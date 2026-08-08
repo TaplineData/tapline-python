@@ -5,12 +5,15 @@
 [![PyPI](https://img.shields.io/pypi/v/tapline.svg)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline.svg)](https://pypi.org/project/tapline/)
 
-Tapline is a Python package for working with public YouTube data. It downloads
-transcripts and provides data about videos, channels, searches, comments, and
-playlists.
+Tapline is a Python YouTube scraper and YouTube transcript extractor for public
+data. You can scrape YouTube transcripts, search videos, and collect structured
+data for videos, channels, and playlists. Extract YouTube comments and replies
+one page at a time. Use the pagination helper to scrape YouTube comments beyond
+the first page.
 
-You will need Python 3.10 or newer and a Tapline API key. You can get a key at
-[tapline.sh](https://tapline.sh).
+Tapline requires Python 3.10 or newer and an API key. Get your key on the
+[Tapline YouTube page](https://tapline.sh/youtube). Every new account starts with
+500 free credits, and you do not need a card.
 
 ## Install
 
