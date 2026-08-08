@@ -1,0 +1,156 @@
+{
+  "channel_by_handle": {
+    "method": "channel",
+    "model": "ChannelResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/channels/%40mkbhd",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "channel_by_id": {
+    "method": "channel",
+    "model": "ChannelResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/channels/UCHnyfMqiRRG1u-2MsSQLbXA",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "channel_videos": {
+    "method": "channel_videos",
+    "model": "ChannelVideosResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/channels/%40veritasium/videos?limit=5",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "channel_videos_shorts": {
+    "method": "channel_videos",
+    "model": "ChannelVideosResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/channels/UCBJycsmduvYEL83R_U4JriQ/videos?content_type=shorts&limit=5",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "channel_videos_streams": {
+    "method": "channel_videos",
+    "model": "ChannelVideosResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/channels/UCBJycsmduvYEL83R_U4JriQ/videos?content_type=streams&limit=5",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "comment_replies": {
+    "method": "comment_replies",
+    "model": "RepliesResponse",
+    "source": "local call of YouTubeInteractor.get_comment_replies (no demo route exists)",
+    "url": "/api/v1/youtube/videos/wt4p2oalmRY/comments/Ugwl2cofVZZNYHwhqah4AaABAg/replies?cursor=\u2026&limit=20",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "comments": {
+    "method": "comments",
+    "model": "CommentsResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/wt4p2oalmRY/comments?sort=top&limit=10",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "formats": {
+    "method": "formats",
+    "model": "FormatsResponse",
+    "source": "https://api.tapline.sh",
+    "url": "https://api.tapline.sh/api/v1/youtube/demo/videos/LXb3EKWsInQ/formats",
+    "captured_at": "2026-08-07T17:18:54+00:00"
+  },
+  "formats_live": {
+    "method": "formats",
+    "model": "FormatsResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/QGe5QUx9mO8/formats",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "heatmap": {
+    "method": "heatmap",
+    "model": "HeatmapResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/dQw4w9WgXcQ/heatmap",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "metadata": {
+    "method": "metadata",
+    "model": "VideoMetadataResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/wt4p2oalmRY/metadata",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "metadata_fields": {
+    "method": "metadata",
+    "model": "VideoMetadataResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/wt4p2oalmRY/metadata?fields=title%2Cview_count%2Cchapters",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "metadata_heatmap": {
+    "method": "metadata",
+    "model": "VideoMetadataResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/dQw4w9WgXcQ/metadata",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "metadata_live": {
+    "method": "metadata",
+    "model": "VideoMetadataResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/QGe5QUx9mO8/metadata",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "playlist": {
+    "method": "playlist",
+    "model": "PlaylistResponse",
+    "source": "https://api.tapline.sh",
+    "url": "https://api.tapline.sh/api/v1/youtube/demo/playlist/UUHnyfMqiRRG1u-2MsSQLbXA?limit=5",
+    "captured_at": "2026-08-07T17:18:46+00:00"
+  },
+  "search": {
+    "method": "search",
+    "model": "SearchResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/search?query=veritasium&limit=8",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "search_filtered": {
+    "method": "search",
+    "model": "SearchResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/search?query=drone+footage&limit=5&sort=view_count&search_type=video&duration=over_20_min&features=hd&features=4k",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "search_movies": {
+    "method": "search",
+    "model": "SearchResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/search?query=free+movies&limit=5&search_type=movie",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "subtitle_tracks": {
+    "method": "subtitle_tracks",
+    "model": "SubtitleTracksResponse",
+    "source": "https://api.tapline.sh",
+    "url": "https://api.tapline.sh/api/v1/youtube/demo/videos/wt4p2oalmRY/subtitles/tracks",
+    "captured_at": "2026-08-07T17:18:51+00:00"
+  },
+  "subtitles_json3": {
+    "method": "subtitles",
+    "model": "SubtitleResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/jNQXAC9IVRw/subtitles?language=en&subtitle_format=json3&source=manual",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "subtitles_json3_auto": {
+    "method": "subtitles",
+    "model": "SubtitleResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/bo4ebVkhp28/subtitles?language=en&subtitle_format=json3&source=auto",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  },
+  "subtitles_srt": {
+    "method": "subtitles",
+    "model": "SubtitleResponse",
+    "source": "local ASGI run of the Tapline demo router",
+    "url": "/api/v1/youtube/demo/videos/wt4p2oalmRY/subtitles?language=en&subtitle_format=srt&source=manual",
+    "captured_at": "2026-08-07T17:38:29+00:00"
+  }
+}

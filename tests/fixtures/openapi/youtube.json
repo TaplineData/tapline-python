@@ -1,0 +1,779 @@
+{
+  "source": "https://api.tapline.sh/openapi.json",
+  "captured_at": "2026-08-07T20:08:15+00:00",
+  "paths": {
+    "/api/v1/youtube/demo/search": {
+      "credits": null,
+      "response_model": "SearchResponse",
+      "query_params": {
+        "query": null,
+        "limit": 10,
+        "country": null,
+        "sort": "relevance",
+        "upload_date": null,
+        "search_type": null,
+        "duration": null,
+        "features": null
+      },
+      "required": [
+        "query"
+      ],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/channels/{channel_id}/videos": {
+      "credits": null,
+      "response_model": "ChannelVideosResponse",
+      "query_params": {
+        "limit": 30,
+        "content_type": "videos"
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/channels/{channel_id}": {
+      "credits": null,
+      "response_model": "ChannelResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/playlist/{playlist_id}": {
+      "credits": null,
+      "response_model": "PlaylistResponse",
+      "query_params": {
+        "limit": 50
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/metadata": {
+      "credits": null,
+      "response_model": "VideoMetadataResponse",
+      "query_params": {
+        "fields": null
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/subtitles/tracks": {
+      "credits": null,
+      "response_model": "SubtitleTracksResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/subtitles": {
+      "credits": null,
+      "response_model": "SubtitleResponse",
+      "query_params": {
+        "language": "en",
+        "subtitle_format": "srt",
+        "source": "any"
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/comments": {
+      "credits": null,
+      "response_model": "CommentsResponse",
+      "query_params": {
+        "sort": "top",
+        "limit": 20
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/formats": {
+      "credits": null,
+      "response_model": "FormatsResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/demo/videos/{video_id}/heatmap": {
+      "credits": null,
+      "response_model": "HeatmapResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "403": [
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/search": {
+      "credits": 2,
+      "response_model": "SearchResponse",
+      "query_params": {
+        "query": null,
+        "limit": 10,
+        "country": null,
+        "sort": "relevance",
+        "upload_date": null,
+        "search_type": null,
+        "duration": null,
+        "features": null
+      },
+      "required": [
+        "query"
+      ],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/channels/{channel_id}/videos": {
+      "credits": 2,
+      "response_model": "ChannelVideosResponse",
+      "query_params": {
+        "limit": 30,
+        "content_type": "videos",
+        "cursor": ""
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ],
+        "400": [
+          "invalid_cursor"
+        ]
+      }
+    },
+    "/api/v1/youtube/channels/{channel_id}": {
+      "credits": 3,
+      "response_model": "ChannelResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/playlist/{playlist_id}": {
+      "credits": 2,
+      "response_model": "PlaylistResponse",
+      "query_params": {
+        "limit": 50
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/metadata": {
+      "credits": 2,
+      "response_model": "VideoMetadataResponse",
+      "query_params": {
+        "fields": null
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/subtitles/tracks": {
+      "credits": 2,
+      "response_model": "SubtitleTracksResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/subtitles": {
+      "credits": 2,
+      "response_model": "SubtitleResponse",
+      "query_params": {
+        "language": "en",
+        "subtitle_format": "srt",
+        "source": "any"
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/comments/{comment_id}/replies": {
+      "credits": 2,
+      "response_model": "RepliesResponse",
+      "query_params": {
+        "cursor": null,
+        "limit": 20
+      },
+      "required": [
+        "cursor"
+      ],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ],
+        "400": [
+          "invalid_cursor"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/comments": {
+      "credits": 2,
+      "response_model": "CommentsResponse",
+      "query_params": {
+        "sort": "top",
+        "limit": 20,
+        "cursor": ""
+      },
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ],
+        "400": [
+          "invalid_cursor"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/formats": {
+      "credits": 2,
+      "response_model": "FormatsResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    },
+    "/api/v1/youtube/videos/{video_id}/heatmap": {
+      "credits": 2,
+      "response_model": "HeatmapResponse",
+      "query_params": {},
+      "required": [],
+      "errors": {
+        "502": [
+          "upstream_response_invalid",
+          "upstream_unavailable"
+        ],
+        "503": [
+          "upstream_blocked"
+        ],
+        "401": [
+          "unauthenticated"
+        ],
+        "402": [
+          "insufficient_credits"
+        ],
+        "403": [
+          "forbidden",
+          "resource_forbidden"
+        ],
+        "404": [
+          "not_found"
+        ],
+        "422": [
+          "invalid_request"
+        ],
+        "429": [
+          "rate_limited"
+        ],
+        "500": [
+          "internal_error"
+        ]
+      }
+    }
+  }
+}

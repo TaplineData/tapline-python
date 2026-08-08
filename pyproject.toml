@@ -1,0 +1,143 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tapline"
+description = "The official Python client for the Tapline API"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dynamic = ["version"]
+authors = [{ name = "Tapline", email = "support@tapline.sh" }]
+keywords = ["tapline", "youtube", "api", "client", "sdk", "scraping"]
+dependencies = [
+  "httpx>=0.25,<1",
+  "pydantic>=2.7,<3",
+  "typing-extensions>=4.10,<5",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://tapline.sh"
+Documentation = "https://tapline.sh/docs"
+Repository = "https://github.com/TaplineData/tapline-python"
+Issues = "https://github.com/TaplineData/tapline-python/issues"
+
+[dependency-groups]
+dev = [
+  "mypy>=1.11",
+  "pyright>=1.1.400",
+  "pytest>=8",
+  "pytest-asyncio>=0.24",
+  "respx>=0.21",
+  "ruff>=0.6",
+]
+
+[tool.hatch.version]
+path = "src/tapline/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tapline"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/tests", "/scripts", "/examples", "/README.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--strict-markers --strict-config -m 'not live'"
+markers = ["live: sends real requests to api.tapline.sh; needs TAPLINE_API_KEY and spends credits"]
+xfail_strict = true
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["error"]
+
+[tool.mypy]
+files = ["src", "tests", "scripts"]
+python_version = "3.10"
+strict = true
+pretty = true
+show_error_codes = true
+warn_unreachable = true
+enable_error_code = [
+  "ignore-without-code",
+  "possibly-undefined",
+  "redundant-expr",
+  "truthy-bool",
+]
+
+[tool.pyright]
+include = ["src", "tests", "scripts"]
+pythonVersion = "3.10"
+typeCheckingMode = "standard"
+reportImplicitOverride = "error"
+reportMissingTypeArgument = "error"
+reportPrivateUsage = "error"
+reportUnknownArgumentType = "error"
+reportUnknownParameterType = "error"
+reportUnnecessaryCast = "error"
+reportUnnecessaryComparison = "error"
+reportUnnecessaryContains = "error"
+reportUnnecessaryIsInstance = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
+reportUnusedImport = "error"
+
+# pytest's mark and parametrize decorators are untyped, and tests reach into internals on purpose.
+[[tool.pyright.executionEnvironments]]
+root = "tests"
+extraPaths = ["."]
+reportPrivateUsage = "none"
+reportUnknownArgumentType = "none"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "ARG", # unused arguments
+  "B",   # bugbear
+  "C4",  # comprehensions
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "FA",  # future annotations
+  "I",   # isort
+  "PIE", # misc lints
+  "PT",  # pytest style
+  "RUF", # ruff-specific
+  "SIM", # simplify
+  "T20", # print statements
+  "UP",  # pyupgrade
+  "W",   # pycodestyle warnings
+]
+ignore = [
+  # Docstrings quote the API's own prose, which uses en dashes and typographic quotes.
+  "RUF001",
+  "RUF002",
+  "RUF003",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tapline"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/tapline/__init__.py" = ["F401"]
+# These runnable examples report their progress to the terminal.
+"examples/**/*.py" = ["T20"]
+# The capture script reports progress over a run that takes minutes.
+"scripts/*.py" = ["T20"]

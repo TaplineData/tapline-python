@@ -1,0 +1,74 @@
+{
+  "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+  "channel": "Veritasium",
+  "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+  "handle": "@veritasium",
+  "handle_url": "https://www.youtube.com/@veritasium",
+  "description": "An element of truth - videos about science, education, and anything else we find interesting.",
+  "channel_follower_count": 21100000,
+  "tags": [
+    "science videos",
+    "science",
+    "science education",
+    "science literacy",
+    "veritasium",
+    "misconceptions",
+    "physics",
+    "education",
+    "astronomy",
+    "chemistry",
+    "biology",
+    "teaching",
+    "learning",
+    "math"
+  ],
+  "thumbnail": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+  "thumbnails": [
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w1060-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 1060,
+      "height": 175
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w1138-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 1138,
+      "height": 188
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 1707,
+      "height": 283
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w2120-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 2120,
+      "height": 351
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w2276-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 2276,
+      "height": 377
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
+      "width": 2560,
+      "height": 424
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=s0",
+      "width": null,
+      "height": null
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/7vCbvtCqtjQ3YLgsJt7Y952MQV1sBvhllSCSxHP8_sVZdcPCBrITfhkN2RdyCuwPnsByq-1GoA=s900-c-k-c0x00ffffff-no-rj",
+      "width": 900,
+      "height": 900
+    },
+    {
+      "url": "https://yt3.googleusercontent.com/7vCbvtCqtjQ3YLgsJt7Y952MQV1sBvhllSCSxHP8_sVZdcPCBrITfhkN2RdyCuwPnsByq-1GoA=s0",
+      "width": null,
+      "height": null
+    }
+  ],
+  "playlist_count": 2
+}
