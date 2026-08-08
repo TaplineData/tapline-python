@@ -29,12 +29,13 @@ import asyncio
 import json
 import os
 import sys
-from collections.abc import Iterator, Mapping
+from collections.abc import Awaitable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import TypeVar, cast
 
 import httpx
 from pydantic import BaseModel
+from typing_extensions import override
 
 from tapline import TaplineClient
 from tapline.youtube import Feature, SearchType, SubtitleFormat
@@ -45,6 +46,8 @@ CHANNEL = "@veritasium"
 CHANNEL_BY_ID = "UCHnyfMqiRRG1u-2MsSQLbXA"
 PLAYLIST = "UUHnyfMqiRRG1u-2MsSQLbXA"
 
+_ModelT = TypeVar("_ModelT", bound=BaseModel)
+
 
 class RecordingTransport(httpx.AsyncBaseTransport):
     """Keeps the raw body of each response so it can be diffed against the model."""
@@ -53,6 +56,7 @@ class RecordingTransport(httpx.AsyncBaseTransport):
         self._inner = inner
         self.bodies: list[bytes] = []
 
+    @override
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         response = await self._inner.handle_async_request(request)
         body = await response.aread()
@@ -65,7 +69,7 @@ class RecordingTransport(httpx.AsyncBaseTransport):
         )
 
 
-def walk_extras(value: Any, path: str = "") -> Iterator[str]:
+def walk_extras(value: object, path: str = "") -> Iterator[str]:
     """Every undeclared field pydantic parked in an extra bucket, with its path."""
     if isinstance(value, BaseModel):
         for key in value.model_extra or {}:
@@ -73,31 +77,39 @@ def walk_extras(value: Any, path: str = "") -> Iterator[str]:
         for name in type(value).model_fields:
             yield from walk_extras(getattr(value, name), f"{path}.{name}".lstrip("."))
     elif isinstance(value, Mapping):
-        for key, item in value.items():
-            yield from walk_extras(item, f"{path}[{key}]")
+        mapping = cast(Mapping[object, object], value)
+        for mapping_key, item in mapping.items():
+            yield from walk_extras(item, f"{path}[{mapping_key}]")
     elif isinstance(value, (list, tuple)):
-        for index, item in enumerate(value):
+        sequence = cast(Sequence[object], value)
+        for index, item in enumerate(sequence):
             yield from walk_extras(item, f"{path}[{index}]")
 
 
-def walk_missing(raw: Any, dumped: Any, path: str = "") -> Iterator[str]:
+def walk_missing(raw: object, dumped: object, path: str = "") -> Iterator[str]:
     """Every key present in the raw JSON that the round-trip did not reproduce."""
     if isinstance(raw, Mapping):
         if not isinstance(dumped, Mapping):
             yield f"{path} (raw is an object, dump is {type(dumped).__name__})"
             return
-        for key, item in raw.items():
-            if key not in dumped:
+        raw_mapping = cast(Mapping[object, object], raw)
+        dumped_mapping = cast(Mapping[object, object], dumped)
+        for key, item in raw_mapping.items():
+            if key not in dumped_mapping:
                 yield f"{path}.{key}".lstrip(".")
             else:
-                yield from walk_missing(item, dumped[key], f"{path}.{key}".lstrip("."))
+                yield from walk_missing(
+                    item, dumped_mapping[key], f"{path}.{key}".lstrip(".")
+                )
     elif isinstance(raw, list):
-        if not isinstance(dumped, list) or len(dumped) != len(raw):
-            seen = len(dumped) if isinstance(dumped, list) else "n/a"
-            yield f"{path} (list length {len(raw)} vs {seen})"
+        raw_items = cast(list[object], raw)
+        dumped_items = cast(list[object], dumped) if isinstance(dumped, list) else None
+        if dumped_items is None or len(dumped_items) != len(raw_items):
+            seen = len(dumped_items) if dumped_items is not None else "n/a"
+            yield f"{path} (list length {len(raw_items)} vs {seen})"
             return
-        for index, item in enumerate(raw):
-            yield from walk_missing(item, dumped[index], f"{path}[{index}]")
+        for index, item in enumerate(raw_items):
+            yield from walk_missing(item, dumped_items[index], f"{path}[{index}]")
 
 
 @dataclass
@@ -127,7 +139,9 @@ async def main() -> int:
     async with TaplineClient(api_key=key, base_url=base_url, http_client=http_client) as tapline:
         yt = tapline.youtube
 
-        async def check(endpoint: str, awaitable: Any, note: str = "") -> Any:
+        async def check(
+            endpoint: str, awaitable: Awaitable[_ModelT], note: str = ""
+        ) -> _ModelT:
             before = len(recorder.bodies)
             model = await awaitable
             raw = json.loads(recorder.bodies[before])
@@ -179,13 +193,13 @@ async def main() -> int:
         )
         comments = await check("comments", yt.comments(VIDEO, limit=3))
 
-        cursor = next(
-            (t.replies_cursor for t in comments.threads if t.replies_cursor),
-            None,
-        )
-        if cursor:
-            thread = next(t for t in comments.threads if t.replies_cursor == cursor)
-            comment_id = thread.comment.comment_id
+        reply_target: tuple[str, str] | None = None
+        for thread in comments.threads:
+            if thread.replies_cursor is not None and thread.comment.comment_id is not None:
+                reply_target = (thread.replies_cursor, thread.comment.comment_id)
+                break
+        if reply_target is not None:
+            cursor, comment_id = reply_target
             await check(
                 "comment_replies",
                 yt.comment_replies(VIDEO, comment_id=comment_id, cursor=cursor, limit=3),
