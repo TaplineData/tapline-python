@@ -48,19 +48,19 @@ tapline = TaplineClient(api_key="your-api-key")
 
 ## Client methods
 
-| Method | What you get | Credits |
-| --- | --- | --- |
-| `search(query=...)` | Search results | 2 |
-| `metadata(video)` | Title, counts, dates, chapters, thumbnails | 2 |
-| `subtitles(video)` | A transcript document | 2 |
-| `subtitle_tracks(video)` | The languages a video has captions in | 2 |
-| `comments(video)` | One page of comment threads | 2 |
-| `comment_replies(video, comment_id, cursor=...)` | One page of replies | 2 |
-| `channel(channel)` | A channel's profile and subscriber count | 3 |
-| `channel_videos(channel)` | One page of a channel's uploads | 2 |
-| `playlist(playlist_id)` | A playlist and its videos | 2 |
-| `heatmap(video)` | Which parts of a video get replayed | 2 |
-| `formats(video)` | The streams YouTube offers for a video | 2 |
+| Method | What you get |
+| --- | --- |
+| `search(query=...)` | Search results |
+| `metadata(video)` | Title, counts, dates, chapters, thumbnails |
+| `subtitles(video)` | A transcript document |
+| `subtitle_tracks(video)` | The languages a video has captions in |
+| `comments(video)` | One page of comment threads |
+| `comment_replies(video, comment_id, cursor=...)` | One page of replies |
+| `channel(channel)` | A channel's profile and subscriber count |
+| `channel_videos(channel)` | One page of a channel's uploads |
+| `playlist(playlist_id)` | A playlist and its videos |
+| `heatmap(video)` | Which parts of a video get replayed |
+| `formats(video)` | The streams YouTube offers for a video |
 
 Every method is on both the sync and async clients, and takes an optional
 `timeout` that overrides the client's own for that one call.
