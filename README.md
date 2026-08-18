@@ -1,4 +1,4 @@
-[![Tapline — Official Python Client](./assets/tapline-github-banner.png)](https://tapline.sh)
+[![Tapline — Official Python Client](./assets/tapline-github-banner.png)](https://tapline.sh?utm_source=python_sdk_readme&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=banner)
 
 # tapline
 
@@ -12,7 +12,7 @@ one page at a time. Use the pagination helper to scrape YouTube comments beyond
 the first page.
 
 Tapline requires Python 3.10 or newer and an API key. Get your key on the
-[Tapline YouTube page](https://tapline.sh/youtube). Every new account starts with
+[Tapline YouTube page](https://tapline.sh/youtube?utm_source=python_sdk_readme&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=get_api_key). Every new account starts with
 500 free credits, and you do not need a card.
 
 ## Install
