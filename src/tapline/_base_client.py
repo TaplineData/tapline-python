@@ -1,6 +1,7 @@
 """HTTP transport for the Tapline API — the sync and async engines over httpx.
 
-Resource classes reach the network through exactly one method, ``get``::
+Resource classes reach the network through exactly one method, ``request``,
+with ``get`` and ``post`` as its two spellings::
 
     from tapline._base_client import encode_path
 
@@ -9,6 +10,10 @@ Resource classes reach the network through exactly one method, ``get``::
         cast_to=CommentsResponse,
         params={"sort": sort, "limit": limit, "cursor": cursor},
     )
+
+A ``POST`` is retried on the same terms as a ``GET``: every endpoint that takes
+a body is a read, so resending it is safe, though a response lost on the wire
+is charged twice.
 
 Build paths with :func:`encode_path`: ``video_id`` and ``channel_id`` accept
 full YouTube URLs, so an f-string would leak ``/`` and ``?`` into the path.
@@ -74,7 +79,7 @@ from ._exceptions import (
     make_request_error,
     make_status_error,
 )
-from ._types import Headers, NotGiven, PrimitiveQueryValue, Query, Timeout, not_given
+from ._types import Body, Headers, NotGiven, PrimitiveQueryValue, Query, Timeout, not_given
 
 __all__ = ["AsyncAPIClient", "BaseClient", "SyncAPIClient", "encode_path"]
 
@@ -366,15 +371,18 @@ class BaseClient(abc.ABC, Generic[_HttpxClientT]):
 
     def _build_request(
         self,
+        method: str,
         path: str,
         *,
         params: Query | None,
+        json: Body | None,
         timeout: float | Timeout | NotGiven | None,
     ) -> httpx.Request:
         return self._client.build_request(
-            "GET",
+            method,
             self._url_for(path),
             params=encode_query(params),
+            json=json,
             headers=self._headers(),
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
         )
@@ -413,13 +421,42 @@ class SyncAPIClient(BaseClient[httpx.Client]):
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> _ModelT:
-        """Send a ``GET`` request and validate the response body into ``cast_to``.
+        """Send a ``GET`` request; see :meth:`request`."""
+        return self.request("GET", path, cast_to=cast_to, params=params, timeout=timeout)
+
+    def post(
+        self,
+        path: str,
+        *,
+        cast_to: type[_ModelT],
+        json: Body | None = None,
+        params: Query | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> _ModelT:
+        """Send a ``POST`` request with a JSON body; see :meth:`request`."""
+        return self.request(
+            "POST", path, cast_to=cast_to, params=params, json=json, timeout=timeout
+        )
+
+    def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        cast_to: type[_ModelT],
+        params: Query | None = None,
+        json: Body | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> _ModelT:
+        """Send a request and validate the response body into ``cast_to``.
 
         Args:
+            method: ``GET`` or ``POST``.
             path: Request path, already percent-encoded by :func:`encode_path`.
                 Query parameters go in ``params``, not here.
             cast_to: Model the JSON body is validated into.
             params: Query parameters; see the module docstring for serialization.
+            json: JSON body, sent as-is.
             timeout: Overrides the client timeout for this request. ``None``
                 waits indefinitely.
 
@@ -431,7 +468,7 @@ class SyncAPIClient(BaseClient[httpx.Client]):
                 has been closed.
             APIResponseValidationError: The body did not match ``cast_to``.
         """
-        request = self._build_request(path, params=params, timeout=timeout)
+        request = self._build_request(method, path, params=params, json=json, timeout=timeout)
         budget = _RetryBudget(self.max_retries)
         while True:
             self._raise_if_closed(request)
@@ -482,13 +519,42 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> _ModelT:
-        """Send a ``GET`` request and validate the response body into ``cast_to``.
+        """Send a ``GET`` request; see :meth:`request`."""
+        return await self.request("GET", path, cast_to=cast_to, params=params, timeout=timeout)
+
+    async def post(
+        self,
+        path: str,
+        *,
+        cast_to: type[_ModelT],
+        json: Body | None = None,
+        params: Query | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> _ModelT:
+        """Send a ``POST`` request with a JSON body; see :meth:`request`."""
+        return await self.request(
+            "POST", path, cast_to=cast_to, params=params, json=json, timeout=timeout
+        )
+
+    async def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        cast_to: type[_ModelT],
+        params: Query | None = None,
+        json: Body | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> _ModelT:
+        """Send a request and validate the response body into ``cast_to``.
 
         Args:
+            method: ``GET`` or ``POST``.
             path: Request path, already percent-encoded by :func:`encode_path`.
                 Query parameters go in ``params``, not here.
             cast_to: Model the JSON body is validated into.
             params: Query parameters; see the module docstring for serialization.
+            json: JSON body, sent as-is.
             timeout: Overrides the client timeout for this request. ``None``
                 waits indefinitely.
 
@@ -500,7 +566,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
                 has been closed.
             APIResponseValidationError: The body did not match ``cast_to``.
         """
-        request = self._build_request(path, params=params, timeout=timeout)
+        request = self._build_request(method, path, params=params, json=json, timeout=timeout)
         budget = _RetryBudget(self.max_retries)
         while True:
             self._raise_if_closed(request)

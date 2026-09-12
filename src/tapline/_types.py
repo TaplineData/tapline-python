@@ -8,6 +8,7 @@ import httpx
 from typing_extensions import override
 
 __all__ = [
+    "Body",
     "Headers",
     "NotGiven",
     "PrimitiveQueryValue",
@@ -23,6 +24,7 @@ Headers: TypeAlias = Mapping[str, str]
 PrimitiveQueryValue: TypeAlias = str | int | float | bool | Enum
 QueryValue: TypeAlias = PrimitiveQueryValue | Sequence[PrimitiveQueryValue] | None
 Query: TypeAlias = Mapping[str, QueryValue]
+Body: TypeAlias = Mapping[str, object]
 
 
 class NotGiven:

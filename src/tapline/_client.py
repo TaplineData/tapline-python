@@ -15,7 +15,7 @@ import httpx
 from ._base_client import AsyncAPIClient, SyncAPIClient
 from ._constants import DEFAULT_MAX_RETRIES
 from ._types import Headers, NotGiven, Timeout, not_given
-from .resources import SyncYouTube, YouTube
+from .resources import Airbnb, Gmgn, SyncAirbnb, SyncGmgn, SyncYouTube, YouTube
 
 __all__ = ["SyncTaplineClient", "TaplineClient"]
 
@@ -43,6 +43,12 @@ class TaplineClient(AsyncAPIClient):
         async with TaplineClient(api_key=api_key) as tapline:
             comments = await tapline.youtube.comments(video_id=video_id)
     """
+
+    airbnb: Airbnb
+    """The Airbnb endpoints."""
+
+    gmgn: Gmgn
+    """The GMGN endpoints."""
 
     youtube: YouTube
     """The YouTube endpoints."""
@@ -92,6 +98,8 @@ class TaplineClient(AsyncAPIClient):
             default_headers=default_headers,
             http_client=http_client,
         )
+        self.airbnb = Airbnb(self)
+        self.gmgn = Gmgn(self)
         self.youtube = YouTube(self)
 
 
@@ -111,6 +119,12 @@ class SyncTaplineClient(SyncAPIClient):
         with SyncTaplineClient(api_key=api_key) as tapline:
             comments = tapline.youtube.comments(video_id=video_id)
     """
+
+    airbnb: SyncAirbnb
+    """The Airbnb endpoints."""
+
+    gmgn: SyncGmgn
+    """The GMGN endpoints."""
 
     youtube: SyncYouTube
     """The YouTube endpoints."""
@@ -160,4 +174,6 @@ class SyncTaplineClient(SyncAPIClient):
             default_headers=default_headers,
             http_client=http_client,
         )
+        self.airbnb = SyncAirbnb(self)
+        self.gmgn = SyncGmgn(self)
         self.youtube = SyncYouTube(self)

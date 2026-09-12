@@ -29,7 +29,7 @@ means one thing under :mod:`tapline.youtube` and can mean another under the
 next API Tapline adds.
 """
 
-from . import resources, youtube
+from . import airbnb, gmgn, resources, youtube
 from ._client import SyncTaplineClient, TaplineClient
 from ._exceptions import (
     APIConnectionError,
@@ -55,7 +55,7 @@ from ._models import BaseModel
 from ._pagination import CursorCompletion, CursorCompletionValue, CursorPagination
 from ._types import Headers, NotGiven, Timeout, not_given
 from ._version import __title__, __version__
-from .resources import SyncYouTube, YouTube
+from .resources import Airbnb, Gmgn, SyncAirbnb, SyncGmgn, SyncYouTube, YouTube
 
 __all__ = [
     "APIConnectionError",
@@ -63,6 +63,7 @@ __all__ = [
     "APIResponseValidationError",
     "APIStatusError",
     "APITimeoutError",
+    "Airbnb",
     "AuthenticationError",
     "BadRequestError",
     "BaseModel",
@@ -71,6 +72,7 @@ __all__ = [
     "CursorPagination",
     "ErrorCode",
     "ErrorDetail",
+    "Gmgn",
     "Headers",
     "InsufficientCreditsError",
     "InternalServerError",
@@ -80,6 +82,8 @@ __all__ = [
     "NotGiven",
     "PermissionDeniedError",
     "RateLimitError",
+    "SyncAirbnb",
+    "SyncGmgn",
     "SyncTaplineClient",
     "SyncYouTube",
     "TaplineClient",
@@ -89,6 +93,8 @@ __all__ = [
     "YouTube",
     "__title__",
     "__version__",
+    "airbnb",
+    "gmgn",
     "not_given",
     "resources",
     "youtube",

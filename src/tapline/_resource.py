@@ -15,13 +15,13 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from dataclasses import dataclass
-from typing import Generic, Protocol, TypeVar
+from typing import Generic, Literal, Protocol, TypeVar
 
 import pydantic
 
 from ._base_client import AsyncAPIClient, SyncAPIClient
 from ._pagination import CursorPagination
-from ._types import NotGiven, Query, Timeout
+from ._types import Body, NotGiven, Query, Timeout
 
 __all__ = ["AsyncAPIResource", "CursorPage", "Request", "SyncAPIResource"]
 
@@ -47,11 +47,15 @@ class Request(Generic[_ModelT]):
             :func:`~tapline._base_client.encode_path`.
         cast_to: Model the response body is validated into.
         params: Query parameters, with the caller's values left raw.
+        method: HTTP method; ``POST`` sends ``json`` as the body.
+        json: JSON body for a ``POST``, with ``None`` values already dropped.
     """
 
     path: str
     cast_to: type[_ModelT]
     params: Query | None = None
+    method: Literal["GET", "POST"] = "GET"
+    json: Body | None = None
 
 
 class SyncAPIResource:
@@ -68,10 +72,12 @@ class SyncAPIResource:
         *,
         timeout: float | Timeout | NotGiven | None,
     ) -> _ModelT:
-        return self._client.get(
+        return self._client.request(
+            request.method,
             request.path,
             cast_to=request.cast_to,
             params=request.params,
+            json=request.json,
             timeout=timeout,
         )
 
@@ -129,10 +135,12 @@ class AsyncAPIResource:
         *,
         timeout: float | Timeout | NotGiven | None,
     ) -> _ModelT:
-        return await self._client.get(
+        return await self._client.request(
+            request.method,
             request.path,
             cast_to=request.cast_to,
             params=request.params,
+            json=request.json,
             timeout=timeout,
         )
 

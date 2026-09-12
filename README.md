@@ -322,6 +322,33 @@ with SyncTaplineClient() as tapline:
 Each `url` is signed by YouTube and expires within hours, so fetch it when you
 are ready to use it. Storyboard formats are left out.
 
+## Airbnb
+
+The same client carries the Airbnb endpoints under `tapline.airbnb`:
+
+| Method | What you get |
+| --- | --- |
+| `airbnb.search_locations(query=...)` | Place suggestions with a `place_id` to search by |
+| `airbnb.search(...)` | Listings in an area, by `place_id`, `query`, centre and `radius_km`, or a bounding box |
+| `airbnb.get_price(room_id=..., check_in=..., check_out=...)` | Total and nightly price for a stay |
+| `airbnb.get_calendar(room_id=..., month=..., year=...)` | Availability by day |
+| `airbnb.get_reviews(room_id=...)` | Reviews, newest first |
+| `airbnb.get_details(room_id=...)` | The listing page, parsed |
+
+```python
+from tapline import SyncTaplineClient
+
+with SyncTaplineClient() as tapline:
+    places = tapline.airbnb.search_locations(query="Lisbon")
+    results = tapline.airbnb.search(place_id=places.suggestions[0].place_id, adults=2)
+    for listing in results.listings:
+        print(listing.room_id, listing.name, listing.price.formatted)
+```
+
+Every Airbnb type lives in `tapline.airbnb`. Enums that travel into a request,
+such as `AmenityFilter`, are closed and also accept their string value; enums
+that arrive on a response are open, so a value Airbnb adds tomorrow parses today.
+
 ## Walk every page
 
 `comments`, `comment_replies`, and `channel_videos` return one page per call.

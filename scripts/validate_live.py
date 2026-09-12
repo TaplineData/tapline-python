@@ -98,9 +98,7 @@ def walk_missing(raw: object, dumped: object, path: str = "") -> Iterator[str]:
             if key not in dumped_mapping:
                 yield f"{path}.{key}".lstrip(".")
             else:
-                yield from walk_missing(
-                    item, dumped_mapping[key], f"{path}.{key}".lstrip(".")
-                )
+                yield from walk_missing(item, dumped_mapping[key], f"{path}.{key}".lstrip("."))
     elif isinstance(raw, list):
         raw_items = cast(list[object], raw)
         dumped_items = cast(list[object], dumped) if isinstance(dumped, list) else None
@@ -139,9 +137,7 @@ async def main() -> int:
     async with TaplineClient(api_key=key, base_url=base_url, http_client=http_client) as tapline:
         yt = tapline.youtube
 
-        async def check(
-            endpoint: str, awaitable: Awaitable[_ModelT], note: str = ""
-        ) -> _ModelT:
+        async def check(endpoint: str, awaitable: Awaitable[_ModelT], note: str = "") -> _ModelT:
             before = len(recorder.bodies)
             model = await awaitable
             raw = json.loads(recorder.bodies[before])
