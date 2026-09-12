@@ -15,7 +15,16 @@ import httpx
 from ._base_client import AsyncAPIClient, SyncAPIClient
 from ._constants import DEFAULT_MAX_RETRIES
 from ._types import Headers, NotGiven, Timeout, not_given
-from .resources import Airbnb, Gmgn, SyncAirbnb, SyncGmgn, SyncYouTube, YouTube
+from .resources import (
+    Airbnb,
+    Geckoterminal,
+    Gmgn,
+    SyncAirbnb,
+    SyncGeckoterminal,
+    SyncGmgn,
+    SyncYouTube,
+    YouTube,
+)
 
 __all__ = ["SyncTaplineClient", "TaplineClient"]
 
@@ -46,6 +55,9 @@ class TaplineClient(AsyncAPIClient):
 
     airbnb: Airbnb
     """The Airbnb endpoints."""
+
+    geckoterminal: Geckoterminal
+    """The GeckoTerminal endpoints."""
 
     gmgn: Gmgn
     """The GMGN endpoints."""
@@ -99,6 +111,7 @@ class TaplineClient(AsyncAPIClient):
             http_client=http_client,
         )
         self.airbnb = Airbnb(self)
+        self.geckoterminal = Geckoterminal(self)
         self.gmgn = Gmgn(self)
         self.youtube = YouTube(self)
 
@@ -122,6 +135,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     airbnb: SyncAirbnb
     """The Airbnb endpoints."""
+
+    geckoterminal: SyncGeckoterminal
+    """The GeckoTerminal endpoints."""
 
     gmgn: SyncGmgn
     """The GMGN endpoints."""
@@ -175,5 +191,6 @@ class SyncTaplineClient(SyncAPIClient):
             http_client=http_client,
         )
         self.airbnb = SyncAirbnb(self)
+        self.geckoterminal = SyncGeckoterminal(self)
         self.gmgn = SyncGmgn(self)
         self.youtube = SyncYouTube(self)
