@@ -349,6 +349,59 @@ Every Airbnb type lives in `tapline.airbnb`. Enums that travel into a request,
 such as `AmenityFilter`, are closed and also accept their string value; enums
 that arrive on a response are open, so a value Airbnb adds tomorrow parses today.
 
+## GMGN
+
+`tapline.gmgn` covers GMGN's on-chain token data across Solana, Base, BSC,
+Ethereum and Tron: 61 methods spanning trending leaderboards, token security
+and holder breakdowns, wallet PnL, launchpad fees and candles.
+
+| Method | What you get |
+| --- | --- |
+| `gmgn.search(chain, q=...)` | Tokens and wallets matching a name, symbol or address |
+| `gmgn.trending_tokens(requests=[...])` | Trending leaderboards for several chains in one call |
+| `gmgn.multi_token_full_info(...)` | Pool, security, rug and social data for a batch of tokens |
+| `gmgn.token_candles(...)` | Price OHLCV candles for a token |
+| `gmgn.holders(...)` | A token's holders, with balances and shares |
+| `gmgn.security(...)` | Honeypot, tax and ownership checks |
+
+```python
+from tapline import SyncTaplineClient
+
+with SyncTaplineClient() as tapline:
+    hits = tapline.gmgn.search("sol", q="bonk")
+    print(hits)
+```
+
+## GeckoTerminal
+
+`tapline.geckoterminal` covers GeckoTerminal's DEX data: 28 methods across
+pools, swaps, tokens, categories and trending.
+
+| Method | What you get |
+| --- | --- |
+| `geckoterminal.global_stats()` | Total 24h volume, pool and network counts, fear-and-greed index |
+| `geckoterminal.networks()` | Every chain indexed, with its identifier and native token |
+| `geckoterminal.network_latest_pools(network)` | Newly created pools on one chain, newest first |
+| `geckoterminal.pools(...)` | Screen pools across every chain by liquidity, volume, age, holders and taxes |
+| `geckoterminal.pool(network, address)` | Full pool detail: price, reserves, GT score, security, tokens |
+| `geckoterminal.pool_swaps(...)` | Individual swaps in a pool, by cursor |
+| `geckoterminal.token_top_holders(...)` | Largest holders, with balance and share of supply |
+| `geckoterminal.trends()` | Top gainers, newest pools and hottest pairs |
+
+```python
+from tapline import SyncTaplineClient
+
+with SyncTaplineClient() as tapline:
+    stats = tapline.geckoterminal.global_stats()
+    fresh = tapline.geckoterminal.network_latest_pools("solana")
+    for pool in fresh.data[:5]:
+        print(pool.attributes.address, pool.attributes.name)
+```
+
+Every GMGN and GeckoTerminal type lives in `tapline.gmgn` and
+`tapline.geckoterminal`. Both modules are generated from the published OpenAPI
+schema, and each call costs 2 credits.
+
 ## Walk every page
 
 `comments`, `comment_replies`, and `channel_videos` return one page per call.
