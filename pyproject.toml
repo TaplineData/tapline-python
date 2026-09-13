@@ -4,13 +4,34 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tapline"
-description = "The official Python client for the Tapline API"
+description = "Typed Python SDK for Tapline's web scraping APIs for YouTube, Airbnb, GMGN and GeckoTerminal."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 dynamic = ["version"]
 authors = [{ name = "Tapline", email = "support@tapline.sh" }]
-keywords = ["tapline", "youtube", "api", "client", "sdk", "scraping"]
+keywords = [
+  "tapline",
+  "python",
+  "youtube",
+  "airbnb",
+  "gmgn",
+  "geckoterminal",
+  "api",
+  "client",
+  "sdk",
+  "scraping",
+  "web-scraping",
+  "scraping-api",
+  "api-client",
+  "youtube-scraper",
+  "youtube-transcript",
+  "airbnb-scraper",
+  "gmgn-api",
+  "geckoterminal-api",
+  "crypto-data",
+  "dex-data",
+]
 dependencies = [
   "httpx>=0.25,<1",
   "pydantic>=2.7,<3",
@@ -32,8 +53,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://tapline.sh"
-Documentation = "https://tapline.sh/docs"
+Homepage = "https://tapline.sh/sign-up?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=package_metadata"
+Documentation = "https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=package_metadata"
 Repository = "https://github.com/TaplineData/tapline-python"
 Issues = "https://github.com/TaplineData/tapline-python/issues"
 
