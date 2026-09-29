@@ -84,6 +84,8 @@ print(details.title, details.rating_summary)
 print(reviews.total_count)
 ```
 
+`price.breakdown` lists each nightly line Airbnb quoted as `nights`, `unit_price` and `total`. It is empty for unavailable dates and monthly quotes. Discounts are in `price.rate_details.discounts`.
+
 Airbnb can silently fall back to USD for unsupported display currencies; treat the response currency as authoritative. A listing found by search may later be removed or made unavailable.
 
 ## Search filters

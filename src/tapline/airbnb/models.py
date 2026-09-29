@@ -144,6 +144,7 @@ class ErrorResponse(BaseModel):
     domain: str | None = None
     message: str
     request_id: str
+    upgrade_url: str | None = None
 
 
 class GetCalendarRequest(BaseModel):
@@ -235,6 +236,12 @@ class ParsedAutocompleteSuggestion(BaseModel):
     place_id: str | None
     subtitle: str | None
     title: str
+
+
+class ParsedBreakdownItem(BaseModel):
+    nights: int | None
+    total: Money
+    unit_price: Money
 
 
 class ParsedCalendarDay(BaseModel):
@@ -430,6 +437,7 @@ class ParsedPagination(BaseModel):
 
 class ParsedPriceResponse(BaseModel):
     available: bool | None = None
+    breakdown: list[ParsedBreakdownItem] | None = None
     can_instant_book: bool | None = None
     currency: str | None = None
     display_price: Money | None = None
