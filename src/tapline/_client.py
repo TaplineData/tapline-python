@@ -2,8 +2,10 @@
 
 :class:`TaplineClient` is awaitable and :class:`SyncTaplineClient` blocks.
 Async is the unprefixed name because that is how the API is expected to be
-called: eleven endpoints that each proxy YouTube live, so a caller almost
-always wants several in flight at once.
+called: every endpoint fetches from its upstream site live, so a caller almost
+always wants several in flight at once. Each client carries one namespace per
+service (``airbnb``, ``geckoterminal``, ``gmgn``, ``ponsfamily``, ``youtube``),
+all sharing its API key, connection pool and retry policy.
 """
 
 from __future__ import annotations

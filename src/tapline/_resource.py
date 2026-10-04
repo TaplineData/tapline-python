@@ -1,9 +1,9 @@
 """The seam between a resource and the engine that sends its requests.
 
 A resource method describes its call as a :class:`Request` — path, response
-model, query parameters — and hands it to ``_send``. Every endpoint's request
-is therefore built in exactly one place, shared by the blocking and awaitable
-resources, which differ only in ``await``.
+type (a model, or a list of one), query parameters — and hands it to
+``_send``. Every endpoint's request is therefore built in exactly one place,
+shared by the blocking and awaitable resources, which differ only in ``await``.
 
 ``pages`` sits alongside ``_send`` and is public: a cursor-paginated endpoint
 returns one page per call, and walking one is the same loop every time. No

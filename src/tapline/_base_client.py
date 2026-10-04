@@ -54,7 +54,7 @@ from email.utils import parsedate_to_datetime
 from enum import Enum
 from random import random
 from types import TracebackType
-from typing import Any, ClassVar, Generic, TypeVar, get_origin
+from typing import Any, ClassVar, Generic, TypeVar
 from urllib.parse import quote
 
 import httpx
@@ -277,14 +277,9 @@ def _parse_base_url(base_url: str | httpx.URL | None) -> httpx.URL:
 
 
 @functools.cache
-def _response_adapter(cast_to: object) -> pydantic.TypeAdapter[Any]:
+def _build_response_adapter(cast_to: object) -> pydantic.TypeAdapter[Any]:
     """The validator for one response type, built once: a model or ``list[Model]``."""
     return pydantic.TypeAdapter(cast_to)
-
-
-def _describe(cast_to: type[Any]) -> str:
-    """``CommentsResponse`` for a model, ``list[...MarketTrade]`` for a list of them."""
-    return cast_to.__name__ if get_origin(cast_to) is None else str(cast_to)
 
 
 class BaseClient(abc.ABC, Generic[_HttpxClientT]):
@@ -413,10 +408,10 @@ class BaseClient(abc.ABC, Generic[_HttpxClientT]):
         # mypy does not count type[...] as Hashable, which functools.cache requires.
         response_type: object = cast_to
         try:
-            validated: _ResponseT = _response_adapter(response_type).validate_python(payload)
+            validated: _ResponseT = _build_response_adapter(response_type).validate_python(payload)
         except pydantic.ValidationError as err:
             raise APIResponseValidationError(
-                response, f"The API response did not match {_describe(cast_to)}:\n{err}"
+                response, f"The API response did not match {err.title}:\n{err}"
             ) from err
         return validated
 
