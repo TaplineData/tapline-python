@@ -65,7 +65,7 @@ class TaplineClient(AsyncAPIClient):
     """The GMGN endpoints."""
 
     goplus: Goplus
-    """The GoPlus Security endpoints (admin keys only)."""
+    """The GoPlus Security endpoints."""
 
     youtube: YouTube
     """The YouTube endpoints."""
@@ -149,7 +149,7 @@ class SyncTaplineClient(SyncAPIClient):
     """The GMGN endpoints."""
 
     goplus: SyncGoplus
-    """The GoPlus Security endpoints (admin keys only)."""
+    """The GoPlus Security endpoints."""
 
     youtube: SyncYouTube
     """The YouTube endpoints."""

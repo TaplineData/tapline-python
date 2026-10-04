@@ -18,6 +18,7 @@ from tapline import BaseModel
 from tapline.goplus import (
     GetEvmTokenSecurityResponse,
     GetSolanaTokenSecurityResponse,
+    GetTronTokenSecurityResponse,
 )
 
 FIXTURES = (
@@ -42,8 +43,9 @@ def cases(negative: bool) -> list[str]:
 MODELS: dict[str, type[BaseModel]] = {
     "get_evm_token_security": GetEvmTokenSecurityResponse,
     "get_solana_token_security": GetSolanaTokenSecurityResponse,
+    "get_tron_token_security": GetTronTokenSecurityResponse,
 }
-METHODS = ["get_evm_token_security", "get_solana_token_security"]
+METHODS = ["get_evm_token_security", "get_solana_token_security", "get_tron_token_security"]
 
 
 def test_every_method_has_a_default_fixture() -> None:
