@@ -65,7 +65,7 @@ class Goplus(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEvmTokenSecurityResponse:
-        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` (1 complete, 2 partial, 3 no contract code) and `result`, which is keyed by the lowercased address. Powered by GoPlus Security.
+        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` (1 complete, 2 partial, 3 no contract code) and `result`, which is keyed by the lowercased address. Powered by GoPlus Security. Costs 3 credits.
 
         Args:
             chain_id: See the API reference.
@@ -83,7 +83,7 @@ class Goplus(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolanaTokenSecurityResponse:
-        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` and `result`, which is keyed by the mint. Powered by GoPlus Security.
+        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` and `result`, which is keyed by the mint. Powered by GoPlus Security. Costs 3 credits.
 
         Args:
             mint: See the API reference.
@@ -114,7 +114,7 @@ class SyncGoplus(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEvmTokenSecurityResponse:
-        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` (1 complete, 2 partial, 3 no contract code) and `result`, which is keyed by the lowercased address. Powered by GoPlus Security.
+        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` (1 complete, 2 partial, 3 no contract code) and `result`, which is keyed by the lowercased address. Powered by GoPlus Security. Costs 3 credits.
 
         Args:
             chain_id: See the API reference.
@@ -132,7 +132,7 @@ class SyncGoplus(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolanaTokenSecurityResponse:
-        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` and `result`, which is keyed by the mint. Powered by GoPlus Security.
+        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope is returned unchanged; read `code` and `result`, which is keyed by the mint. Powered by GoPlus Security. Costs 3 credits.
 
         Args:
             mint: See the API reference.

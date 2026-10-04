@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, and GeckoTerminal in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, and GoPlus Security in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -14,8 +14,9 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, and GeckoTerminal
 | Airbnb | Find locations and listings, check prices and availability, and read listing details and reviews | [Airbnb guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/airbnb/README.md) |
 | GMGN | Find tokens, check security and market data, inspect holders and traders, and analyze wallets | [GMGN guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/gmgn/README.md) |
 | GeckoTerminal | Find pools, read candlesticks and swaps, inspect holders and traders, and follow market trends | [GeckoTerminal guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md) |
+| GoPlus Security | Check EVM tokens and Solana mints for honeypots, taxes, owner and mint powers, holders, and liquidity | [GoPlus guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md) |
 
-One API key and credit balance work across all four services.
+One API key and credit balance work across all five services.
 
 ## Get started
 
@@ -110,6 +111,22 @@ for pool in pools.data[:5]:
 
 See the [GeckoTerminal guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md) for pool, token, trend, and developer history data.
 
+## Check token security with GoPlus
+
+```python
+from tapline import SyncTaplineClient
+
+address = "0x6982508145454ce325ddbe47a25d4ec3d2311933"
+
+with SyncTaplineClient() as tapline:
+    security = tapline.goplus.get_evm_token_security("1", address)
+
+token = (security.result or {})[address]
+print(token.token_symbol, token.is_honeypot, token.buy_tax, token.sell_tax)
+```
+
+`""` means GoPlus does not know a value, so do not read it as zero. Each call costs 3 credits. See the [GoPlus guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md) for Solana mints and how to read the response.
+
 ## Go beyond the free tier
 
 Your free account starts with 500 credits and can use every live endpoint. When you need more credits or higher rate limits, choose a paid plan under [Billing](https://tapline.sh/dashboard?tab=billing&utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=main_readme). Your API key and code stay the same.
@@ -157,6 +174,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [Airbnb](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/airbnb/README.md)
 - [GMGN](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/gmgn/README.md)
 - [GeckoTerminal](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md)
+- [GoPlus Security](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md)
 
 ## License
 
