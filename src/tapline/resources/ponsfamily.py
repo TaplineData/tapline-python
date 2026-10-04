@@ -1005,7 +1005,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetProfileResponse:
-        """The launches a wallet created, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
+        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
 
         Args:
             address: See the API reference.
@@ -1686,7 +1686,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetProfileResponse:
-        """The launches a wallet created, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
+        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
 
         Args:
             address: See the API reference.
