@@ -754,14 +754,15 @@ class Geckoterminal(AsyncAPIResource):
         sender: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PoolSwapsResponse:
-        """Individual swaps in a pool. Requires a cursor: pass a unix timestamp to start from. Costs 2 credits.
+        """Individual swaps in a pool. Defaults to the latest swaps when neither cursor is supplied. Pass a unix timestamp or a returned cursor to paginate. Costs 2 credits.
 
         Args:
             network: See the API reference.
             address: See the API reference.
             pair_id: Pair id from the pool's `pairs` relationship.
             inverted: Quote prices in the other token of the pair.
-            page_after: Return swaps older than this cursor.
+            page_after: Return swaps older than this cursor. Defaults to the current
+                unix timestamp when neither cursor is supplied.
             page_before: Return swaps newer than this cursor.
             sender: Restrict swaps to one sender wallet address.
             timeout: Overrides the client's timeout for this request.
@@ -1493,14 +1494,15 @@ class SyncGeckoterminal(SyncAPIResource):
         sender: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PoolSwapsResponse:
-        """Individual swaps in a pool. Requires a cursor: pass a unix timestamp to start from. Costs 2 credits.
+        """Individual swaps in a pool. Defaults to the latest swaps when neither cursor is supplied. Pass a unix timestamp or a returned cursor to paginate. Costs 2 credits.
 
         Args:
             network: See the API reference.
             address: See the API reference.
             pair_id: Pair id from the pool's `pairs` relationship.
             inverted: Quote prices in the other token of the pair.
-            page_after: Return swaps older than this cursor.
+            page_after: Return swaps older than this cursor. Defaults to the current
+                unix timestamp when neither cursor is supplied.
             page_before: Return swaps newer than this cursor.
             sender: Restrict swaps to one sender wallet address.
             timeout: Overrides the client's timeout for this request.

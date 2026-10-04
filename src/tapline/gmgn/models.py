@@ -474,6 +474,7 @@ class ErrorResponse(BaseModel):
     domain: str | None = None
     message: str
     request_id: str
+    upgrade_url: str | None = None
 
 
 class FeeDistributionCharity(BaseModel):

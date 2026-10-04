@@ -50,10 +50,11 @@ def arguments(stem: str) -> tuple[dict[str, object], dict[str, object]]:
 @pytest.mark.parametrize("stem", cases(negative=False))
 def test_a_method_returns_a_response_its_model_fully_describes(stem: str) -> None:
     kwargs, _ = arguments(stem)
+    method = stem.split(".", 1)[0]
     with SyncTaplineClient() as tapline:
-        response = getattr(tapline.geckoterminal, stem.split(".", 1)[0])(**kwargs)
+        response = getattr(tapline.geckoterminal, method)(**kwargs)
 
-    assert extras(response, type(response).__name__) == []
+    assert extras(response, method) == []
 
 
 @pytest.mark.parametrize("stem", cases(negative=True))

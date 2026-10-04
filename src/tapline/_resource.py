@@ -1,9 +1,9 @@
 """The seam between a resource and the engine that sends its requests.
 
 A resource method describes its call as a :class:`Request` — path, response
-model, query parameters — and hands it to ``_send``. Every endpoint's request
-is therefore built in exactly one place, shared by the blocking and awaitable
-resources, which differ only in ``await``.
+type (a model, or a list of one), query parameters — and hands it to
+``_send``. Every endpoint's request is therefore built in exactly one place,
+shared by the blocking and awaitable resources, which differ only in ``await``.
 
 ``pages`` sits alongside ``_send`` and is public: a cursor-paginated endpoint
 returns one page per call, and walking one is the same loop every time. No
@@ -17,15 +17,13 @@ from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from dataclasses import dataclass
 from typing import Generic, Literal, Protocol, TypeVar
 
-import pydantic
-
 from ._base_client import AsyncAPIClient, SyncAPIClient
 from ._pagination import CursorPagination
 from ._types import Body, NotGiven, Query, Timeout
 
 __all__ = ["AsyncAPIResource", "CursorPage", "Request", "SyncAPIResource"]
 
-_ModelT = TypeVar("_ModelT", bound=pydantic.BaseModel)
+_ResponseT = TypeVar("_ResponseT")
 
 
 class CursorPage(Protocol):
@@ -39,20 +37,20 @@ _PageT = TypeVar("_PageT", bound=CursorPage)
 
 
 @dataclass(frozen=True)
-class Request(Generic[_ModelT]):
+class Request(Generic[_ResponseT]):
     """One endpoint call, described independently of how it is sent.
 
     Attributes:
         path: Request path, already percent-encoded by
             :func:`~tapline._base_client.encode_path`.
-        cast_to: Model the response body is validated into.
+        cast_to: Type the response body is validated into: a model, or a list of one.
         params: Query parameters, with the caller's values left raw.
         method: HTTP method; ``POST`` sends ``json`` as the body.
         json: JSON body for a ``POST``, with ``None`` values already dropped.
     """
 
     path: str
-    cast_to: type[_ModelT]
+    cast_to: type[_ResponseT]
     params: Query | None = None
     method: Literal["GET", "POST"] = "GET"
     json: Body | None = None
@@ -68,10 +66,10 @@ class SyncAPIResource:
 
     def _send(
         self,
-        request: Request[_ModelT],
+        request: Request[_ResponseT],
         *,
         timeout: float | Timeout | NotGiven | None,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         return self._client.request(
             request.method,
             request.path,
@@ -131,10 +129,10 @@ class AsyncAPIResource:
 
     async def _send(
         self,
-        request: Request[_ModelT],
+        request: Request[_ResponseT],
         *,
         timeout: float | Timeout | NotGiven | None,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         return await self._client.request(
             request.method,
             request.path,

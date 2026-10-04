@@ -62,7 +62,7 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 | `pool` | `network`, `address`; optional `base_token` | `PoolResponse`: price, reserves, GT score, security, tokens, DEX, developer |
 | `pool_related_pools` | `network`, `address` | `PoolRelatedPoolsResponse`: same-base-token pools and liquidity |
 | `pool_sender_swaps` | `network`, `address`, `from_timestamp`, `to_timestamp`; optional `pair_id`, `sender`, `include_developer`, `inverted` | `PoolSenderSwapsResponse`: swaps grouped by sender |
-| `pool_swaps` | `network`, `address`, `pair_id`; `page_after` or `page_before`; optional `sender`, `inverted` | `PoolSwapsResponse`: individual swaps and cursors |
+| `pool_swaps` | `network`, `address`, `pair_id`; optional `page_after` or `page_before`, `sender`, `inverted` | `PoolSwapsResponse`: individual swaps and cursors |
 | `pool_token_info_snapshots` | `network`, `address` | `PoolTokenInfoSnapshotsResponse`: descriptions, socials, metadata for both tokens |
 
 ### Token, wallet, and developer data
@@ -122,7 +122,7 @@ for bar in candles.data:
 print(len(swaps.data))
 ```
 
-Candlestick timestamps are Unix seconds. `pool_swaps` requires a cursor; start with the current Unix timestamp and continue with the response links.
+Candlestick timestamps are Unix seconds. `pool_swaps` returns the latest swaps when you pass neither cursor; pass a Unix timestamp or a cursor from the response links to page further.
 
 ## Inspect holders and traders
 
