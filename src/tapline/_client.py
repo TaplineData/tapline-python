@@ -19,9 +19,11 @@ from .resources import (
     Airbnb,
     Geckoterminal,
     Gmgn,
+    Ponsfamily,
     SyncAirbnb,
     SyncGeckoterminal,
     SyncGmgn,
+    SyncPonsfamily,
     SyncYouTube,
     YouTube,
 )
@@ -61,6 +63,9 @@ class TaplineClient(AsyncAPIClient):
 
     gmgn: Gmgn
     """The GMGN endpoints."""
+
+    ponsfamily: Ponsfamily
+    """The Pons Family endpoints."""
 
     youtube: YouTube
     """The YouTube endpoints."""
@@ -113,6 +118,7 @@ class TaplineClient(AsyncAPIClient):
         self.airbnb = Airbnb(self)
         self.geckoterminal = Geckoterminal(self)
         self.gmgn = Gmgn(self)
+        self.ponsfamily = Ponsfamily(self)
         self.youtube = YouTube(self)
 
 
@@ -141,6 +147,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     gmgn: SyncGmgn
     """The GMGN endpoints."""
+
+    ponsfamily: SyncPonsfamily
+    """The Pons Family endpoints."""
 
     youtube: SyncYouTube
     """The YouTube endpoints."""
@@ -193,4 +202,5 @@ class SyncTaplineClient(SyncAPIClient):
         self.airbnb = SyncAirbnb(self)
         self.geckoterminal = SyncGeckoterminal(self)
         self.gmgn = SyncGmgn(self)
+        self.ponsfamily = SyncPonsfamily(self)
         self.youtube = SyncYouTube(self)

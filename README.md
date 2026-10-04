@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, and GeckoTerminal in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, and Pons Family in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -14,8 +14,9 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, and GeckoTerminal
 | Airbnb | Find locations and listings, check prices and availability, and read listing details and reviews | [Airbnb guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/airbnb/README.md) |
 | GMGN | Find tokens, check security and market data, inspect holders and traders, and analyze wallets | [GMGN guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/gmgn/README.md) |
 | GeckoTerminal | Find pools, read candlesticks and swaps, inspect holders and traders, and follow market trends | [GeckoTerminal guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md) |
+| Pons Family | Browse and search launches, read token markets, trades and holders, follow wallets and creator fees, and read the memestock forum | [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md) |
 
-One API key and credit balance work across all four services.
+One API key and credit balance work across all five services.
 
 ## Get started
 
@@ -110,6 +111,21 @@ for pool in pools.data[:5]:
 
 See the [GeckoTerminal guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md) for pool, token, trend, and developer history data.
 
+## Browse Pons Family launches
+
+```python
+from tapline import SyncTaplineClient
+
+with SyncTaplineClient() as tapline:
+    board = tapline.ponsfamily.list_launches(sort="volume", page_size=5)
+
+active = board.active.items if board.active else None
+for launch in active or []:
+    print(launch.symbol, launch.token, launch.marketCapUsd)
+```
+
+See the [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md) for token markets, charts, holders, wallets, creator fees, and the memestock forum.
+
 ## Go beyond the free tier
 
 Your free account starts with 500 credits and can use every live endpoint. When you need more credits or higher rate limits, choose a paid plan under [Billing](https://tapline.sh/dashboard?tab=billing&utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=main_readme). Your API key and code stay the same.
@@ -157,6 +173,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [Airbnb](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/airbnb/README.md)
 - [GMGN](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/gmgn/README.md)
 - [GeckoTerminal](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md)
+- [Pons Family](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md)
 
 ## License
 
