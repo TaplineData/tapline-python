@@ -10,11 +10,12 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+from typing import Any
 
+import pydantic
 import pytest
 
 from conftest import extras
-from tapline import BaseModel
 from tapline.geckoterminal import (
     CandlesticksResponse,
     DexesResponse,
@@ -65,7 +66,7 @@ def cases(negative: bool) -> list[str]:
     return stems
 
 
-MODELS: dict[str, type[BaseModel]] = {
+RESPONSES: dict[str, type[Any]] = {
     "candlesticks": CandlesticksResponse,
     "dexes": DexesResponse,
     "global_stats": GlobalStatsResponse,
@@ -136,8 +137,9 @@ def test_every_method_has_a_default_fixture() -> None:
 @pytest.mark.parametrize("stem", cases(negative=False))
 def test_a_captured_payload_parses_and_declares_every_field(stem: str) -> None:
     payload = json.loads((FIXTURES / f"{stem}.json").read_text())
-    model = MODELS[stem.split(".", 1)[0]]
-    parsed = model.model_validate(payload)
+    method = stem.split(".", 1)[0]
+    adapter: pydantic.TypeAdapter[Any] = pydantic.TypeAdapter(RESPONSES[method])
+    parsed = adapter.validate_python(payload)
 
-    assert extras(parsed, model.__name__) == []
-    assert parsed.model_dump(mode="json", exclude_unset=True, by_alias=True) == payload
+    assert extras(parsed, method) == []
+    assert adapter.dump_python(parsed, mode="json", exclude_unset=True, by_alias=True) == payload

@@ -45,6 +45,7 @@ from __future__ import annotations
 
 import abc
 import asyncio
+import functools
 import logging
 import os
 import time
@@ -53,7 +54,7 @@ from email.utils import parsedate_to_datetime
 from enum import Enum
 from random import random
 from types import TracebackType
-from typing import ClassVar, Generic, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar, get_origin
 from urllib.parse import quote
 
 import httpx
@@ -85,7 +86,7 @@ __all__ = ["AsyncAPIClient", "BaseClient", "SyncAPIClient", "encode_path"]
 
 log: logging.Logger = logging.getLogger(__name__)
 
-_ModelT = TypeVar("_ModelT", bound=pydantic.BaseModel)
+_ResponseT = TypeVar("_ResponseT")
 _HttpxClientT = TypeVar("_HttpxClientT", bound=httpx.Client | httpx.AsyncClient)
 
 # 408 and 409 are transient server-side conditions; 429 and 5xx are explicitly
@@ -275,6 +276,17 @@ def _parse_base_url(base_url: str | httpx.URL | None) -> httpx.URL:
     return url.copy_with(raw_path=url.raw_path + b"/")
 
 
+@functools.cache
+def _response_adapter(cast_to: object) -> pydantic.TypeAdapter[Any]:
+    """The validator for one response type, built once: a model or ``list[Model]``."""
+    return pydantic.TypeAdapter(cast_to)
+
+
+def _describe(cast_to: type[Any]) -> str:
+    """``CommentsResponse`` for a model, ``list[...MarketTrade]`` for a list of them."""
+    return cast_to.__name__ if get_origin(cast_to) is None else str(cast_to)
+
+
 class BaseClient(abc.ABC, Generic[_HttpxClientT]):
     """Configuration, request building, and response validation, shared by both engines."""
 
@@ -387,7 +399,9 @@ class BaseClient(abc.ABC, Generic[_HttpxClientT]):
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
         )
 
-    def _process_response(self, response: httpx.Response, *, cast_to: type[_ModelT]) -> _ModelT:
+    def _process_response(
+        self, response: httpx.Response, *, cast_to: type[_ResponseT]
+    ) -> _ResponseT:
         if not response.is_success:
             raise make_status_error(response)
         try:
@@ -396,12 +410,15 @@ class BaseClient(abc.ABC, Generic[_HttpxClientT]):
             raise APIResponseValidationError(
                 response, "The API returned a body that is not valid JSON."
             ) from err
+        # mypy does not count type[...] as Hashable, which functools.cache requires.
+        response_type: object = cast_to
         try:
-            return cast_to.model_validate(payload)
+            validated: _ResponseT = _response_adapter(response_type).validate_python(payload)
         except pydantic.ValidationError as err:
             raise APIResponseValidationError(
-                response, f"The API response did not match {cast_to.__name__}:\n{err}"
+                response, f"The API response did not match {_describe(cast_to)}:\n{err}"
             ) from err
+        return validated
 
 
 class SyncAPIClient(BaseClient[httpx.Client]):
@@ -417,10 +434,10 @@ class SyncAPIClient(BaseClient[httpx.Client]):
         self,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a ``GET`` request; see :meth:`request`."""
         return self.request("GET", path, cast_to=cast_to, params=params, timeout=timeout)
 
@@ -428,11 +445,11 @@ class SyncAPIClient(BaseClient[httpx.Client]):
         self,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         json: Body | None = None,
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a ``POST`` request with a JSON body; see :meth:`request`."""
         return self.request(
             "POST", path, cast_to=cast_to, params=params, json=json, timeout=timeout
@@ -443,18 +460,18 @@ class SyncAPIClient(BaseClient[httpx.Client]):
         method: str,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         params: Query | None = None,
         json: Body | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a request and validate the response body into ``cast_to``.
 
         Args:
             method: ``GET`` or ``POST``.
             path: Request path, already percent-encoded by :func:`encode_path`.
                 Query parameters go in ``params``, not here.
-            cast_to: Model the JSON body is validated into.
+            cast_to: Type the JSON body is validated into: a model, or a list of one.
             params: Query parameters; see the module docstring for serialization.
             json: JSON body, sent as-is.
             timeout: Overrides the client timeout for this request. ``None``
@@ -515,10 +532,10 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
         self,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a ``GET`` request; see :meth:`request`."""
         return await self.request("GET", path, cast_to=cast_to, params=params, timeout=timeout)
 
@@ -526,11 +543,11 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
         self,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         json: Body | None = None,
         params: Query | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a ``POST`` request with a JSON body; see :meth:`request`."""
         return await self.request(
             "POST", path, cast_to=cast_to, params=params, json=json, timeout=timeout
@@ -541,18 +558,18 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
         method: str,
         path: str,
         *,
-        cast_to: type[_ModelT],
+        cast_to: type[_ResponseT],
         params: Query | None = None,
         json: Body | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> _ModelT:
+    ) -> _ResponseT:
         """Send a request and validate the response body into ``cast_to``.
 
         Args:
             method: ``GET`` or ``POST``.
             path: Request path, already percent-encoded by :func:`encode_path`.
                 Query parameters go in ``params``, not here.
-            cast_to: Model the JSON body is validated into.
+            cast_to: Type the JSON body is validated into: a model, or a list of one.
             params: Query parameters; see the module docstring for serialization.
             json: JSON body, sent as-is.
             timeout: Overrides the client timeout for this request. ``None``
