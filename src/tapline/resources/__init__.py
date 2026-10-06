@@ -7,6 +7,7 @@ from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
 from .ponsfamily import Ponsfamily, SyncPonsfamily
+from .twitter import SyncTwitter, Twitter
 from .youtube import SyncYouTube, YouTube
 
 __all__ = [
@@ -20,6 +21,8 @@ __all__ = [
     "SyncGmgn",
     "SyncGoplus",
     "SyncPonsfamily",
+    "SyncTwitter",
     "SyncYouTube",
+    "Twitter",
     "YouTube",
 ]

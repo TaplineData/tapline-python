@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, and Pons Family in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, and Twitter (X) in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -16,6 +16,7 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | GeckoTerminal | Find pools, read candlesticks and swaps, inspect holders and traders, and follow market trends | [GeckoTerminal guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md) |
 | GoPlus Security | Check EVM and Tron tokens and Solana mints for honeypots, taxes, owner and mint powers, holders, and liquidity | [GoPlus guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md) |
 | Pons Family | Browse and search launches, read token markets, trades and holders, follow wallets and creator fees, and read the memestock forum | [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md) |
+| Twitter (X) | Read public X profiles with their pinned and newest posts, single posts with media, quotes and top replies, and X Communities | [Twitter guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md) |
 
 One API key and credit balance work across all six services.
 
@@ -195,6 +196,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [GeckoTerminal](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/geckoterminal/README.md)
 - [GoPlus Security](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md)
 - [Pons Family](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md)
+- [Twitter (X)](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md)
 
 ## License
 

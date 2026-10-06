@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tapline"
-description = "Typed Python SDK for Tapline's web scraping APIs for YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security and Pons Family."
+description = "Typed Python SDK for Tapline's web scraping APIs for YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family and Twitter (X)."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -19,6 +19,7 @@ keywords = [
   "geckoterminal",
   "goplus",
   "ponsfamily",
+  "twitter",
   "api",
   "client",
   "sdk",
@@ -33,6 +34,7 @@ keywords = [
   "geckoterminal-api",
   "goplus-api",
   "ponsfamily-api",
+  "twitter-api",
   "crypto-data",
   "dex-data",
 ]

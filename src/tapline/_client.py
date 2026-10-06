@@ -4,7 +4,8 @@
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``geckoterminal``, ``gmgn``, ``ponsfamily``, ``youtube``),
+service (``airbnb``, ``geckoterminal``, ``gmgn``, ``goplus``, ``ponsfamily``,
+``twitter``, ``youtube``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -28,7 +29,9 @@ from .resources import (
     SyncGmgn,
     SyncGoplus,
     SyncPonsfamily,
+    SyncTwitter,
     SyncYouTube,
+    Twitter,
     YouTube,
 )
 
@@ -73,6 +76,9 @@ class TaplineClient(AsyncAPIClient):
 
     ponsfamily: Ponsfamily
     """The Pons Family endpoints."""
+
+    twitter: Twitter
+    """The Twitter (X) endpoints."""
 
     youtube: YouTube
     """The YouTube endpoints."""
@@ -127,6 +133,7 @@ class TaplineClient(AsyncAPIClient):
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
         self.ponsfamily = Ponsfamily(self)
+        self.twitter = Twitter(self)
         self.youtube = YouTube(self)
 
 
@@ -161,6 +168,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     ponsfamily: SyncPonsfamily
     """The Pons Family endpoints."""
+
+    twitter: SyncTwitter
+    """The Twitter (X) endpoints."""
 
     youtube: SyncYouTube
     """The YouTube endpoints."""
@@ -215,4 +225,5 @@ class SyncTaplineClient(SyncAPIClient):
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
         self.ponsfamily = SyncPonsfamily(self)
+        self.twitter = SyncTwitter(self)
         self.youtube = SyncYouTube(self)
