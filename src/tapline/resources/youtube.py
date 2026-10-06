@@ -42,7 +42,7 @@ from ..youtube import (
 
 __all__ = ["SyncYouTube", "YouTube"]
 
-_PREFIX = "/api/v1/youtube"
+_PREFIX = "/v1/youtube"
 
 
 def _search(

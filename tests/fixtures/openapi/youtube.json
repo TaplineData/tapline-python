@@ -2,7 +2,7 @@
   "source": "https://api.tapline.sh/openapi.json",
   "captured_at": "2026-08-07T20:08:15+00:00",
   "paths": {
-    "/api/v1/youtube/demo/search": {
+    "/v1/youtube/demo/search": {
       "credits": null,
       "response_model": "SearchResponse",
       "query_params": {
@@ -43,7 +43,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/channels/{channel_id}/videos": {
+    "/v1/youtube/demo/channels/{channel_id}/videos": {
       "credits": null,
       "response_model": "ChannelVideosResponse",
       "query_params": {
@@ -76,7 +76,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/channels/{channel_id}": {
+    "/v1/youtube/demo/channels/{channel_id}": {
       "credits": null,
       "response_model": "ChannelResponse",
       "query_params": {},
@@ -106,7 +106,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/playlist/{playlist_id}": {
+    "/v1/youtube/demo/playlist/{playlist_id}": {
       "credits": null,
       "response_model": "PlaylistResponse",
       "query_params": {
@@ -138,7 +138,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/metadata": {
+    "/v1/youtube/demo/videos/{video_id}/metadata": {
       "credits": null,
       "response_model": "VideoMetadataResponse",
       "query_params": {
@@ -170,7 +170,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/subtitles/tracks": {
+    "/v1/youtube/demo/videos/{video_id}/subtitles/tracks": {
       "credits": null,
       "response_model": "SubtitleTracksResponse",
       "query_params": {},
@@ -200,7 +200,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/subtitles": {
+    "/v1/youtube/demo/videos/{video_id}/subtitles": {
       "credits": null,
       "response_model": "SubtitleResponse",
       "query_params": {
@@ -234,7 +234,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/comments": {
+    "/v1/youtube/demo/videos/{video_id}/comments": {
       "credits": null,
       "response_model": "CommentsResponse",
       "query_params": {
@@ -267,7 +267,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/formats": {
+    "/v1/youtube/demo/videos/{video_id}/formats": {
       "credits": null,
       "response_model": "FormatsResponse",
       "query_params": {},
@@ -297,7 +297,7 @@
         ]
       }
     },
-    "/api/v1/youtube/demo/videos/{video_id}/heatmap": {
+    "/v1/youtube/demo/videos/{video_id}/heatmap": {
       "credits": null,
       "response_model": "HeatmapResponse",
       "query_params": {},
@@ -327,7 +327,7 @@
         ]
       }
     },
-    "/api/v1/youtube/search": {
+    "/v1/youtube/search": {
       "credits": 2,
       "response_model": "SearchResponse",
       "query_params": {
@@ -375,7 +375,7 @@
         ]
       }
     },
-    "/api/v1/youtube/channels/{channel_id}/videos": {
+    "/v1/youtube/channels/{channel_id}/videos": {
       "credits": 2,
       "response_model": "ChannelVideosResponse",
       "query_params": {
@@ -419,7 +419,7 @@
         ]
       }
     },
-    "/api/v1/youtube/channels/{channel_id}": {
+    "/v1/youtube/channels/{channel_id}": {
       "credits": 3,
       "response_model": "ChannelResponse",
       "query_params": {},
@@ -456,7 +456,7 @@
         ]
       }
     },
-    "/api/v1/youtube/playlist/{playlist_id}": {
+    "/v1/youtube/playlist/{playlist_id}": {
       "credits": 2,
       "response_model": "PlaylistResponse",
       "query_params": {
@@ -495,7 +495,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/metadata": {
+    "/v1/youtube/videos/{video_id}/metadata": {
       "credits": 2,
       "response_model": "VideoMetadataResponse",
       "query_params": {
@@ -534,7 +534,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/subtitles/tracks": {
+    "/v1/youtube/videos/{video_id}/subtitles/tracks": {
       "credits": 2,
       "response_model": "SubtitleTracksResponse",
       "query_params": {},
@@ -571,7 +571,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/subtitles": {
+    "/v1/youtube/videos/{video_id}/subtitles": {
       "credits": 2,
       "response_model": "SubtitleResponse",
       "query_params": {
@@ -612,7 +612,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/comments/{comment_id}/replies": {
+    "/v1/youtube/videos/{video_id}/comments/{comment_id}/replies": {
       "credits": 2,
       "response_model": "RepliesResponse",
       "query_params": {
@@ -657,7 +657,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/comments": {
+    "/v1/youtube/videos/{video_id}/comments": {
       "credits": 2,
       "response_model": "CommentsResponse",
       "query_params": {
@@ -701,7 +701,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/formats": {
+    "/v1/youtube/videos/{video_id}/formats": {
       "credits": 2,
       "response_model": "FormatsResponse",
       "query_params": {},
@@ -738,7 +738,7 @@
         ]
       }
     },
-    "/api/v1/youtube/videos/{video_id}/heatmap": {
+    "/v1/youtube/videos/{video_id}/heatmap": {
       "credits": 2,
       "response_model": "HeatmapResponse",
       "query_params": {},

@@ -6,7 +6,7 @@ with ``get`` and ``post`` as its two spellings::
     from tapline._base_client import encode_path
 
     await self._client.get(
-        encode_path("/api/v1/youtube/videos/{video_id}/comments", video_id=video_id),
+        encode_path("/v1/youtube/videos/{video_id}/comments", video_id=video_id),
         cast_to=CommentsResponse,
         params={"sort": sort, "limit": limit, "cursor": cursor},
     )

@@ -52,7 +52,7 @@ from ..geckoterminal import (
 
 __all__ = ["Geckoterminal", "SyncGeckoterminal"]
 
-_PREFIX = "/api/v1/gecko-terminal"
+_PREFIX = "/v1/gecko-terminal"
 
 
 def _body(fields: Mapping[str, object]) -> Body:
