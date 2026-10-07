@@ -25,7 +25,7 @@ from ..airbnb import (
 
 __all__ = ["Airbnb", "SyncAirbnb"]
 
-_PREFIX = "/api/v1/airbnb"
+_PREFIX = "/v1/airbnb"
 
 
 def _body(fields: Mapping[str, object]) -> Body:
@@ -356,7 +356,7 @@ class Airbnb(AsyncAPIResource):
             ne_lat: Northeast latitude of bounding box
             ne_long: Northeast longitude of bounding box
             place_id: Google Place ID for the search area, from the `GET
-                /api/v1/airbnb/locations` endpoint (`suggestions[].place_id`).
+                /v1/airbnb/locations` endpoint (`suggestions[].place_id`).
             price_max: Maximum price filter
             price_min: Minimum price filter
             query: Text location query (e.g. 'London, United Kingdom')
@@ -610,7 +610,7 @@ class SyncAirbnb(SyncAPIResource):
             ne_lat: Northeast latitude of bounding box
             ne_long: Northeast longitude of bounding box
             place_id: Google Place ID for the search area, from the `GET
-                /api/v1/airbnb/locations` endpoint (`suggestions[].place_id`).
+                /v1/airbnb/locations` endpoint (`suggestions[].place_id`).
             price_max: Maximum price filter
             price_min: Minimum price filter
             query: Text location query (e.g. 'London, United Kingdom')

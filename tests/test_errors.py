@@ -31,7 +31,7 @@ from tapline import (
 from tapline.ponsfamily import MarketTrade
 
 REQUEST_ID = "req_01JBTAPLINE"
-METADATA_PATH = f"/api/v1/youtube/videos/{VIDEO_ID}/metadata"
+METADATA_PATH = f"/v1/youtube/videos/{VIDEO_ID}/metadata"
 PONS_TOKEN = "0x39dBED3a2bd333467115dE45665cC57F813C4571"
 
 DOCUMENTED_ERRORS = frozenset(

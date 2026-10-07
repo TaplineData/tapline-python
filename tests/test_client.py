@@ -21,7 +21,7 @@ ENV_VAR = "TAPLINE_API_KEY"
 README = Path(__file__).parents[1] / "README.md"
 
 METADATA_BODY = {"video_id": VIDEO_ID}
-METADATA_PATH = f"/api/v1/youtube/videos/{VIDEO_ID}/metadata"
+METADATA_PATH = f"/v1/youtube/videos/{VIDEO_ID}/metadata"
 
 HttpClientClass = type[httpx.Client] | type[httpx.AsyncClient]
 
@@ -180,7 +180,7 @@ class TestBaseURL:
 
         await engine.call("search", query="game of thrones", limit=5)
 
-        assert api.path == "/tapline/api/v1/youtube/search"
+        assert api.path == "/tapline/v1/youtube/search"
         assert api.query == "query=game+of+thrones&limit=5&sort=relevance"
 
     @pytest.mark.parametrize(
@@ -455,8 +455,7 @@ class TestPublicSurface:
         exec(documented_snippet("Get a transcript"), {})
 
         assert api.path == (
-            "/api/v1/youtube/videos/"
-            "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DjNQXAC9IVRw/subtitles"
+            "/v1/youtube/videos/https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DjNQXAC9IVRw/subtitles"
         )
         assert api.query == "language=en&subtitle_format=txt&source=any"
         assert subtitles["transcript"] in capsys.readouterr().out

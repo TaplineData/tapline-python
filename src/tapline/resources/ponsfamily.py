@@ -64,7 +64,7 @@ from ..ponsfamily import (
 
 __all__ = ["Ponsfamily", "SyncPonsfamily"]
 
-_PREFIX = "/api/v1/ponsfamily"
+_PREFIX = "/v1/ponsfamily"
 
 
 def _body(fields: Mapping[str, object]) -> Body:

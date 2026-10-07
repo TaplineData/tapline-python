@@ -573,7 +573,7 @@ class SearchRequest(BaseModel):
     """
     place_id: str | None = None
     """
-    Google Place ID for the search area, from the `GET /api/v1/airbnb/locations` endpoint (`suggestions[].place_id`).
+    Google Place ID for the search area, from the `GET /v1/airbnb/locations` endpoint (`suggestions[].place_id`).
     """
     price_max: Annotated[int | None, Field(ge=0)] = None
     """

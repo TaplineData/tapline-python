@@ -21,7 +21,7 @@ from ..goplus import (
 
 __all__ = ["Goplus", "SyncGoplus"]
 
-_PREFIX = "/api/v1/goplus"
+_PREFIX = "/v1/goplus"
 
 
 def _body(fields: Mapping[str, object]) -> Body:

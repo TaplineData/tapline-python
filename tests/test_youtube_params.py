@@ -43,7 +43,7 @@ from tapline.youtube import (
     request_enums,
 )
 
-PREFIX = "/api/v1/youtube"
+PREFIX = "/v1/youtube"
 
 CHANNEL_ID = "UCBJycsmduvYEL83R_U4JriQ"
 PLAYLIST_ID = "PLbpi6ZahtOH6Blw3RGYpWkSByi_T7Rygb"

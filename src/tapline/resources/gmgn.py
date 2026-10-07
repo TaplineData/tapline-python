@@ -97,7 +97,7 @@ from ..gmgn import (
 
 __all__ = ["Gmgn", "SyncGmgn"]
 
-_PREFIX = "/api/v1/gmgn"
+_PREFIX = "/v1/gmgn"
 
 
 def _body(fields: Mapping[str, object]) -> Body:

@@ -38,7 +38,7 @@ from urllib.parse import quote
 import httpx
 
 BASE_URL = "https://api.tapline.sh"
-DEMO_PREFIX = "/api/v1/youtube/demo"
+DEMO_PREFIX = "/v1/youtube/demo"
 FIXTURE_DIR = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "youtube"
 MANIFEST = FIXTURE_DIR / "manifest.json"
 
