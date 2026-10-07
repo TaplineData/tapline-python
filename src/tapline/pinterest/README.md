@@ -62,16 +62,20 @@ Pinterest sends up to 25 pins per page and the count varies, so keep paging whil
 with SyncTaplineClient() as tapline:
     pin = tapline.pinterest.get_pin(url="https://pin.it/2u9bHtUx6")
 
-print(pin.entityId, pin.title, pin.link, pin.pinner.username, pin.imageSpec_orig.url)
-print(pin.aggregatedPinData.aggregatedStats.saves, pin.repinCount, pin.createdAt)
-if pin.videos:
-    print("video", pin.videos.videoList.v720P.url, pin.videos.duration)
+pinner = pin.pinner.username if pin.pinner else None
+original = pin.imageSpec_orig.url if pin.imageSpec_orig else None
+print(pin.entityId, pin.title, pin.link, pinner, original)
+stats = pin.aggregatedPinData.aggregatedStats if pin.aggregatedPinData else None
+print(stats.saves if stats else None, pin.repinCount, pin.createdAt)
+video_list = pin.videos.videoList if pin.videos else None
+if video_list and video_list.v720P:
+    print("video", video_list.v720P.url)
 if pin.storyPinData:
-    for story_page in pin.storyPinData.pages:
-        print("idea pin page", len(story_page.blocks))
+    for story_page in pin.storyPinData.pages or []:
+        print("idea pin page", len(story_page.blocks or []))
 ```
 
-`entityId` is the numeric pin id; `id` is Pinterest's base64 node id, so join pins from `get_pin` with search or board pins on `entityId`. Pinterest's `isVideo` is `False` on some video pins, so test `videos` instead. A `pin.it` link is followed to its pin before the lookup, at no extra charge.
+`entityId` is the numeric pin id, the same value search and board pins carry as `id`; the pin's own `id` is Pinterest's base64 node id. Pinterest leaves fields empty on many pins, so every field can be `None`: check before reading a nested one. Pinterest's `isVideo` is `False` on some video pins, so test `videos` instead. A `pin.it` link is followed to its pin before the lookup, at no extra charge.
 
 ## List a user's boards, then read one
 

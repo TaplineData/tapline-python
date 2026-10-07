@@ -91,7 +91,7 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestBoardResponse:
-        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. Up to 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. About 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -169,7 +169,7 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestUserBoardsResponse:
-        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. Up to 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             handle: The Pinterest username, with or without a leading @.
@@ -207,7 +207,7 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestBoardResponse:
-        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. Up to 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. About 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -283,7 +283,7 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestUserBoardsResponse:
-        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. Up to 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             handle: The Pinterest username, with or without a leading @.
