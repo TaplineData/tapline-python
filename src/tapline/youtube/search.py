@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .._models import BaseModel
+from .._pagination import CursorPagination
 from .response_enums import LiveStatusValue, SearchResultTypeValue
 from .thumbnail import ThumbnailItem
 
@@ -56,3 +57,5 @@ class SearchResponse(BaseModel):
     returned_count: int
 
     results: list[SearchResultItem]
+
+    pagination: CursorPagination

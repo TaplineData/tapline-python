@@ -84,11 +84,13 @@ def project(document: Any) -> dict[str, dict[str, Any]]:
         operation = operations["get"]
         parameters = operation.get("parameters", [])
         query = [parameter for parameter in parameters if parameter["in"] == "query"]
-        price = CREDIT_PRICE.search(operation["description"])
+        price = CREDIT_PRICE.search(operation.get("description", ""))
         schema = operation["responses"]["200"]["content"]["application/json"]["schema"]
+        # FastAPI prefixes a schema name with its module when two modules share it.
+        model = schema["$ref"].rsplit("/", maxsplit=1)[-1].rsplit("__", maxsplit=1)[-1]
         projected[template] = {
             "credits": int(price.group(1)) if price else None,
-            "response_model": schema["$ref"].rsplit("/", maxsplit=1)[-1],
+            "response_model": model,
             "query_params": {
                 parameter["name"]: parameter["schema"].get("default") for parameter in query
             },

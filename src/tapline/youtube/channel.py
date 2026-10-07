@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .._models import BaseModel
 from .._pagination import CursorPagination
+from .response_enums import ChannelContentTypeValue
 from .thumbnail import ThumbnailItem
 from .video import VideoListItem
 
@@ -36,7 +37,17 @@ class ChannelResponse(BaseModel):
 
     thumbnails: list[ThumbnailItem]
 
+    available_content_types: list[ChannelContentTypeValue] | None
+    """Which of the videos, shorts and streams tabs the channel has, each one a
+    valid ``content_type`` for ``youtube.channel_videos``. ``None`` when Tapline's
+    fallback scraper cannot tell the tabs apart."""
+
+    content_tab_count: int | None
+    """How many of those tabs the channel has."""
+
     playlist_count: int | None
+    """Deprecated alias of ``content_tab_count``: it counts content tabs, not
+    playlists."""
 
 
 class ChannelVideosResponse(BaseModel):

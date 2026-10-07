@@ -178,10 +178,10 @@ class TestBaseURL:
         engine = make_engine(base_url="https://proxy.example.com/tapline", max_retries=0)
         api.respond(ok(captured("search")))
 
-        await engine.call("search", query="game of thrones", limit=5)
+        await engine.call("search", query="game of thrones", country="BR")
 
         assert api.path == "/tapline/v1/youtube/search"
-        assert api.query == "query=game+of+thrones&limit=5&sort=relevance"
+        assert api.query == "query=game+of+thrones&country=BR&sort=relevance"
 
     @pytest.mark.parametrize(
         "base_url",

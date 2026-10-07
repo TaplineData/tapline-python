@@ -14,8 +14,9 @@ unrecognised one arrives verbatim. The bare enum is exported for those
 comparisons and for ``in`` checks against its members.
 
 Enums that only travel the other way, into a request, are closed — see
-:mod:`tapline.youtube.request_enums`. :class:`SubtitleFormat` travels both
-ways, so it is declared there and opened here.
+:mod:`tapline.youtube.request_enums`. :class:`SubtitleFormat` and
+:class:`ChannelContentType` travel both ways, so they are declared there and
+opened here.
 """
 
 from __future__ import annotations
@@ -24,13 +25,14 @@ from enum import Enum
 from typing import Annotated, TypeAlias
 
 from .._models import PREFER_ENUM
-from .request_enums import SubtitleFormat
+from .request_enums import ChannelContentType, SubtitleFormat
 
 __all__ = [
     "AudioExt",
     "AudioExtValue",
     "Availability",
     "AvailabilityValue",
+    "ChannelContentTypeValue",
     "Container",
     "ContainerValue",
     "DynamicRange",
@@ -164,3 +166,4 @@ DynamicRangeValue: TypeAlias = Annotated[DynamicRange | str, PREFER_ENUM]
 ContainerValue: TypeAlias = Annotated[Container | str, PREFER_ENUM]
 SearchResultTypeValue: TypeAlias = Annotated[SearchResultType | str, PREFER_ENUM]
 SubtitleFormatValue: TypeAlias = Annotated[SubtitleFormat | str, PREFER_ENUM]
+ChannelContentTypeValue: TypeAlias = Annotated[ChannelContentType | str, PREFER_ENUM]

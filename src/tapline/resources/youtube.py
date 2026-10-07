@@ -48,26 +48,26 @@ _PREFIX = "/v1/youtube"
 def _search(
     *,
     query: str,
-    limit: int,
     country: str | None,
     sort: SearchSortParam,
     upload_date: UploadDateParam | None,
     search_type: SearchTypeParam | None,
     duration: VideoDurationParam | None,
     features: Sequence[FeatureParam] | None,
+    cursor: str,
 ) -> Request[SearchResponse]:
     return Request(
         _PREFIX + "/search",
         SearchResponse,
         {
             "query": query,
-            "limit": limit,
             "country": country,
             "sort": sort,
             "upload_date": upload_date,
             "search_type": search_type,
             "duration": duration,
             "features": features,
+            "cursor": cursor or None,
         },
     )
 
@@ -82,14 +82,13 @@ def _channel(channel_id: str) -> Request[ChannelResponse]:
 def _channel_videos(
     channel_id: str,
     *,
-    limit: int,
     content_type: ChannelContentTypeParam,
     cursor: str,
 ) -> Request[ChannelVideosResponse]:
     return Request(
         encode_path(_PREFIX + "/channels/{channel_id}/videos", channel_id=channel_id),
         ChannelVideosResponse,
-        {"limit": limit, "content_type": content_type, "cursor": cursor or None},
+        {"content_type": content_type, "cursor": cursor or None},
     )
 
 
@@ -110,11 +109,12 @@ def _metadata(
     video_id: str,
     *,
     fields: str | Sequence[str] | None,
+    country: str | None,
 ) -> Request[VideoMetadataResponse]:
     return Request(
         encode_path(_PREFIX + "/videos/{video_id}/metadata", video_id=video_id),
         VideoMetadataResponse,
-        {"fields": _comma_joined(fields)},
+        {"fields": _comma_joined(fields), "country": country},
     )
 
 
@@ -124,18 +124,25 @@ def _subtitles(
     language: str,
     subtitle_format: SubtitleFormatParam,
     source: SubtitleSourceParam,
+    country: str | None,
 ) -> Request[SubtitleResponse]:
     return Request(
         encode_path(_PREFIX + "/videos/{video_id}/subtitles", video_id=video_id),
         SubtitleResponse,
-        {"language": language, "subtitle_format": subtitle_format, "source": source},
+        {
+            "language": language,
+            "subtitle_format": subtitle_format,
+            "source": source,
+            "country": country,
+        },
     )
 
 
-def _subtitle_tracks(video_id: str) -> Request[SubtitleTracksResponse]:
+def _subtitle_tracks(video_id: str, *, country: str | None) -> Request[SubtitleTracksResponse]:
     return Request(
         encode_path(_PREFIX + "/videos/{video_id}/subtitles/tracks", video_id=video_id),
         SubtitleTracksResponse,
+        {"country": country},
     )
 
 
@@ -143,13 +150,12 @@ def _comments(
     video_id: str,
     *,
     sort: CommentSortOrderParam,
-    limit: int,
     cursor: str,
 ) -> Request[CommentsResponse]:
     return Request(
         encode_path(_PREFIX + "/videos/{video_id}/comments", video_id=video_id),
         CommentsResponse,
-        {"sort": sort, "limit": limit, "cursor": cursor or None},
+        {"sort": sort, "cursor": cursor or None},
     )
 
 
@@ -158,7 +164,6 @@ def _comment_replies(
     comment_id: str,
     *,
     cursor: str,
-    limit: int,
 ) -> Request[RepliesResponse]:
     return Request(
         encode_path(
@@ -167,7 +172,7 @@ def _comment_replies(
             comment_id=comment_id,
         ),
         RepliesResponse,
-        {"cursor": cursor, "limit": limit},
+        {"cursor": cursor},
     )
 
 
@@ -198,9 +203,9 @@ class YouTube(AsyncAPIResource):
     takes an enum it also takes that enum's value as a plain string, so
     ``sort=SearchSort.VIEW_COUNT`` and ``sort="view_count"`` are one call.
 
-    :meth:`channel_videos`, :meth:`comments`, and :meth:`comment_replies` are
-    cursor-paginated and return one page per call; :meth:`pages` walks one of
-    them to its end.
+    :meth:`search`, :meth:`channel_videos`, :meth:`comments`, and
+    :meth:`comment_replies` are cursor-paginated and return one page per call;
+    :meth:`pages` walks one of them to its end.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -214,13 +219,13 @@ class YouTube(AsyncAPIResource):
         self,
         *,
         query: str,
-        limit: int = 10,
         country: str | None = None,
         sort: SearchSortParam = SearchSort.RELEVANCE,
         upload_date: UploadDateParam | None = None,
         search_type: SearchTypeParam | None = None,
         duration: VideoDurationParam | None = None,
         features: Sequence[FeatureParam] | None = None,
+        cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchResponse:
         """Search YouTube and return matching results. Costs 2 credits.
@@ -228,7 +233,6 @@ class YouTube(AsyncAPIResource):
         Args:
             query: Search text, 1–200 characters. Surrounding whitespace is
                 stripped, and the stripped form comes back as ``query``.
-            limit: Maximum results to return (1–20).
             country: ISO 3166-1 alpha-2 code to search from, such as ``"BR"``.
                 Omit to let YouTube pick the region.
             sort: Rank order — ``relevance``, ``upload_date``, ``view_count``,
@@ -243,26 +247,35 @@ class YouTube(AsyncAPIResource):
             features: Features every result must carry, such as ``hd`` or
                 ``subtitles``; :class:`~tapline.youtube.Feature` lists all
                 eleven. Sent as one repeated query parameter per feature.
+            cursor: ``pagination.next_cursor`` from the previous page. Leave
+                empty for the first page. A cursor is bound to the query,
+                ``country``, and filters it was issued for, so keep them the
+                same for every page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.SearchResponse`. A search that matched
-            nothing returns an empty ``results``, not an error.
+            A :class:`~tapline.youtube.SearchResponse`, one page of YouTube's
+            results. Pass its ``pagination.next_cursor`` back as ``cursor``
+            until that comes back ``None``, or hand the whole walk to
+            :meth:`pages`. A search that matched nothing returns an empty
+            ``results``, not an error.
 
         Raises:
-            UnprocessableEntityError: ``query``, ``limit``, or ``country`` is
-                outside the range the server accepts.
+            InvalidCursorError: ``cursor`` is malformed or expired, or was
+                issued for a different query, country, or filter.
+            UnprocessableEntityError: ``query`` or ``country`` is outside the
+                range the server accepts.
         """
         return await self._send(
             _search(
                 query=query,
-                limit=limit,
                 country=country,
                 sort=sort,
                 upload_date=upload_date,
                 search_type=search_type,
                 duration=duration,
                 features=features,
+                cursor=cursor,
             ),
             timeout=timeout,
         )
@@ -296,7 +309,6 @@ class YouTube(AsyncAPIResource):
         self,
         channel_id: str,
         *,
-        limit: int = 30,
         content_type: ChannelContentTypeParam = ChannelContentType.VIDEOS,
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
@@ -306,8 +318,6 @@ class YouTube(AsyncAPIResource):
         Args:
             channel_id: Channel ID (``UC…``), ``@handle``, or channel URL, as
                 for :meth:`channel`. Use the same reference for every page.
-            limit: Maximum items to return from this page (1–30). The cursor
-                still advances by YouTube's full page.
             content_type: Which tab to list — ``videos``, ``shorts``, or
                 ``streams``. Ignored when ``cursor`` is set, because the cursor
                 carries the walk's tab.
@@ -317,11 +327,12 @@ class YouTube(AsyncAPIResource):
 
         Returns:
             A :class:`~tapline.youtube.ChannelVideosResponse`, one page of a
-            walk. Pass its ``pagination.next_cursor`` back as ``cursor`` until
-            that comes back ``None``, or hand the whole walk to :meth:`pages`.
-            The last page's ``pagination.completion`` says whether the channel
-            ran out (``exhausted``) or the cursor outgrew its 8,000-character
-            cap (``depth_limit``).
+            walk holding YouTube's whole page, usually 30 videos. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`. The last page's
+            ``pagination.completion`` says whether the channel ran out
+            (``exhausted``) or the cursor outgrew its 8,000-character cap
+            (``depth_limit``).
 
         Raises:
             NotFoundError: No such channel.
@@ -333,7 +344,6 @@ class YouTube(AsyncAPIResource):
         return await self._send(
             _channel_videos(
                 channel_id,
-                limit=limit,
                 content_type=content_type,
                 cursor=cursor,
             ),
@@ -372,6 +382,7 @@ class YouTube(AsyncAPIResource):
         video_id: str,
         *,
         fields: str | Sequence[str] | None = None,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> VideoMetadataResponse:
         """Get public metadata for a video. Costs 2 credits.
@@ -383,6 +394,9 @@ class YouTube(AsyncAPIResource):
                 :class:`~tapline.youtube.VideoMetadataResponse` — either a
                 sequence of names or an already comma-joined string.
                 ``video_id`` always comes back. Omit for the whole record.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, such as
+                ``"US"``. Set it when the video is blocked in the region the
+                request would otherwise go through. Omit to let Tapline pick.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -394,12 +408,15 @@ class YouTube(AsyncAPIResource):
         Raises:
             NotFoundError: No such video, or it has been removed.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
             UnprocessableEntityError: ``fields`` names a key that is not part
-                of the metadata record, or ``video_id`` is not an ID or a
-                supported URL.
+                of the metadata record, ``country`` is not a country code, or
+                ``video_id`` is not an ID or a supported URL.
         """
-        return await self._send(_metadata(video_id, fields=fields), timeout=timeout)
+        return await self._send(
+            _metadata(video_id, fields=fields, country=country), timeout=timeout
+        )
 
     async def subtitles(
         self,
@@ -408,6 +425,7 @@ class YouTube(AsyncAPIResource):
         language: str = "en",
         subtitle_format: SubtitleFormatParam = SubtitleFormat.SRT,
         source: SubtitleSourceParam = SubtitleSource.ANY,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SubtitleResponse:
         """Get a video's subtitles as a transcript document. Costs 2 credits.
@@ -424,6 +442,8 @@ class YouTube(AsyncAPIResource):
             source: Which track to serve — ``manual`` (human-authored),
                 ``auto`` (machine-generated), or ``any``, which prefers manual
                 and falls back to auto.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, as for
+                :meth:`metadata`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -435,7 +455,8 @@ class YouTube(AsyncAPIResource):
             NotFoundError: The video has no track matching ``language``,
                 ``source``, and ``subtitle_format``.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
             UnprocessableEntityError: ``language`` is not a registered
                 language tag.
         """
@@ -445,6 +466,7 @@ class YouTube(AsyncAPIResource):
                 language=language,
                 subtitle_format=subtitle_format,
                 source=source,
+                country=country,
             ),
             timeout=timeout,
         )
@@ -453,12 +475,15 @@ class YouTube(AsyncAPIResource):
         self,
         video_id: str,
         *,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SubtitleTracksResponse:
         """List the subtitle tracks a video has. Costs 2 credits.
 
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, as for
+                :meth:`metadata`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -469,16 +494,16 @@ class YouTube(AsyncAPIResource):
         Raises:
             NotFoundError: No such video, or it has been removed.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
         """
-        return await self._send(_subtitle_tracks(video_id), timeout=timeout)
+        return await self._send(_subtitle_tracks(video_id, country=country), timeout=timeout)
 
     async def comments(
         self,
         video_id: str,
         *,
         sort: CommentSortOrderParam = CommentSortOrder.TOP,
-        limit: int = 20,
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> CommentsResponse:
@@ -489,16 +514,15 @@ class YouTube(AsyncAPIResource):
             sort: Comment order — ``top`` or ``new``. Pinned threads surface
                 first either way. Ignored when ``cursor`` is set, because the
                 cursor carries the walk's sort.
-            limit: Maximum threads to return from this page (1–20). The cursor
-                still advances by YouTube's full 20-thread page.
             cursor: ``pagination.next_cursor`` from the previous page. Leave
                 empty for the first page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.CommentsResponse`, one page of a walk.
-            Pass its ``pagination.next_cursor`` back as ``cursor`` until that
-            comes back ``None``, or hand the whole walk to :meth:`pages`;
+            A :class:`~tapline.youtube.CommentsResponse`, one page of a walk
+            holding YouTube's whole page, usually 20 threads. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`;
             sorting by ``top`` stops at roughly 1,200 comments with
             ``completion="depth_limit"``. Each thread carries a
             ``replies_cursor`` for :meth:`comment_replies`.
@@ -511,7 +535,7 @@ class YouTube(AsyncAPIResource):
                 another video.
         """
         return await self._send(
-            _comments(video_id, sort=sort, limit=limit, cursor=cursor),
+            _comments(video_id, sort=sort, cursor=cursor),
             timeout=timeout,
         )
 
@@ -521,7 +545,6 @@ class YouTube(AsyncAPIResource):
         comment_id: str,
         *,
         cursor: str,
-        limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> RepliesResponse:
         """Get replies to a comment, one cursor page at a time. Costs 2 credits.
@@ -535,15 +558,14 @@ class YouTube(AsyncAPIResource):
                 ``pagination.next_cursor`` for each page after it. There is no
                 replies endpoint without a cursor: a comment with no replies
                 has ``replies_cursor=None``.
-            limit: Maximum replies to return from this page (1–20). The cursor
-                still advances by YouTube's full reply page, currently ten.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.RepliesResponse`, one page of a walk.
-            Pass its ``pagination.next_cursor`` back as ``cursor`` until that
-            comes back ``None``, or hand the whole walk to :meth:`pages`,
-            starting it from ``replies_cursor``.
+            A :class:`~tapline.youtube.RepliesResponse`, one page of a walk
+            holding YouTube's whole reply page, currently ten replies. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`, starting it from
+            ``replies_cursor``.
 
         Raises:
             InvalidCursorError: ``cursor`` is malformed, expired, or belongs to
@@ -553,7 +575,7 @@ class YouTube(AsyncAPIResource):
                 members-only, or blocked in the server's region.
         """
         return await self._send(
-            _comment_replies(video_id, comment_id, cursor=cursor, limit=limit),
+            _comment_replies(video_id, comment_id, cursor=cursor),
             timeout=timeout,
         )
 
@@ -619,9 +641,9 @@ class SyncYouTube(SyncAPIResource):
     takes an enum it also takes that enum's value as a plain string, so
     ``sort=SearchSort.VIEW_COUNT`` and ``sort="view_count"`` are one call.
 
-    :meth:`channel_videos`, :meth:`comments`, and :meth:`comment_replies` are
-    cursor-paginated and return one page per call; :meth:`pages` walks one of
-    them to its end.
+    :meth:`search`, :meth:`channel_videos`, :meth:`comments`, and
+    :meth:`comment_replies` are cursor-paginated and return one page per call;
+    :meth:`pages` walks one of them to its end.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -635,13 +657,13 @@ class SyncYouTube(SyncAPIResource):
         self,
         *,
         query: str,
-        limit: int = 10,
         country: str | None = None,
         sort: SearchSortParam = SearchSort.RELEVANCE,
         upload_date: UploadDateParam | None = None,
         search_type: SearchTypeParam | None = None,
         duration: VideoDurationParam | None = None,
         features: Sequence[FeatureParam] | None = None,
+        cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchResponse:
         """Search YouTube and return matching results. Costs 2 credits.
@@ -649,7 +671,6 @@ class SyncYouTube(SyncAPIResource):
         Args:
             query: Search text, 1–200 characters. Surrounding whitespace is
                 stripped, and the stripped form comes back as ``query``.
-            limit: Maximum results to return (1–20).
             country: ISO 3166-1 alpha-2 code to search from, such as ``"BR"``.
                 Omit to let YouTube pick the region.
             sort: Rank order — ``relevance``, ``upload_date``, ``view_count``,
@@ -664,26 +685,35 @@ class SyncYouTube(SyncAPIResource):
             features: Features every result must carry, such as ``hd`` or
                 ``subtitles``; :class:`~tapline.youtube.Feature` lists all
                 eleven. Sent as one repeated query parameter per feature.
+            cursor: ``pagination.next_cursor`` from the previous page. Leave
+                empty for the first page. A cursor is bound to the query,
+                ``country``, and filters it was issued for, so keep them the
+                same for every page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.SearchResponse`. A search that matched
-            nothing returns an empty ``results``, not an error.
+            A :class:`~tapline.youtube.SearchResponse`, one page of YouTube's
+            results. Pass its ``pagination.next_cursor`` back as ``cursor``
+            until that comes back ``None``, or hand the whole walk to
+            :meth:`pages`. A search that matched nothing returns an empty
+            ``results``, not an error.
 
         Raises:
-            UnprocessableEntityError: ``query``, ``limit``, or ``country`` is
-                outside the range the server accepts.
+            InvalidCursorError: ``cursor`` is malformed or expired, or was
+                issued for a different query, country, or filter.
+            UnprocessableEntityError: ``query`` or ``country`` is outside the
+                range the server accepts.
         """
         return self._send(
             _search(
                 query=query,
-                limit=limit,
                 country=country,
                 sort=sort,
                 upload_date=upload_date,
                 search_type=search_type,
                 duration=duration,
                 features=features,
+                cursor=cursor,
             ),
             timeout=timeout,
         )
@@ -717,7 +747,6 @@ class SyncYouTube(SyncAPIResource):
         self,
         channel_id: str,
         *,
-        limit: int = 30,
         content_type: ChannelContentTypeParam = ChannelContentType.VIDEOS,
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
@@ -727,8 +756,6 @@ class SyncYouTube(SyncAPIResource):
         Args:
             channel_id: Channel ID (``UC…``), ``@handle``, or channel URL, as
                 for :meth:`channel`. Use the same reference for every page.
-            limit: Maximum items to return from this page (1–30). The cursor
-                still advances by YouTube's full page.
             content_type: Which tab to list — ``videos``, ``shorts``, or
                 ``streams``. Ignored when ``cursor`` is set, because the cursor
                 carries the walk's tab.
@@ -738,11 +765,12 @@ class SyncYouTube(SyncAPIResource):
 
         Returns:
             A :class:`~tapline.youtube.ChannelVideosResponse`, one page of a
-            walk. Pass its ``pagination.next_cursor`` back as ``cursor`` until
-            that comes back ``None``, or hand the whole walk to :meth:`pages`.
-            The last page's ``pagination.completion`` says whether the channel
-            ran out (``exhausted``) or the cursor outgrew its 8,000-character
-            cap (``depth_limit``).
+            walk holding YouTube's whole page, usually 30 videos. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`. The last page's
+            ``pagination.completion`` says whether the channel ran out
+            (``exhausted``) or the cursor outgrew its 8,000-character cap
+            (``depth_limit``).
 
         Raises:
             NotFoundError: No such channel.
@@ -754,7 +782,6 @@ class SyncYouTube(SyncAPIResource):
         return self._send(
             _channel_videos(
                 channel_id,
-                limit=limit,
                 content_type=content_type,
                 cursor=cursor,
             ),
@@ -793,6 +820,7 @@ class SyncYouTube(SyncAPIResource):
         video_id: str,
         *,
         fields: str | Sequence[str] | None = None,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> VideoMetadataResponse:
         """Get public metadata for a video. Costs 2 credits.
@@ -804,6 +832,9 @@ class SyncYouTube(SyncAPIResource):
                 :class:`~tapline.youtube.VideoMetadataResponse` — either a
                 sequence of names or an already comma-joined string.
                 ``video_id`` always comes back. Omit for the whole record.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, such as
+                ``"US"``. Set it when the video is blocked in the region the
+                request would otherwise go through. Omit to let Tapline pick.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -815,12 +846,13 @@ class SyncYouTube(SyncAPIResource):
         Raises:
             NotFoundError: No such video, or it has been removed.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
             UnprocessableEntityError: ``fields`` names a key that is not part
-                of the metadata record, or ``video_id`` is not an ID or a
-                supported URL.
+                of the metadata record, ``country`` is not a country code, or
+                ``video_id`` is not an ID or a supported URL.
         """
-        return self._send(_metadata(video_id, fields=fields), timeout=timeout)
+        return self._send(_metadata(video_id, fields=fields, country=country), timeout=timeout)
 
     def subtitles(
         self,
@@ -829,6 +861,7 @@ class SyncYouTube(SyncAPIResource):
         language: str = "en",
         subtitle_format: SubtitleFormatParam = SubtitleFormat.SRT,
         source: SubtitleSourceParam = SubtitleSource.ANY,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SubtitleResponse:
         """Get a video's subtitles as a transcript document. Costs 2 credits.
@@ -845,6 +878,8 @@ class SyncYouTube(SyncAPIResource):
             source: Which track to serve — ``manual`` (human-authored),
                 ``auto`` (machine-generated), or ``any``, which prefers manual
                 and falls back to auto.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, as for
+                :meth:`metadata`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -856,7 +891,8 @@ class SyncYouTube(SyncAPIResource):
             NotFoundError: The video has no track matching ``language``,
                 ``source``, and ``subtitle_format``.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
             UnprocessableEntityError: ``language`` is not a registered
                 language tag.
         """
@@ -866,6 +902,7 @@ class SyncYouTube(SyncAPIResource):
                 language=language,
                 subtitle_format=subtitle_format,
                 source=source,
+                country=country,
             ),
             timeout=timeout,
         )
@@ -874,12 +911,15 @@ class SyncYouTube(SyncAPIResource):
         self,
         video_id: str,
         *,
+        country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SubtitleTracksResponse:
         """List the subtitle tracks a video has. Costs 2 credits.
 
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.
+            country: ISO 3166-1 alpha-2 code to fetch the video from, as for
+                :meth:`metadata`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -890,16 +930,16 @@ class SyncYouTube(SyncAPIResource):
         Raises:
             NotFoundError: No such video, or it has been removed.
             PermissionDeniedError: The video is private, age-gated,
-                members-only, or blocked in the server's region.
+                members-only, or blocked in the region the request went
+                through; set ``country`` for the last.
         """
-        return self._send(_subtitle_tracks(video_id), timeout=timeout)
+        return self._send(_subtitle_tracks(video_id, country=country), timeout=timeout)
 
     def comments(
         self,
         video_id: str,
         *,
         sort: CommentSortOrderParam = CommentSortOrder.TOP,
-        limit: int = 20,
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> CommentsResponse:
@@ -910,16 +950,15 @@ class SyncYouTube(SyncAPIResource):
             sort: Comment order — ``top`` or ``new``. Pinned threads surface
                 first either way. Ignored when ``cursor`` is set, because the
                 cursor carries the walk's sort.
-            limit: Maximum threads to return from this page (1–20). The cursor
-                still advances by YouTube's full 20-thread page.
             cursor: ``pagination.next_cursor`` from the previous page. Leave
                 empty for the first page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.CommentsResponse`, one page of a walk.
-            Pass its ``pagination.next_cursor`` back as ``cursor`` until that
-            comes back ``None``, or hand the whole walk to :meth:`pages`;
+            A :class:`~tapline.youtube.CommentsResponse`, one page of a walk
+            holding YouTube's whole page, usually 20 threads. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`;
             sorting by ``top`` stops at roughly 1,200 comments with
             ``completion="depth_limit"``. Each thread carries a
             ``replies_cursor`` for :meth:`comment_replies`.
@@ -932,7 +971,7 @@ class SyncYouTube(SyncAPIResource):
                 another video.
         """
         return self._send(
-            _comments(video_id, sort=sort, limit=limit, cursor=cursor),
+            _comments(video_id, sort=sort, cursor=cursor),
             timeout=timeout,
         )
 
@@ -942,7 +981,6 @@ class SyncYouTube(SyncAPIResource):
         comment_id: str,
         *,
         cursor: str,
-        limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> RepliesResponse:
         """Get replies to a comment, one cursor page at a time. Costs 2 credits.
@@ -956,15 +994,14 @@ class SyncYouTube(SyncAPIResource):
                 ``pagination.next_cursor`` for each page after it. There is no
                 replies endpoint without a cursor: a comment with no replies
                 has ``replies_cursor=None``.
-            limit: Maximum replies to return from this page (1–20). The cursor
-                still advances by YouTube's full reply page, currently ten.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.youtube.RepliesResponse`, one page of a walk.
-            Pass its ``pagination.next_cursor`` back as ``cursor`` until that
-            comes back ``None``, or hand the whole walk to :meth:`pages`,
-            starting it from ``replies_cursor``.
+            A :class:`~tapline.youtube.RepliesResponse`, one page of a walk
+            holding YouTube's whole reply page, currently ten replies. Pass its
+            ``pagination.next_cursor`` back as ``cursor`` until that comes back
+            ``None``, or hand the whole walk to :meth:`pages`, starting it from
+            ``replies_cursor``.
 
         Raises:
             InvalidCursorError: ``cursor`` is malformed, expired, or belongs to
@@ -974,7 +1011,7 @@ class SyncYouTube(SyncAPIResource):
                 members-only, or blocked in the server's region.
         """
         return self._send(
-            _comment_replies(video_id, comment_id, cursor=cursor, limit=limit),
+            _comment_replies(video_id, comment_id, cursor=cursor),
             timeout=timeout,
         )
 

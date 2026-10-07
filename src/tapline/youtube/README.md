@@ -31,16 +31,16 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 | Method | Key inputs | Returns |
 | --- | --- | --- |
-| `search` | `query`; optional `limit`, `country`, `sort`, `upload_date`, `search_type`, `duration`, `features` | `SearchResponse` with videos, channels, playlists, and movies |
+| `search` | `query`; optional `country`, `sort`, `upload_date`, `search_type`, `duration`, `features`, `cursor` | `SearchResponse` page of videos, channels, playlists, and movies, and next cursor |
 | `channel` | `channel_id` or supported channel URL | `ChannelResponse` profile, handle, statistics, and content tabs |
-| `channel_videos` | `channel_id`; optional `limit`, `content_type`, `cursor` | `ChannelVideosResponse` page and next cursor |
+| `channel_videos` | `channel_id`; optional `content_type`, `cursor` | `ChannelVideosResponse` page and next cursor |
 | `playlist` | `playlist_id`; optional `limit` | `PlaylistResponse` details and videos |
 
 ### Video data
 
 | Method | Key inputs | Returns |
 | --- | --- | --- |
-| `metadata` | `video_id`; optional `fields` | `VideoMetadataResponse` with projected metadata |
+| `metadata` | `video_id`; optional `fields`, `country` | `VideoMetadataResponse` with projected metadata |
 | `formats` | `video_id` | `FormatsResponse` with available audio/video streams |
 | `heatmap` | `video_id` | `HeatmapResponse` with replay-intensity points, or no heatmap |
 
@@ -48,12 +48,14 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 | Method | Key inputs | Returns |
 | --- | --- | --- |
-| `subtitles` | `video_id`; optional `language`, `subtitle_format`, `source` | `SubtitleResponse` in SRT, VTT, JSON3, TTML, or plain text |
-| `subtitle_tracks` | `video_id` | `SubtitleTracksResponse` with manual and automatic tracks |
-| `comments` | `video_id`; optional `sort`, `limit`, `cursor` | `CommentsResponse` page of top-level threads |
-| `comment_replies` | `video_id`, `comment_id`, required `cursor`; optional `limit` | `RepliesResponse` page and next cursor |
+| `subtitles` | `video_id`; optional `language`, `subtitle_format`, `source`, `country` | `SubtitleResponse` in SRT, VTT, JSON3, TTML, or plain text |
+| `subtitle_tracks` | `video_id`; optional `country` | `SubtitleTracksResponse` with manual and automatic tracks |
+| `comments` | `video_id`; optional `sort`, `cursor` | `CommentsResponse` page of top-level threads |
+| `comment_replies` | `video_id`, `comment_id`, required `cursor` | `RepliesResponse` page and next cursor |
 
-Use `pages(...)` to fetch more results from `channel_videos`, `comments`, and `comment_replies`.
+`search`, `channel_videos`, `comments`, and `comment_replies` return YouTube's whole page on every call: about 20 search results, 30 channel videos, 20 comment threads, or 10 replies. Use `pages(...)` to walk further. A search cursor only works with the query, `country`, and filters it came from.
+
+Pass `country`, an ISO 3166-1 alpha-2 code such as `"US"`, to `metadata`, `subtitles`, or `subtitle_tracks` when a video is blocked in the region the request would otherwise go through. The API answers that block with `PermissionDeniedError`.
 
 ## Get a transcript
 
@@ -84,12 +86,11 @@ from tapline.youtube import SearchSort
 with SyncTaplineClient() as tapline:
     results = tapline.youtube.search(
         query="learn Python",
-        limit=5,
         sort=SearchSort.VIEW_COUNT,
     )
     metadata = tapline.youtube.metadata("dQw4w9WgXcQ", fields=["title", "channel", "view_count"])
     channel = tapline.youtube.channel("@Computerphile2")
-    videos = tapline.youtube.channel_videos("@Computerphile2", limit=10)
+    videos = tapline.youtube.channel_videos("@Computerphile2")
 
 print([item.title for item in results.results])
 print(metadata.title, metadata.view_count)

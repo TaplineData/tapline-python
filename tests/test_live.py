@@ -8,7 +8,7 @@ send real requests and spend real credits. Run them deliberately::
 Set ``TAPLINE_BASE_URL`` to point the run at a server other than production.
 
 Asking for them without a key fails the run rather than skipping it: a live
-run that proved nothing must not come back green. A full run sends 36
+run that proved nothing must not come back green. A full run sends 38
 authenticated requests — two credits each, three for ``channel`` — of which
 the rejected-key call is never charged and the ones the API turns down for bad
 input are refunded.
@@ -62,10 +62,6 @@ REPLAYED_VIDEO = "dQw4w9WgXcQ"
 CHANNEL = "@veritasium"
 PLAYLIST = "UUHnyfMqiRRG1u-2MsSQLbXA"
 
-# Every call asks for the smallest page the endpoint allows. These tests check
-# that the wiring holds; a wide page proves nothing extra and costs seconds.
-PAGE = 1
-
 
 @pytest.fixture(scope="session", autouse=True)
 def api_key() -> str:
@@ -89,17 +85,28 @@ async def tapline(api_key: str, base_url: str | None) -> AsyncIterator[TaplineCl
 
 
 async def test_search(tapline: TaplineClient) -> None:
-    results = await tapline.youtube.search(query="  game of thrones  ", limit=2)
+    results = await tapline.youtube.search(query="  game of thrones  ")
 
     assert results.query == "game of thrones"
-    assert results.returned_count == len(results.results) <= 2
+    assert results.returned_count == len(results.results) > 0
     assert all(hit.result_type for hit in results.results)
+    assert results.pagination.next_cursor or results.pagination.completion
+
+
+async def test_search_paginates_by_cursor(tapline: TaplineClient) -> None:
+    first = await tapline.youtube.search(query="game of thrones")
+    cursor = first.pagination.next_cursor
+    assert cursor is not None
+
+    second = await tapline.youtube.search(query="game of thrones", cursor=cursor)
+
+    assert second.results
+    assert second.pagination.next_cursor != cursor
 
 
 async def test_search_narrowed_by_type_and_features(tapline: TaplineClient) -> None:
     results = await tapline.youtube.search(
         query="drone footage",
-        limit=2,
         sort=SearchSort.VIEW_COUNT,
         search_type=SearchType.VIDEO,
         duration=VideoDuration.OVER_20_MIN,
@@ -115,16 +122,14 @@ async def test_channel(tapline: TaplineClient) -> None:
     assert channel.channel_id.startswith("UC")
     assert channel.handle == CHANNEL
     assert channel.channel_follower_count
+    assert channel.available_content_types
+    assert channel.content_tab_count == len(channel.available_content_types)
 
 
 async def test_channel_videos(tapline: TaplineClient) -> None:
-    page = await tapline.youtube.channel_videos(
-        CHANNEL,
-        limit=PAGE,
-        content_type=ChannelContentType.VIDEOS,
-    )
+    page = await tapline.youtube.channel_videos(CHANNEL, content_type=ChannelContentType.VIDEOS)
 
-    assert page.returned_count == len(page.videos) == PAGE
+    assert page.returned_count == len(page.videos) > 0
     assert page.videos[0].video_id
     assert page.pagination.next_cursor or page.pagination.completion
 
@@ -189,38 +194,33 @@ async def test_subtitles_come_back_as_a_document_for_json3(tapline: TaplineClien
 
 
 async def test_comments(tapline: TaplineClient) -> None:
-    page = await tapline.youtube.comments(VIDEO, limit=PAGE)
+    page = await tapline.youtube.comments(VIDEO)
 
     assert page.video_id == VIDEO
-    assert page.returned_count == len(page.threads) == PAGE
+    assert page.returned_count == len(page.threads) > 0
     assert page.threads[0].comment.comment_id
 
 
 async def test_comment_replies(tapline: TaplineClient) -> None:
-    threads = await tapline.youtube.comments(VIDEO, limit=20)
+    threads = await tapline.youtube.comments(VIDEO)
     thread = next(thread for thread in threads.threads if thread.replies_cursor)
     comment_id, cursor = thread.comment.comment_id, thread.replies_cursor
     assert comment_id is not None
     assert cursor is not None
 
-    replies = await tapline.youtube.comment_replies(
-        VIDEO,
-        comment_id,
-        cursor=cursor,
-        limit=PAGE,
-    )
+    replies = await tapline.youtube.comment_replies(VIDEO, comment_id, cursor=cursor)
 
     assert replies.video_id == VIDEO
     assert replies.comment_id == comment_id
-    assert replies.returned_count == len(replies.replies) == PAGE
+    assert replies.returned_count == len(replies.replies) > 0
 
 
 async def test_comments_paginate_by_cursor(tapline: TaplineClient) -> None:
-    first = await tapline.youtube.comments(VIDEO, limit=5)
+    first = await tapline.youtube.comments(VIDEO)
     cursor = first.pagination.next_cursor
     assert cursor is not None
 
-    second = await tapline.youtube.comments(VIDEO, limit=5, cursor=cursor)
+    second = await tapline.youtube.comments(VIDEO, cursor=cursor)
 
     seen = {thread.comment.comment_id for thread in first.threads}
     assert seen.isdisjoint(thread.comment.comment_id for thread in second.threads)
@@ -250,7 +250,6 @@ async def test_heatmap(tapline: TaplineClient) -> None:
 EVERY_PARAMETER: dict[str, Callable[[YouTube], Awaitable[BaseModel]]] = {
     "search": lambda yt: yt.search(
         query="documentary",
-        limit=1,
         country="US",
         sort=SearchSort.RATING,
         upload_date=UploadDate.THIS_YEAR,
@@ -260,15 +259,19 @@ EVERY_PARAMETER: dict[str, Callable[[YouTube], Awaitable[BaseModel]]] = {
     ),
     "channel": lambda yt: yt.channel(CHANNEL),
     "channel_videos": lambda yt: yt.channel_videos(
-        CHANNEL, limit=PAGE, content_type=ChannelContentType.SHORTS, cursor=""
+        CHANNEL, content_type=ChannelContentType.SHORTS, cursor=""
     ),
     "playlist": lambda yt: yt.playlist(PLAYLIST, limit=1),
-    "metadata": lambda yt: yt.metadata(VIDEO, fields="title,view_count,duration"),
-    "subtitle_tracks": lambda yt: yt.subtitle_tracks(VIDEO),
+    "metadata": lambda yt: yt.metadata(VIDEO, fields="title,view_count,duration", country="US"),
+    "subtitle_tracks": lambda yt: yt.subtitle_tracks(VIDEO, country="US"),
     "subtitles": lambda yt: yt.subtitles(
-        VIDEO, language="en", subtitle_format=SubtitleFormat.VTT, source=SubtitleSource.AUTO
+        VIDEO,
+        language="en",
+        subtitle_format=SubtitleFormat.VTT,
+        source=SubtitleSource.AUTO,
+        country="US",
     ),
-    "comments": lambda yt: yt.comments(VIDEO, sort=CommentSortOrder.NEW, limit=PAGE, cursor=""),
+    "comments": lambda yt: yt.comments(VIDEO, sort=CommentSortOrder.NEW, cursor=""),
     "formats": lambda yt: yt.formats(VIDEO),
     "heatmap": lambda yt: yt.heatmap(REPLAYED_VIDEO),
 }
@@ -277,7 +280,8 @@ EVERY_PARAMETER: dict[str, Callable[[YouTube], Awaitable[BaseModel]]] = {
 The assertion is that nothing comes back ``422``: a rejected parameter would mean
 this client spells a name or a value differently from the server that serves it.
 ``comment_replies`` is absent because its cursor has to come from a live page;
-``test_comment_replies`` exercises its full signature instead.
+``test_comment_replies`` exercises its full signature instead, as
+``test_search_paginates_by_cursor`` does for the search cursor.
 """
 
 
@@ -320,7 +324,7 @@ async def test_a_malformed_cursor_raises_invalid_cursor(tapline: TaplineClient) 
 
 
 async def test_a_cursor_bound_to_another_video_is_rejected(tapline: TaplineClient) -> None:
-    page = await tapline.youtube.comments(VIDEO, limit=PAGE)
+    page = await tapline.youtube.comments(VIDEO)
     assert page.pagination.next_cursor is not None
 
     with pytest.raises(InvalidCursorError):
@@ -329,7 +333,7 @@ async def test_a_cursor_bound_to_another_video_is_rejected(tapline: TaplineClien
 
 async def test_a_limit_out_of_range_raises_unprocessable(tapline: TaplineClient) -> None:
     with pytest.raises(UnprocessableEntityError) as caught:
-        await tapline.youtube.search(query="anything", limit=999)
+        await tapline.youtube.playlist(PLAYLIST, limit=999)
 
     assert caught.value.status_code == 422
     assert caught.value.code == "invalid_request"
