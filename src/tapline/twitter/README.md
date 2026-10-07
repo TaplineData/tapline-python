@@ -45,7 +45,8 @@ with SyncTaplineClient() as tapline:
     profile = tapline.twitter.get_user_profile("nasa")
 
 print(profile.rest_id, profile.core.name, profile.core.created_at, profile.is_blue_verified)
-print(profile.legacy.followers_count, profile.legacy.statuses_count, profile.location.location)
+location = profile.location.location if profile.location else None
+print(profile.legacy.followers_count, profile.legacy.statuses_count, location)
 for tweet in profile.tweets:
     print(tweet.url, tweet.legacy.created_at, tweet.legacy.favorite_count, tweet.views.count)
 ```
@@ -72,7 +73,7 @@ if post.quoted_status_result:
     print("quotes", quoted.rest_id, quoted.core.user_results.result.core.screen_name)
 ```
 
-`legacy.full_text` keeps X's `t.co` links and HTML escapes, and holds X's shortened text for a long post; `note_tweet` carries the full text. `legacy.entities.urls` maps each `t.co` link to its expanded URL. `parent_tweets` holds the post a reply answers. Follow `legacy.in_reply_to_status_id_str` to walk further up. The author under `core.user_results.result` carries only what x.com embeds with posts, plus the join date (`core.created_at`) that Tapline adds. Call `get_user_profile` for the location, banner and bio link.
+`legacy.full_text` keeps X's `t.co` links and HTML escapes, and holds X's shortened text for a long post; `note_tweet` carries the full text. `legacy.entities.urls` maps each `t.co` link to its expanded URL. `parent_tweets` holds the post a reply answers. Follow `legacy.in_reply_to_status_id_str` to walk further up. The author under `core.user_results.result` also carries what x.com shows only on profile pages, such as `location`, the join date, the bio, the bio link and the banner. Tapline reads these from the author's profile page at no extra charge, so they can be up to 2 minutes old. It is best-effort, and an author whose profile page fails or is slow keeps only what x.com embeds with posts.
 
 ## Read a community
 
@@ -99,6 +100,6 @@ Failed calls raise the errors described in the [package guide](../../../README.m
 - An account, post, or community x.com does not show raises `NotFoundError` (404, `not_found`). x.com answers the same way for deleted accounts and for live accounts it hides from logged-out visitors. The call is charged.
 - A suspended account raises `PermissionDeniedError` (403, `resource_forbidden`) when looked up by handle, and `NotFoundError` when looked up by id. A post x.com withholds from logged-out visitors, such as one by a protected author, also raises `PermissionDeniedError`. The call is charged.
 - A malformed handle or id, or one of x.com's own page names such as `explore`, raises `UnprocessableEntityError` (422) before any fetch, and is not charged.
-- Upstream failures and x.com's login wall raise a 5xx error and are not charged.
+- Upstream failures and x.com's login wall raise `InternalServerError` (503) and are not charged.
 
 Every response reports `credits_charged` and `credits_remaining`, your balance after the call. The [Twitter API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=twitter_readme#/twitter) lists every field.

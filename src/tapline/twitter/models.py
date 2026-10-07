@@ -366,7 +366,7 @@ class TwitterProfileResponse(BaseModel):
     id: str
     is_blue_verified: bool | None = None
     legacy: TwitterUserLegacy
-    location: TwitterUserLocation
+    location: TwitterUserLocation | None = None
     media_permissions: TwitterMediaPermissions
     pinned_tweet: TwitterUserTweetsItem | None
     privacy: TwitterUserPrivacy | None = None
@@ -510,6 +510,7 @@ class TwitterUser(BaseModel):
     id: str
     is_blue_verified: bool | None = None
     legacy: TwitterUserLegacy
+    location: TwitterUserLocation | None = None
     media_permissions: TwitterMediaPermissions
     privacy: TwitterUserPrivacy | None = None
     profile_bio: TwitterProfileBio | None = None

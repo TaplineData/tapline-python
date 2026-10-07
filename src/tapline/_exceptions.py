@@ -250,8 +250,9 @@ class RateLimitError(APIStatusError):
 
 class InternalServerError(APIStatusError):
     """5xx — the failure is on the server side. ``internal_error`` (500) is a
-    Tapline fault; ``upstream_unavailable`` / ``upstream_response_invalid`` (502)
-    and ``upstream_blocked`` (503) mean YouTube is refusing to cooperate."""
+    Tapline fault; ``upstream_unavailable``, ``upstream_response_invalid``,
+    ``upstream_blocked`` and ``timeout`` (503) mean the upstream site failed,
+    refused the request or timed out."""
 
 
 _STATUS_ERRORS: dict[int, type[APIStatusError]] = {
