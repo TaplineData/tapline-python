@@ -157,6 +157,7 @@ class TwitterCardBindingValueData(BaseModel):
 
 
 class TwitterCardImageValue(BaseModel):
+    alt: str | None = None
     height: int
     url: str
     width: int
