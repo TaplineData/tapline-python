@@ -101,7 +101,7 @@ CAPTURES: tuple[Capture, ...] = (
         method="search",
         model="SearchResponse",
         template="/search",
-        params={"query": "veritasium", "limit": 8},
+        params={"query": "veritasium"},
     ),
     Capture(
         name="channel_by_id",
@@ -177,7 +177,6 @@ CAPTURES: tuple[Capture, ...] = (
         template="/search",
         params={
             "query": "drone footage",
-            "limit": 5,
             "sort": "view_count",
             "search_type": "video",
             "duration": "over_20_min",
@@ -227,7 +226,7 @@ CAPTURES: tuple[Capture, ...] = (
         method="search",
         model="SearchResponse",
         template="/search",
-        params={"query": "free movies", "limit": 5, "search_type": "movie"},
+        params={"query": "the matrix", "search_type": "movie", "country": "US"},
     ),
     Capture(
         name="channel_videos_streams",

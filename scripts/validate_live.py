@@ -20,7 +20,7 @@ finds nothing.
 ``dropped`` is a key the raw JSON carries that survives neither as a declared
 field nor as an extra — data the client silently loses.
 
-Requests cost credits. One pass over the eleven endpoints spends 25.
+Requests cost credits. One pass over the eleven endpoints spends 38.
 """
 
 from __future__ import annotations
@@ -153,12 +153,17 @@ async def main() -> int:
             )
             return model
 
-        await check("search", yt.search(query="game of thrones", limit=3))
+        search = await check("search", yt.search(query="game of thrones"))
+        if search.pagination.next_cursor:
+            await check(
+                "search (page 2)",
+                yt.search(query="game of thrones", cursor=search.pagination.next_cursor),
+                "cursor bound to the same query",
+            )
         await check(
             "search (filtered)",
             yt.search(
                 query="veritasium",
-                limit=2,
                 search_type=SearchType.VIDEO,
                 features=[Feature.HD],
                 country="US",
@@ -167,7 +172,7 @@ async def main() -> int:
         )
         await check("channel", yt.channel(CHANNEL), "@handle")
         await check("channel (by id)", yt.channel(CHANNEL_BY_ID), "UC… id")
-        await check("channel_videos", yt.channel_videos(CHANNEL, limit=3))
+        await check("channel_videos", yt.channel_videos(CHANNEL))
         await check("playlist", yt.playlist(PLAYLIST, limit=3))
         await check("metadata", yt.metadata(VIDEO))
         await check(
@@ -187,7 +192,7 @@ async def main() -> int:
             yt.subtitles(VIDEO, subtitle_format=SubtitleFormat.JSON3),
             "transcript is an object, not a string",
         )
-        comments = await check("comments", yt.comments(VIDEO, limit=3))
+        comments = await check("comments", yt.comments(VIDEO))
 
         reply_target: tuple[str, str] | None = None
         for thread in comments.threads:
@@ -198,7 +203,7 @@ async def main() -> int:
             cursor, comment_id = reply_target
             await check(
                 "comment_replies",
-                yt.comment_replies(VIDEO, comment_id=comment_id, cursor=cursor, limit=3),
+                yt.comment_replies(VIDEO, comment_id=comment_id, cursor=cursor),
                 "cursor taken from a live comments page",
             )
         else:
@@ -210,7 +215,7 @@ async def main() -> int:
         if next_cursor:
             await check(
                 "comments (page 2)",
-                yt.comments(VIDEO, limit=3, cursor=next_cursor),
+                yt.comments(VIDEO, cursor=next_cursor),
                 "cursor round-trips through a second page",
             )
 

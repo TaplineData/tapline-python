@@ -45,6 +45,18 @@ def replies(next_cursor: str | None, *, completion: str | None = None) -> httpx.
     )
 
 
+def search(next_cursor: str | None, *, completion: str | None = None) -> httpx.Response:
+    return httpx.Response(
+        200,
+        json={
+            "query": "veritasium",
+            "returned_count": 0,
+            "results": [],
+            "pagination": {"next_cursor": next_cursor, "completion": completion},
+        },
+    )
+
+
 def cursors_sent(api: MockAPI) -> list[str | None]:
     """The ``cursor`` each request carried, ``None`` where it carried none."""
     return [dict(parse_qsl(request.url.query.decode())).get("cursor") for request in api.requests]
@@ -148,9 +160,29 @@ class TestWalk:
             walk(
                 engine,
                 lambda cursor: engine.client.youtube.comments(
-                    VIDEO_ID, sort=CommentSortOrder.NEW, limit=5, cursor=cursor
+                    VIDEO_ID, sort=CommentSortOrder.NEW, cursor=cursor
                 ),
             )
         )
 
-        assert api.query == "sort=new&limit=5"
+        assert api.query == "sort=new"
+
+    async def test_a_search_walk_resends_its_query_with_every_cursor(
+        self, api: MockAPI, engine: Engine
+    ) -> None:
+        """A search cursor is bound to the query and filters it was issued for."""
+        api.respond(search("s1"), search(None, completion="exhausted"))
+
+        await collect(
+            walk(
+                engine,
+                lambda cursor: engine.client.youtube.search(
+                    query="veritasium", country="BR", cursor=cursor
+                ),
+            )
+        )
+
+        assert [parse_qsl(request.url.query.decode()) for request in api.requests] == [
+            [("query", "veritasium"), ("country", "BR"), ("sort", "relevance")],
+            [("query", "veritasium"), ("country", "BR"), ("sort", "relevance"), ("cursor", "s1")],
+        ]

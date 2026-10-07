@@ -15,6 +15,7 @@ from pydantic import BaseModel, ValidationError
 from conftest import extras
 from tapline import CursorCompletion, CursorPagination
 from tapline.youtube import (
+    ChannelContentType,
     ChannelResponse,
     ChannelVideosResponse,
     CommentsResponse,
@@ -56,7 +57,14 @@ SEARCH_RESULT = {
     "channel_is_verified": True,
 }
 
-SEARCH = {"query": "rick astley", "returned_count": 1, "results": [SEARCH_RESULT]}
+SEARCH_CURSOR = "EpcDEgtyaWNrIGFzdGxleQ"
+
+SEARCH = {
+    "query": "rick astley",
+    "returned_count": 1,
+    "results": [SEARCH_RESULT],
+    "pagination": {"next_cursor": SEARCH_CURSOR, "completion": None},
+}
 
 CHANNEL = {
     "channel_id": CHANNEL_ID,
@@ -69,7 +77,9 @@ CHANNEL = {
     "tags": ["music"],
     "thumbnail": THUMBNAIL["url"],
     "thumbnails": [THUMBNAIL],
-    "playlist_count": 12,
+    "available_content_types": ["videos", "shorts"],
+    "content_tab_count": 2,
+    "playlist_count": 2,
 }
 
 CHANNEL_VIDEOS = {
@@ -330,6 +340,21 @@ class TestEveryResponse:
         assert result.thumbnails is not None
         assert result.thumbnails[0].width == 480
 
+    def test_a_search_page_says_where_the_next_one_starts(self) -> None:
+        pagination = SearchResponse.model_validate(SEARCH).pagination
+
+        assert pagination.next_cursor == SEARCH_CURSOR
+        assert pagination.completion is None
+
+    def test_channel_tabs_arrive_typed(self) -> None:
+        channel = ChannelResponse.model_validate(CHANNEL)
+
+        assert channel.available_content_types == [
+            ChannelContentType.VIDEOS,
+            ChannelContentType.SHORTS,
+        ]
+        assert channel.content_tab_count == 2
+
     def test_a_listing_entry_may_omit_its_duration(self) -> None:
         video = ChannelVideosResponse.model_validate(CHANNEL_VIDEOS).videos[0]
 
@@ -450,6 +475,15 @@ class TestUpstreamChange:
 
         assert result.result_type == "podcast"
         assert type(result.result_type) is str
+
+    def test_a_new_channel_tab_does_not_reject_the_channel(self) -> None:
+        payload = {**CHANNEL, "available_content_types": ["videos", "podcasts"]}
+
+        tabs = ChannelResponse.model_validate(payload).available_content_types
+
+        assert tabs is not None
+        assert tabs == [ChannelContentType.VIDEOS, "podcasts"]
+        assert type(tabs[1]) is str
 
     def test_a_new_cursor_completion_does_not_reject_the_page(self) -> None:
         parsed = CursorPagination.model_validate({"next_cursor": None, "completion": "time_limit"})

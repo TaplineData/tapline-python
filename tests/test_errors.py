@@ -51,8 +51,8 @@ STATUS_ERRORS = [
     (422, "invalid_request", UnprocessableEntityError),
     (429, "rate_limited", RateLimitError),
     (500, "internal_error", InternalServerError),
-    (502, "upstream_unavailable", InternalServerError),
-    (502, "upstream_response_invalid", InternalServerError),
+    (503, "upstream_unavailable", InternalServerError),
+    (503, "upstream_response_invalid", InternalServerError),
     (503, "upstream_blocked", InternalServerError),
 ]
 

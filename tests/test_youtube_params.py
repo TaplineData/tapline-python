@@ -49,6 +49,7 @@ CHANNEL_ID = "UCBJycsmduvYEL83R_U4JriQ"
 PLAYLIST_ID = "PLbpi6ZahtOH6Blw3RGYpWkSByi_T7Rygb"
 COMMENT_ID = "UgxKREWxIgDrw8w2e_Z4AaABAg"
 COMMENT_CURSOR = "Eg0SC2RRdzR3OVdnWGNR"
+SEARCH_CURSOR = "EpcDEg9nYW1lIG9mIHRocm9uZXM"
 WATCH_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 ENCODED_WATCH_URL = "https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DdQw4w9WgXcQ"
 
@@ -77,22 +78,27 @@ ENDPOINTS = (
     Endpoint(
         method="search",
         path=f"{PREFIX}/search",
-        response={"query": "game of thrones", "returned_count": 0, "results": []},
+        response={
+            "query": "game of thrones",
+            "returned_count": 0,
+            "results": [],
+            "pagination": PAGINATION,
+        },
         required={"query": "game of thrones"},
         optional={
-            "limit": 5,
             "country": "BR",
             "sort": SearchSort.VIEW_COUNT,
             "upload_date": UploadDate.THIS_WEEK,
             "search_type": SearchType.VIDEO,
             "duration": VideoDuration.OVER_20_MIN,
             "features": [Feature.HD, Feature.FOUR_K],
+            "cursor": SEARCH_CURSOR,
         },
-        default_query="query=game+of+thrones&limit=10&sort=relevance",
+        default_query="query=game+of+thrones&sort=relevance",
         explicit_query=(
-            "query=game+of+thrones&limit=5&country=BR&sort=view_count"
+            "query=game+of+thrones&country=BR&sort=view_count"
             "&upload_date=this_week&search_type=video&duration=over_20_min"
-            "&features=hd&features=4k"
+            f"&features=hd&features=4k&cursor={SEARCH_CURSOR}"
         ),
     ),
     Endpoint(
@@ -109,6 +115,8 @@ ENDPOINTS = (
             "tags": [],
             "thumbnail": None,
             "thumbnails": [],
+            "available_content_types": None,
+            "content_tab_count": None,
             "playlist_count": None,
         },
         args=("@mkbhd",),
@@ -124,12 +132,11 @@ ENDPOINTS = (
         },
         args=(CHANNEL_ID,),
         optional={
-            "limit": 10,
             "content_type": ChannelContentType.SHORTS,
             "cursor": "4qmFsgKPARIY==",
         },
-        default_query="limit=30&content_type=videos",
-        explicit_query="limit=10&content_type=shorts&cursor=4qmFsgKPARIY%3D%3D",
+        default_query="content_type=videos",
+        explicit_query="content_type=shorts&cursor=4qmFsgKPARIY%3D%3D",
     ),
     Endpoint(
         method="playlist",
@@ -162,8 +169,8 @@ ENDPOINTS = (
         path=f"{PREFIX}/videos/{ENCODED_WATCH_URL}/metadata",
         response={"video_id": VIDEO_ID},
         args=(WATCH_URL,),
-        optional={"fields": ["title", "view_count"]},
-        explicit_query="fields=title%2Cview_count",
+        optional={"fields": ["title", "view_count"], "country": "BR"},
+        explicit_query="fields=title%2Cview_count&country=BR",
     ),
     Endpoint(
         method="subtitles",
@@ -184,9 +191,10 @@ ENDPOINTS = (
             "language": "pt-BR",
             "subtitle_format": SubtitleFormat.JSON3,
             "source": SubtitleSource.MANUAL,
+            "country": "BR",
         },
         default_query="language=en&subtitle_format=srt&source=any",
-        explicit_query="language=pt-BR&subtitle_format=json3&source=manual",
+        explicit_query="language=pt-BR&subtitle_format=json3&source=manual&country=BR",
     ),
     Endpoint(
         method="subtitle_tracks",
@@ -199,6 +207,8 @@ ENDPOINTS = (
             "auto": [],
         },
         args=(VIDEO_ID,),
+        optional={"country": "BR"},
+        explicit_query="country=BR",
     ),
     Endpoint(
         method="comments",
@@ -210,9 +220,9 @@ ENDPOINTS = (
             "pagination": PAGINATION,
         },
         args=(VIDEO_ID,),
-        optional={"sort": CommentSortOrder.NEW, "limit": 15, "cursor": COMMENT_CURSOR},
-        default_query="sort=top&limit=20",
-        explicit_query=f"sort=new&limit=15&cursor={COMMENT_CURSOR}",
+        optional={"sort": CommentSortOrder.NEW, "cursor": COMMENT_CURSOR},
+        default_query="sort=top",
+        explicit_query=f"sort=new&cursor={COMMENT_CURSOR}",
     ),
     Endpoint(
         method="comment_replies",
@@ -226,9 +236,8 @@ ENDPOINTS = (
         },
         args=(VIDEO_ID, COMMENT_ID),
         required={"cursor": COMMENT_CURSOR},
-        optional={"limit": 10},
-        default_query=f"cursor={COMMENT_CURSOR}&limit=20",
-        explicit_query=f"cursor={COMMENT_CURSOR}&limit=10",
+        default_query=f"cursor={COMMENT_CURSOR}",
+        explicit_query=f"cursor={COMMENT_CURSOR}",
     ),
     Endpoint(
         method="formats",
@@ -308,7 +317,6 @@ class TestRequestBuilding:
 
         assert parse_qsl(api.query, keep_blank_values=True) == [
             ("query", "x"),
-            ("limit", "10"),
             ("sort", "relevance"),
             ("features", "hd"),
             ("features", "4k"),
@@ -328,7 +336,7 @@ class TestRequestBuilding:
 
         await engine.call("comments", VIDEO_ID, cursor="")
 
-        assert api.query == "sort=top&limit=20"
+        assert api.query == "sort=top"
 
     @pytest.mark.parametrize(
         "fields", [["title", "view_count"], ("title", "view_count"), "title,view_count"]

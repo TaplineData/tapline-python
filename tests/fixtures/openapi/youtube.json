@@ -1,30 +1,28 @@
 {
   "source": "https://api.tapline.sh/openapi.json",
-  "captured_at": "2026-08-07T20:08:15+00:00",
+  "captured_at": "2026-10-07T04:43:43+00:00",
   "paths": {
     "/v1/youtube/demo/search": {
       "credits": null,
       "response_model": "SearchResponse",
       "query_params": {
         "query": null,
-        "limit": 10,
         "country": null,
         "sort": "relevance",
         "upload_date": null,
         "search_type": null,
         "duration": null,
-        "features": null
+        "features": null,
+        "cursor": ""
       },
       "required": [
         "query"
       ],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -40,6 +38,9 @@
         ],
         "500": [
           "internal_error"
+        ],
+        "400": [
+          "invalid_cursor"
         ]
       }
     },
@@ -52,12 +53,10 @@
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -82,12 +81,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -114,12 +111,10 @@
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -142,16 +137,15 @@
       "credits": null,
       "response_model": "VideoMetadataResponse",
       "query_params": {
-        "fields": null
+        "fields": null,
+        "country": null
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -173,15 +167,15 @@
     "/v1/youtube/demo/videos/{video_id}/subtitles/tracks": {
       "credits": null,
       "response_model": "SubtitleTracksResponse",
-      "query_params": {},
+      "query_params": {
+        "country": null
+      },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -206,16 +200,15 @@
       "query_params": {
         "language": "en",
         "subtitle_format": "srt",
-        "source": "any"
+        "source": "any",
+        "country": null
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -243,12 +236,10 @@
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -273,12 +264,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -303,12 +292,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "403": [
           "resource_forbidden"
@@ -332,24 +319,22 @@
       "response_model": "SearchResponse",
       "query_params": {
         "query": null,
-        "limit": 10,
         "country": null,
         "sort": "relevance",
         "upload_date": null,
         "search_type": null,
         "duration": null,
-        "features": null
+        "features": null,
+        "cursor": ""
       },
       "required": [
         "query"
       ],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -372,6 +357,9 @@
         ],
         "500": [
           "internal_error"
+        ],
+        "400": [
+          "invalid_cursor"
         ]
       }
     },
@@ -379,18 +367,15 @@
       "credits": 2,
       "response_model": "ChannelVideosResponse",
       "query_params": {
-        "limit": 30,
         "content_type": "videos",
         "cursor": ""
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -425,12 +410,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -464,12 +447,10 @@
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -499,16 +480,15 @@
       "credits": 2,
       "response_model": "VideoMetadataResponse",
       "query_params": {
-        "fields": null
+        "fields": null,
+        "country": null
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -537,15 +517,15 @@
     "/v1/youtube/videos/{video_id}/subtitles/tracks": {
       "credits": 2,
       "response_model": "SubtitleTracksResponse",
-      "query_params": {},
+      "query_params": {
+        "country": null
+      },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -577,16 +557,15 @@
       "query_params": {
         "language": "en",
         "subtitle_format": "srt",
-        "source": "any"
+        "source": "any",
+        "country": null
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -616,19 +595,16 @@
       "credits": 2,
       "response_model": "RepliesResponse",
       "query_params": {
-        "cursor": null,
-        "limit": 20
+        "cursor": null
       },
       "required": [
         "cursor"
       ],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -662,17 +638,14 @@
       "response_model": "CommentsResponse",
       "query_params": {
         "sort": "top",
-        "limit": 20,
         "cursor": ""
       },
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -707,12 +680,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
@@ -744,12 +715,10 @@
       "query_params": {},
       "required": [],
       "errors": {
-        "502": [
+        "503": [
+          "upstream_blocked",
           "upstream_response_invalid",
           "upstream_unavailable"
-        ],
-        "503": [
-          "upstream_blocked"
         ],
         "401": [
           "unauthenticated"
