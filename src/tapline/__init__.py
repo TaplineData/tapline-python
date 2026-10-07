@@ -29,7 +29,17 @@ means one thing under :mod:`tapline.youtube` and can mean another under the
 next API Tapline adds.
 """
 
-from . import airbnb, geckoterminal, gmgn, goplus, ponsfamily, resources, twitter, youtube
+from . import (
+    airbnb,
+    geckoterminal,
+    gmgn,
+    goplus,
+    pinterest,
+    ponsfamily,
+    resources,
+    twitter,
+    youtube,
+)
 from ._client import SyncTaplineClient, TaplineClient
 from ._exceptions import (
     APIConnectionError,
@@ -60,11 +70,13 @@ from .resources import (
     Geckoterminal,
     Gmgn,
     Goplus,
+    Pinterest,
     Ponsfamily,
     SyncAirbnb,
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
+    SyncPinterest,
     SyncPonsfamily,
     SyncTwitter,
     SyncYouTube,
@@ -98,12 +110,14 @@ __all__ = [
     "NotFoundError",
     "NotGiven",
     "PermissionDeniedError",
+    "Pinterest",
     "Ponsfamily",
     "RateLimitError",
     "SyncAirbnb",
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",
+    "SyncPinterest",
     "SyncPonsfamily",
     "SyncTaplineClient",
     "SyncTwitter",
@@ -121,6 +135,7 @@ __all__ = [
     "gmgn",
     "goplus",
     "not_given",
+    "pinterest",
     "ponsfamily",
     "resources",
     "twitter",

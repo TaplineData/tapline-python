@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, and Twitter (X) in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), and Pinterest in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -17,8 +17,9 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | GoPlus Security | Check EVM and Tron tokens and Solana mints for honeypots, taxes, owner and mint powers, holders, and liquidity | [GoPlus guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md) |
 | Pons Family | Browse and search launches, read token markets, trades and holders, follow wallets and creator fees, and read the memestock forum | [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md) |
 | Twitter (X) | Read public X profiles with their pinned and newest posts, single posts with media, quotes and top replies, and X Communities | [Twitter guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md) |
+| Pinterest | Search pins, read one pin with every image size, its video and idea-pin pages, list a user's boards, and read the pins on a board | [Pinterest guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/pinterest/README.md) |
 
-One API key and credit balance work across all seven services.
+One API key and credit balance work across all eight services.
 
 ## Get started
 
@@ -197,6 +198,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [GoPlus Security](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/goplus/README.md)
 - [Pons Family](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md)
 - [Twitter (X)](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md)
+- [Pinterest](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/pinterest/README.md)
 
 ## License
 
