@@ -78,17 +78,19 @@ if post.quoted_status_result:
 
 ```python
 from tapline import SyncTaplineClient
+from tapline.twitter import TwitterCommunityUser
 
 with SyncTaplineClient() as tapline:
     community = tapline.twitter.get_community("1493446837214187523")
 
-creator = community.creator_results.result.core if community.creator_results else None
-print(community.name, community.member_count, creator.screen_name if creator else None)
+creator = community.creator_results.result if community.creator_results else None
+creator_core = creator.core if isinstance(creator, TwitterCommunityUser) else None
+print(community.name, community.member_count, creator_core.screen_name if creator_core else None)
 for tweet in community.tweets:
     print(tweet.user.core.screen_name, tweet.favorite_count, tweet.view_count, tweet.full_text[:80])
 ```
 
-Community posts come flattened the way Scrape Creators flattens them: a post's `legacy` fields sit at the top level next to `id`, `view_count` and the author as `user`. The community's `created_at` is in Unix milliseconds.
+Community posts come flattened the way Scrape Creators flattens them: a post's `legacy` fields sit at the top level next to `id`, `view_count` and the author as `user`. The community's `created_at` is in Unix milliseconds. x.com sends a suspended or deactivated member as a bare `UserUnavailable`, so `creator_results.result` and each `members_facepile_results[].result` is either a `TwitterCommunityUser` or a `TwitterUnavailableResult`. Check with `isinstance` before reading profile fields.
 
 ## Handle errors and check costs
 

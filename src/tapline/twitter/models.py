@@ -259,7 +259,7 @@ class TwitterCommunityUser(BaseModel):
 
 class TwitterCommunityUserResults(BaseModel):
     id: str
-    result: TwitterCommunityUser
+    result: TwitterCommunityUser | TwitterUnavailableResult
 
 
 class TwitterContentDisclosure(BaseModel):
