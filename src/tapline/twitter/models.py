@@ -12,6 +12,18 @@ from pydantic import Field
 from tapline._models import PREFER_ENUM, BaseModel
 
 
+class CacheMaxAge(str, Enum):
+    """
+    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
+    """
+
+    FIELD_1D = "1d"
+    FIELD_3D = "3d"
+    FIELD_7D = "7d"
+    FIELD_14D = "14d"
+    FIELD_30D = "30d"
+
+
 class PublicError(str, Enum):
     BLOCKED = "blocked"
     CONCURRENCY_EXCEEDED = "concurrency_exceeded"
@@ -51,30 +63,61 @@ class ErrorResponse(BaseModel):
 
 
 class GetCommunityParams(BaseModel):
-    community_id: Annotated[str, Field(examples=["1493446837214187523"], pattern="^[0-9]{1,19}$")]
+    url: Annotated[str, Field(examples=["https://x.com/i/communities/1493446837214187523"])]
     """
-    Numeric X Community id, the digits after /i/communities/ in a community URL.
+    Community URL on x.com, twitter.com, mobile.twitter.com or a www. host: /i/communities/<id>, optionally followed by more segments.
+    """
+
+
+class GetCommunityTweetsParams(BaseModel):
+    url: Annotated[str, Field(examples=["https://x.com/i/communities/1493446837214187523"])]
+    """
+    Community URL on x.com, twitter.com, mobile.twitter.com or a www. host: /i/communities/<id>, optionally followed by more segments.
+    """
+
+
+class GetProfileParams(BaseModel):
+    cache_max_age: CacheMaxAge | None = None
+    """
+    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
+    """
+    handle: Annotated[
+        str | None, Field(examples=["shivanipod"], pattern="^@?[A-Za-z0-9_]{1,15}$")
+    ] = None
+    """
+    X handle, with or without a leading @: 1 to 15 letters, digits or underscores. x.com's own page names (explore, home, search, ...) are rejected. Send `handle` or `user_id`, not both.
+    """
+    user_id: Annotated[
+        str | None, Field(examples=["1952858158382428160"], pattern="^[0-9]{1,19}$")
+    ] = None
+    """
+    Numeric X user id (the account's `rest_id`). It still finds the account after the handle changes. Send `handle` or `user_id`, not both.
     """
 
 
 class GetTweetParams(BaseModel):
-    tweet_id: Annotated[str, Field(examples=["2106870968048386134"], pattern="^[0-9]{1,19}$")]
+    cache_max_age: CacheMaxAge | None = None
     """
-    Numeric post (tweet) id, the digits after /status/ in a post URL.
+    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
+    """
+    trim: bool | None = None
+    """
+    Accepted for Scrape Creators compatibility. It has no effect: the body is the same either way.
+    """
+    url: Annotated[str, Field(examples=["https://x.com/Seahawks/status/2106870968048386134"])]
+    """
+    Post URL on x.com, twitter.com, mobile.twitter.com or a www. host: /<handle>/status/<id>, /i/status/<id> or /i/web/status/<id>. Trailing segments such as /photo/1 and query strings such as ?s=20 are allowed.
     """
 
 
-class GetUserProfileByIdParams(BaseModel):
-    user_id: Annotated[str, Field(examples=["1952858158382428160"], pattern="^[0-9]{1,19}$")]
+class GetUserTweetsParams(BaseModel):
+    handle: Annotated[str, Field(examples=["shivanipod"], pattern="^@?[A-Za-z0-9_]{1,15}$")]
     """
-    Numeric X user id (the account's rest_id).
+    X handle, with or without a leading @: 1 to 15 letters, digits or underscores. x.com's own page names (explore, home, search, ...) are rejected.
     """
-
-
-class GetUserProfileParams(BaseModel):
-    screen_name: Annotated[str, Field(examples=["shivanipod"], pattern="^[A-Za-z0-9_]{1,15}$")]
+    trim: bool | None = None
     """
-    X handle without the @: 1 to 15 letters, digits or underscores. x.com's own page names (explore, home, search, ...) are rejected.
+    Accepted for Scrape Creators compatibility. It has no effect: the body is the same either way.
     """
 
 
@@ -150,6 +193,7 @@ class TwitterCardBindingValue(BaseModel):
 
 
 class TwitterCardBindingValueData(BaseModel):
+    boolean_value: bool | None = None
     image_value: TwitterCardImageValue | None = None
     string_value: str | None = None
     type: str
@@ -207,7 +251,6 @@ class TwitterCommunityResponse(BaseModel):
     role: str
     rules: list[TwitterCommunityRule]
     success: bool
-    tweets: list[TwitterCommunityTweetsItem]
 
 
 class TwitterCommunityRule(BaseModel):
@@ -245,6 +288,13 @@ class TwitterCommunityTweetsItem(BaseModel):
     user: TwitterUser
     user_id_str: str
     view_count: str | None = None
+
+
+class TwitterCommunityTweetsResponse(BaseModel):
+    credits_charged: int
+    credits_remaining: int
+    success: bool
+    tweets: list[TwitterCommunityTweetsItem]
 
 
 class TwitterCommunityUser(BaseModel):
@@ -368,7 +418,6 @@ class TwitterProfileResponse(BaseModel):
     legacy: TwitterUserLegacy
     location: TwitterUserLocation | None = None
     media_permissions: TwitterMediaPermissions
-    pinned_tweet: TwitterUserTweetsItem | None
     privacy: TwitterUserPrivacy | None = None
     profile_bio: TwitterProfileBio | None = None
     profile_image_shape: str | None = None
@@ -378,7 +427,6 @@ class TwitterProfileResponse(BaseModel):
     super_follow_eligible: bool | None = None
     super_followed_by: bool
     super_following: bool
-    tweets: list[TwitterUserTweetsItem]
     user_seed_tweet_count: int | None = None
     verification: TwitterUserVerification | None = None
 
@@ -425,26 +473,6 @@ class TwitterTweetCore(BaseModel):
     user_results: TwitterTweetUserResults
 
 
-class TwitterTweetDetailResponse(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    article: TwitterArticle | None = None
-    card: TwitterCard | None = None
-    content_disclosure: TwitterContentDisclosure | None = None
-    core: TwitterTweetCore
-    credits_charged: int
-    credits_remaining: int
-    edit_control: TwitterEditControl | None = None
-    is_translatable: bool | None = None
-    legacy: TwitterTweetLegacy
-    note_tweet: TwitterNoteTweet | None = None
-    parent_tweets: list[TwitterUserTweetsItem]
-    quoted_status_result: TwitterQuotedStatusResult | None = None
-    replies: list[TwitterUserTweetsItem]
-    rest_id: str
-    success: bool
-    views: TwitterTweetViews
-
-
 class TwitterTweetEntities(BaseModel):
     hashtags: list[TwitterTextEntity] | None = None
     media: list[TwitterMedia] | None = None
@@ -478,6 +506,24 @@ class TwitterTweetLegacy(BaseModel):
     retweet_count: int
     retweeted: bool
     user_id_str: str
+
+
+class TwitterTweetResponse(BaseModel):
+    field__typename: Annotated[str, Field(alias="__typename")]
+    article: TwitterArticle | None = None
+    card: TwitterCard | None = None
+    content_disclosure: TwitterContentDisclosure | None = None
+    core: TwitterTweetCore
+    credits_charged: int
+    credits_remaining: int
+    edit_control: TwitterEditControl | None = None
+    is_translatable: bool | None = None
+    legacy: TwitterTweetLegacy
+    note_tweet: TwitterNoteTweet | None = None
+    quoted_status_result: TwitterQuotedStatusResult | None = None
+    rest_id: str
+    success: bool
+    views: TwitterTweetViews
 
 
 class TwitterTweetUserResults(BaseModel):
@@ -610,6 +656,13 @@ class TwitterUserTweetsItem(BaseModel):
     views: TwitterTweetViews
 
 
+class TwitterUserTweetsResponse(BaseModel):
+    credits_charged: int
+    credits_remaining: int
+    success: bool
+    tweets: list[TwitterUserTweetsItem]
+
+
 class TwitterUserUrlEntities(BaseModel):
     urls: list[TwitterUrlEntity]
 
@@ -631,9 +684,7 @@ class TwitterVideoVariant(BaseModel):
     url: str
 
 
-TwitterProfileResponse.model_rebuild()
 TwitterQuotedStatusResult.model_rebuild()
-TwitterTweetDetailResponse.model_rebuild()
 
 
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

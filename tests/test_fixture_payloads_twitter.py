@@ -18,8 +18,10 @@ import pytest
 from conftest import extras
 from tapline.twitter import (
     TwitterCommunityResponse,
+    TwitterCommunityTweetsResponse,
     TwitterProfileResponse,
-    TwitterTweetDetailResponse,
+    TwitterTweetResponse,
+    TwitterUserTweetsResponse,
 )
 
 FIXTURES = (
@@ -43,11 +45,12 @@ def cases(negative: bool) -> list[str]:
 
 RESPONSES: dict[str, type[Any]] = {
     "get_community": TwitterCommunityResponse,
-    "get_tweet": TwitterTweetDetailResponse,
-    "get_user_profile_by_id": TwitterProfileResponse,
-    "get_user_profile": TwitterProfileResponse,
+    "get_community_tweets": TwitterCommunityTweetsResponse,
+    "get_profile": TwitterProfileResponse,
+    "get_tweet": TwitterTweetResponse,
+    "get_user_tweets": TwitterUserTweetsResponse,
 }
-METHODS = ["get_community", "get_tweet", "get_user_profile_by_id", "get_user_profile"]
+METHODS = ["get_community", "get_community_tweets", "get_profile", "get_tweet", "get_user_tweets"]
 
 
 def test_every_method_has_a_default_fixture() -> None:
