@@ -267,7 +267,7 @@ class Tiktok(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileResponse:
-        """A TikTok profile by handle or numeric user id: `user` (nickname, signature, avatars, `secUid`, `verified`, `privateAccount`, bio link), `stats` and `statsV2` (followers, following, likes, videos) and an empty `itemList`, the body TikTok's profile page carries and Scrape Creators passes through. A private account answers its profile too. Costs 1 credit.
+        """A TikTok profile by handle or numeric user id: `user` (nickname, signature, avatars, `secUid`, `verified`, `privateAccount`, bio link), `stats` and `statsV2` (followers, following, likes, videos) and an empty `itemList`, the body TikTok's profile page carries and Scrape Creators passes through, without Scrape Creators' top-level status and credit metadata. A private account answers its profile too. Costs 1 credit.
 
         Args:
             cache_max_age: Accepted for Scrape Creators compatibility. It has no
@@ -657,7 +657,7 @@ class SyncTiktok(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileResponse:
-        """A TikTok profile by handle or numeric user id: `user` (nickname, signature, avatars, `secUid`, `verified`, `privateAccount`, bio link), `stats` and `statsV2` (followers, following, likes, videos) and an empty `itemList`, the body TikTok's profile page carries and Scrape Creators passes through. A private account answers its profile too. Costs 1 credit.
+        """A TikTok profile by handle or numeric user id: `user` (nickname, signature, avatars, `secUid`, `verified`, `privateAccount`, bio link), `stats` and `statsV2` (followers, following, likes, videos) and an empty `itemList`, the body TikTok's profile page carries and Scrape Creators passes through, without Scrape Creators' top-level status and credit metadata. A private account answers its profile too. Costs 1 credit.
 
         Args:
             cache_max_age: Accepted for Scrape Creators compatibility. It has no

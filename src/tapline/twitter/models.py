@@ -232,8 +232,6 @@ class TwitterCommunityResponse(BaseModel):
     actions: TwitterCommunityActions
     created_at: int
     creator_results: TwitterCommunityUserResults | None = None
-    credits_charged: int
-    credits_remaining: int
     custom_banner_media: TwitterCommunityBannerMedia | None = None
     default_banner_media: TwitterCommunityBannerMedia
     description: str | None = None
@@ -250,7 +248,6 @@ class TwitterCommunityResponse(BaseModel):
     rest_id: str
     role: str
     rules: list[TwitterCommunityRule]
-    success: bool
 
 
 class TwitterCommunityRule(BaseModel):
@@ -291,9 +288,6 @@ class TwitterCommunityTweetsItem(BaseModel):
 
 
 class TwitterCommunityTweetsResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
-    success: bool
     tweets: list[TwitterCommunityTweetsItem]
 
 
@@ -407,8 +401,6 @@ class TwitterProfileResponse(BaseModel):
     avatar: TwitterUserAvatar | None = None
     core: TwitterUserCore
     creator_subscriptions_count: int | None = None
-    credits_charged: int
-    credits_remaining: int
     dm_permissions: TwitterDmPermissions
     follow_request_sent: bool
     has_hidden_subscriptions_on_profile: bool | None = None
@@ -423,7 +415,6 @@ class TwitterProfileResponse(BaseModel):
     profile_image_shape: str | None = None
     relationship_perspectives: TwitterRelationshipPerspectives
     rest_id: str
-    success: bool
     super_follow_eligible: bool | None = None
     super_followed_by: bool
     super_following: bool
@@ -514,15 +505,12 @@ class TwitterTweetResponse(BaseModel):
     card: TwitterCard | None = None
     content_disclosure: TwitterContentDisclosure | None = None
     core: TwitterTweetCore
-    credits_charged: int
-    credits_remaining: int
     edit_control: TwitterEditControl | None = None
     is_translatable: bool | None = None
     legacy: TwitterTweetLegacy
     note_tweet: TwitterNoteTweet | None = None
     quoted_status_result: TwitterQuotedStatusResult | None = None
     rest_id: str
-    success: bool
     views: TwitterTweetViews
 
 
@@ -657,9 +645,6 @@ class TwitterUserTweetsItem(BaseModel):
 
 
 class TwitterUserTweetsResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
-    success: bool
     tweets: list[TwitterUserTweetsItem]
 
 

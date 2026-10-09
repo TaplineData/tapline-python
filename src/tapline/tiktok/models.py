@@ -1668,13 +1668,10 @@ class TikTokClaInfo(BaseModel):
 
 class TikTokCollectionVideosResponse(BaseModel):
     collection_id: str
-    credits_charged: int
-    credits_remaining: int
     has_more: bool
     max_cursor: str
     status_code: int
     status_msg: str
-    success: bool
     videos: list[TikTokWebItem]
 
 
@@ -1732,15 +1729,12 @@ class TikTokCommentPageLogPb(BaseModel):
 
 class TikTokCommentRepliesResponse(BaseModel):
     comments: list[TikTokComment]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
     extra: TikTokCommentReplyPageExtra
     has_more: int
     log_pb: TikTokCommentReplyPageLogPb
     status_code: int
     status_msg: str
-    success: bool
     total: int
 
 
@@ -1833,8 +1827,6 @@ class TikTokCommentUserAvatarThumb(BaseModel):
 class TikTokCommentsResponse(BaseModel):
     alias_comment_deleted: bool
     comments: list[TikTokComment]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
     extra: TikTokCommentPageExtra
     has_filtered_comments: int
@@ -1843,41 +1835,31 @@ class TikTokCommentsResponse(BaseModel):
     reply_style: int
     status_code: int
     status_msg: str
-    success: bool
     top_gifts: str | None
     total: int
 
 
 class TikTokFollowersResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     followers: list[TikTokUser]
     has_more: bool
     min_time: int
     status_code: int
-    success: bool
     total: int
 
 
 class TikTokFollowingResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     followings: list[TikTokUser]
     has_more: bool
     min_time: int
     status_code: int
-    success: bool
     total: int
 
 
 class TikTokHashtagSearchResponse(BaseModel):
     aweme_list: list[TikTokAweme]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
     has_more: int
     status_code: int
-    success: bool
 
 
 class TikTokImagePostImage(BaseModel):
@@ -1907,23 +1889,17 @@ class TikTokPlayAddr(BaseModel):
 
 
 class TikTokProfileResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     itemList: list[str]
     stats: TikTokUserInfoStats
     statsV2: TikTokUserInfoStatsV2
-    success: bool
     user: TikTokUserInfoUser
 
 
 class TikTokProfileVideosResponse(BaseModel):
     aweme_list: list[TikTokAweme]
-    credits_charged: int
-    credits_remaining: int
     has_more: int
     max_cursor: int
     status_code: int
-    success: bool
 
 
 class TikTokSearchSuggestion(BaseModel):
@@ -1934,9 +1910,6 @@ class TikTokSearchSuggestion(BaseModel):
 
 
 class TikTokSearchSuggestionsResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
-    success: bool
     suggestions: list[TikTokSearchSuggestion]
 
 
@@ -1965,20 +1938,14 @@ class TikTokSongMusicInfo(BaseModel):
 
 
 class TikTokSongResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     music_info: TikTokSongMusicInfo
-    success: bool
 
 
 class TikTokSongVideosResponse(BaseModel):
     aweme_list: list[TikTokAweme]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
     has_more: int
     status_code: int
-    success: bool
 
 
 class TikTokTextExtra(BaseModel):
@@ -1994,10 +1961,7 @@ class TikTokTextExtra(BaseModel):
 
 
 class TikTokTranscriptResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     id: str
-    success: bool
     transcript: str
     url: str
 
@@ -2012,9 +1976,6 @@ class TikTokTrendingAuthor(BaseModel):
 
 class TikTokTrendingFeedResponse(BaseModel):
     aweme_list: list[TikTokTrendingItem]
-    credits_charged: int
-    credits_remaining: int
-    success: bool
 
 
 class TikTokTrendingItem(BaseModel):
@@ -2073,12 +2034,9 @@ class TikTokTrimmedComment(BaseModel):
 
 class TikTokTrimmedCommentsResponse(BaseModel):
     comments: list[TikTokTrimmedComment]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
     end_of_pagination: bool
     has_more: int
-    success: bool
     total: int
 
 
@@ -2096,11 +2054,8 @@ class GetCommentsResponse(
 
 
 class TikTokTrimmedFollowersResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     followers: list[TikTokTrimmedRelationUser]
     min_time: int
-    success: bool
     total: int
 
 
@@ -2118,11 +2073,8 @@ class GetFollowersResponse(
 
 
 class TikTokTrimmedFollowingResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     followings: list[TikTokTrimmedRelationUser]
     min_time: int
-    success: bool
     total: int
 
 
@@ -2141,10 +2093,7 @@ class GetFollowingResponse(
 
 class TikTokTrimmedHashtagSearchResponse(BaseModel):
     aweme_list: list[TikTokTrimmedAweme]
-    credits_charged: int
-    credits_remaining: int
     cursor: int
-    success: bool
 
 
 class SearchHashtagResponse(
@@ -2163,11 +2112,8 @@ class SearchHashtagResponse(
 
 class TikTokTrimmedProfileVideosResponse(BaseModel):
     aweme_list: list[TikTokTrimmedAweme]
-    credits_charged: int
-    credits_remaining: int
     has_more: int
     max_cursor: int
-    success: bool
 
 
 class GetProfileVideosResponse(
@@ -2197,9 +2143,6 @@ class TikTokTrimmedRelationUser(BaseModel):
 
 class TikTokTrimmedTrendingFeedResponse(BaseModel):
     aweme_list: list[TikTokTrimmedTrendingItem]
-    credits_charged: int
-    credits_remaining: int
-    success: bool
 
 
 class GetTrendingFeedResponse(
@@ -2244,9 +2187,6 @@ class TikTokTrimmedVideoAweme(BaseModel):
 
 class TikTokTrimmedVideoResponse(BaseModel):
     aweme_detail: TikTokTrimmedVideoAweme
-    credits_charged: int
-    credits_remaining: int
-    success: bool
     transcript: str | None = None
 
 
@@ -2500,9 +2440,6 @@ class TikTokVideoAweme(BaseModel):
 
 class TikTokVideoResponse(BaseModel):
     aweme_detail: TikTokVideoAweme
-    credits_charged: int
-    credits_remaining: int
-    success: bool
     transcript: str | None = None
 
 

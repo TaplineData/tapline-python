@@ -33,6 +33,6 @@ with SyncTaplineClient() as tapline:
 print(video.root.aweme_detail.statistics.play_count)
 ```
 
-Methods whose response can be full or trimmed return a Pydantic root model; read the selected body through `.root`. Pass `trim=True` for the smaller Scrape Creators-compatible branch. Use each response's `cursor`, `max_cursor`, or `min_time` in the next call while `has_more` is true.
+Methods whose response can be full or trimmed return a Pydantic root model; read the selected body through `.root`. Pass `trim=True` for the smaller Scrape Creators-compatible provider-data branch. Tapline omits Scrape Creators' top-level status and credit metadata. Use each response's `cursor`, `max_cursor`, or `min_time` in the next call while `has_more` is true.
 
 Every method costs one credit. Missing or private targets raise typed 404 or 403 errors and are charged; invalid input is rejected before charging; temporary upstream failures raise a 503 error and are refunded. A transcript can return 404 when TikTok has no captions for that video.

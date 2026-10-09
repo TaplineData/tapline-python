@@ -414,11 +414,8 @@ class PinterestBoardImages(BaseModel):
 
 
 class PinterestBoardResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     cursor: str | None
     pins: list[PinterestBoardFeedPin]
-    success: bool
 
 
 class PinterestBoardVase(BaseModel):
@@ -891,8 +888,6 @@ class PinterestPinResponse(BaseModel):
     createdAt: str | None = None
     creativeOverlayImages: Any = None
     creatorClass: Any = None
-    credits_charged: int
-    credits_remaining: int
     description: str | None = None
     descriptionHtml: str | None = None
     descriptionLinks: list[Any] | None = None
@@ -1003,7 +998,6 @@ class PinterestPinResponse(BaseModel):
     sponsorship: Any = None
     storyPinData: PinterestPinStoryPinData | None = None
     storyPinDataId: str | None = None
-    success: bool
     thirdPartyPinOwner: Any = None
     title: str | None = None
     topInterest: int | None = None
@@ -1338,11 +1332,8 @@ class PinterestSearchPin(BaseModel):
 
 
 class PinterestSearchResponse(BaseModel):
-    credits_charged: int
-    credits_remaining: int
     cursor: str | None
     pins: list[PinterestSearchPin]
-    success: bool
 
 
 class PinterestSearchResultAggregatedPinData(BaseModel):
@@ -1695,10 +1686,7 @@ class PinterestUserBoardOwner(BaseModel):
 
 class PinterestUserBoardsResponse(BaseModel):
     boards: list[PinterestUserBoard]
-    credits_charged: int
-    credits_remaining: int
     cursor: str | None
-    success: bool
 
 
 class PinterestVerifiedIdentity(BaseModel):
