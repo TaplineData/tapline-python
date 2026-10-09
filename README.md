@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, and TikTok in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, and TikTok in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -18,9 +18,10 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | Pons Family | Browse and search launches, read token markets, trades and holders, follow wallets and creator fees, and read the memestock forum | [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md) |
 | Twitter (X) | Read public X profiles by handle or id, an account's newest posts, single posts with media and quotes, and X Communities with their top posts | [Twitter guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md) |
 | Pinterest | Search pins, read one pin with every image size, its video and idea-pin pages, list a user's boards, and read the pins on a board | [Pinterest guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/pinterest/README.md) |
+| Instagram | Read profiles, posts, reels, comments, highlights, audio pages, popular topics, embeds, and exact post counts | [Instagram guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/instagram/README.md) |
 | TikTok | Read profiles and videos, comments and replies, followers, sounds, hashtags, captions, collections, suggestions, and regional trending feeds | [TikTok guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/tiktok/README.md) |
 
-One API key and credit balance work across all nine services.
+One API key and credit balance work across all eleven services.
 
 ## Get started
 
@@ -200,6 +201,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [Pons Family](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/ponsfamily/README.md)
 - [Twitter (X)](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/twitter/README.md)
 - [Pinterest](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/pinterest/README.md)
+- [Instagram](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/instagram/README.md)
 - [TikTok](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/tiktok/README.md)
 
 ## License

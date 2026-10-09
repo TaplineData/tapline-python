@@ -4,8 +4,8 @@
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``geckoterminal``, ``gmgn``, ``goplus``, ``pinterest``,
-``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
+service (``airbnb``, ``geckoterminal``, ``gmgn``, ``goplus``, ``instagram``,
+``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -23,6 +23,7 @@ from .resources import (
     Geckoterminal,
     Gmgn,
     Goplus,
+    Instagram,
     Pinterest,
     Ponsfamily,
     Pumpfun,
@@ -30,6 +31,7 @@ from .resources import (
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
+    SyncInstagram,
     SyncPinterest,
     SyncPonsfamily,
     SyncPumpfun,
@@ -79,6 +81,9 @@ class TaplineClient(AsyncAPIClient):
 
     goplus: Goplus
     """The GoPlus Security endpoints."""
+
+    instagram: Instagram
+    """The Instagram endpoints."""
 
     pinterest: Pinterest
     """The Pinterest endpoints."""
@@ -147,6 +152,7 @@ class TaplineClient(AsyncAPIClient):
         self.geckoterminal = Geckoterminal(self)
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
+        self.instagram = Instagram(self)
         self.pinterest = Pinterest(self)
         self.ponsfamily = Ponsfamily(self)
         self.pumpfun = Pumpfun(self)
@@ -183,6 +189,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     goplus: SyncGoplus
     """The GoPlus Security endpoints."""
+
+    instagram: SyncInstagram
+    """The Instagram endpoints."""
 
     pinterest: SyncPinterest
     """The Pinterest endpoints."""
@@ -251,6 +260,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.geckoterminal = SyncGeckoterminal(self)
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
+        self.instagram = SyncInstagram(self)
         self.pinterest = SyncPinterest(self)
         self.ponsfamily = SyncPonsfamily(self)
         self.pumpfun = SyncPumpfun(self)

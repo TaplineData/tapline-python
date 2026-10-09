@@ -6,6 +6,7 @@ from .airbnb import Airbnb, SyncAirbnb
 from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
+from .instagram import Instagram, SyncInstagram
 from .pinterest import Pinterest, SyncPinterest
 from .ponsfamily import Ponsfamily, SyncPonsfamily
 from .pumpfun import Pumpfun, SyncPumpfun
@@ -18,6 +19,7 @@ __all__ = [
     "Geckoterminal",
     "Gmgn",
     "Goplus",
+    "Instagram",
     "Pinterest",
     "Ponsfamily",
     "Pumpfun",
@@ -25,6 +27,7 @@ __all__ = [
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",
+    "SyncInstagram",
     "SyncPinterest",
     "SyncPonsfamily",
     "SyncPumpfun",
