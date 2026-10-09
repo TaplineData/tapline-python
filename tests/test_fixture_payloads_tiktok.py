@@ -56,39 +56,47 @@ RESPONSES: dict[str, type[Any]] = {
     "get_collection_videos": TikTokCollectionVideosResponse,
     "get_trending_feed": GetTrendingFeedResponse,
     "get_profile": TikTokProfileResponse,
+    "get_profile_videos": GetProfileVideosResponse,
     "search_hashtag": SearchHashtagResponse,
     "get_search_suggestions": TikTokSearchSuggestionsResponse,
     "get_song": TikTokSongResponse,
     "get_song_videos": TikTokSongVideosResponse,
     "get_followers": GetFollowersResponse,
     "get_following": GetFollowingResponse,
+    "get_video": GetVideoResponse,
     "get_comment_replies": TikTokCommentRepliesResponse,
     "get_comments": GetCommentsResponse,
     "get_transcript": TikTokTranscriptResponse,
-    "get_video": GetVideoResponse,
-    "get_profile_videos": GetProfileVideosResponse,
 }
 METHODS = [
     "get_collection_videos",
     "get_trending_feed",
     "get_profile",
+    "get_profile_videos",
     "search_hashtag",
     "get_search_suggestions",
     "get_song",
     "get_song_videos",
     "get_followers",
     "get_following",
+    "get_video",
     "get_comment_replies",
     "get_comments",
     "get_transcript",
-    "get_video",
-    "get_profile_videos",
 ]
 
 
-def test_every_method_has_a_default_fixture() -> None:
-    missing = [m for m in METHODS if not (FIXTURES / f"{m}.default.json").exists()]
+SUCCESS_UNAVAILABLE: dict[str, str] = {}
 
+
+def test_every_method_has_a_default_fixture() -> None:
+    missing = [
+        m
+        for m in METHODS
+        if m not in SUCCESS_UNAVAILABLE and not (FIXTURES / f"{m}.default.json").exists()
+    ]
+
+    assert set(SUCCESS_UNAVAILABLE) <= set(METHODS)
     assert missing == [], f"run the generate-client capture step for {missing}"
 
 

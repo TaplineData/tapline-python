@@ -73,6 +73,29 @@ def _get_profile(
     )
 
 
+def _get_profile_videos(
+    *,
+    handle: str | None = None,
+    max_cursor: str | None = None,
+    region: str | None = None,
+    sort_by: Literal["latest", "popular"] | None = None,
+    trim: bool | None = None,
+    user_id: str | None = None,
+) -> Request[GetProfileVideosResponse]:
+    return Request(
+        _PREFIX + "v1/tiktok/profile/videos",
+        GetProfileVideosResponse,
+        {
+            "handle": handle,
+            "max_cursor": max_cursor,
+            "region": region,
+            "sort_by": sort_by,
+            "trim": trim,
+            "user_id": user_id,
+        },
+    )
+
+
 def _search_hashtag(
     *, hashtag: str, cursor: int | None = None, region: str | None = None, trim: bool | None = None
 ) -> Request[SearchHashtagResponse]:
@@ -93,17 +116,17 @@ def _get_search_suggestions(
     )
 
 
-def _get_song(*, clipId: str) -> Request[TikTokSongResponse]:
-    return Request(_PREFIX + "v1/tiktok/song", TikTokSongResponse, {"clipId": clipId})
+def _get_song(*, clip_id: str) -> Request[TikTokSongResponse]:
+    return Request(_PREFIX + "v1/tiktok/song", TikTokSongResponse, {"clipId": clip_id})
 
 
 def _get_song_videos(
-    *, clipId: str, cursor: int | None = None
+    *, clip_id: str, cursor: int | None = None
 ) -> Request[TikTokSongVideosResponse]:
     return Request(
         _PREFIX + "v1/tiktok/song/videos",
         TikTokSongVideosResponse,
-        {"clipId": clipId, "cursor": cursor},
+        {"clipId": clip_id, "cursor": cursor},
     )
 
 
@@ -128,6 +151,27 @@ def _get_following(
         _PREFIX + "v1/tiktok/user/following",
         GetFollowingResponse,
         {"handle": handle, "min_time": min_time, "trim": trim},
+    )
+
+
+def _get_video(
+    *,
+    url: str,
+    cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
+    get_transcript: bool | None = None,
+    region: str | None = None,
+    trim: bool | None = None,
+) -> Request[GetVideoResponse]:
+    return Request(
+        _PREFIX + "v1/tiktok/video",
+        GetVideoResponse,
+        {
+            "url": url,
+            "cache_max_age": cache_max_age,
+            "get_transcript": get_transcript,
+            "region": region,
+            "trim": trim,
+        },
     )
 
 
@@ -158,50 +202,6 @@ def _get_transcript(
         _PREFIX + "v1/tiktok/video/transcript",
         TikTokTranscriptResponse,
         {"url": url, "language": language, "use_ai_as_fallback": use_ai_as_fallback},
-    )
-
-
-def _get_video(
-    *,
-    url: str,
-    cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
-    get_transcript: bool | None = None,
-    region: str | None = None,
-    trim: bool | None = None,
-) -> Request[GetVideoResponse]:
-    return Request(
-        _PREFIX + "v2/tiktok/video",
-        GetVideoResponse,
-        {
-            "url": url,
-            "cache_max_age": cache_max_age,
-            "get_transcript": get_transcript,
-            "region": region,
-            "trim": trim,
-        },
-    )
-
-
-def _get_profile_videos(
-    *,
-    handle: str | None = None,
-    max_cursor: str | None = None,
-    region: str | None = None,
-    sort_by: Literal["latest", "popular"] | None = None,
-    trim: bool | None = None,
-    user_id: str | None = None,
-) -> Request[GetProfileVideosResponse]:
-    return Request(
-        _PREFIX + "v3/tiktok/profile/videos",
-        GetProfileVideosResponse,
-        {
-            "handle": handle,
-            "max_cursor": max_cursor,
-            "region": region,
-            "sort_by": sort_by,
-            "trim": trim,
-            "user_id": user_id,
-        },
     )
 
 
@@ -286,6 +286,49 @@ class Tiktok(AsyncAPIResource):
             timeout=timeout,
         )
 
+    async def get_profile_videos(
+        self,
+        *,
+        handle: str | None = None,
+        max_cursor: str | None = None,
+        region: str | None = None,
+        sort_by: Literal["latest", "popular"] | None = None,
+        trim: bool | None = None,
+        user_id: str | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> GetProfileVideosResponse:
+        """Videos a TikTok user posted, newest first or most popular first, 35 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
+
+        Args:
+            handle: The TikTok handle, with or without a leading @. Send `handle` or
+                `user_id`, not both.
+            max_cursor: The `max_cursor` from the previous page. Omit it for the
+                first page.
+            region: Two-letter country code for the proxy, such as `US`, `GB` or
+                `PH`. TikTok answers as it does to a viewer in that country; it does
+                not filter results to that country.
+            sort_by: `latest` (default) or `popular`, most viewed first.
+            trim: Set to `true` for the trimmed answer Scrape Creators returns:
+                fewer keys per item.
+            user_id: The numeric TikTok user id (`user.id` from
+                `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
+        """
+        return await self._send(
+            _get_profile_videos(
+                handle=handle,
+                max_cursor=max_cursor,
+                region=region,
+                sort_by=sort_by,
+                trim=trim,
+                user_id=user_id,
+            ),
+            timeout=timeout,
+        )
+
     async def search_hashtag(
         self,
         *,
@@ -341,13 +384,13 @@ class Tiktok(AsyncAPIResource):
     async def get_song(
         self,
         *,
-        clipId: str,
+        clip_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongResponse:
         """A TikTok sound as `music_info`: title, author, album, duration, `user_count` (videos using it), `play_url` and covers, in Scrape Creators' app layout built from TikTok's web data. Costs 1 credit.
 
         Args:
-            clipId: The sound's clip id, the number at the end of a sound URL such
+            clip_id: The sound's clip id, the number at the end of a sound URL such
                 as `https://www.tiktok.com/music/Different-
                 Acoustic-6717159721276540930`.
             timeout: Overrides the client's timeout for this request.
@@ -355,19 +398,19 @@ class Tiktok(AsyncAPIResource):
         Returns:
             A :class:`~tapline.tiktok.TikTokSongResponse`.
         """
-        return await self._send(_get_song(clipId=clipId), timeout=timeout)
+        return await self._send(_get_song(clip_id=clip_id), timeout=timeout)
 
     async def get_song_videos(
         self,
         *,
-        clipId: str,
+        clip_id: str,
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongVideosResponse:
         """Videos that use a TikTok sound, 30 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `cursor` back while `has_more` is 1. Costs 1 credit.
 
         Args:
-            clipId: The sound's clip id, the number at the end of a sound URL such
+            clip_id: The sound's clip id, the number at the end of a sound URL such
                 as `https://www.tiktok.com/music/Different-
                 Acoustic-6717159721276540930`.
             cursor: The `cursor` from the previous page. Omit it for the first page.
@@ -376,7 +419,7 @@ class Tiktok(AsyncAPIResource):
         Returns:
             A :class:`~tapline.tiktok.TikTokSongVideosResponse`.
         """
-        return await self._send(_get_song_videos(clipId=clipId, cursor=cursor), timeout=timeout)
+        return await self._send(_get_song_videos(clip_id=clip_id, cursor=cursor), timeout=timeout)
 
     async def get_followers(
         self,
@@ -431,6 +474,47 @@ class Tiktok(AsyncAPIResource):
         """
         return await self._send(
             _get_following(handle=handle, min_time=min_time, trim=trim), timeout=timeout
+        )
+
+    async def get_video(
+        self,
+        *,
+        url: str,
+        cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
+        get_transcript: bool | None = None,
+        region: str | None = None,
+        trim: bool | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> GetVideoResponse:
+        """One TikTok video or photo post as `aweme_detail`, TikTok's own Android app object with exact counts, plus the `url` and `create_time_utc` Scrape Creators adds. It comes from the app's feed, which leaves out about a quarter of the keys the app's detail view has. With `get_transcript=true`, `transcript` holds the WEBVTT captions in the video's original language, or `null` when it has none. Costs 1 credit.
+
+        Args:
+            url: A TikTok video or photo post URL:
+                `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
+                `https://vm.tiktok.com/<code>/` share link.
+            cache_max_age: Accepted for Scrape Creators compatibility. It has no
+                effect: every request fetches a live answer and is charged.
+            get_transcript: Set to `true` to add `transcript`, the video's WEBVTT
+                captions, or `null` when it has none.
+            region: Two-letter country code for the proxy, such as `US`, `GB` or
+                `PH`. TikTok answers as it does to a viewer in that country; it does
+                not filter results to that country.
+            trim: Set to `true` for the trimmed answer Scrape Creators returns:
+                fewer keys per item.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.tiktok.GetVideoResponse`.
+        """
+        return await self._send(
+            _get_video(
+                url=url,
+                cache_max_age=cache_max_age,
+                get_transcript=get_transcript,
+                region=region,
+                trim=trim,
+            ),
+            timeout=timeout,
         )
 
     async def get_comment_replies(
@@ -507,90 +591,6 @@ class Tiktok(AsyncAPIResource):
         """
         return await self._send(
             _get_transcript(url=url, language=language, use_ai_as_fallback=use_ai_as_fallback),
-            timeout=timeout,
-        )
-
-    async def get_video(
-        self,
-        *,
-        url: str,
-        cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
-        get_transcript: bool | None = None,
-        region: str | None = None,
-        trim: bool | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetVideoResponse:
-        """One TikTok video or photo post as `aweme_detail`, TikTok's own Android app object with exact counts, plus the `url` and `create_time_utc` Scrape Creators adds. It comes from the app's feed, which leaves out about a quarter of the keys the app's detail view has. With `get_transcript=true`, `transcript` holds the WEBVTT captions in the video's original language, or `null` when it has none. Costs 1 credit.
-
-        Args:
-            url: A TikTok video or photo post URL:
-                `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
-                `https://vm.tiktok.com/<code>/` share link.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            get_transcript: Set to `true` to add `transcript`, the video's WEBVTT
-                captions, or `null` when it has none.
-            region: Two-letter country code for the proxy, such as `US`, `GB` or
-                `PH`. TikTok answers as it does to a viewer in that country; it does
-                not filter results to that country.
-            trim: Set to `true` for the trimmed answer Scrape Creators returns:
-                fewer keys per item.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.tiktok.GetVideoResponse`.
-        """
-        return await self._send(
-            _get_video(
-                url=url,
-                cache_max_age=cache_max_age,
-                get_transcript=get_transcript,
-                region=region,
-                trim=trim,
-            ),
-            timeout=timeout,
-        )
-
-    async def get_profile_videos(
-        self,
-        *,
-        handle: str | None = None,
-        max_cursor: str | None = None,
-        region: str | None = None,
-        sort_by: Literal["latest", "popular"] | None = None,
-        trim: bool | None = None,
-        user_id: str | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetProfileVideosResponse:
-        """Videos a TikTok user posted, newest first or most popular first, 35 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
-
-        Args:
-            handle: The TikTok handle, with or without a leading @. Send `handle` or
-                `user_id`, not both.
-            max_cursor: The `max_cursor` from the previous page. Omit it for the
-                first page.
-            region: Two-letter country code for the proxy, such as `US`, `GB` or
-                `PH`. TikTok answers as it does to a viewer in that country; it does
-                not filter results to that country.
-            sort_by: `latest` (default) or `popular`, most viewed first.
-            trim: Set to `true` for the trimmed answer Scrape Creators returns:
-                fewer keys per item.
-            user_id: The numeric TikTok user id (`user.id` from
-                `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
-        """
-        return await self._send(
-            _get_profile_videos(
-                handle=handle,
-                max_cursor=max_cursor,
-                region=region,
-                sort_by=sort_by,
-                trim=trim,
-                user_id=user_id,
-            ),
             timeout=timeout,
         )
 
@@ -676,6 +676,49 @@ class SyncTiktok(SyncAPIResource):
             timeout=timeout,
         )
 
+    def get_profile_videos(
+        self,
+        *,
+        handle: str | None = None,
+        max_cursor: str | None = None,
+        region: str | None = None,
+        sort_by: Literal["latest", "popular"] | None = None,
+        trim: bool | None = None,
+        user_id: str | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> GetProfileVideosResponse:
+        """Videos a TikTok user posted, newest first or most popular first, 35 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
+
+        Args:
+            handle: The TikTok handle, with or without a leading @. Send `handle` or
+                `user_id`, not both.
+            max_cursor: The `max_cursor` from the previous page. Omit it for the
+                first page.
+            region: Two-letter country code for the proxy, such as `US`, `GB` or
+                `PH`. TikTok answers as it does to a viewer in that country; it does
+                not filter results to that country.
+            sort_by: `latest` (default) or `popular`, most viewed first.
+            trim: Set to `true` for the trimmed answer Scrape Creators returns:
+                fewer keys per item.
+            user_id: The numeric TikTok user id (`user.id` from
+                `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
+        """
+        return self._send(
+            _get_profile_videos(
+                handle=handle,
+                max_cursor=max_cursor,
+                region=region,
+                sort_by=sort_by,
+                trim=trim,
+                user_id=user_id,
+            ),
+            timeout=timeout,
+        )
+
     def search_hashtag(
         self,
         *,
@@ -729,13 +772,13 @@ class SyncTiktok(SyncAPIResource):
     def get_song(
         self,
         *,
-        clipId: str,
+        clip_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongResponse:
         """A TikTok sound as `music_info`: title, author, album, duration, `user_count` (videos using it), `play_url` and covers, in Scrape Creators' app layout built from TikTok's web data. Costs 1 credit.
 
         Args:
-            clipId: The sound's clip id, the number at the end of a sound URL such
+            clip_id: The sound's clip id, the number at the end of a sound URL such
                 as `https://www.tiktok.com/music/Different-
                 Acoustic-6717159721276540930`.
             timeout: Overrides the client's timeout for this request.
@@ -743,19 +786,19 @@ class SyncTiktok(SyncAPIResource):
         Returns:
             A :class:`~tapline.tiktok.TikTokSongResponse`.
         """
-        return self._send(_get_song(clipId=clipId), timeout=timeout)
+        return self._send(_get_song(clip_id=clip_id), timeout=timeout)
 
     def get_song_videos(
         self,
         *,
-        clipId: str,
+        clip_id: str,
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongVideosResponse:
         """Videos that use a TikTok sound, 30 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `cursor` back while `has_more` is 1. Costs 1 credit.
 
         Args:
-            clipId: The sound's clip id, the number at the end of a sound URL such
+            clip_id: The sound's clip id, the number at the end of a sound URL such
                 as `https://www.tiktok.com/music/Different-
                 Acoustic-6717159721276540930`.
             cursor: The `cursor` from the previous page. Omit it for the first page.
@@ -764,7 +807,7 @@ class SyncTiktok(SyncAPIResource):
         Returns:
             A :class:`~tapline.tiktok.TikTokSongVideosResponse`.
         """
-        return self._send(_get_song_videos(clipId=clipId, cursor=cursor), timeout=timeout)
+        return self._send(_get_song_videos(clip_id=clip_id, cursor=cursor), timeout=timeout)
 
     def get_followers(
         self,
@@ -819,6 +862,47 @@ class SyncTiktok(SyncAPIResource):
         """
         return self._send(
             _get_following(handle=handle, min_time=min_time, trim=trim), timeout=timeout
+        )
+
+    def get_video(
+        self,
+        *,
+        url: str,
+        cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
+        get_transcript: bool | None = None,
+        region: str | None = None,
+        trim: bool | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> GetVideoResponse:
+        """One TikTok video or photo post as `aweme_detail`, TikTok's own Android app object with exact counts, plus the `url` and `create_time_utc` Scrape Creators adds. It comes from the app's feed, which leaves out about a quarter of the keys the app's detail view has. With `get_transcript=true`, `transcript` holds the WEBVTT captions in the video's original language, or `null` when it has none. Costs 1 credit.
+
+        Args:
+            url: A TikTok video or photo post URL:
+                `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
+                `https://vm.tiktok.com/<code>/` share link.
+            cache_max_age: Accepted for Scrape Creators compatibility. It has no
+                effect: every request fetches a live answer and is charged.
+            get_transcript: Set to `true` to add `transcript`, the video's WEBVTT
+                captions, or `null` when it has none.
+            region: Two-letter country code for the proxy, such as `US`, `GB` or
+                `PH`. TikTok answers as it does to a viewer in that country; it does
+                not filter results to that country.
+            trim: Set to `true` for the trimmed answer Scrape Creators returns:
+                fewer keys per item.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.tiktok.GetVideoResponse`.
+        """
+        return self._send(
+            _get_video(
+                url=url,
+                cache_max_age=cache_max_age,
+                get_transcript=get_transcript,
+                region=region,
+                trim=trim,
+            ),
+            timeout=timeout,
         )
 
     def get_comment_replies(
@@ -895,89 +979,5 @@ class SyncTiktok(SyncAPIResource):
         """
         return self._send(
             _get_transcript(url=url, language=language, use_ai_as_fallback=use_ai_as_fallback),
-            timeout=timeout,
-        )
-
-    def get_video(
-        self,
-        *,
-        url: str,
-        cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
-        get_transcript: bool | None = None,
-        region: str | None = None,
-        trim: bool | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetVideoResponse:
-        """One TikTok video or photo post as `aweme_detail`, TikTok's own Android app object with exact counts, plus the `url` and `create_time_utc` Scrape Creators adds. It comes from the app's feed, which leaves out about a quarter of the keys the app's detail view has. With `get_transcript=true`, `transcript` holds the WEBVTT captions in the video's original language, or `null` when it has none. Costs 1 credit.
-
-        Args:
-            url: A TikTok video or photo post URL:
-                `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
-                `https://vm.tiktok.com/<code>/` share link.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            get_transcript: Set to `true` to add `transcript`, the video's WEBVTT
-                captions, or `null` when it has none.
-            region: Two-letter country code for the proxy, such as `US`, `GB` or
-                `PH`. TikTok answers as it does to a viewer in that country; it does
-                not filter results to that country.
-            trim: Set to `true` for the trimmed answer Scrape Creators returns:
-                fewer keys per item.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.tiktok.GetVideoResponse`.
-        """
-        return self._send(
-            _get_video(
-                url=url,
-                cache_max_age=cache_max_age,
-                get_transcript=get_transcript,
-                region=region,
-                trim=trim,
-            ),
-            timeout=timeout,
-        )
-
-    def get_profile_videos(
-        self,
-        *,
-        handle: str | None = None,
-        max_cursor: str | None = None,
-        region: str | None = None,
-        sort_by: Literal["latest", "popular"] | None = None,
-        trim: bool | None = None,
-        user_id: str | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetProfileVideosResponse:
-        """Videos a TikTok user posted, newest first or most popular first, 35 per page. Items follow Scrape Creators' app layout (`aweme_id`, `statistics`, `video.play_addr`, snake_case `author`), built from TikTok's logged-out web data: a key the web data has no source for is left out, never filled in, and TikTok rounds counts of 10,000 or more for logged-out viewers (1,041,184 plays reads 1,000,000). Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
-
-        Args:
-            handle: The TikTok handle, with or without a leading @. Send `handle` or
-                `user_id`, not both.
-            max_cursor: The `max_cursor` from the previous page. Omit it for the
-                first page.
-            region: Two-letter country code for the proxy, such as `US`, `GB` or
-                `PH`. TikTok answers as it does to a viewer in that country; it does
-                not filter results to that country.
-            sort_by: `latest` (default) or `popular`, most viewed first.
-            trim: Set to `true` for the trimmed answer Scrape Creators returns:
-                fewer keys per item.
-            user_id: The numeric TikTok user id (`user.id` from
-                `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
-        """
-        return self._send(
-            _get_profile_videos(
-                handle=handle,
-                max_cursor=max_cursor,
-                region=region,
-                sort_by=sort_by,
-                trim=trim,
-                user_id=user_id,
-            ),
             timeout=timeout,
         )

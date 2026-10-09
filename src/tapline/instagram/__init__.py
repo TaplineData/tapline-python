@@ -8,13 +8,13 @@ the attribute on a client is where the methods live.
 from __future__ import annotations
 
 from .models import (
-    CacheMaxAge,
     DownloadMedia,
     DownloadMediaEnum,
     ErrorDetail,
     ErrorResponse,
     GetAudioReelsParams,
     GetBasicProfileParams,
+    GetBasicProfileParamsCacheMaxAge,
     GetEmbedParams,
     GetHighlightDetailParams,
     GetHighlightsParams,
@@ -23,7 +23,9 @@ from .models import (
     GetPostCommentsParams,
     GetPostCountParams,
     GetPostParams,
+    GetPostParamsCacheMaxAge,
     GetProfileParams,
+    GetProfileParamsCacheMaxAge,
     GetUserPostsParams,
     GetUserReelsParams,
     GetUserReelsParams1,
@@ -223,13 +225,13 @@ from .models import (
 )
 
 __all__ = [
-    "CacheMaxAge",
     "DownloadMedia",
     "DownloadMediaEnum",
     "ErrorDetail",
     "ErrorResponse",
     "GetAudioReelsParams",
     "GetBasicProfileParams",
+    "GetBasicProfileParamsCacheMaxAge",
     "GetEmbedParams",
     "GetHighlightDetailParams",
     "GetHighlightsParams",
@@ -238,7 +240,9 @@ __all__ = [
     "GetPostCommentsParams",
     "GetPostCountParams",
     "GetPostParams",
+    "GetPostParamsCacheMaxAge",
     "GetProfileParams",
+    "GetProfileParamsCacheMaxAge",
     "GetUserPostsParams",
     "GetUserReelsParams",
     "GetUserReelsParams1",

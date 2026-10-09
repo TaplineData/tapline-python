@@ -81,6 +81,16 @@ def _get_post(
     )
 
 
+def _get_post_comments(
+    *, url: str, cursor: str | None = None, include_replies: Literal[False] | None = None
+) -> Request[InstagramCommentsResponse]:
+    return Request(
+        _PREFIX + "1/instagram/post/comments",
+        InstagramCommentsResponse,
+        {"url": url, "cursor": cursor, "include_replies": include_replies},
+    )
+
+
 def _get_profile(
     *,
     handle: str,
@@ -136,6 +146,16 @@ def _get_highlights(
     )
 
 
+def _get_user_posts(
+    *, handle: str, next_max_id: str | None = None, trim: bool = False
+) -> Request[InstagramUserPostsResponse]:
+    return Request(
+        _PREFIX + "1/instagram/user/posts",
+        InstagramUserPostsResponse,
+        {"handle": handle, "next_max_id": next_max_id, "trim": trim},
+    )
+
+
 def _get_user_reels(
     *,
     handle: str | None = None,
@@ -149,26 +169,6 @@ def _get_user_reels(
         _PREFIX + "1/instagram/user/reels",
         InstagramUserReelsResponse,
         {"handle": handle, "max_id": max_id, "trim": trim, "user_id": user_id},
-    )
-
-
-def _get_post_comments(
-    *, url: str, cursor: str | None = None, include_replies: Literal[False] | None = None
-) -> Request[InstagramCommentsResponse]:
-    return Request(
-        _PREFIX + "2/instagram/post/comments",
-        InstagramCommentsResponse,
-        {"url": url, "cursor": cursor, "include_replies": include_replies},
-    )
-
-
-def _get_user_posts(
-    *, handle: str, next_max_id: str | None = None, trim: bool = False
-) -> Request[InstagramUserPostsResponse]:
-    return Request(
-        _PREFIX + "2/instagram/user/posts",
-        InstagramUserPostsResponse,
-        {"handle": handle, "next_max_id": next_max_id, "trim": trim},
     )
 
 
@@ -269,6 +269,34 @@ class Instagram(AsyncAPIResource):
                 region=region,
                 trim=trim,
             ),
+            timeout=timeout,
+        )
+
+    async def get_post_comments(
+        self,
+        *,
+        url: str,
+        cursor: str | None = None,
+        include_replies: Literal[False] | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> InstagramCommentsResponse:
+        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
+
+        Args:
+            url: Instagram post or reel URL:
+                https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
+                /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
+                instagr.am. Query strings are allowed.
+            cursor: The `cursor` from the previous page. Omit it for the first page.
+            include_replies: Accepted for Scrape Creators compatibility only as
+                false: Instagram does not show replies to logged-out visitors.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.instagram.InstagramCommentsResponse`.
+        """
+        return await self._send(
+            _get_post_comments(url=url, cursor=cursor, include_replies=include_replies),
             timeout=timeout,
         )
 
@@ -394,6 +422,32 @@ class Instagram(AsyncAPIResource):
         """
         return await self._send(_get_highlights(handle=handle, user_id=user_id), timeout=timeout)
 
+    async def get_user_posts(
+        self,
+        *,
+        handle: str,
+        next_max_id: str | None = None,
+        trim: bool = False,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> InstagramUserPostsResponse:
+        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
+
+        Args:
+            handle: Instagram handle, with or without a leading @.
+            next_max_id: The `next_max_id` from the previous page, or the
+                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
+                first page.
+            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
+                item, same values.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.instagram.InstagramUserPostsResponse`.
+        """
+        return await self._send(
+            _get_user_posts(handle=handle, next_max_id=next_max_id, trim=trim), timeout=timeout
+        )
+
     async def get_user_reels(
         self,
         *,
@@ -423,60 +477,6 @@ class Instagram(AsyncAPIResource):
         return await self._send(
             _get_user_reels(handle=handle, max_id=max_id, trim=trim, user_id=user_id),
             timeout=timeout,
-        )
-
-    async def get_post_comments(
-        self,
-        *,
-        url: str,
-        cursor: str | None = None,
-        include_replies: Literal[False] | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> InstagramCommentsResponse:
-        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
-
-        Args:
-            url: Instagram post or reel URL:
-                https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
-                /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
-                instagr.am. Query strings are allowed.
-            cursor: The `cursor` from the previous page. Omit it for the first page.
-            include_replies: Accepted for Scrape Creators compatibility only as
-                false: Instagram does not show replies to logged-out visitors.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.instagram.InstagramCommentsResponse`.
-        """
-        return await self._send(
-            _get_post_comments(url=url, cursor=cursor, include_replies=include_replies),
-            timeout=timeout,
-        )
-
-    async def get_user_posts(
-        self,
-        *,
-        handle: str,
-        next_max_id: str | None = None,
-        trim: bool = False,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> InstagramUserPostsResponse:
-        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
-
-        Args:
-            handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page, or the
-                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
-                first page.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.instagram.InstagramUserPostsResponse`.
-        """
-        return await self._send(
-            _get_user_posts(handle=handle, next_max_id=next_max_id, trim=trim), timeout=timeout
         )
 
 
@@ -577,6 +577,34 @@ class SyncInstagram(SyncAPIResource):
                 region=region,
                 trim=trim,
             ),
+            timeout=timeout,
+        )
+
+    def get_post_comments(
+        self,
+        *,
+        url: str,
+        cursor: str | None = None,
+        include_replies: Literal[False] | None = None,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> InstagramCommentsResponse:
+        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
+
+        Args:
+            url: Instagram post or reel URL:
+                https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
+                /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
+                instagr.am. Query strings are allowed.
+            cursor: The `cursor` from the previous page. Omit it for the first page.
+            include_replies: Accepted for Scrape Creators compatibility only as
+                false: Instagram does not show replies to logged-out visitors.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.instagram.InstagramCommentsResponse`.
+        """
+        return self._send(
+            _get_post_comments(url=url, cursor=cursor, include_replies=include_replies),
             timeout=timeout,
         )
 
@@ -702,6 +730,32 @@ class SyncInstagram(SyncAPIResource):
         """
         return self._send(_get_highlights(handle=handle, user_id=user_id), timeout=timeout)
 
+    def get_user_posts(
+        self,
+        *,
+        handle: str,
+        next_max_id: str | None = None,
+        trim: bool = False,
+        timeout: float | Timeout | NotGiven | None = not_given,
+    ) -> InstagramUserPostsResponse:
+        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
+
+        Args:
+            handle: Instagram handle, with or without a leading @.
+            next_max_id: The `next_max_id` from the previous page, or the
+                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
+                first page.
+            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
+                item, same values.
+            timeout: Overrides the client's timeout for this request.
+
+        Returns:
+            A :class:`~tapline.instagram.InstagramUserPostsResponse`.
+        """
+        return self._send(
+            _get_user_posts(handle=handle, next_max_id=next_max_id, trim=trim), timeout=timeout
+        )
+
     def get_user_reels(
         self,
         *,
@@ -731,58 +785,4 @@ class SyncInstagram(SyncAPIResource):
         return self._send(
             _get_user_reels(handle=handle, max_id=max_id, trim=trim, user_id=user_id),
             timeout=timeout,
-        )
-
-    def get_post_comments(
-        self,
-        *,
-        url: str,
-        cursor: str | None = None,
-        include_replies: Literal[False] | None = None,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> InstagramCommentsResponse:
-        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
-
-        Args:
-            url: Instagram post or reel URL:
-                https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
-                /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
-                instagr.am. Query strings are allowed.
-            cursor: The `cursor` from the previous page. Omit it for the first page.
-            include_replies: Accepted for Scrape Creators compatibility only as
-                false: Instagram does not show replies to logged-out visitors.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.instagram.InstagramCommentsResponse`.
-        """
-        return self._send(
-            _get_post_comments(url=url, cursor=cursor, include_replies=include_replies),
-            timeout=timeout,
-        )
-
-    def get_user_posts(
-        self,
-        *,
-        handle: str,
-        next_max_id: str | None = None,
-        trim: bool = False,
-        timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> InstagramUserPostsResponse:
-        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
-
-        Args:
-            handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page, or the
-                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
-                first page.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
-            timeout: Overrides the client's timeout for this request.
-
-        Returns:
-            A :class:`~tapline.instagram.InstagramUserPostsResponse`.
-        """
-        return self._send(
-            _get_user_posts(handle=handle, next_max_id=next_max_id, trim=trim), timeout=timeout
         )

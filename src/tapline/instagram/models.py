@@ -12,11 +12,15 @@ from pydantic import Field, RootModel
 from tapline._models import PREFER_ENUM, BaseModel
 
 
-class CacheMaxAge(str, Enum):
+class DownloadMediaEnum(Enum):
     """
-    Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
+    Accepted for Scrape Creators compatibility only as false: Tapline does not re-host media.
     """
 
+    BOOLEAN_FALSE = False
+
+
+class GetBasicProfileParamsCacheMaxAge(str, Enum):
     FIELD_1D = "1d"
     FIELD_3D = "3d"
     FIELD_7D = "7d"
@@ -24,12 +28,20 @@ class CacheMaxAge(str, Enum):
     FIELD_30D = "30d"
 
 
-class DownloadMediaEnum(Enum):
-    """
-    Accepted for Scrape Creators compatibility only as false: Tapline does not re-host media.
-    """
+class GetPostParamsCacheMaxAge(str, Enum):
+    FIELD_1D = "1d"
+    FIELD_3D = "3d"
+    FIELD_7D = "7d"
+    FIELD_14D = "14d"
+    FIELD_30D = "30d"
 
-    BOOLEAN_FALSE = False
+
+class GetProfileParamsCacheMaxAge(str, Enum):
+    FIELD_1D = "1d"
+    FIELD_3D = "3d"
+    FIELD_7D = "7d"
+    FIELD_14D = "14d"
+    FIELD_30D = "30d"
 
 
 class IncludeRepliesEnum(Enum):
@@ -99,7 +111,7 @@ class GetAudioReelsParams(BaseModel):
 
 
 class GetBasicProfileParams(BaseModel):
-    cache_max_age: CacheMaxAge | None = None
+    cache_max_age: GetBasicProfileParamsCacheMaxAge | None = None
     """
     Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
     """
@@ -183,7 +195,7 @@ class GetPostCountParams(BaseModel):
 
 
 class GetPostParams(BaseModel):
-    cache_max_age: CacheMaxAge | None = None
+    cache_max_age: GetPostParamsCacheMaxAge | None = None
     """
     Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
     """
@@ -210,7 +222,7 @@ class GetPostParams(BaseModel):
 
 
 class GetProfileParams(BaseModel):
-    cache_max_age: CacheMaxAge | None = None
+    cache_max_age: GetProfileParamsCacheMaxAge | None = None
     """
     Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
     """
@@ -1929,8 +1941,16 @@ class InstagramPostTrimResponse(BaseModel):
     xdt_shortcode_media: InstagramPostPageXdtShortcodeMedia | None
 
 
-class InstagramPostResponse(RootModel[InstagramPostFullResponse | InstagramPostTrimResponse]):
-    root: InstagramPostFullResponse | InstagramPostTrimResponse
+class InstagramPostResponse(
+    RootModel[
+        Annotated[
+            InstagramPostFullResponse | InstagramPostTrimResponse, Field(union_mode="left_to_right")
+        ]
+    ]
+):
+    root: Annotated[
+        InstagramPostFullResponse | InstagramPostTrimResponse, Field(union_mode="left_to_right")
+    ]
 
 
 class InstagramPrimaryCta(BaseModel):

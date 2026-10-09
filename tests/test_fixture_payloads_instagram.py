@@ -54,29 +54,29 @@ RESPONSES: dict[str, type[Any]] = {
     "get_audio_reels": InstagramAudioReelsResponse,
     "get_basic_profile": InstagramBasicProfileResponse,
     "get_post": InstagramPostResponse,
+    "get_post_comments": InstagramCommentsResponse,
     "get_profile": InstagramProfileResponse,
     "get_post_count": InstagramPostCountResponse,
     "search_popular": InstagramPopularSearchResponse,
     "get_embed": InstagramEmbedResponse,
     "get_highlight_detail": InstagramHighlightDetailResponse,
     "get_highlights": InstagramHighlightsResponse,
-    "get_user_reels": InstagramUserReelsResponse,
-    "get_post_comments": InstagramCommentsResponse,
     "get_user_posts": InstagramUserPostsResponse,
+    "get_user_reels": InstagramUserReelsResponse,
 }
 METHODS = [
     "get_audio_reels",
     "get_basic_profile",
     "get_post",
+    "get_post_comments",
     "get_profile",
     "get_post_count",
     "search_popular",
     "get_embed",
     "get_highlight_detail",
     "get_highlights",
-    "get_user_reels",
-    "get_post_comments",
     "get_user_posts",
+    "get_user_reels",
 ]
 
 
