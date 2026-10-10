@@ -243,7 +243,7 @@ def _get_net_worth_history(
     )
 
 
-def _get_wallet_portfolio(
+def _list_wallet_portfolio(
     wallet: str, *, cursor: str = "", limit: int = 50
 ) -> Request[BirdeyeWalletPortfolioPage]:
     return Request(
@@ -326,7 +326,7 @@ class Birdeye(AsyncAPIResource):
             address: See the API reference.
             count: Number of candles.
             interval: Candle size.
-            to: Last candle's unix time in seconds.
+            to: Return bars strictly before this unix time, in seconds.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -420,7 +420,7 @@ class Birdeye(AsyncAPIResource):
         side: BirdeyeTradeSideParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenTradesPage:
-        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop before offset 10,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
+        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop after offset 9,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
 
         Args:
             chain: See the API reference.
@@ -645,7 +645,7 @@ class Birdeye(AsyncAPIResource):
             _get_net_worth_history(wallet, count=count, interval=interval), timeout=timeout
         )
 
-    async def get_wallet_portfolio(
+    async def list_wallet_portfolio(
         self,
         wallet: str,
         *,
@@ -669,7 +669,7 @@ class Birdeye(AsyncAPIResource):
             A :class:`~tapline.birdeye.BirdeyeWalletPortfolioPage`.
         """
         return await self._send(
-            _get_wallet_portfolio(wallet, cursor=cursor, limit=limit), timeout=timeout
+            _list_wallet_portfolio(wallet, cursor=cursor, limit=limit), timeout=timeout
         )
 
 
@@ -746,7 +746,7 @@ class SyncBirdeye(SyncAPIResource):
             address: See the API reference.
             count: Number of candles.
             interval: Candle size.
-            to: Last candle's unix time in seconds.
+            to: Return bars strictly before this unix time, in seconds.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -840,7 +840,7 @@ class SyncBirdeye(SyncAPIResource):
         side: BirdeyeTradeSideParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenTradesPage:
-        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop before offset 10,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
+        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop after offset 9,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
 
         Args:
             chain: See the API reference.
@@ -1063,7 +1063,7 @@ class SyncBirdeye(SyncAPIResource):
             _get_net_worth_history(wallet, count=count, interval=interval), timeout=timeout
         )
 
-    def get_wallet_portfolio(
+    def list_wallet_portfolio(
         self,
         wallet: str,
         *,
@@ -1087,5 +1087,5 @@ class SyncBirdeye(SyncAPIResource):
             A :class:`~tapline.birdeye.BirdeyeWalletPortfolioPage`.
         """
         return self._send(
-            _get_wallet_portfolio(wallet, cursor=cursor, limit=limit), timeout=timeout
+            _list_wallet_portfolio(wallet, cursor=cursor, limit=limit), timeout=timeout
         )

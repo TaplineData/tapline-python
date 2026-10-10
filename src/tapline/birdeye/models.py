@@ -30,6 +30,11 @@ class BirdeyeCandleInterval(str, Enum):
     FIELD_1MO = "1mo"
 
 
+class BirdeyeCursorCompletion(str, Enum):
+    EXHAUSTED = "exhausted"
+    DEPTH_LIMIT = "depth_limit"
+
+
 class BirdeyeLeaderboardInterval(str, Enum):
     FIELD_1D = "1d"
     FIELD_7D = "7d"
@@ -144,7 +149,7 @@ class PublicError(str, Enum):
 
 
 class BirdeyeCursorPagination(BaseModel):
-    completion: str | None
+    completion: BirdeyeCursorCompletionValue | None
     next_cursor: str | None
 
 
@@ -1513,7 +1518,7 @@ class GetTokenOhlcvParams(BaseModel):
     """
     to: Annotated[int | None, Field(ge=0)] = None
     """
-    Last candle's unix time in seconds.
+    Return bars strictly before this unix time, in seconds.
     """
 
 
@@ -1569,27 +1574,6 @@ class GetWalletPnlSummaryParams(BaseModel):
     ]
     """
     Wallet address on the chosen chain: base58 on Solana, 0x plus 40 hex characters on an EVM chain.
-    """
-
-
-class GetWalletPortfolioParams(BaseModel):
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
-    """
-    Holdings per page.
-    """
-    wallet: Annotated[
-        str,
-        Field(
-            examples=["8B3KyNP6QWnvbuHAz4CCMLQmWhcXJ3KvcX2GHCEs6yNS"],
-            pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$",
-        ),
-    ]
-    """
-    Solana wallet address, base58.
     """
 
 
@@ -1751,6 +1735,27 @@ class ListTrendingTokensParams(BaseModel):
     """
 
 
+class ListWalletPortfolioParams(BaseModel):
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
+    """
+    Holdings per page.
+    """
+    wallet: Annotated[
+        str,
+        Field(
+            examples=["8B3KyNP6QWnvbuHAz4CCMLQmWhcXJ3KvcX2GHCEs6yNS"],
+            pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$",
+        ),
+    ]
+    """
+    Solana wallet address, base58.
+    """
+
+
 class ListWalletTokensParams(BaseModel):
     chain: BirdeyePnlChain
     """
@@ -1866,4 +1871,5 @@ BirdeyeTrendingChainParam: TypeAlias = (
 BirdeyeWalletTokenSortParam: TypeAlias = (
     BirdeyeWalletTokenSort | Literal["last_trade", "tx_count", "total_pnl"]
 )
+BirdeyeCursorCompletionValue: TypeAlias = Annotated[BirdeyeCursorCompletion | str, PREFER_ENUM]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

@@ -70,7 +70,7 @@ RESPONSES: dict[str, type[Any]] = {
     "list_first_buyers": BirdeyeFirstBuyers,
     "list_token_holders": BirdeyeTokenHolders,
     "get_net_worth_history": BirdeyeNetWorthHistory,
-    "get_wallet_portfolio": BirdeyeWalletPortfolioPage,
+    "list_wallet_portfolio": BirdeyeWalletPortfolioPage,
 }
 METHODS = [
     "list_new_listings",
@@ -88,7 +88,7 @@ METHODS = [
     "list_first_buyers",
     "list_token_holders",
     "get_net_worth_history",
-    "get_wallet_portfolio",
+    "list_wallet_portfolio",
 ]
 
 
