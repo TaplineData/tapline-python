@@ -31,6 +31,7 @@ next API Tapline adds.
 
 from . import (
     airbnb,
+    birdeye,
     geckoterminal,
     gmgn,
     goplus,
@@ -70,6 +71,7 @@ from ._types import Headers, NotGiven, Timeout, not_given
 from ._version import __title__, __version__
 from .resources import (
     Airbnb,
+    Birdeye,
     Geckoterminal,
     Gmgn,
     Goplus,
@@ -78,6 +80,7 @@ from .resources import (
     Ponsfamily,
     Pumpfun,
     SyncAirbnb,
+    SyncBirdeye,
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
@@ -103,6 +106,7 @@ __all__ = [
     "AuthenticationError",
     "BadRequestError",
     "BaseModel",
+    "Birdeye",
     "CursorCompletion",
     "CursorCompletionValue",
     "CursorPagination",
@@ -125,6 +129,7 @@ __all__ = [
     "Pumpfun",
     "RateLimitError",
     "SyncAirbnb",
+    "SyncBirdeye",
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",
@@ -146,6 +151,7 @@ __all__ = [
     "__title__",
     "__version__",
     "airbnb",
+    "birdeye",
     "geckoterminal",
     "gmgn",
     "goplus",

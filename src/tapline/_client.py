@@ -4,7 +4,7 @@
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``geckoterminal``, ``gmgn``, ``goplus``, ``instagram``,
+service (``airbnb``, ``birdeye``, ``geckoterminal``, ``gmgn``, ``goplus``, ``instagram``,
 ``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
 all sharing its API key, connection pool and retry policy.
 """
@@ -20,6 +20,7 @@ from ._constants import DEFAULT_MAX_RETRIES
 from ._types import Headers, NotGiven, Timeout, not_given
 from .resources import (
     Airbnb,
+    Birdeye,
     Geckoterminal,
     Gmgn,
     Goplus,
@@ -28,6 +29,7 @@ from .resources import (
     Ponsfamily,
     Pumpfun,
     SyncAirbnb,
+    SyncBirdeye,
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
@@ -72,6 +74,9 @@ class TaplineClient(AsyncAPIClient):
 
     airbnb: Airbnb
     """The Airbnb endpoints."""
+
+    birdeye: Birdeye
+    """The Birdeye endpoints."""
 
     geckoterminal: Geckoterminal
     """The GeckoTerminal endpoints."""
@@ -149,6 +154,7 @@ class TaplineClient(AsyncAPIClient):
             http_client=http_client,
         )
         self.airbnb = Airbnb(self)
+        self.birdeye = Birdeye(self)
         self.geckoterminal = Geckoterminal(self)
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
@@ -180,6 +186,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     airbnb: SyncAirbnb
     """The Airbnb endpoints."""
+
+    birdeye: SyncBirdeye
+    """The Birdeye endpoints."""
 
     geckoterminal: SyncGeckoterminal
     """The GeckoTerminal endpoints."""
@@ -257,6 +266,7 @@ class SyncTaplineClient(SyncAPIClient):
             http_client=http_client,
         )
         self.airbnb = SyncAirbnb(self)
+        self.birdeye = SyncBirdeye(self)
         self.geckoterminal = SyncGeckoterminal(self)
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
