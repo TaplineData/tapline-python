@@ -8,11 +8,11 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from .._base_client import encode_path
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..zillow import (
     ZillowComparables,
     ZillowDaysOnZillowParam,
@@ -34,11 +34,6 @@ __all__ = ["SyncZillow", "Zillow"]
 _PREFIX = "/v1/zillow"
 
 
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
-
-
 def _search_locations(
     *, query: str, limit: int = 8, type: ZillowLocationTypeParam = "all"
 ) -> Request[ZillowLocations]:
@@ -47,24 +42,24 @@ def _search_locations(
     )
 
 
-def _get_property(zpid: str) -> Request[ZillowProperty]:
-    return Request(encode_path(_PREFIX + "/properties/{zpid}", zpid=zpid), ZillowProperty)
+def _get_property(zpid: int) -> Request[ZillowProperty]:
+    return Request(encode_path(_PREFIX + "/properties/{zpid}", zpid=str(zpid)), ZillowProperty)
 
 
-def _list_comparables(zpid: str) -> Request[ZillowComparables]:
+def _list_comparables(zpid: int) -> Request[ZillowComparables]:
     return Request(
-        encode_path(_PREFIX + "/properties/{zpid}/comparables", zpid=zpid), ZillowComparables
+        encode_path(_PREFIX + "/properties/{zpid}/comparables", zpid=str(zpid)), ZillowComparables
     )
 
 
 def _get_property_history(
-    zpid: str,
+    zpid: int,
     *,
     metric: ZillowHistoryMetricParam = "zestimate",
     period: ZillowHistoryPeriodParam = "ten_years",
 ) -> Request[ZillowPropertyHistory]:
     return Request(
-        encode_path(_PREFIX + "/properties/{zpid}/history", zpid=zpid),
+        encode_path(_PREFIX + "/properties/{zpid}/history", zpid=str(zpid)),
         ZillowPropertyHistory,
         {"metric": metric, "period": period},
     )
@@ -164,14 +159,16 @@ class Zillow(AsyncAPIResource):
 
     async def get_property(
         self,
-        zpid: str,
+        zpid: int,
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowProperty:
         """One home on Zillow by zpid, as Zillow's own `property` object. How much it carries depends on the home's status (`FOR_SALE`, `FOR_RENT`, `RECENTLY_SOLD`, `OTHER` for off market): rentals carry about 180 `resoFacts` (facts and features), `priceHistory` with events and sources, `nearbyHomes` and rental fees; for-sale, sold and off-market homes carry about 20 `resoFacts`, and only some for-sale homes carry `priceHistory`, as date and price pairs. Every status carries the address, Zestimate and Rent Zestimate, beds, baths, living area, lot, year built, photos, listing attribution and MLS, and coordinates. `price` is the list price for sale, the monthly rent for rentals, the last sale price when sold, and the Zestimate off market. Tax history is not on this route; the `history` route gives yearly tax paid and assessed value. `zpid` is an integer here. An unknown zpid answers 404, which is charged. Costs 3 credits.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -181,14 +178,16 @@ class Zillow(AsyncAPIResource):
 
     async def list_comparables(
         self,
-        zpid: str,
+        zpid: int,
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowComparables:
         """The comparable homes Zillow uses for a home's Zestimate, usually 5: integer zpid, address, price, beds, baths, living area, lot, status, coordinates, a photo and the listing attribution. `lotSize` is square feet; `lotAreaValue` is in `lotAreaUnits`, which Zillow spells `Acres`, `Square Feet` or `sqft`. Zillow sends no sale date or distance for comparables. An empty `items` list means Zillow lists no comparables, which is charged. An unknown zpid answers 404, or for some ids an empty `items` list. Costs 1 credit.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -198,7 +197,7 @@ class Zillow(AsyncAPIResource):
 
     async def get_property_history(
         self,
-        zpid: str,
+        zpid: int,
         *,
         metric: ZillowHistoryMetricParam = "zestimate",
         period: ZillowHistoryPeriodParam = "ten_years",
@@ -207,7 +206,9 @@ class Zillow(AsyncAPIResource):
         """A home's value and tax history as Zillow charts it: monthly Zestimate or Rent Zestimate, monthly year-over-year Zestimate change, yearly property tax paid, or yearly assessed value split into `Land` and `Structure` series. Each series is a list of points with `x` (epoch milliseconds) and `y` (USD, or a fraction for `zestimate_change`). Yearly tax points carry 1 January (UTC) of the tax year as `x` and amounts rounded to cents. `series` is empty when Zillow has no data for the metric, which is charged. An unknown zpid answers 404, or for some ids an empty `series`. Costs 1 credit.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             metric: Which series: `zestimate` (monthly Zestimate), `rent_zestimate`
                 (monthly Rent Zestimate), `zestimate_change` (monthly year-over-year
                 change as a fraction), `tax_paid` (yearly property tax) or
@@ -367,14 +368,16 @@ class SyncZillow(SyncAPIResource):
 
     def get_property(
         self,
-        zpid: str,
+        zpid: int,
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowProperty:
         """One home on Zillow by zpid, as Zillow's own `property` object. How much it carries depends on the home's status (`FOR_SALE`, `FOR_RENT`, `RECENTLY_SOLD`, `OTHER` for off market): rentals carry about 180 `resoFacts` (facts and features), `priceHistory` with events and sources, `nearbyHomes` and rental fees; for-sale, sold and off-market homes carry about 20 `resoFacts`, and only some for-sale homes carry `priceHistory`, as date and price pairs. Every status carries the address, Zestimate and Rent Zestimate, beds, baths, living area, lot, year built, photos, listing attribution and MLS, and coordinates. `price` is the list price for sale, the monthly rent for rentals, the last sale price when sold, and the Zestimate off market. Tax history is not on this route; the `history` route gives yearly tax paid and assessed value. `zpid` is an integer here. An unknown zpid answers 404, which is charged. Costs 3 credits.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -384,14 +387,16 @@ class SyncZillow(SyncAPIResource):
 
     def list_comparables(
         self,
-        zpid: str,
+        zpid: int,
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowComparables:
         """The comparable homes Zillow uses for a home's Zestimate, usually 5: integer zpid, address, price, beds, baths, living area, lot, status, coordinates, a photo and the listing attribution. `lotSize` is square feet; `lotAreaValue` is in `lotAreaUnits`, which Zillow spells `Acres`, `Square Feet` or `sqft`. Zillow sends no sale date or distance for comparables. An empty `items` list means Zillow lists no comparables, which is charged. An unknown zpid answers 404, or for some ids an empty `items` list. Costs 1 credit.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -401,7 +406,7 @@ class SyncZillow(SyncAPIResource):
 
     def get_property_history(
         self,
-        zpid: str,
+        zpid: int,
         *,
         metric: ZillowHistoryMetricParam = "zestimate",
         period: ZillowHistoryPeriodParam = "ten_years",
@@ -410,7 +415,9 @@ class SyncZillow(SyncAPIResource):
         """A home's value and tax history as Zillow charts it: monthly Zestimate or Rent Zestimate, monthly year-over-year Zestimate change, yearly property tax paid, or yearly assessed value split into `Land` and `Structure` series. Each series is a list of points with `x` (epoch milliseconds) and `y` (USD, or a fraction for `zestimate_change`). Yearly tax points carry 1 January (UTC) of the tax year as `x` and amounts rounded to cents. `series` is empty when Zillow has no data for the metric, which is charged. An unknown zpid answers 404, or for some ids an empty `series`. Costs 1 credit.
 
         Args:
-            zpid: See the API reference.
+            zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
+                URL, or the `zpid` of a property, comparable or address suggestion.
+                Search listings carry it as a string.
             metric: Which series: `zestimate` (monthly Zestimate), `rent_zestimate`
                 (monthly Rent Zestimate), `zestimate_change` (monthly year-over-year
                 change as a fraction), `tax_paid` (yearly property tax) or

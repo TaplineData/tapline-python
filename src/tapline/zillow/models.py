@@ -132,23 +132,23 @@ class GetPropertyHistoryParams(BaseModel):
     """
     How far back the series goes.
     """
-    zpid: Annotated[str, Field(examples=["15067360"], pattern="^[1-9][0-9]{0,11}$")]
+    zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
     """
-    Zillow property id, the digits before `_zpid` in a home's Zillow URL.
+    Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
     """
 
 
 class GetPropertyParams(BaseModel):
-    zpid: Annotated[str, Field(examples=["15067360"], pattern="^[1-9][0-9]{0,11}$")]
+    zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
     """
-    Zillow property id, the digits before `_zpid` in a home's Zillow URL.
+    Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
     """
 
 
 class ListComparablesParams(BaseModel):
-    zpid: Annotated[str, Field(examples=["15067360"], pattern="^[1-9][0-9]{0,11}$")]
+    zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
     """
-    Zillow property id, the digits before `_zpid` in a home's Zillow URL.
+    Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
     """
 
 
@@ -315,7 +315,7 @@ class ZillowComparable(BaseModel):
     miniCardPhotos: list[ZillowComparablePhoto]
     newConstructionType: str | None
     parentRegion: ZillowComparableParentRegion | None
-    price: int
+    price: int | None
     propertyTypeDimension: str
     providerListingID: str | None
     state: str
@@ -373,7 +373,7 @@ class ZillowComparablePhoto(BaseModel):
 
 class ZillowComparables(BaseModel):
     items: list[ZillowComparable]
-    zpid: str
+    zpid: int
 
 
 class ZillowCursorPagination(BaseModel):
@@ -577,8 +577,11 @@ class ZillowListingSubType(BaseModel):
     is_bankOwned: bool | None = None
     is_comingSoon: bool | None = None
     is_forAuction: bool | None = None
+    is_foreclosure: bool | None = None
     is_newHome: bool | None = None
     is_openHouse: bool | None = None
+    is_pending: bool | None = None
+    is_roomForRent: bool | None = None
 
 
 class ZillowListingUnit(BaseModel):
@@ -743,7 +746,7 @@ class ZillowProperty(BaseModel):
     postingPresentationTypes: Any = None
     postingProductType: str | None = None
     postingUrl: str | None = None
-    price: int
+    price: int | None
     priceChange: int | None = None
     priceChangeDate: int | None = None
     priceChangeDateString: str | None = None
@@ -953,7 +956,7 @@ class ZillowPropertyHistory(BaseModel):
     metric: ZillowHistoryMetric
     period: ZillowHistoryPeriod
     series: list[ZillowHomeValueChartSeries]
-    zpid: str
+    zpid: int
 
 
 class ZillowPropertyHomeInsight(BaseModel):
@@ -1131,8 +1134,8 @@ class ZillowPropertyNearbyHome(BaseModel):
     address: ZillowPropertyNearbyHomeAddress
     attributionInfo: ZillowPropertyNearbyHomeAttributionInfo
     baseRent: int | None
-    bathrooms: int
-    bedrooms: int
+    bathrooms: float | None
+    bedrooms: int | None
     currency: str
     formattedChip: ZillowPropertyFormattedChip
     hdpTypeDimension: str
@@ -1157,9 +1160,9 @@ class ZillowPropertyNearbyHome(BaseModel):
     miniCardPhotos: list[ZillowPropertyNeighborhoodMapThumb]
     newConstructionType: str | None
     parentRegion: Any
-    price: int
+    price: int | None
     propertyTypeDimension: str
-    providerListingID: str
+    providerListingID: str | None
     resoFacts: ZillowPropertyNearbyHomeResoFacts
     state: str
     totalRequiredMonthlyMaxFee: int | None
