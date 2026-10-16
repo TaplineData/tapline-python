@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, TikTok, and Birdeye in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, TikTok, Birdeye, and LinkedIn in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -21,8 +21,9 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | Instagram | Read profiles, posts, reels, comments, highlights, audio pages, popular topics, embeds, and exact post counts | [Instagram guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/instagram/README.md) |
 | TikTok | Read profiles and videos, comments and replies, followers, sounds, hashtags, captions, collections, suggestions, and regional trending feeds | [TikTok guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/tiktok/README.md) |
 | Birdeye | Read token overviews, security checks, trades, candles, pools, trending tokens and launchpad listings on Solana and seven EVM chains, plus trader leaderboards and wallet PnL | [Birdeye guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/birdeye/README.md) |
+| LinkedIn | Read public member profiles, company, school and showcase pages with their posts, posts and Pulse articles with video transcripts, and job search and postings | [LinkedIn guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/linkedin/README.md) |
 
-One API key and credit balance work across all eleven services.
+One API key and credit balance work across all thirteen services.
 
 ## Get started
 
@@ -205,6 +206,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [Instagram](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/instagram/README.md)
 - [TikTok](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/tiktok/README.md)
 - [Birdeye](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/birdeye/README.md)
+- [LinkedIn](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/linkedin/README.md)
 
 ## License
 

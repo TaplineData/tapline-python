@@ -18,7 +18,6 @@ from dataclasses import dataclass
 from typing import Generic, Literal, Protocol, TypeVar
 
 from ._base_client import AsyncAPIClient, SyncAPIClient
-from ._pagination import CursorPagination
 from ._types import Body, NotGiven, Query, Timeout
 
 __all__ = ["AsyncAPIResource", "CursorPage", "Request", "SyncAPIResource"]
@@ -26,11 +25,18 @@ __all__ = ["AsyncAPIResource", "CursorPage", "Request", "SyncAPIResource"]
 _ResponseT = TypeVar("_ResponseT")
 
 
+class CursorPosition(Protocol):
+    """Where a walk resumes; each service's generated pagination model has this shape."""
+
+    @property
+    def next_cursor(self) -> str | None: ...
+
+
 class CursorPage(Protocol):
     """One page of a cursor-paginated response: it says where the walk resumes."""
 
     @property
-    def pagination(self) -> CursorPagination: ...
+    def pagination(self) -> CursorPosition: ...
 
 
 _PageT = TypeVar("_PageT", bound=CursorPage)
