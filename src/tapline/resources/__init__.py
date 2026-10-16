@@ -14,6 +14,7 @@ from .pumpfun import Pumpfun, SyncPumpfun
 from .tiktok import SyncTiktok, Tiktok
 from .twitter import SyncTwitter, Twitter
 from .youtube import SyncYouTube, YouTube
+from .zillow import SyncZillow, Zillow
 
 __all__ = [
     "Airbnb",
@@ -37,7 +38,9 @@ __all__ = [
     "SyncTiktok",
     "SyncTwitter",
     "SyncYouTube",
+    "SyncZillow",
     "Tiktok",
     "Twitter",
     "YouTube",
+    "Zillow",
 ]

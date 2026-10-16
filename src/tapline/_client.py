@@ -5,7 +5,8 @@ Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``geckoterminal``, ``gmgn``, ``goplus``, ``instagram``,
-``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
+``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``,
+``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -40,9 +41,11 @@ from .resources import (
     SyncTiktok,
     SyncTwitter,
     SyncYouTube,
+    SyncZillow,
     Tiktok,
     Twitter,
     YouTube,
+    Zillow,
 )
 
 __all__ = ["SyncTaplineClient", "TaplineClient"]
@@ -108,6 +111,9 @@ class TaplineClient(AsyncAPIClient):
     youtube: YouTube
     """The YouTube endpoints."""
 
+    zillow: Zillow
+    """The Zillow endpoints."""
+
     def __init__(
         self,
         *,
@@ -165,6 +171,7 @@ class TaplineClient(AsyncAPIClient):
         self.tiktok = Tiktok(self)
         self.twitter = Twitter(self)
         self.youtube = YouTube(self)
+        self.zillow = Zillow(self)
 
 
 class SyncTaplineClient(SyncAPIClient):
@@ -219,6 +226,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     youtube: SyncYouTube
     """The YouTube endpoints."""
+
+    zillow: SyncZillow
+    """The Zillow endpoints."""
 
     def __init__(
         self,
@@ -277,3 +287,4 @@ class SyncTaplineClient(SyncAPIClient):
         self.tiktok = SyncTiktok(self)
         self.twitter = SyncTwitter(self)
         self.youtube = SyncYouTube(self)
+        self.zillow = SyncZillow(self)

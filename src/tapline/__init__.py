@@ -43,6 +43,7 @@ from . import (
     tiktok,
     twitter,
     youtube,
+    zillow,
 )
 from ._client import SyncTaplineClient, TaplineClient
 from ._exceptions import (
@@ -91,9 +92,11 @@ from .resources import (
     SyncTiktok,
     SyncTwitter,
     SyncYouTube,
+    SyncZillow,
     Tiktok,
     Twitter,
     YouTube,
+    Zillow,
 )
 
 __all__ = [
@@ -141,6 +144,7 @@ __all__ = [
     "SyncTiktok",
     "SyncTwitter",
     "SyncYouTube",
+    "SyncZillow",
     "TaplineClient",
     "TaplineError",
     "Tiktok",
@@ -148,6 +152,7 @@ __all__ = [
     "Twitter",
     "UnprocessableEntityError",
     "YouTube",
+    "Zillow",
     "__title__",
     "__version__",
     "airbnb",
@@ -164,4 +169,5 @@ __all__ = [
     "tiktok",
     "twitter",
     "youtube",
+    "zillow",
 ]
