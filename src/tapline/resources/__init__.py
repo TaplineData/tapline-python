@@ -8,6 +8,7 @@ from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
 from .instagram import Instagram, SyncInstagram
+from .linkedin import Linkedin, SyncLinkedin
 from .pinterest import Pinterest, SyncPinterest
 from .ponsfamily import Ponsfamily, SyncPonsfamily
 from .pumpfun import Pumpfun, SyncPumpfun
@@ -22,6 +23,7 @@ __all__ = [
     "Gmgn",
     "Goplus",
     "Instagram",
+    "Linkedin",
     "Pinterest",
     "Ponsfamily",
     "Pumpfun",
@@ -31,6 +33,7 @@ __all__ = [
     "SyncGmgn",
     "SyncGoplus",
     "SyncInstagram",
+    "SyncLinkedin",
     "SyncPinterest",
     "SyncPonsfamily",
     "SyncPumpfun",

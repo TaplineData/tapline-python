@@ -5,7 +5,7 @@ Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``geckoterminal``, ``gmgn``, ``goplus``, ``instagram``,
-``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
+``linkedin``, ``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -25,6 +25,7 @@ from .resources import (
     Gmgn,
     Goplus,
     Instagram,
+    Linkedin,
     Pinterest,
     Ponsfamily,
     Pumpfun,
@@ -34,6 +35,7 @@ from .resources import (
     SyncGmgn,
     SyncGoplus,
     SyncInstagram,
+    SyncLinkedin,
     SyncPinterest,
     SyncPonsfamily,
     SyncPumpfun,
@@ -89,6 +91,9 @@ class TaplineClient(AsyncAPIClient):
 
     instagram: Instagram
     """The Instagram endpoints."""
+
+    linkedin: Linkedin
+    """The LinkedIn endpoints."""
 
     pinterest: Pinterest
     """The Pinterest endpoints."""
@@ -159,6 +164,7 @@ class TaplineClient(AsyncAPIClient):
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
         self.instagram = Instagram(self)
+        self.linkedin = Linkedin(self)
         self.pinterest = Pinterest(self)
         self.ponsfamily = Ponsfamily(self)
         self.pumpfun = Pumpfun(self)
@@ -201,6 +207,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     instagram: SyncInstagram
     """The Instagram endpoints."""
+
+    linkedin: SyncLinkedin
+    """The LinkedIn endpoints."""
 
     pinterest: SyncPinterest
     """The Pinterest endpoints."""
@@ -271,6 +280,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
         self.instagram = SyncInstagram(self)
+        self.linkedin = SyncLinkedin(self)
         self.pinterest = SyncPinterest(self)
         self.ponsfamily = SyncPonsfamily(self)
         self.pumpfun = SyncPumpfun(self)
