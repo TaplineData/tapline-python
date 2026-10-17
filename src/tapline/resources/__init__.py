@@ -7,6 +7,7 @@ from .birdeye import Birdeye, SyncBirdeye
 from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
+from .imovelweb import Imovelweb, SyncImovelweb
 from .instagram import Instagram, SyncInstagram
 from .pinterest import Pinterest, SyncPinterest
 from .ponsfamily import Ponsfamily, SyncPonsfamily
@@ -21,6 +22,7 @@ __all__ = [
     "Geckoterminal",
     "Gmgn",
     "Goplus",
+    "Imovelweb",
     "Instagram",
     "Pinterest",
     "Ponsfamily",
@@ -30,6 +32,7 @@ __all__ = [
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",
+    "SyncImovelweb",
     "SyncInstagram",
     "SyncPinterest",
     "SyncPonsfamily",
