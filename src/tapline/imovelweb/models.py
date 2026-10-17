@@ -301,7 +301,7 @@ class ImovelwebDevelopmentUnit(BaseModel):
     title: str
     unsafe: bool
     url: str
-    whatsApp: str
+    whatsApp: str | None
 
 
 class ImovelwebDuplicate(BaseModel):
@@ -338,10 +338,11 @@ class ImovelwebListing(BaseModel):
     """
     One search result in imovelweb's own keys (some are Spanish, from the Navent platform).
     `whatsApp` is the advertiser's WhatsApp number with country code, when shown. `url` is a
-    path on https://www.imovelweb.com.br.
+    path on https://www.imovelweb.com.br. `slot` numbers a paid placement. Fields that accept
+    any JSON were null in every answer imovelweb gave us, so their shape is unknown.
     """
 
-    action: str | None
+    action: Any
     alphanumeric_key: str
     alt: bool
     antiquity: str | None
@@ -351,7 +352,7 @@ class ImovelwebListing(BaseModel):
     duplicated: ImovelwebDuplicate | None
     earlyDemandCronut: bool
     expenses: ImovelwebPrice | None
-    features: str | None
+    features: Any
     flagsFeatures: list[ImovelwebFeature | None]
     generalFeatures: dict[str, dict[str, ImovelwebGeneralFeature]]
     generatedTitle: str
@@ -359,14 +360,14 @@ class ImovelwebListing(BaseModel):
     hasTour: bool
     hasVideos: bool
     highlightedFeatures: list[str]
-    house: str | None
+    house: Any
     iadescription: str | None
-    iptu: str | None
+    iptu: Any
     leadWhatsappDevelopmentRequestData: bool
     leadWhatsappPostingRequestData: bool
     mainFeatures: dict[str, ImovelwebFeature]
     modified_date: str
-    ownerDomain: str | None
+    ownerDomain: Any
     pixelPlus: bool
     postingCode: str
     postingId: str
@@ -382,9 +383,9 @@ class ImovelwebListing(BaseModel):
     realEstateType: ImovelwebRealEstateType
     requestVisit5A: ImovelwebRequestVisit
     reserved: bool
-    slot: str | None
-    slotColor: str | None
-    sponsor: str | None
+    slot: int | None
+    slotColor: Any
+    sponsor: Any
     status: str
     title: str
     triggerPill: str | None
@@ -461,10 +462,11 @@ class ImovelwebListingPublisher(BaseModel):
 
 class ImovelwebListingPublisherSummary(BaseModel):
     """
-    The advertiser of a search result. `publisherTypeId`: 1 owner selling directly, 2 agency,
-    4 QuintoAndar, 6 developer, 3 other professional. `license` is the CRECI registration.
-    `mainPhone` is filled only when the agency publishes one; `/publishers/{publisherId}`
-    has every number.
+    The advertiser of a search result. `publisherTypeId` is a string here: "1" owner selling
+    directly, "2" agency, "4" QuintoAndar, "6" developer, "3" other professional. `license` is
+    the CRECI registration. `mainPhone` is filled only when the agency publishes one;
+    `/publishers/{publisherId}` has every number. Fields that accept any JSON were null in
+    every answer imovelweb gave us, so their shape is unknown.
     """
 
     amountPostingActive: int | None
@@ -475,15 +477,15 @@ class ImovelwebListingPublisherSummary(BaseModel):
     license: str | None
     mainPhone: str | None
     name: str
-    parentPublisher: str | None
+    parentPublisher: Any
     partialPhone: str | None
     premier: bool
     publisherId: str
-    publisherStatistics: str | None
+    publisherStatistics: Any
     publisherTags: list[int]
     publisherTypeId: str
-    quantity_posting_by_operation_type: str | None
-    slotFilterUrl: str | None
+    quantity_posting_by_operation_type: Any
+    slotFilterUrl: Any
     slug: str | None
     url: str
     urlChat: str | None
@@ -552,7 +554,7 @@ class ImovelwebMapArea(BaseModel):
     idsubzonaciudad: int
     idzonaciudad: int
     nombre: str
-    solr_geometry: str | None
+    solr_geometry: Any
     tipoN: str
 
 
@@ -654,7 +656,7 @@ class ImovelwebPublisher(BaseModel):
     """
     An agency or developer profile. `phone` is the free text the agency publishes;
     `phoneNumbers` holds each number in it as +55, area code and number. `publisherTypeId`
-    as on listings; `amountPostingActive` counts its live listings.
+    is the listings' code as a number; `amountPostingActive` counts its live listings.
     """
 
     aboutUs: str | None
