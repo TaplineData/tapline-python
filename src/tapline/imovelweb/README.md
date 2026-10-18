@@ -27,7 +27,7 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 ## What you can do
 
-Search and map take the same filters: `operation` (`sale`, `rent`, `season`, `auction`, `development`), `location_id`, property type and subtype, price, condo fee, bedrooms, bathrooms, parking, total and usable area, age, publication date, publisher type or id, amenities, media and a keyword.
+Search and map take the same filters: `operation` (`sale`, `rent`, `season`, `auction`, `development`), `location_id`, property type and subtype, price, condo fee, bedrooms, bathrooms, parking, total and usable area, building age, publication date, publisher type (`all`, `company`, `owner`) or id, amenities, media, a keyword, `development_stage` for developments, and `without_guarantor` and `price_includes_condo_fee` for rentals.
 
 | Method | Key inputs | Returns | Credits |
 | --- | --- | --- | --- |
@@ -46,7 +46,7 @@ Paged methods cost their credits per page, not per item.
 ```python
 suggestions = tapline.imovelweb.list_locations(query="pinheiros")
 for location in suggestions.locations:
-    print(location.id, location.level, location.labelSuggest)
+    print(location.id, location.level, location.label)
 ```
 
 `V1-Z-52` is Pinheiros in São Paulo. Pass several ids to `location_id` and listings in any of them match.
@@ -60,7 +60,7 @@ while True:
         operation="rent", location_id=["V1-Z-52"], min_bedrooms=2, cursor=cursor
     )
     for listing in page.listings:
-        print(listing.postingId, listing.title, listing.publisher.name, listing.whatsApp)
+        print(listing.id, listing.title, listing.publisher.name, listing.whatsapp)
     if page.pagination.next_cursor is None:
         break
     cursor = page.pagination.next_cursor
@@ -70,25 +70,26 @@ while True:
 
 ```python
 agency = tapline.imovelweb.get_publisher("15460167")
-print(agency.denomination, agency.phoneNumbers, agency.address)
+print(agency.name, agency.phone_numbers, agency.address)
 if agency.ratings:
-    print(agency.ratings.average, agency.ratings.respondedCount)
+    print(agency.ratings.average, agency.ratings.review_count)
 ```
 
-Take the id from `publisher.publisherId` on a search listing.
+Take the id from `publisher.id` on a search listing.
 
 ## Read the response
 
-- Listings keep imovelweb's own keys, some of them Spanish. Each operation a listing is offered for has its own entry in `priceOperationTypes`, priced in R$.
+- Records use this API's names and decoded values. `property_type`, `ad_tier`, amenities and the location levels are enums; `operations` has one entry per operation a listing is offered for, each with its price as `amount`, `currency` (`BRL`) and imovelweb's `display` text; `whatsapp` and `phone_numbers` are +55 numbers.
+- Each record keeps the fields this API does not decode under `raw`, in imovelweb's own names. Fields typed `Any` there were null in every answer imovelweb gave us, so their shape is unknown.
 - `pagination.completion` is `exhausted` at the end, or `depth_limit` at page 1,000 (30,000 listings). Narrow the filters to reach the rest.
-- About a fifth of search listings hide their map position (`postingGeolocation` is `None`). `get_listing` usually still has coordinates.
-- Search listings carry `publisherTypeId` as a string (`"1"` is an owner selling directly). Owners have no profile, so `get_publisher` answers 404 for them and the listing's `whatsApp` is their contact.
-- `get_listing` gives only the first digits of the agency's phone (`partialPhone`). `get_publisher` has every number.
-- Fields typed `Any` were null in every answer imovelweb gave us, so their shape is unknown.
-- `ratings` is `None` when imovelweb keeps no statistics for an agency. An unrated agency has `None` for `respondedCount` and `ratings` and an `average` of 0.
+- About a fifth of search listings hide their map position (`location.latitude` is `None`). `get_listing` usually still has coordinates.
+- `publisher.type` is `owner` for an owner selling directly. Owners have no profile, so `get_publisher` answers 404 for them and the listing's `whatsapp` is their contact.
+- `get_listing` gives only the first digits of the agency's phone (`publisher.partial_phone`). `get_publisher` has every number.
+- An amenity this API does not name comes back with `amenity` set to `None`, plus imovelweb's `id` and `label`.
+- `ratings` is `None` when imovelweb keeps no statistics for an agency. An unrated agency has `None` for `review_count`, no `questions` and an `average` of 0.
 
 ## Handle errors and check costs
 
-Failed calls throw the errors described in the [package guide](../../../README.md#handle-errors). Validation errors (an unknown enum value, a subtype without its type, a minimum above its maximum, a cursor this API did not issue) are not charged. A location id imovelweb does not know answers 400 `invalid_request` naming it, and is not charged. `map_listings` answers 400 on filters imovelweb's map cannot run across the whole country or a state; narrow to a city or neighbourhood. An unknown listing or publisher id answers 404 and is charged.
+Failed calls throw the errors described in the [package guide](../../../README.md#handle-errors). Validation errors (an unknown enum value, a subtype without its type, a minimum above its maximum, a cursor this API did not issue) are not charged. A location id imovelweb does not know answers 400 `invalid_request` naming it, and is not charged. `map_listings` answers 400 on filters imovelweb's map cannot run across the whole country or a state; narrow to a city or neighbourhood. It answers 422 to `max_age="launching_soon"`, which imovelweb's map cannot run anywhere; `list_listings` takes it. An unknown listing or publisher id answers 404 and is charged.
 
 The [imovelweb API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=imovelweb_readme#/imovelweb) lists the inputs, response fields, and credit cost for each method.

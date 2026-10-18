@@ -14,6 +14,7 @@ from .._base_client import encode_path
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
 from .._types import Body, NotGiven, Timeout, not_given
 from ..imovelweb import (
+    ImovelwebDevelopmentStageParam,
     ImovelwebListingDetail,
     ImovelwebListingFeatureParam,
     ImovelwebListingPublishers,
@@ -46,6 +47,7 @@ def _body(fields: Mapping[str, object]) -> Body:
 def _list_listings(
     *,
     cursor: str = "",
+    development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
     features: Sequence[ImovelwebListingFeatureParam] | None = None,
     keyword: str | None = None,
     location_id: Sequence[str] | None = None,
@@ -64,18 +66,21 @@ def _list_listings(
     multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
     operation: ImovelwebOperationParam = "sale",
     parking_spaces: ImovelwebParkingSpacesParam | None = None,
+    price_includes_condo_fee: bool = False,
     property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
     property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
     published_within: ImovelwebPublishedWithinParam | None = None,
     publisher_id: str | None = None,
     publisher_type: ImovelwebPublisherTypeParam = "all",
     sort: ImovelwebListingSortParam = "relevance",
+    without_guarantor: bool = False,
 ) -> Request[ImovelwebListingsPage]:
     return Request(
         _PREFIX + "/listings",
         ImovelwebListingsPage,
         {
             "cursor": cursor,
+            "development_stage": development_stage,
             "features": features,
             "keyword": keyword,
             "location_id": location_id,
@@ -94,18 +99,21 @@ def _list_listings(
             "multimedia": multimedia,
             "operation": operation,
             "parking_spaces": parking_spaces,
+            "price_includes_condo_fee": price_includes_condo_fee,
             "property_subtype": property_subtype,
             "property_type": property_type,
             "published_within": published_within,
             "publisher_id": publisher_id,
             "publisher_type": publisher_type,
             "sort": sort,
+            "without_guarantor": without_guarantor,
         },
     )
 
 
 def _map_listings(
     *,
+    development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
     features: Sequence[ImovelwebListingFeatureParam] | None = None,
     keyword: str | None = None,
     location_id: Sequence[str] | None = None,
@@ -124,16 +132,19 @@ def _map_listings(
     multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
     operation: ImovelwebOperationParam = "sale",
     parking_spaces: ImovelwebParkingSpacesParam | None = None,
+    price_includes_condo_fee: bool = False,
     property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
     property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
     published_within: ImovelwebPublishedWithinParam | None = None,
     publisher_id: str | None = None,
     publisher_type: ImovelwebPublisherTypeParam = "all",
+    without_guarantor: bool = False,
 ) -> Request[ImovelwebListingsMap]:
     return Request(
         _PREFIX + "/listings/map",
         ImovelwebListingsMap,
         {
+            "development_stage": development_stage,
             "features": features,
             "keyword": keyword,
             "location_id": location_id,
@@ -152,11 +163,13 @@ def _map_listings(
             "multimedia": multimedia,
             "operation": operation,
             "parking_spaces": parking_spaces,
+            "price_includes_condo_fee": price_includes_condo_fee,
             "property_subtype": property_subtype,
             "property_type": property_type,
             "published_within": published_within,
             "publisher_id": publisher_id,
             "publisher_type": publisher_type,
+            "without_guarantor": without_guarantor,
         },
     )
 
@@ -212,6 +225,7 @@ class Imovelweb(AsyncAPIResource):
         self,
         *,
         cursor: str = "",
+        development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
         features: Sequence[ImovelwebListingFeatureParam] | None = None,
         keyword: str | None = None,
         location_id: Sequence[str] | None = None,
@@ -230,15 +244,17 @@ class Imovelweb(AsyncAPIResource):
         multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
         operation: ImovelwebOperationParam = "sale",
         parking_spaces: ImovelwebParkingSpacesParam | None = None,
+        price_includes_condo_fee: bool = False,
         property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
         property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
         published_within: ImovelwebPublishedWithinParam | None = None,
         publisher_id: str | None = None,
         publisher_type: ImovelwebPublisherTypeParam = "all",
         sort: ImovelwebListingSortParam = "relevance",
+        without_guarantor: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingsPage:
-        """Search imovelweb.com.br, Brazil's QuintoAndar-owned listings portal: homes and commercial property for sale, rent, short stays, auction and new developments, 30 per page. Each listing carries prices, condo fee, areas and rooms, address and coordinates, photos, the publisher (agency, CRECI licence and, when published, its main phone) and the listing's WhatsApp number when the advertiser shows one. About a fifth of listings hide their map position (`postingGeolocation` null); the detail route usually still has coordinates. Rent and season listings give the rental period only in their text. `developments` holds unit ranges for development listings, keyed by listing id. Search a publisher's portfolio with `publisher_id`. Pages stop at page 1,000 (30,000 listings); narrow the filters to reach the rest. Priced per page, not per listing. Costs 2 credits.
+        """Search imovelweb.com.br, Brazil's QuintoAndar-owned listings portal: homes and commercial property for sale, rent, short stays, auction and new developments, 30 per page. Each listing carries its price per operation, condo fee, rooms and areas, address with its state, city and district, coordinates, photos in every size, the publisher (type, CRECI licence and, when published, its main phone) and its WhatsApp number when the advertiser shows one. A development also carries its stage, delivery date, price and size ranges and unit groups in `development`. Fields imovelweb sends that this API does not decode stay in each record's `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. About a fifth of listings hide their map position (`location.latitude` null); the detail route usually still has coordinates. Rent and season listings give the rental period only in their text. `applied_filters` is imovelweb's own account of the filters it applied, in this API's parameter names: compare it with the request to spot a filter imovelweb dropped. Search a publisher's portfolio with `publisher_id`. Pages stop at page 1,000 (30,000 listings); narrow the filters to reach the rest. Priced per page, not per listing. Costs 2 credits.
 
         Args:
             cursor: `pagination.next_cursor` from the previous page; empty for the
@@ -249,8 +265,11 @@ class Imovelweb(AsyncAPIResource):
                 imovelweb serves; narrow the filters to reach the rest. imovelweb's
                 `relevance` order changes over minutes, so a long crawl that pages
                 by relevance can skip or repeat listings.
+            development_stage: Development stage; repeat for several, a development
+                at any of them matches. Only with `operation=development`.
             features: Required amenities, such as `pool` or `pets_allowed`; repeat
-                for several. A listing must have all of them.
+                for several. A listing must have all of them. imovelweb's
+                development search cannot filter by `garden`.
             keyword: Free-text keyword matched against listing text, such as
                 `piscina`.
             location_id: Location `id` from `/v1/imovelweb/locations` (`V1-C-109668`
@@ -260,7 +279,8 @@ class Imovelweb(AsyncAPIResource):
             max_age: Building age: `under_construction`, `launching_soon`, at most
                 `5_years` to `50_years`, or `over_50_years`.
             max_bedrooms: Maximum bedrooms. imovelweb's top bucket is 5 or more, so
-                4 is the highest cap.
+                4 is the highest cap. Send the same number as `min_bedrooms` for an
+                exact count.
             max_condo_fee: Maximum monthly condominium fee in R$.
             max_price: Maximum price in R$.
             max_total_area: Maximum total area in m². Not with the usable-area
@@ -280,22 +300,28 @@ class Imovelweb(AsyncAPIResource):
                 developer).
             parking_spaces: `none` for listings without parking, or `1` to `4` for
                 at least that many spaces.
+            price_includes_condo_fee: Compare `min_price` and `max_price` with the
+                rent plus the monthly condo fee. Only with `operation=rent` and a
+                price bound.
             property_subtype: Property subtype, such as `penthouse` or `townhouse`;
                 repeat for several. Send its type in `property_type` too
                 (`penthouse` needs `apartment`). Not with `operation=development`.
             property_type: Property type; repeat for several. Not with
                 `operation=development`.
             published_within: Only listings published within this window.
-            publisher_id: Only this publisher's listings (`publisher.publisherId` on
-                a listing).
-            publisher_type: `agency` for agencies and developers, `owner` for owners
-                selling directly.
+            publisher_id: Only this publisher's listings (`publisher.id` on a
+                listing).
+            publisher_type: `company` for every publisher that is not an owner:
+                agencies, developers, brokers and builders (imovelweb's Imobiliária
+                option). `owner` for owners selling directly. `all` for both.
             sort: `relevance`, `lowest_price`, `highest_price`, `newest`,
                 `most_viewed` or `price_dropped`. imovelweb keeps its premier
                 listings in their own ordered run, so prices on one page can step
                 back where the two runs meet, and it sorts a development by its
                 highest unit price while showing its lowest. `relevance` reshuffles
                 over minutes, so a long crawl should sort by `newest`.
+            without_guarantor: Only rentals that need no guarantor (imovelweb's
+                Aluguel sem fiador). Only with `operation=rent`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -304,6 +330,7 @@ class Imovelweb(AsyncAPIResource):
         return await self._send(
             _list_listings(
                 cursor=cursor,
+                development_stage=development_stage,
                 features=features,
                 keyword=keyword,
                 location_id=location_id,
@@ -322,12 +349,14 @@ class Imovelweb(AsyncAPIResource):
                 multimedia=multimedia,
                 operation=operation,
                 parking_spaces=parking_spaces,
+                price_includes_condo_fee=price_includes_condo_fee,
                 property_subtype=property_subtype,
                 property_type=property_type,
                 published_within=published_within,
                 publisher_id=publisher_id,
                 publisher_type=publisher_type,
                 sort=sort,
+                without_guarantor=without_guarantor,
             ),
             timeout=timeout,
         )
@@ -335,6 +364,7 @@ class Imovelweb(AsyncAPIResource):
     async def map_listings(
         self,
         *,
+        development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
         features: Sequence[ImovelwebListingFeatureParam] | None = None,
         keyword: str | None = None,
         location_id: Sequence[str] | None = None,
@@ -353,18 +383,23 @@ class Imovelweb(AsyncAPIResource):
         multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
         operation: ImovelwebOperationParam = "sale",
         parking_spaces: ImovelwebParkingSpacesParam | None = None,
+        price_includes_condo_fee: bool = False,
         property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
         property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
         published_within: ImovelwebPublishedWithinParam | None = None,
         publisher_id: str | None = None,
         publisher_type: ImovelwebPublisherTypeParam = "all",
+        without_guarantor: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingsMap:
-        """Map markers for a search: the 100 most relevant listings with id, title, first listed price (a listing offered for both sale and rent can show its sale price on a rent search) and coordinates, the count of matching listings imovelweb can place on the map (`total`, lower than the search total), the viewport `boundary`, and, when you filter by one location, its `area` with centre and MultiPolygon outline. Takes the filters of `/listings`; the markers cannot be paged or re-sorted. imovelweb's map fails on many filters across the whole country or a state and on `max_age=launching_soon`; those answer 400 with the reason (not charged): narrow to a city or neighbourhood or use `/listings`. Costs 1 credit.
+        """Map markers for a search: the 100 most relevant listings with id, title, first listed operation and price (a listing offered for both sale and rent can show its sale price on a rent search) and coordinates, the count of matching listings imovelweb can place on the map (`total`, lower than the search total), the `viewport`, and, when you filter by one location, its `area` with level, centre and GeoJSON outline. Takes the filters of `/listings`; the markers cannot be paged or re-sorted. imovelweb's map fails on many filters across the whole country or a state; those answer 400 with the reason (not charged): narrow to a city or neighbourhood or use `/listings`. `max_age=launching_soon` fails wherever the map runs, so it answers 422 before any call. Costs 1 credit.
 
         Args:
+            development_stage: Development stage; repeat for several, a development
+                at any of them matches. Only with `operation=development`.
             features: Required amenities, such as `pool` or `pets_allowed`; repeat
-                for several. A listing must have all of them.
+                for several. A listing must have all of them. imovelweb's
+                development search cannot filter by `garden`.
             keyword: Free-text keyword matched against listing text, such as
                 `piscina`.
             location_id: Location `id` from `/v1/imovelweb/locations` (`V1-C-109668`
@@ -374,7 +409,8 @@ class Imovelweb(AsyncAPIResource):
             max_age: Building age: `under_construction`, `launching_soon`, at most
                 `5_years` to `50_years`, or `over_50_years`.
             max_bedrooms: Maximum bedrooms. imovelweb's top bucket is 5 or more, so
-                4 is the highest cap.
+                4 is the highest cap. Send the same number as `min_bedrooms` for an
+                exact count.
             max_condo_fee: Maximum monthly condominium fee in R$.
             max_price: Maximum price in R$.
             max_total_area: Maximum total area in m². Not with the usable-area
@@ -394,16 +430,22 @@ class Imovelweb(AsyncAPIResource):
                 developer).
             parking_spaces: `none` for listings without parking, or `1` to `4` for
                 at least that many spaces.
+            price_includes_condo_fee: Compare `min_price` and `max_price` with the
+                rent plus the monthly condo fee. Only with `operation=rent` and a
+                price bound.
             property_subtype: Property subtype, such as `penthouse` or `townhouse`;
                 repeat for several. Send its type in `property_type` too
                 (`penthouse` needs `apartment`). Not with `operation=development`.
             property_type: Property type; repeat for several. Not with
                 `operation=development`.
             published_within: Only listings published within this window.
-            publisher_id: Only this publisher's listings (`publisher.publisherId` on
-                a listing).
-            publisher_type: `agency` for agencies and developers, `owner` for owners
-                selling directly.
+            publisher_id: Only this publisher's listings (`publisher.id` on a
+                listing).
+            publisher_type: `company` for every publisher that is not an owner:
+                agencies, developers, brokers and builders (imovelweb's Imobiliária
+                option). `owner` for owners selling directly. `all` for both.
+            without_guarantor: Only rentals that need no guarantor (imovelweb's
+                Aluguel sem fiador). Only with `operation=rent`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -411,6 +453,7 @@ class Imovelweb(AsyncAPIResource):
         """
         return await self._send(
             _map_listings(
+                development_stage=development_stage,
                 features=features,
                 keyword=keyword,
                 location_id=location_id,
@@ -429,11 +472,13 @@ class Imovelweb(AsyncAPIResource):
                 multimedia=multimedia,
                 operation=operation,
                 parking_spaces=parking_spaces,
+                price_includes_condo_fee=price_includes_condo_fee,
                 property_subtype=property_subtype,
                 property_type=property_type,
                 published_within=published_within,
                 publisher_id=publisher_id,
                 publisher_type=publisher_type,
+                without_guarantor=without_guarantor,
             ),
             timeout=timeout,
         )
@@ -444,7 +489,7 @@ class Imovelweb(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingDetail:
-        """One listing's full page: complete description, every photo and floor plan, amenities grouped as imovelweb groups them, prices per operation, condo fee (`expenses`, the same price object as search), coordinates, publication date, the publisher with CRECI licence and the first digits of its phone (`partialPhone`; the full numbers are on `/publishers/{publisher_id}`), and the units of a development, plus the amenity ids imovelweb shows as icons (`featuresWithIcon`). `duplicated` is true when this listing is another agency's copy of a property; `/listings/{posting_id}/publishers` lists the whole group. `url` fields are paths on https://www.imovelweb.com.br. The description is plain text: line breaks kept, imovelweb's markup removed. A listing id imovelweb does not know answers 404. Costs 2 credits.
+        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             posting_id: See the API reference.
@@ -461,7 +506,7 @@ class Imovelweb(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingPublishers:
-        """Every agency advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicated`): each agency's listing id, URL, name and logo, but no publisher id or price; fetch each `postingId` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
+        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
 
         Args:
             posting_id: See the API reference.
@@ -479,7 +524,7 @@ class Imovelweb(AsyncAPIResource):
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebSimilarListings:
-        """Listings imovelweb shows as similar to this one (same area, type and price band), in imovelweb's compact card shape: price, operation, type and location are display strings (`"1.000.000"`, `"Venda"`), with main features, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
+        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
 
         Args:
             posting_id: See the API reference.
@@ -498,7 +543,7 @@ class Imovelweb(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebLocations:
-        """Location autocomplete: states, cities and neighbourhoods matching the text, at most 10, with the `id` that `location_id` on `/listings` takes. A query with no match answers an empty list. Costs 1 credit.
+        """Location autocomplete: states, cities and neighbourhoods matching the text, at most 10, each with its `level` and the `id` that `location_id` on `/listings` takes. A query with no match answers an empty list. Costs 1 credit.
 
         Args:
             query: Place name, such as `pinheiros` or `rio de janeiro`.
@@ -516,7 +561,7 @@ class Imovelweb(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebPublisher:
-        """An agency's or developer's profile: name, phone numbers as the agency writes them (`phone`) and parsed into +55 numbers (`phoneNumbers`), office address, year joined, active listing count, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has null `respondedCount` and `ratings` and an `average` of 0). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisherTypeId` "1" on a search listing) have no profile page: their ids answer 404, and the listing's `whatsApp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
+        """An agency's or developer's profile: name, its phone text as the publisher writes it (`phone_text`) and parsed into +55 numbers (`phone_numbers`), office address, year joined, live and listed listing counts, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has a null `review_count`, no questions and an `average` of 0). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisher.type` `owner` on a search listing) have no profile page: their ids answer 404, and the listing's `whatsapp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             publisher_id: See the API reference.
@@ -544,6 +589,7 @@ class SyncImovelweb(SyncAPIResource):
         self,
         *,
         cursor: str = "",
+        development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
         features: Sequence[ImovelwebListingFeatureParam] | None = None,
         keyword: str | None = None,
         location_id: Sequence[str] | None = None,
@@ -562,15 +608,17 @@ class SyncImovelweb(SyncAPIResource):
         multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
         operation: ImovelwebOperationParam = "sale",
         parking_spaces: ImovelwebParkingSpacesParam | None = None,
+        price_includes_condo_fee: bool = False,
         property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
         property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
         published_within: ImovelwebPublishedWithinParam | None = None,
         publisher_id: str | None = None,
         publisher_type: ImovelwebPublisherTypeParam = "all",
         sort: ImovelwebListingSortParam = "relevance",
+        without_guarantor: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingsPage:
-        """Search imovelweb.com.br, Brazil's QuintoAndar-owned listings portal: homes and commercial property for sale, rent, short stays, auction and new developments, 30 per page. Each listing carries prices, condo fee, areas and rooms, address and coordinates, photos, the publisher (agency, CRECI licence and, when published, its main phone) and the listing's WhatsApp number when the advertiser shows one. About a fifth of listings hide their map position (`postingGeolocation` null); the detail route usually still has coordinates. Rent and season listings give the rental period only in their text. `developments` holds unit ranges for development listings, keyed by listing id. Search a publisher's portfolio with `publisher_id`. Pages stop at page 1,000 (30,000 listings); narrow the filters to reach the rest. Priced per page, not per listing. Costs 2 credits.
+        """Search imovelweb.com.br, Brazil's QuintoAndar-owned listings portal: homes and commercial property for sale, rent, short stays, auction and new developments, 30 per page. Each listing carries its price per operation, condo fee, rooms and areas, address with its state, city and district, coordinates, photos in every size, the publisher (type, CRECI licence and, when published, its main phone) and its WhatsApp number when the advertiser shows one. A development also carries its stage, delivery date, price and size ranges and unit groups in `development`. Fields imovelweb sends that this API does not decode stay in each record's `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. About a fifth of listings hide their map position (`location.latitude` null); the detail route usually still has coordinates. Rent and season listings give the rental period only in their text. `applied_filters` is imovelweb's own account of the filters it applied, in this API's parameter names: compare it with the request to spot a filter imovelweb dropped. Search a publisher's portfolio with `publisher_id`. Pages stop at page 1,000 (30,000 listings); narrow the filters to reach the rest. Priced per page, not per listing. Costs 2 credits.
 
         Args:
             cursor: `pagination.next_cursor` from the previous page; empty for the
@@ -581,8 +629,11 @@ class SyncImovelweb(SyncAPIResource):
                 imovelweb serves; narrow the filters to reach the rest. imovelweb's
                 `relevance` order changes over minutes, so a long crawl that pages
                 by relevance can skip or repeat listings.
+            development_stage: Development stage; repeat for several, a development
+                at any of them matches. Only with `operation=development`.
             features: Required amenities, such as `pool` or `pets_allowed`; repeat
-                for several. A listing must have all of them.
+                for several. A listing must have all of them. imovelweb's
+                development search cannot filter by `garden`.
             keyword: Free-text keyword matched against listing text, such as
                 `piscina`.
             location_id: Location `id` from `/v1/imovelweb/locations` (`V1-C-109668`
@@ -592,7 +643,8 @@ class SyncImovelweb(SyncAPIResource):
             max_age: Building age: `under_construction`, `launching_soon`, at most
                 `5_years` to `50_years`, or `over_50_years`.
             max_bedrooms: Maximum bedrooms. imovelweb's top bucket is 5 or more, so
-                4 is the highest cap.
+                4 is the highest cap. Send the same number as `min_bedrooms` for an
+                exact count.
             max_condo_fee: Maximum monthly condominium fee in R$.
             max_price: Maximum price in R$.
             max_total_area: Maximum total area in m². Not with the usable-area
@@ -612,22 +664,28 @@ class SyncImovelweb(SyncAPIResource):
                 developer).
             parking_spaces: `none` for listings without parking, or `1` to `4` for
                 at least that many spaces.
+            price_includes_condo_fee: Compare `min_price` and `max_price` with the
+                rent plus the monthly condo fee. Only with `operation=rent` and a
+                price bound.
             property_subtype: Property subtype, such as `penthouse` or `townhouse`;
                 repeat for several. Send its type in `property_type` too
                 (`penthouse` needs `apartment`). Not with `operation=development`.
             property_type: Property type; repeat for several. Not with
                 `operation=development`.
             published_within: Only listings published within this window.
-            publisher_id: Only this publisher's listings (`publisher.publisherId` on
-                a listing).
-            publisher_type: `agency` for agencies and developers, `owner` for owners
-                selling directly.
+            publisher_id: Only this publisher's listings (`publisher.id` on a
+                listing).
+            publisher_type: `company` for every publisher that is not an owner:
+                agencies, developers, brokers and builders (imovelweb's Imobiliária
+                option). `owner` for owners selling directly. `all` for both.
             sort: `relevance`, `lowest_price`, `highest_price`, `newest`,
                 `most_viewed` or `price_dropped`. imovelweb keeps its premier
                 listings in their own ordered run, so prices on one page can step
                 back where the two runs meet, and it sorts a development by its
                 highest unit price while showing its lowest. `relevance` reshuffles
                 over minutes, so a long crawl should sort by `newest`.
+            without_guarantor: Only rentals that need no guarantor (imovelweb's
+                Aluguel sem fiador). Only with `operation=rent`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -636,6 +694,7 @@ class SyncImovelweb(SyncAPIResource):
         return self._send(
             _list_listings(
                 cursor=cursor,
+                development_stage=development_stage,
                 features=features,
                 keyword=keyword,
                 location_id=location_id,
@@ -654,12 +713,14 @@ class SyncImovelweb(SyncAPIResource):
                 multimedia=multimedia,
                 operation=operation,
                 parking_spaces=parking_spaces,
+                price_includes_condo_fee=price_includes_condo_fee,
                 property_subtype=property_subtype,
                 property_type=property_type,
                 published_within=published_within,
                 publisher_id=publisher_id,
                 publisher_type=publisher_type,
                 sort=sort,
+                without_guarantor=without_guarantor,
             ),
             timeout=timeout,
         )
@@ -667,6 +728,7 @@ class SyncImovelweb(SyncAPIResource):
     def map_listings(
         self,
         *,
+        development_stage: Sequence[ImovelwebDevelopmentStageParam] | None = None,
         features: Sequence[ImovelwebListingFeatureParam] | None = None,
         keyword: str | None = None,
         location_id: Sequence[str] | None = None,
@@ -685,18 +747,23 @@ class SyncImovelweb(SyncAPIResource):
         multimedia: Sequence[ImovelwebMultimediaParam] | None = None,
         operation: ImovelwebOperationParam = "sale",
         parking_spaces: ImovelwebParkingSpacesParam | None = None,
+        price_includes_condo_fee: bool = False,
         property_subtype: Sequence[ImovelwebPropertySubtypeParam] | None = None,
         property_type: Sequence[ImovelwebPropertyTypeParam] | None = None,
         published_within: ImovelwebPublishedWithinParam | None = None,
         publisher_id: str | None = None,
         publisher_type: ImovelwebPublisherTypeParam = "all",
+        without_guarantor: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingsMap:
-        """Map markers for a search: the 100 most relevant listings with id, title, first listed price (a listing offered for both sale and rent can show its sale price on a rent search) and coordinates, the count of matching listings imovelweb can place on the map (`total`, lower than the search total), the viewport `boundary`, and, when you filter by one location, its `area` with centre and MultiPolygon outline. Takes the filters of `/listings`; the markers cannot be paged or re-sorted. imovelweb's map fails on many filters across the whole country or a state and on `max_age=launching_soon`; those answer 400 with the reason (not charged): narrow to a city or neighbourhood or use `/listings`. Costs 1 credit.
+        """Map markers for a search: the 100 most relevant listings with id, title, first listed operation and price (a listing offered for both sale and rent can show its sale price on a rent search) and coordinates, the count of matching listings imovelweb can place on the map (`total`, lower than the search total), the `viewport`, and, when you filter by one location, its `area` with level, centre and GeoJSON outline. Takes the filters of `/listings`; the markers cannot be paged or re-sorted. imovelweb's map fails on many filters across the whole country or a state; those answer 400 with the reason (not charged): narrow to a city or neighbourhood or use `/listings`. `max_age=launching_soon` fails wherever the map runs, so it answers 422 before any call. Costs 1 credit.
 
         Args:
+            development_stage: Development stage; repeat for several, a development
+                at any of them matches. Only with `operation=development`.
             features: Required amenities, such as `pool` or `pets_allowed`; repeat
-                for several. A listing must have all of them.
+                for several. A listing must have all of them. imovelweb's
+                development search cannot filter by `garden`.
             keyword: Free-text keyword matched against listing text, such as
                 `piscina`.
             location_id: Location `id` from `/v1/imovelweb/locations` (`V1-C-109668`
@@ -706,7 +773,8 @@ class SyncImovelweb(SyncAPIResource):
             max_age: Building age: `under_construction`, `launching_soon`, at most
                 `5_years` to `50_years`, or `over_50_years`.
             max_bedrooms: Maximum bedrooms. imovelweb's top bucket is 5 or more, so
-                4 is the highest cap.
+                4 is the highest cap. Send the same number as `min_bedrooms` for an
+                exact count.
             max_condo_fee: Maximum monthly condominium fee in R$.
             max_price: Maximum price in R$.
             max_total_area: Maximum total area in m². Not with the usable-area
@@ -726,16 +794,22 @@ class SyncImovelweb(SyncAPIResource):
                 developer).
             parking_spaces: `none` for listings without parking, or `1` to `4` for
                 at least that many spaces.
+            price_includes_condo_fee: Compare `min_price` and `max_price` with the
+                rent plus the monthly condo fee. Only with `operation=rent` and a
+                price bound.
             property_subtype: Property subtype, such as `penthouse` or `townhouse`;
                 repeat for several. Send its type in `property_type` too
                 (`penthouse` needs `apartment`). Not with `operation=development`.
             property_type: Property type; repeat for several. Not with
                 `operation=development`.
             published_within: Only listings published within this window.
-            publisher_id: Only this publisher's listings (`publisher.publisherId` on
-                a listing).
-            publisher_type: `agency` for agencies and developers, `owner` for owners
-                selling directly.
+            publisher_id: Only this publisher's listings (`publisher.id` on a
+                listing).
+            publisher_type: `company` for every publisher that is not an owner:
+                agencies, developers, brokers and builders (imovelweb's Imobiliária
+                option). `owner` for owners selling directly. `all` for both.
+            without_guarantor: Only rentals that need no guarantor (imovelweb's
+                Aluguel sem fiador). Only with `operation=rent`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -743,6 +817,7 @@ class SyncImovelweb(SyncAPIResource):
         """
         return self._send(
             _map_listings(
+                development_stage=development_stage,
                 features=features,
                 keyword=keyword,
                 location_id=location_id,
@@ -761,11 +836,13 @@ class SyncImovelweb(SyncAPIResource):
                 multimedia=multimedia,
                 operation=operation,
                 parking_spaces=parking_spaces,
+                price_includes_condo_fee=price_includes_condo_fee,
                 property_subtype=property_subtype,
                 property_type=property_type,
                 published_within=published_within,
                 publisher_id=publisher_id,
                 publisher_type=publisher_type,
+                without_guarantor=without_guarantor,
             ),
             timeout=timeout,
         )
@@ -776,7 +853,7 @@ class SyncImovelweb(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingDetail:
-        """One listing's full page: complete description, every photo and floor plan, amenities grouped as imovelweb groups them, prices per operation, condo fee (`expenses`, the same price object as search), coordinates, publication date, the publisher with CRECI licence and the first digits of its phone (`partialPhone`; the full numbers are on `/publishers/{publisher_id}`), and the units of a development, plus the amenity ids imovelweb shows as icons (`featuresWithIcon`). `duplicated` is true when this listing is another agency's copy of a property; `/listings/{posting_id}/publishers` lists the whole group. `url` fields are paths on https://www.imovelweb.com.br. The description is plain text: line breaks kept, imovelweb's markup removed. A listing id imovelweb does not know answers 404. Costs 2 credits.
+        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             posting_id: See the API reference.
@@ -793,7 +870,7 @@ class SyncImovelweb(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingPublishers:
-        """Every agency advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicated`): each agency's listing id, URL, name and logo, but no publisher id or price; fetch each `postingId` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
+        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
 
         Args:
             posting_id: See the API reference.
@@ -811,7 +888,7 @@ class SyncImovelweb(SyncAPIResource):
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebSimilarListings:
-        """Listings imovelweb shows as similar to this one (same area, type and price band), in imovelweb's compact card shape: price, operation, type and location are display strings (`"1.000.000"`, `"Venda"`), with main features, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
+        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
 
         Args:
             posting_id: See the API reference.
@@ -830,7 +907,7 @@ class SyncImovelweb(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebLocations:
-        """Location autocomplete: states, cities and neighbourhoods matching the text, at most 10, with the `id` that `location_id` on `/listings` takes. A query with no match answers an empty list. Costs 1 credit.
+        """Location autocomplete: states, cities and neighbourhoods matching the text, at most 10, each with its `level` and the `id` that `location_id` on `/listings` takes. A query with no match answers an empty list. Costs 1 credit.
 
         Args:
             query: Place name, such as `pinheiros` or `rio de janeiro`.
@@ -848,7 +925,7 @@ class SyncImovelweb(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebPublisher:
-        """An agency's or developer's profile: name, phone numbers as the agency writes them (`phone`) and parsed into +55 numbers (`phoneNumbers`), office address, year joined, active listing count, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has null `respondedCount` and `ratings` and an `average` of 0). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisherTypeId` "1" on a search listing) have no profile page: their ids answer 404, and the listing's `whatsApp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
+        """An agency's or developer's profile: name, its phone text as the publisher writes it (`phone_text`) and parsed into +55 numbers (`phone_numbers`), office address, year joined, live and listed listing counts, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has a null `review_count`, no questions and an `average` of 0). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisher.type` `owner` on a search listing) have no profile page: their ids answer 404, and the listing's `whatsapp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             publisher_id: See the API reference.

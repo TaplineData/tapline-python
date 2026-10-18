@@ -12,12 +12,121 @@ from pydantic import Field, RootModel
 from tapline._models import PREFER_ENUM, BaseModel
 
 
+class ImovelwebAdTier(str, Enum):
+    """
+    The paid placement a listing bought, as imovelweb's listing page names it; `free` is an
+    unpaid listing.
+    """
+
+    SIMPLE = "simple"
+    SIMPLE_PLUS = "simple_plus"
+    HIGHLIGHTED = "highlighted"
+    HIGHLIGHTED_PLUS = "highlighted_plus"
+    SUPER_HIGHLIGHTED = "super_highlighted"
+    EXCLUSIVE = "exclusive"
+    FREE = "free"
+
+
+class ImovelwebAmenity(str, Enum):
+    """
+    An amenity of the condominium or the unit. Those outside the search's `features` filter
+    appear on listings, but imovelweb does not filter by them.
+    """
+
+    WHEELCHAIR_ACCESS = "wheelchair_access"
+    CENTRAL_HEATING = "central_heating"
+    GREEN_AREA = "green_area"
+    TOY_LIBRARY = "toy_library"
+    SECURITY_CAMERAS = "security_cameras"
+    FOOTBALL_FIELD = "football_field"
+    GOLF_COURSE = "golf_course"
+    BARBECUE = "barbecue"
+    ELEVATOR = "elevator"
+    GENERATOR = "generator"
+    JOGGING_TRACK = "jogging_track"
+    PLAYGROUND = "playground"
+    ELECTRONIC_GATE = "electronic_gate"
+    DOORMAN_24H = "doorman_24h"
+    NEAR_METRO = "near_metro"
+    TENNIS_COURT = "tennis_court"
+    POOL = "pool"
+    FURNISHED = "furnished"
+    BALCONY = "balcony"
+    AIR_CONDITIONING = "air_conditioning"
+    BAR = "bar"
+    CLOSET = "closet"
+    OPEN_KITCHEN = "open_kitchen"
+    MAID_ROOM = "maid_room"
+    HOME_OFFICE = "home_office"
+    ACCEPTS_SWAP = "accepts_swap"
+    SEA_FRONT = "sea_front"
+    HOT_TUB = "hot_tub"
+    GARDEN = "garden"
+    FIREPLACE = "fireplace"
+    SUITES = "suites"
+    RENTAL_POOL = "rental_pool"
+    PETS_ALLOWED = "pets_allowed"
+    BACKYARD = "backyard"
+    ALARM_SYSTEM = "alarm_system"
+    SERVICE_AREA = "service_area"
+    GYM = "gym"
+    LAUNDRY = "laundry"
+    SAUNA = "sauna"
+    PARTY_ROOM = "party_room"
+    GAMES_ROOM = "games_room"
+    HEATED_POOL = "heated_pool"
+    COVERED_POOL = "covered_pool"
+    GUARDHOUSE = "guardhouse"
+    BIKE_RACK = "bike_rack"
+    PAVED_ACCESS = "paved_access"
+    PANTRY = "pantry"
+    LEISURE_AREA = "leisure_area"
+    PET_CARE = "pet_care"
+    GOURMET_BALCONY = "gourmet_balcony"
+
+
+class ImovelwebAmenityArea(str, Enum):
+    """
+    Where an amenity is: the condominium's `common` areas, the `private` unit, or `other`
+    details such as the building's floor count.
+    """
+
+    COMMON = "common"
+    PRIVATE = "private"
+    OTHER = "other"
+
+
+class ImovelwebCurrency(str, Enum):
+    """
+    An ISO 4217 currency code.
+    """
+
+    BRL = "BRL"
+    USD = "USD"
+
+
 class ImovelwebCursorCompletion(str, Enum):
     EXHAUSTED = "exhausted"
     DEPTH_LIMIT = "depth_limit"
 
 
+class ImovelwebDevelopmentStage(str, Enum):
+    """
+    A development's stage: about to launch (breve lançamento), on sale before building (na
+    planta), under construction (em obra), or ready to move into (mude já).
+    """
+
+    LAUNCHING_SOON = "launching_soon"
+    OFF_PLAN = "off_plan"
+    UNDER_CONSTRUCTION = "under_construction"
+    READY_TO_MOVE = "ready_to_move"
+
+
 class ImovelwebListingFeature(str, Enum):
+    """
+    An amenity the search filters by: the amenities imovelweb honours as a filter.
+    """
+
     WHEELCHAIR_ACCESS = "wheelchair_access"
     CENTRAL_HEATING = "central_heating"
     GREEN_AREA = "green_area"
@@ -65,11 +174,17 @@ class ImovelwebListingSort(str, Enum):
 
 
 class ImovelwebLocationLevel(str, Enum):
-    PROVINCE = "province"
+    """
+    The level of a place: `country`, `state`, `city`, `district` (a zone of a city),
+    `sub_district`, or `neighbourhood`.
+    """
+
+    COUNTRY = "country"
+    STATE = "state"
     CITY = "city"
-    ZONE = "zone"
-    SUB_ZONE = "subZone"
-    VALUE_ZONE = "valueZone"
+    DISTRICT = "district"
+    SUB_DISTRICT = "sub_district"
+    NEIGHBOURHOOD = "neighbourhood"
 
 
 class ImovelwebMaxAge(str, Enum):
@@ -82,13 +197,45 @@ class ImovelwebMaxAge(str, Enum):
     OVER_50_YEARS = "over_50_years"
 
 
+class ImovelwebMediaKind(str, Enum):
+    """
+    A kind of media. Pictures are photos or floor plans; videos and 360° tours exist only as
+    the search's `has_video` and `has_tour` flags.
+    """
+
+    PHOTO = "photo"
+    VIDEO = "video"
+    TOUR_360 = "tour_360"
+    FLOOR_PLAN = "floor_plan"
+
+
 class ImovelwebMultimedia(str, Enum):
+    """
+    Media a search can require.
+    """
+
     TOUR_360 = "tour_360"
     VIDEO = "video"
-    FLOOR_PLANS = "floor_plans"
+    FLOOR_PLAN = "floor_plan"
+
+
+class ImovelwebNetworkRole(str, Enum):
+    """
+    How imovelweb marks a listing in QuintoAndar's network (its `ownershipRede`, 1P or 3P);
+    QuintoAndar books visits to these listings at `visit_booking_url`.
+    """
+
+    FIRST_PARTY = "first_party"
+    THIRD_PARTY = "third_party"
 
 
 class ImovelwebOperation(str, Enum):
+    """
+    How a listing is offered: `sale`, `rent` (long term), `season` (short stays), `auction`,
+    or `development` (new developments sold by their developer). `development` is a search
+    filter; a development's own prices carry `sale`.
+    """
+
     SALE = "sale"
     RENT = "rent"
     SEASON = "season"
@@ -104,7 +251,50 @@ class ImovelwebParkingSpaces(str, Enum):
     FIELD_4 = "4"
 
 
+class ImovelwebPostingStatus(str, Enum):
+    """
+    Whether a listing is live; a development keeps its sold or withdrawn units, `offline`.
+    """
+
+    ONLINE = "online"
+    OFFLINE = "offline"
+
+
+class ImovelwebPostingType(str, Enum):
+    """
+    A single `property`, a new `development`, or one `unit` of a development.
+    """
+
+    PROPERTY = "property"
+    DEVELOPMENT = "development"
+    UNIT = "unit"
+
+
+class ImovelwebPropertyKind(str, Enum):
+    """
+    A listing's property type: the five the search filters by, and the kinds of new
+    development: towers (`new_development_vertical`), houses (`new_development_horizontal`),
+    both (`new_development_mixed`), lots (`land_subdivision`) and whole buildings
+    (`building`).
+    """
+
+    APARTMENT = "apartment"
+    HOUSE = "house"
+    LAND = "land"
+    COMMERCIAL = "commercial"
+    RURAL = "rural"
+    NEW_DEVELOPMENT_VERTICAL = "new_development_vertical"
+    NEW_DEVELOPMENT_HORIZONTAL = "new_development_horizontal"
+    NEW_DEVELOPMENT_MIXED = "new_development_mixed"
+    LAND_SUBDIVISION = "land_subdivision"
+    BUILDING = "building"
+
+
 class ImovelwebPropertySubtype(str, Enum):
+    """
+    A property subtype; each belongs to one property type (`penthouse` to `apartment`).
+    """
+
     STANDARD_APARTMENT = "standard_apartment"
     STUDIO = "studio"
     PENTHOUSE = "penthouse"
@@ -129,6 +319,10 @@ class ImovelwebPropertySubtype(str, Enum):
 
 
 class ImovelwebPropertyType(str, Enum):
+    """
+    A property type the search filters by.
+    """
+
     APARTMENT = "apartment"
     HOUSE = "house"
     LAND = "land"
@@ -145,10 +339,51 @@ class ImovelwebPublishedWithin(str, Enum):
     FIELD_45_DAYS = "45_days"
 
 
-class ImovelwebPublisherType(str, Enum):
-    ALL = "all"
-    AGENCY = "agency"
+class ImovelwebPublisherKind(str, Enum):
+    """
+    Who publishes a listing, in imovelweb's own words where its code has them: an `owner`
+    selling directly (Particular), an `agency` (Inmobiliaria), a `developer` (Desarrollador)
+    or a `broker` (Corredor), a firm or a single agent. `builder` is the kind imovelweb's code
+    leaves unnamed; most of its publishers are construction and development companies.
+    """
+
     OWNER = "owner"
+    AGENCY = "agency"
+    DEVELOPER = "developer"
+    BROKER = "broker"
+    BUILDER = "builder"
+
+
+class ImovelwebPublisherType(str, Enum):
+    """
+    Which publishers a search returns: `all`, `company` for every publisher that is not an
+    owner (agencies, developers, brokers and builders), or `owner` for owners selling
+    directly.
+    """
+
+    ALL = "all"
+    COMPANY = "company"
+    OWNER = "owner"
+
+
+class ImovelwebStepStatus(str, Enum):
+    """
+    Whether a development has passed a stage, is at it, or has yet to reach it.
+    """
+
+    DONE = "done"
+    IN_PROGRESS = "in_progress"
+    TO_DO = "to_do"
+
+
+class ImovelwebVisibility(str, Enum):
+    """
+    How precisely imovelweb shows an address or a map position: `exact`, or `approximate`
+    (a circle of about 200 m on the map).
+    """
+
+    EXACT = "exact"
+    APPROXIMATE = "approximate"
 
 
 class PublicError(str, Enum):
@@ -199,18 +434,56 @@ class GetListingParams(BaseModel):
 class GetPublisherParams(BaseModel):
     publisher_id: Annotated[str, Field(examples=["15460167"], pattern="^\\d{1,12}$")]
     """
-    imovelweb publisher (agency, developer or owner) id: `publisher.publisherId` on a listing.
+    imovelweb publisher (agency, developer or owner) id: `publisher.id` on a listing.
     """
 
 
-class ImovelwebAddress(BaseModel):
-    name: str | None
-    visibility: str
+class ImovelwebAmenityEntry(BaseModel):
+    """
+    One amenity on a listing page. `amenity` is null for ids this API does not name; `id`
+    and `label` are imovelweb's. `quantity` is the number imovelweb attaches to a few
+    entries, such as the floor count of 30001 "Andares".
+    """
+
+    amenity: ImovelwebAmenityValue | None
+    area: ImovelwebAmenityAreaValue | None
+    id: str
+    label: str
+    quantity: int | None
 
 
-class ImovelwebCoordinates(BaseModel):
-    latitude: float
-    longitude: float
+class ImovelwebAppliedFilter(BaseModel):
+    """
+    A filter imovelweb says it applied, as this API's query parameter and values: compare
+    it with the request to spot a filter imovelweb dropped. Numbers and flags are strings,
+    as in a query string.
+    """
+
+    filter: str
+    values: list[str]
+
+
+class ImovelwebAreaOutline(BaseModel):
+    """
+    A GeoJSON geometry.
+    """
+
+    coordinates: list[list[list[list[float]]]]
+    type: str
+
+
+class ImovelwebAreaRange(BaseModel):
+    """
+    Square metres.
+    """
+
+    max: float | None
+    min: float | None
+
+
+class ImovelwebCountRange(BaseModel):
+    max: int | None
+    min: int | None
 
 
 class ImovelwebCoverPicture(BaseModel):
@@ -223,320 +496,425 @@ class ImovelwebCursorPagination(BaseModel):
     next_cursor: str | None
 
 
-class ImovelwebDetailPicture(BaseModel):
-    height: int | None
-    multimediaTypeId: int
-    order: int
-    resizeUrl1200x1200: str
-    resizeUrl720x532: str
-    title: str
-    url100x75: str
-    url1200x1200: str
-    url215x159: str
-    url360x266: str
-    url730x532: str
-    width: int | None
+class ImovelwebDevelopment(BaseModel):
+    """
+    A new development: its stage, delivery date and the ranges across its units. A unit
+    carries only the stage, delivery and unit count.
+    """
 
-
-class ImovelwebDetailPublisher(BaseModel):
-    license: str | None
-    name: str | None
-    partialPhone: str | None
-    premium: bool | None
-    publisherId: str | None
-    publisherTypeId: int | None
-    url: str | None
-    urlChat: str | None
-    urlLogo: str | None
-
-
-class ImovelwebDevelopmentData(BaseModel):
-    ambientes: ImovelwebNumberRange
-    bathrooms: ImovelwebNumberRange
-    coveredArea: ImovelwebNumberRange
-    delivery: str
-    garages: ImovelwebNumberRange
-    majorPrices: ImovelwebPriceRange
-    minorPrices: ImovelwebPriceRange
-    numberOfUnits: int
-    prices: ImovelwebPriceRange | None = None
-    pricesByOperationType: list[ImovelwebPricesByOperationType] | None = None
-    rooms: ImovelwebNumberRange
+    bathrooms: ImovelwebCountRange | None
+    bedrooms: ImovelwebCountRange | None
+    delivery: ImovelwebDevelopmentDelivery | None
+    parking_spaces: ImovelwebCountRange | None
+    price: ImovelwebMoneyRange | None
+    prices_by_operation: list[ImovelwebDevelopmentPrice]
+    raw: ImovelwebDevelopmentRaw
+    stage: ImovelwebDevelopmentStage | None
     steps: list[ImovelwebDevelopmentStep]
-    totalArea: ImovelwebNumberRange
-    unitGroupsData: dict[str, dict[str, ImovelwebUnitGroup]]
+    total_area_m2: ImovelwebAreaRange | None
+    unit_count: int | None
+    unit_groups: list[ImovelwebUnitGroup]
+    usable_area_m2: ImovelwebAreaRange | None
+
+
+class ImovelwebDevelopmentDelivery(BaseModel):
+    """
+    When the developer hands over the units: immediately, or in a month and year.
+    """
+
+    is_immediate: bool
+    month: int | None
+    year: int | None
+
+
+class ImovelwebDevelopmentPrice(BaseModel):
+    operation: ImovelwebOperation | None
+    price: ImovelwebMoney | None
+
+
+class ImovelwebDevelopmentRaw(BaseModel):
+    ambientes: ImovelwebRawNumberRange | None = None
 
 
 class ImovelwebDevelopmentStep(BaseModel):
-    stage: str
-    status: str
+    stage: ImovelwebDevelopmentStage | None
+    status: ImovelwebStepStatusValue | None
 
 
 class ImovelwebDevelopmentUnit(BaseModel):
-    alt: bool
-    createdDate: int
-    description: str
-    descriptionNormalized: str
-    developmentFeatures: dict[str, dict[str, ImovelwebFeature]]
-    enableBannerFicha: bool
-    generalFeatures: dict[str, dict[str, ImovelwebGeneralFeature]]
-    generatedTitle: str
-    highlightedFeatures: list[str]
-    mainFeatures: dict[str, ImovelwebFeature]
-    pictures: list[ImovelwebDetailPicture]
-    pixelPlus: bool
-    postingCode: str
-    postingId: str
-    postingLocation: ImovelwebPostingLocation
-    postingType: str
-    premier: bool
-    priceOperationTypes: list[ImovelwebPriceOperationType]
-    publicationAreaId: str
-    realEstateSubtype: ImovelwebRealEstateSubtype
-    realEstateType: ImovelwebRealEstateType
-    requestVisit5A: ImovelwebRequestVisit
-    reserved: bool
-    showFirst360: bool
-    status: str
-    title: str
-    unsafe: bool
-    url: str
-    whatsApp: str | None
+    """
+    One unit of a development, a listing of its own. `created_at` is when the unit was
+    listed.
+    """
 
-
-class ImovelwebDuplicate(BaseModel):
+    ad_tier: ImovelwebAdTierValue | None
+    amenities: list[ImovelwebAmenityEntry]
+    bathrooms: int | None
+    bedrooms: int | None
+    building_age_years: int | None
+    code: str | None
+    created_at: str | None
+    description: str | None
+    development: ImovelwebDevelopment | None
+    generated_title: str | None
+    highlighted_amenities: list[ImovelwebAmenityValue]
     id: str
+    is_premier: bool
+    is_reserved: bool
+    location: ImovelwebListingLocation
+    operations: list[ImovelwebOperationPrice]
+    parking_spaces: int | None
+    photos: list[ImovelwebPicture]
+    posting_type: ImovelwebPostingTypeValue | None
+    property_subtype: ImovelwebPropertySubtype | None
+    property_type: ImovelwebPropertyKindValue | None
+    quintoandar_network: ImovelwebNetworkRoleValue | None
+    raw: ImovelwebDevelopmentUnitRaw
+    status: ImovelwebPostingStatusValue | None
+    suites: int | None
+    title: str | None
+    total_area_m2: float | None
     url: str
-    whatsApp: bool
+    usable_area_m2: float | None
+    visit_booking_url: str | None
+    whatsapp: str | None
 
 
-class ImovelwebFeature(BaseModel):
+class ImovelwebDevelopmentUnitRaw(BaseModel):
     """
-    A listing attribute keyed by imovelweb's code: CFT100 total area, CFT101 usable area,
-    CFT2 bedrooms, CFT3 bathrooms, CFT4 suites, CFT5 building age in years, CFT7 parking
-    spaces, CFT200 development stage, CFT201 delivery, CFT202 number of units. `value` is a
-    string as imovelweb sends it; `measure` is the unit (m²).
+    Feature codes and highlight names this API does not know, and `whatsApp` when this API
+    could not read a number in it.
     """
 
-    featureCategoryId: str | None = None
-    featureId: str
-    icon: str | None
-    label: str
-    maxValue: str | None = None
-    measure: str | None = None
-    minValue: str | None = None
-    value: str | None
+    alt: bool
+    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
+    enableBannerFicha: bool
+    highlightedFeatures: list[str]
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    pixelPlus: bool
+    publicationAreaId: str
+    requestVisit5A: ImovelwebRequestVisitRaw
+    showFirst360: bool
+    unsafe: bool
+    whatsApp: str | None = None
 
 
-class ImovelwebGeneralFeature(BaseModel):
-    featureId: str
-    label: str
-    value: str | None = None
+class ImovelwebDuplicatePublisher(BaseModel):
+    """
+    A publisher advertising the same property, with its own listing of it.
+    """
+
+    ad_tier: ImovelwebAdTierValue | None
+    is_premier: bool
+    listing_id: str
+    listing_url: str
+    logo_url: str | None
+    name: str
+    raw: ImovelwebDuplicatePublisherRaw
+
+
+class ImovelwebDuplicatePublisherRaw(BaseModel):
+    publicationAreaId: str
 
 
 class ImovelwebListing(BaseModel):
     """
-    One search result in imovelweb's own keys (some are Spanish, from the Navent platform).
-    `whatsApp` is the advertiser's WhatsApp number with country code, when shown. `url` is a
-    path on https://www.imovelweb.com.br. `slot` numbers a paid placement. Fields that accept
-    any JSON were null in every answer imovelweb gave us, so their shape is unknown.
+    One search result. `description` is plain text, imovelweb's markup removed;
+    `photo_count` counts every photo, beyond the few a search card carries;
+    `ai_description` is imovelweb's own generated summary, when it wrote one; `logo_url` is a
+    development's own logo. `published_days_ago` is 0 for today; a listing without a date has
+    null. `units` lists a development's units when imovelweb sends them with the search.
+    """
+
+    ad_tier: ImovelwebAdTierValue | None
+    ai_description: str | None
+    bathrooms: int | None
+    bedrooms: int | None
+    building_age_years: int | None
+    code: str | None
+    condo_fee: ImovelwebMoney | None
+    description: str | None
+    development: ImovelwebDevelopment | None
+    duplicate: ImovelwebListingDuplicate | None
+    generated_title: str | None
+    has_floor_plans: bool
+    has_tour: bool
+    has_video: bool
+    highlighted_amenities: list[ImovelwebAmenityValue]
+    id: str
+    is_foreclosure_auction: bool
+    is_premier: bool
+    is_reserved: bool
+    location: ImovelwebListingLocation
+    logo_url: str | None
+    modified_at: str | None
+    operations: list[ImovelwebOperationPrice]
+    parking_spaces: int | None
+    photo_count: int
+    photos: list[ImovelwebPicture]
+    posting_type: ImovelwebPostingTypeValue | None
+    promotion_title: str | None
+    property_type: ImovelwebPropertyKindValue | None
+    published_days_ago: int | None
+    publisher: ImovelwebListingPublisher
+    quintoandar_network: ImovelwebNetworkRoleValue | None
+    raw: ImovelwebListingRaw
+    status: ImovelwebPostingStatusValue | None
+    suites: int | None
+    title: str | None
+    total_area_m2: float | None
+    units: list[ImovelwebDevelopmentUnit]
+    url: str
+    usable_area_m2: float | None
+    visit_booking_url: str | None
+    whatsapp: str | None
+
+
+class ImovelwebListingDetail(BaseModel):
+    """
+    A listing page. `description` is plain text with line breaks kept; `has_duplicates`
+    is true when other publishers list the same property, which
+    `/listings/{posting_id}/publishers` lists. `view_count` and `popularity_message` are
+    imovelweb's own counters, when it shows them.
+    """
+
+    ad_tier: ImovelwebAdTierValue | None
+    amenities: list[ImovelwebAmenityEntry]
+    bathrooms: int | None
+    bedrooms: int | None
+    building_age_years: int | None
+    code: str | None
+    condo_fee: ImovelwebMoney | None
+    description: str | None
+    development: ImovelwebDevelopment | None
+    floor_plans: list[ImovelwebPicture]
+    generated_title: str | None
+    has_duplicates: bool
+    id: str
+    is_development_unit: bool
+    is_foreclosure_auction: bool
+    is_premier: bool
+    is_reserved: bool
+    location: ImovelwebListingLocation
+    operations: list[ImovelwebOperationPrice]
+    parking_spaces: int | None
+    photos: list[ImovelwebPicture]
+    popularity_message: str | None
+    posting_type: ImovelwebPostingTypeValue | None
+    property_type: ImovelwebPropertyKindValue | None
+    published_at: str | None
+    published_days_ago: int | None
+    publisher: ImovelwebListingDetailPublisher | None
+    quintoandar_network: ImovelwebNetworkRoleValue | None
+    raw: ImovelwebListingDetailRaw
+    status: ImovelwebPostingStatusValue | None
+    suites: int | None
+    title: str | None
+    total_area_m2: float | None
+    units: list[ImovelwebDevelopmentUnit]
+    url: str
+    usable_area_m2: float | None
+    view_count: int | None
+    visit_booking_url: str | None
+    whatsapp: str | None
+
+
+class ImovelwebListingDetailPublisher(BaseModel):
+    """
+    The publisher on a listing page. `partial_phone` is the first digits imovelweb shows
+    before its contact form; `/publishers/{publisher_id}` has the full numbers.
+    """
+
+    chat_url: str | None
+    creci: str | None
+    id: str | None
+    is_premium: bool | None
+    logo_url: str | None
+    name: str | None
+    partial_phone: str | None
+    type: ImovelwebPublisherKindValue | None
+    url: str | None
+
+
+class ImovelwebListingDetailRaw(BaseModel):
+    """
+    Feature codes and flags this API does not know, and `whatsApp` when this API could not
+    read a number in it. `requestVisit5A` is false, or on a QuintoAndar-network listing the
+    visit booking URL that `visit_booking_url` also carries.
+    """
+
+    cronut5A: ImovelwebRequestVisitRaw
+    enableBannerFicha: bool
+    featuresWithIcon: list[int]
+    flagsFeatures: list[ImovelwebRawFeature]
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    pixelPlus: bool
+    publicationAreaId: str | None
+    requestVisit5A: bool | str
+    whatsApp: str | None = None
+
+
+class ImovelwebListingDuplicate(BaseModel):
+    """
+    Another publisher's listing of the same property; `/listings/{posting_id}/publishers`
+    lists them all.
+    """
+
+    has_whatsapp: bool
+    listing_id: str
+    url: str
+
+
+class ImovelwebListingLocation(BaseModel):
+    """
+    Where the listing is. Coordinates are null when the advertiser hides the map position;
+    `static_map_url` is imovelweb's own map image of it.
+    """
+
+    address: str | None
+    address_visibility: ImovelwebVisibilityValue | None
+    city: ImovelwebPlace | None
+    coordinates_visibility: ImovelwebVisibilityValue | None
+    country: ImovelwebPlace | None
+    district: ImovelwebPlace | None
+    latitude: float | None
+    longitude: float | None
+    neighbourhood: ImovelwebPlace | None
+    state: ImovelwebPlace | None
+    static_map_url: str | None
+    sub_district: ImovelwebPlace | None
+
+
+class ImovelwebListingPublisher(BaseModel):
+    """
+    The publisher of a search result. `creci` is the CRECI licence; `main_phone` is filled
+    only when the publisher publishes one, and `/publishers/{publisher_id}` has every number.
+    An owner selling directly has no profile page.
+    """
+
+    active_listing_count: int | None
+    chat_url: str | None
+    creci: str | None
+    id: str
+    is_premier: bool
+    joined_at: str | None
+    joined_year: int | None
+    logo_url: str | None
+    main_phone: str | None
+    name: str
+    partial_phone: str | None
+    raw: ImovelwebListingPublisherRaw
+    slug: str | None
+    type: ImovelwebPublisherKindValue | None
+    url: str
+
+
+class ImovelwebListingPublisherRaw(BaseModel):
+    """
+    `mainPhone` is here only when this API could not read a phone number in it.
+    """
+
+    approved: bool
+    id_portal: str | None
+    mainPhone: str | None = None
+    parentPublisher: Any
+    publisherStatistics: Any
+    publisherTags: list[int]
+    quantity_posting_by_operation_type: Any
+    slotFilterUrl: Any
+
+
+class ImovelwebListingPublishers(BaseModel):
+    publishers: list[ImovelwebDuplicatePublisher]
+
+
+class ImovelwebListingRaw(BaseModel):
+    """
+    Feature codes, flags and highlight names this API does not know, `triggerPill` when it
+    names no amenity this API knows, and `whatsApp` when this API could not read a number in
+    it.
     """
 
     action: Any
     alphanumeric_key: str
     alt: bool
-    antiquity: str | None
     avisoDuplicado: str | None
-    descriptionNormalized: str
-    developmentFeatures: dict[str, dict[str, ImovelwebFeature]]
-    duplicated: ImovelwebDuplicate | None
+    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
     earlyDemandCronut: bool
-    expenses: ImovelwebPrice | None
     features: Any
-    flagsFeatures: list[ImovelwebFeature | None]
-    generalFeatures: dict[str, dict[str, ImovelwebGeneralFeature]]
-    generatedTitle: str
-    hasPlans: bool
-    hasTour: bool
-    hasVideos: bool
+    flagsFeatures: list[ImovelwebRawFeature]
     highlightedFeatures: list[str]
     house: Any
-    iadescription: str | None
     iptu: Any
     leadWhatsappDevelopmentRequestData: bool
     leadWhatsappPostingRequestData: bool
-    mainFeatures: dict[str, ImovelwebFeature]
-    modified_date: str
+    mainFeatures: dict[str, ImovelwebRawFeature]
     ownerDomain: Any
     pixelPlus: bool
-    postingCode: str
-    postingId: str
-    postingLocation: ImovelwebPostingLocation
-    postingType: str
-    premier: bool
-    priceOperationTypes: list[ImovelwebPriceOperationType]
-    promotionTitle: str | None
-    publication: ImovelwebPublication | None
     publicationAreaId: str
-    publisher: ImovelwebListingPublisherSummary
     publisherSlot: str
-    realEstateType: ImovelwebRealEstateType
-    requestVisit5A: ImovelwebRequestVisit
-    reserved: bool
+    requestVisit5A: ImovelwebRequestVisitRaw
     slot: int | None
     slotColor: Any
     sponsor: Any
-    status: str
-    title: str
-    triggerPill: str | None
+    triggerPill: str | None = None
     trigger_pills: list[str]
-    units: list[ImovelwebDevelopmentUnit] | None
-    url: str
-    urlLogo: str | None
     viewPhoneAnonymousLead: bool
-    visiblePictures: ImovelwebVisiblePictures | None
-    whatsApp: str | None
-
-
-class ImovelwebListingDetail(BaseModel):
-    """
-    A listing page. `expenses` is the monthly condo fee; `publisher.partialPhone` is the
-    first digits imovelweb shows before its lead form; `latitude`/`longitude` are null when
-    the advertiser hides the position.
-    """
-
-    address: ImovelwebAddress | None
-    description: str | None
-    developmentData: ImovelwebDevelopmentData | None
-    duplicated: bool
-    expenses: ImovelwebPrice | None
-    featuresWithIcon: list[int]
-    flagsFeatures: list[ImovelwebFeature]
-    generalFeatures: dict[str, dict[str, ImovelwebGeneralFeature]]
-    generatedTitle: str | None
-    latitude: float | None
-    location: ImovelwebLocationNode | None
-    longitude: float | None
-    mainFeatures: dict[str, ImovelwebFeature]
-    partialPhone: str | None
-    pictures: list[ImovelwebDetailPicture]
-    plans: list[ImovelwebDetailPicture]
-    postingCode: str | None
-    postingId: str
-    postingType: str
-    premier: bool
-    priceOperationTypes: list[ImovelwebPriceOperationType]
-    publicationAge: str | None
-    publicationAreaId: str | None
-    publishedAt: str | None
-    publisher: ImovelwebDetailPublisher | None
-    realEstateType: ImovelwebRealEstateType | None
-    reserved: bool
-    status: str
-    title: str | None
-    units: list[ImovelwebDevelopmentUnit]
-    url: str
-    visibility: str | None
-    whatsApp: str | None
-
-
-class ImovelwebListingPicture(BaseModel):
-    height: int | None
-    multimediaTypeId: str
-    order: int
-    title: str
-    url130x70: str | None
-    url360x266: str
-    url730x532: str
-    width: int | None
-
-
-class ImovelwebListingPublisher(BaseModel):
-    logoUrl: str
-    name: str
-    postingId: str
-    postingUrl: str
-    premier: bool
-    publicationAreaId: str
-
-
-class ImovelwebListingPublisherSummary(BaseModel):
-    """
-    The advertiser of a search result. `publisherTypeId` is a string here: "1" owner selling
-    directly, "2" agency, "4" QuintoAndar, "6" developer, "3" other professional. `license` is
-    the CRECI registration. `mainPhone` is filled only when the agency publishes one;
-    `/publishers/{publisherId}` has every number. Fields that accept any JSON were null in
-    every answer imovelweb gave us, so their shape is unknown.
-    """
-
-    amountPostingActive: int | None
-    approved: bool
-    createdYear: str | None
-    created_date: str
-    id_portal: str | None
-    license: str | None
-    mainPhone: str | None
-    name: str
-    parentPublisher: Any
-    partialPhone: str | None
-    premier: bool
-    publisherId: str
-    publisherStatistics: Any
-    publisherTags: list[int]
-    publisherTypeId: str
-    quantity_posting_by_operation_type: Any
-    slotFilterUrl: Any
-    slug: str | None
-    url: str
-    urlChat: str | None
-    urlLogo: str
-
-
-class ImovelwebListingPublishers(BaseModel):
-    publishers: list[ImovelwebListingPublisher]
+    whatsApp: str | None = None
 
 
 class ImovelwebListingsMap(BaseModel):
+    applied_filters: list[ImovelwebAppliedFilter]
     area: ImovelwebMapArea | None
-    boundary: ImovelwebMapBoundary | None
     markers: list[ImovelwebMapMarker]
+    raw: ImovelwebListingsMapRaw
     total: int
+    viewport: ImovelwebViewport | None
+
+
+class ImovelwebListingsMapRaw(BaseModel):
+    """
+    `appliedFilters` is imovelweb's echo as it sent it.
+    """
+
+    appliedFilters: list[ImovelwebRawAppliedFilter]
 
 
 class ImovelwebListingsPage(BaseModel):
-    developments: dict[str, ImovelwebDevelopmentData]
+    applied_filters: list[ImovelwebAppliedFilter]
     listings: list[ImovelwebListing]
     pagination: ImovelwebCursorPagination
+    raw: ImovelwebListingsPageRaw
     title: str
     total: int
+
+
+class ImovelwebListingsPageRaw(BaseModel):
+    """
+    `appliedFilters` is imovelweb's echo as it sent it; `developmentData` holds development
+    data for listings not on this page.
+    """
+
+    appliedFilters: list[ImovelwebRawAppliedFilter]
+    developmentData: dict[str, ImovelwebRawDevelopmentData]
+    total5A: int | None
 
 
 class ImovelwebLocation(BaseModel):
     """
-    A place imovelweb can search. `level` is read from the id: `V1-B-` state, `V1-C-` city,
-    `V1-D-` district, `V1-E-` sub-district, `V1-Z-` neighbourhood.
+    A place the search can filter by: send `id` as `location_id`.
     """
 
     id: str
     label: str
-    labelSuggest: str
     level: ImovelwebLocationLevelValue | None
     name: str
-    tokens: list[str]
+    raw: ImovelwebLocationRaw
 
 
-class ImovelwebLocationMetadata(BaseModel):
-    preposition: str
-
-
-class ImovelwebLocationNode(BaseModel):
-    acronym: str | None = None
-    depth: int
+class ImovelwebLocationRaw(BaseModel):
     label: str
-    locationId: str
-    metadata: ImovelwebLocationMetadata | None = None
-    name: str
-    parent: ImovelwebLocationNode | None = None
+    tokens: list[str]
 
 
 class ImovelwebLocations(BaseModel):
@@ -544,78 +922,260 @@ class ImovelwebLocations(BaseModel):
 
 
 class ImovelwebMapArea(BaseModel):
-    cenLAT: float
-    cenLON: float
-    geometry: ImovelwebMapGeometry
+    center: ImovelwebPoint
     id: str
+    level: ImovelwebLocationLevelValue | None
+    name: str
+    outline: ImovelwebAreaOutline
+    raw: ImovelwebMapAreaRaw
+
+
+class ImovelwebMapAreaRaw(BaseModel):
     idciudad: int
     idpais: int
     idprovincia: int
     idsubzonaciudad: int
     idzonaciudad: int
-    nombre: str
     solr_geometry: Any
     tipoN: str
 
 
-class ImovelwebMapBoundary(BaseModel):
-    east: str
-    north: str
-    south: str
-    west: str
-
-
-class ImovelwebMapGeolocation(BaseModel):
-    geolocation: ImovelwebCoordinates
-    visibility: str | None
-
-
-class ImovelwebMapGeometry(BaseModel):
-    coordinates: list[list[list[list[float]]]]
-    type: str
-
-
 class ImovelwebMapMarker(BaseModel):
     """
-    A listing on the map with its first listed price and coordinates.
+    A listing on the map with its first listed price. `development_id` is the development
+    a unit belongs to.
     """
 
-    geolocation: ImovelwebMapGeolocation
-    parentId: str | None
-    postingId: str
-    premier: bool
-    price: ImovelwebPriceOperationType | None
+    coordinates_visibility: ImovelwebVisibilityValue | None
+    development_id: str | None
+    id: str
+    is_premier: bool
+    latitude: float
+    longitude: float
+    operation: ImovelwebOperation | None
+    price: ImovelwebMoney | None
+    price_drop_percent: int | None
     title: str
 
 
-class ImovelwebNumberRange(BaseModel):
+class ImovelwebMoney(BaseModel):
+    """
+    An amount and its currency. `display` is the amount as imovelweb formats it
+    ("2.990.000", or "R$ 1.2M" on map markers).
+    """
+
+    amount: float
+    currency: ImovelwebCurrencyValue | None
+    display: str | None
+
+
+class ImovelwebMoneyRange(BaseModel):
+    """
+    The lowest and highest price of a development's units. `min` is null when imovelweb
+    shows no starting price, as its site then asks you to enquire.
+    """
+
+    currency: ImovelwebCurrencyValue | None
+    max: float | None
+    min: float | None
+
+
+class ImovelwebOperationPrice(BaseModel):
+    """
+    The price of one operation the listing is offered for. `price` is null when imovelweb
+    shows no amount (developments ask for contact); `price_drop_percent` is how far the price
+    fell, when imovelweb flags a drop.
+    """
+
+    operation: ImovelwebOperation | None
+    price: ImovelwebMoney | None
+    price_drop_percent: int | None
+
+
+class ImovelwebPicture(BaseModel):
+    """
+    One picture in every size imovelweb serves it; a size the route does not carry is
+    null. `url_720x532` is imovelweb's `url730x532`, named after the size its path holds;
+    the `resized_` URLs are imovelweb's resize service. `width` and `height` are the
+    original's.
+    """
+
+    caption: str | None
+    height: int | None
+    kind: ImovelwebMediaKindValue | None
+    resized_url_1200x1200: str | None
+    resized_url_720x532: str | None
+    url_100x75: str | None
+    url_1200x1200: str | None
+    url_130x70: str | None
+    url_215x159: str | None
+    url_360x266: str
+    url_720x532: str
+    width: int | None
+
+
+class ImovelwebPlace(BaseModel):
+    """
+    One level of a listing's location. `id` is the `location_id` the search takes for
+    every level except the country; `acronym` is the state's two letters.
+    """
+
+    acronym: str | None
+    id: str
+    name: str
+
+
+class ImovelwebPoint(BaseModel):
+    latitude: float
+    longitude: float
+
+
+class ImovelwebPublisher(BaseModel):
+    """
+    An agency's or developer's profile. `phone_text` is the free text the publisher
+    writes; `phone_numbers` holds each number in it as +55, area code and number.
+    `active_listing_count` is imovelweb's count of live listings and `listed_count` the
+    count its profile page lists. `ratings` is null when imovelweb keeps no statistics.
+    """
+
+    about: str | None
+    active_listing_count: int | None
+    address: str | None
+    cover_picture_url: str | None
+    cover_pictures: list[ImovelwebCoverPicture]
+    description: str | None
+    has_main_phone: bool
+    has_microsite: bool
+    id: str
+    is_premier: bool
+    joined_year: int | None
+    listed_count: int | None
+    logo_url: str | None
+    name: str
+    phone_numbers: list[str]
+    phone_text: str | None
+    ratings: ImovelwebPublisherRatings | None
+    raw: ImovelwebPublisherRaw
+    type: ImovelwebPublisherKindValue | None
+    video_url: str | None
+
+
+class ImovelwebPublisherRatings(BaseModel):
+    """
+    What buyers rated the publisher, from 1 to 5. An unrated publisher has a null
+    `review_count`, no questions and an average of 0.
+    """
+
+    average: float
+    is_new_publisher: bool
+    questions: list[ImovelwebRatingQuestion]
+    raw: ImovelwebPublisherRatingsRaw
+    recommend_percent: float
+    review_count: int | None
+
+
+class ImovelwebPublisherRatingsRaw(BaseModel):
+    scoreReputation: float
+
+
+class ImovelwebPublisherRaw(BaseModel):
+    isApproved: bool
+    isPublisher5A: bool
+
+
+class ImovelwebRatingQuestion(BaseModel):
+    average: float
+    question: str
+    topic: str
+
+
+class ImovelwebRawAppliedFilter(BaseModel):
+    """
+    One filter imovelweb says it applied, in its own filter names and codes.
+    """
+
+    groups: list[ImovelwebRawAppliedFilterGroup] | None = None
+    idsArea: ImovelwebRawAppliedFilterAreaKind | None = None
+    options: list[ImovelwebRawAppliedFilterOption] | None = None
+    renderType: int | None = None
+    type: str
+    units: list[ImovelwebRawAppliedFilterUnit] | None = None
+
+
+class ImovelwebRawAppliedFilterAreaKind(BaseModel):
+    id: str
+    label: str
+
+
+class ImovelwebRawAppliedFilterGroup(BaseModel):
+    label: str
+    options: list[ImovelwebRawAppliedFilterOption]
+
+
+class ImovelwebRawAppliedFilterOption(BaseModel):
+    label: str | None = None
+    max: str | None = None
+    maxLabel: str | None = None
+    min: str | None = None
+    minLabel: str | None = None
+    subtypes: list[ImovelwebRawAppliedFilterSubtype] | None = None
+    type: str | None = None
+
+
+class ImovelwebRawAppliedFilterSubtype(BaseModel):
+    label: str
+    min: str
+
+
+class ImovelwebRawAppliedFilterUnit(BaseModel):
+    id: str
+    label: str | None = None
+    symbol: str
+
+
+class ImovelwebRawDevelopmentData(BaseModel):
+    ambientes: ImovelwebRawNumberRange
+    bathrooms: ImovelwebRawNumberRange
+    coveredArea: ImovelwebRawNumberRange
+    delivery: str
+    garages: ImovelwebRawNumberRange
+    majorPrices: ImovelwebRawPriceRange | None = None
+    minorPrices: ImovelwebRawPriceRange | None = None
+    numberOfUnits: int
+    prices: ImovelwebRawPriceRange | None = None
+    pricesByOperationType: list[ImovelwebRawPricesByOperationType] | None = None
+    rooms: ImovelwebRawNumberRange
+    steps: list[ImovelwebRawDevelopmentStep]
+    totalArea: ImovelwebRawNumberRange
+    unitGroupsData: dict[str, dict[str, ImovelwebRawUnitGroup]]
+
+
+class ImovelwebRawDevelopmentStep(BaseModel):
+    stage: str
+    status: str
+
+
+class ImovelwebRawFeature(BaseModel):
+    """
+    A listing attribute keyed by imovelweb's feature code, with its value as a string.
+    """
+
+    featureCategoryId: str | None = None
+    featureId: str
+    icon: str | None = None
+    label: str
+    maxValue: str | None = None
+    measure: str | None = None
+    minValue: str | None = None
+    value: str | None
+
+
+class ImovelwebRawNumberRange(BaseModel):
     tuple0: float | None = None
     tuple1: float | None = None
 
 
-class ImovelwebOperationType(BaseModel):
-    name: str
-    operationTypeId: str
-
-
-class ImovelwebPostingGeolocation(BaseModel):
-    geolocation: ImovelwebCoordinates
-    urlStaticMap: str
-    visibility: str | None
-
-
-class ImovelwebPostingLocation(BaseModel):
-    """
-    Where the listing is. `address.visibility` EXACT shows the street; `postingGeolocation` is
-    null when the advertiser hides the map position.
-    """
-
-    address: ImovelwebAddress | None
-    location: ImovelwebLocationNode
-    postingGeolocation: ImovelwebPostingGeolocation | None
-
-
-class ImovelwebPrice(BaseModel):
+class ImovelwebRawPrice(BaseModel):
     amount: float | None
     currency: str
     currencyId: str | None
@@ -623,130 +1183,84 @@ class ImovelwebPrice(BaseModel):
     isoCode: str | None = None
 
 
-class ImovelwebPriceOperationType(BaseModel):
-    """
-    One price per operation. `operationType.operationTypeId`: 1 sale, 2 rent, 3 auction,
-    4 season. `prices[].currencyId` 3 is R$; amounts are whole reais.
-    """
-
-    lowPricePercentage: str | None = None
-    operationType: ImovelwebOperationType
-    prices: list[ImovelwebPrice]
+class ImovelwebRawPriceRange(BaseModel):
+    tuple0: ImovelwebRawPrice | None = None
+    tuple1: ImovelwebRawPrice | None = None
 
 
-class ImovelwebPriceRange(BaseModel):
-    tuple0: ImovelwebPrice | None
-    tuple1: ImovelwebPrice | None = None
-
-
-class ImovelwebPricesByOperationType(BaseModel):
+class ImovelwebRawPricesByOperationType(BaseModel):
     operationTypeName: str
-    prices: list[ImovelwebPrice]
+    prices: list[ImovelwebRawPrice]
 
 
-class ImovelwebPublication(BaseModel):
-    publicationPlan: ImovelwebPublicationPlan
-
-
-class ImovelwebPublicationPlan(BaseModel):
-    publicationAreaId: str
-
-
-class ImovelwebPublisher(BaseModel):
-    """
-    An agency or developer profile. `phone` is the free text the agency publishes;
-    `phoneNumbers` holds each number in it as +55, area code and number. `publisherTypeId`
-    is the listings' code as a number; `amountPostingActive` counts its live listings.
-    """
-
-    aboutUs: str | None
-    address: str | None
-    amountPostingActive: int | None
-    coverPictureUrl: str | None
-    coverPictures: list[ImovelwebCoverPicture] | None
-    createdYear: str | None
-    denomination: str
-    description: str | None
-    hasMainPhone: bool
-    idRealEstate: int
-    isApproved: bool
-    isMicrositeActivated: bool
-    isPublisher5A: bool
-    phone: str | None
-    phoneNumbers: list[str]
-    premier: bool
-    publisherTypeId: int
-    ratings: ImovelwebPublisherRatings | None
-    urlLogo: str | None
-    videoUrl: str | None
-
-
-class ImovelwebPublisherRatings(BaseModel):
-    average: float
-    newPublisher: bool
-    ratings: list[ImovelwebRating] | None
-    recommendPercentage: float
-    respondedCount: int | None
-    scoreReputation: float
-
-
-class ImovelwebRating(BaseModel):
-    average: float
-    question: str
-    title: str
-
-
-class ImovelwebRealEstateSubtype(BaseModel):
-    name: str
-    realEstateSubTypeId: str
-
-
-class ImovelwebRealEstateType(BaseModel):
-    name: str
-    realEstateTypeId: str
-
-
-class ImovelwebRequestVisit(BaseModel):
-    activeModal5A: bool
-    activeModalPostlead5A: bool
-    cronutEarlyDemand: bool
-    cronutRent: bool
-    cronutSell: bool
-    ownershipRede: str | None = None
-    requestVisit5AUrl: str | None = None
-    requestVisitUrl: ImovelwebRequestVisitUrl
-    showWhatsapp: bool
-
-
-class ImovelwebRequestVisitUrl(BaseModel):
+class ImovelwebRawRequestVisitUrl(BaseModel):
     urlControl: str | None = None
     urlEarlyDemand: str | None = None
     urlVariant: str | None = None
     urlWhatsappConcierge: str | None = None
 
 
+class ImovelwebRawUnitGroup(BaseModel):
+    coveredArea: ImovelwebRawNumberRange
+    majorPrices: ImovelwebRawPriceRange | None = None
+    minorPrices: ImovelwebRawPriceRange | None = None
+    numberOfUnits: int
+    operationTypeId: str | None
+    picture: str | None = None
+    prices: ImovelwebRawPriceRange | None = None
+    realEstateTypeId: str
+    rooms: str
+    title: str
+    totalArea: ImovelwebRawNumberRange
+
+
+class ImovelwebRequestVisitRaw(BaseModel):
+    activeModal5A: bool
+    activeModalPostlead5A: bool
+    cronutEarlyDemand: bool
+    cronutRent: bool
+    cronutSell: bool
+    requestVisitUrl: ImovelwebRawRequestVisitUrl
+    showWhatsapp: bool
+
+
 class ImovelwebSimilarListing(BaseModel):
     """
-    imovelweb's compact listing card: `price`, `operationType`, `realestateType` and
-    `location` are display strings.
+    imovelweb's compact card for a similar listing. Its type, operation and price arrive
+    as display text, which this API decodes; `location.label` is the card's own wording.
     """
 
-    address: str
-    currency: str
-    descripcionNormalized: str | None
-    developmentData: ImovelwebDevelopmentData | None
-    location: str
-    mainFeatures: dict[str, ImovelwebFeature]
-    operationType: str
-    pictures: list[ImovelwebListingPicture]
-    postingId: str
-    postingType: str
-    premier: bool
-    price: str
-    publicationAreaId: str | None
-    publisherLogo: str
-    realestateType: str
+    ad_tier: ImovelwebAdTierValue | None
+    bathrooms: int | None
+    bedrooms: int | None
+    building_age_years: int | None
+    id: str
+    is_premier: bool
+    location: ImovelwebSimilarListingLocation
+    operation: ImovelwebOperation | None
+    parking_spaces: int | None
+    photos: list[ImovelwebPicture]
+    posting_type: ImovelwebPostingTypeValue | None
+    price: ImovelwebMoney | None
+    property_type: ImovelwebPropertyKindValue | None
+    publisher_logo_url: str | None
+    raw: ImovelwebSimilarListingRaw
+    suites: int | None
     title: str
+    total_area_m2: float | None
+    usable_area_m2: float | None
+
+
+class ImovelwebSimilarListingLocation(BaseModel):
+    address: str | None
+    label: str | None
+
+
+class ImovelwebSimilarListingRaw(BaseModel):
+    descripcionNormalized: str | None
+    developmentData: ImovelwebRawDevelopmentData | None
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    publicationAreaId: str | None
 
 
 class ImovelwebSimilarListings(BaseModel):
@@ -754,22 +1268,30 @@ class ImovelwebSimilarListings(BaseModel):
 
 
 class ImovelwebUnitGroup(BaseModel):
-    coveredArea: ImovelwebNumberRange
-    majorPrices: ImovelwebPriceRange | None = None
-    minorPrices: ImovelwebPriceRange | None = None
-    numberOfUnits: int
-    operationTypeId: str | None
-    picture: str | None = None
-    prices: ImovelwebPriceRange | None = None
-    realEstateTypeId: str
-    rooms: str
+    """
+    The development's units of one type and bedroom count.
+    """
+
+    bedrooms: int | None
+    operation: ImovelwebOperation | None
+    price: ImovelwebMoneyRange | None
+    property_type: ImovelwebPropertyKindValue | None
+    raw: ImovelwebUnitGroupRaw
     title: str
-    totalArea: ImovelwebNumberRange
+    total_area_m2: ImovelwebAreaRange | None
+    unit_count: int
+    usable_area_m2: ImovelwebAreaRange | None
 
 
-class ImovelwebVisiblePictures(BaseModel):
-    additionalPicturesCount: int
-    pictures: list[ImovelwebListingPicture]
+class ImovelwebUnitGroupRaw(BaseModel):
+    picture: str | None = None
+
+
+class ImovelwebViewport(BaseModel):
+    east: float
+    north: float
+    south: float
+    west: float
 
 
 class ListListingPublishersParams(BaseModel):
@@ -784,9 +1306,13 @@ class ListListingsParams(BaseModel):
     """
     `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a page number, so send it with the same filters and sort as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` at page 1,000 (30,000 listings), the deepest page imovelweb serves; narrow the filters to reach the rest. imovelweb's `relevance` order changes over minutes, so a long crawl that pages by relevance can skip or repeat listings.
     """
+    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    """
+    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
+    """
     features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
     """
-    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them.
+    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
     """
     keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
     """
@@ -804,7 +1330,7 @@ class ListListingsParams(BaseModel):
     """
     max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
     """
-    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap.
+    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
     """
     max_condo_fee: Annotated[int | None, Field(ge=0)] = None
     """
@@ -858,6 +1384,10 @@ class ListListingsParams(BaseModel):
     """
     `none` for listings without parking, or `1` to `4` for at least that many spaces.
     """
+    price_includes_condo_fee: bool | None = False
+    """
+    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
+    """
     property_subtype: Annotated[list[ImovelwebPropertySubtype] | None, Field(max_length=21)] = []
     """
     Property subtype, such as `penthouse` or `townhouse`; repeat for several. Send its type in `property_type` too (`penthouse` needs `apartment`). Not with `operation=development`.
@@ -872,15 +1402,19 @@ class ListListingsParams(BaseModel):
     """
     publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
     """
-    Only this publisher's listings (`publisher.publisherId` on a listing).
+    Only this publisher's listings (`publisher.id` on a listing).
     """
     publisher_type: ImovelwebPublisherType | None = ImovelwebPublisherType.ALL
     """
-    `agency` for agencies and developers, `owner` for owners selling directly.
+    `company` for every publisher that is not an owner: agencies, developers, brokers and builders (imovelweb's Imobiliária option). `owner` for owners selling directly. `all` for both.
     """
     sort: ImovelwebListingSort | None = ImovelwebListingSort.RELEVANCE
     """
     `relevance`, `lowest_price`, `highest_price`, `newest`, `most_viewed` or `price_dropped`. imovelweb keeps its premier listings in their own ordered run, so prices on one page can step back where the two runs meet, and it sorts a development by its highest unit price while showing its lowest. `relevance` reshuffles over minutes, so a long crawl should sort by `newest`.
+    """
+    without_guarantor: bool | None = False
+    """
+    Only rentals that need no guarantor (imovelweb's Aluguel sem fiador). Only with `operation=rent`.
     """
 
 
@@ -911,9 +1445,13 @@ class LocationIdItem(RootModel[str]):
 
 
 class MapListingsParams(BaseModel):
+    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    """
+    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
+    """
     features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
     """
-    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them.
+    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
     """
     keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
     """
@@ -931,7 +1469,7 @@ class MapListingsParams(BaseModel):
     """
     max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
     """
-    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap.
+    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
     """
     max_condo_fee: Annotated[int | None, Field(ge=0)] = None
     """
@@ -985,6 +1523,10 @@ class MapListingsParams(BaseModel):
     """
     `none` for listings without parking, or `1` to `4` for at least that many spaces.
     """
+    price_includes_condo_fee: bool | None = False
+    """
+    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
+    """
     property_subtype: Annotated[list[ImovelwebPropertySubtype] | None, Field(max_length=21)] = []
     """
     Property subtype, such as `penthouse` or `townhouse`; repeat for several. Send its type in `property_type` too (`penthouse` needs `apartment`). Not with `operation=development`.
@@ -999,17 +1541,22 @@ class MapListingsParams(BaseModel):
     """
     publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
     """
-    Only this publisher's listings (`publisher.publisherId` on a listing).
+    Only this publisher's listings (`publisher.id` on a listing).
     """
     publisher_type: ImovelwebPublisherType | None = ImovelwebPublisherType.ALL
     """
-    `agency` for agencies and developers, `owner` for owners selling directly.
+    `company` for every publisher that is not an owner: agencies, developers, brokers and builders (imovelweb's Imobiliária option). `owner` for owners selling directly. `all` for both.
+    """
+    without_guarantor: bool | None = False
+    """
+    Only rentals that need no guarantor (imovelweb's Aluguel sem fiador). Only with `operation=rent`.
     """
 
 
-ImovelwebLocationNode.model_rebuild()
-
-
+ImovelwebDevelopmentStageParam: TypeAlias = (
+    ImovelwebDevelopmentStage
+    | Literal["launching_soon", "off_plan", "under_construction", "ready_to_move"]
+)
 ImovelwebListingFeatureParam: TypeAlias = (
     ImovelwebListingFeature
     | Literal[
@@ -1069,7 +1616,7 @@ ImovelwebMaxAgeParam: TypeAlias = (
     ]
 )
 ImovelwebMultimediaParam: TypeAlias = (
-    ImovelwebMultimedia | Literal["tour_360", "video", "floor_plans"]
+    ImovelwebMultimedia | Literal["tour_360", "video", "floor_plan"]
 )
 ImovelwebOperationParam: TypeAlias = (
     ImovelwebOperation | Literal["sale", "rent", "season", "auction", "development"]
@@ -1110,7 +1657,19 @@ ImovelwebPublishedWithinParam: TypeAlias = (
     ImovelwebPublishedWithin
     | Literal["today", "since_yesterday", "7_days", "15_days", "30_days", "45_days"]
 )
-ImovelwebPublisherTypeParam: TypeAlias = ImovelwebPublisherType | Literal["all", "agency", "owner"]
+ImovelwebPublisherTypeParam: TypeAlias = ImovelwebPublisherType | Literal["all", "company", "owner"]
+ImovelwebAdTierValue: TypeAlias = Annotated[ImovelwebAdTier | str, PREFER_ENUM]
+ImovelwebAmenityValue: TypeAlias = Annotated[ImovelwebAmenity | str, PREFER_ENUM]
+ImovelwebAmenityAreaValue: TypeAlias = Annotated[ImovelwebAmenityArea | str, PREFER_ENUM]
+ImovelwebCurrencyValue: TypeAlias = Annotated[ImovelwebCurrency | str, PREFER_ENUM]
 ImovelwebCursorCompletionValue: TypeAlias = Annotated[ImovelwebCursorCompletion | str, PREFER_ENUM]
 ImovelwebLocationLevelValue: TypeAlias = Annotated[ImovelwebLocationLevel | str, PREFER_ENUM]
+ImovelwebMediaKindValue: TypeAlias = Annotated[ImovelwebMediaKind | str, PREFER_ENUM]
+ImovelwebNetworkRoleValue: TypeAlias = Annotated[ImovelwebNetworkRole | str, PREFER_ENUM]
+ImovelwebPostingStatusValue: TypeAlias = Annotated[ImovelwebPostingStatus | str, PREFER_ENUM]
+ImovelwebPostingTypeValue: TypeAlias = Annotated[ImovelwebPostingType | str, PREFER_ENUM]
+ImovelwebPropertyKindValue: TypeAlias = Annotated[ImovelwebPropertyKind | str, PREFER_ENUM]
+ImovelwebPublisherKindValue: TypeAlias = Annotated[ImovelwebPublisherKind | str, PREFER_ENUM]
+ImovelwebStepStatusValue: TypeAlias = Annotated[ImovelwebStepStatus | str, PREFER_ENUM]
+ImovelwebVisibilityValue: TypeAlias = Annotated[ImovelwebVisibility | str, PREFER_ENUM]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
