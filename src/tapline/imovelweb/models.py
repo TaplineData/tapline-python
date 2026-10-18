@@ -83,6 +83,30 @@ class ImovelwebAmenity(str, Enum):
     LEISURE_AREA = "leisure_area"
     PET_CARE = "pet_care"
     GOURMET_BALCONY = "gourmet_balcony"
+    GOURMET_SPACE = "gourmet_space"
+    SPORTS_COURT = "sports_court"
+    DINING_ROOM = "dining_room"
+    VISITOR_PARKING = "visitor_parking"
+    PET_PLAY = "pet_play"
+    KIDS_POOL = "kids_pool"
+    SQUARE = "square"
+    MASSAGE_ROOM = "massage_room"
+    POOL_WET_DECK = "pool_wet_deck"
+    GOURMET_KITCHEN = "gourmet_kitchen"
+    ZEN_SPACE = "zen_space"
+    SECURITY_24H = "security_24h"
+    HAMMOCK_AREA = "hammock_area"
+    SPA = "spa"
+    REFRIGERATOR = "refrigerator"
+    FUTSAL_COURT = "futsal_court"
+    PIPED_GAS = "piped_gas"
+    SERVICE_ENTRANCE = "service_entrance"
+    WIFI = "wifi"
+    TV = "tv"
+    PIZZA_OVEN = "pizza_oven"
+    SOLARIUM = "solarium"
+    TILED_FLOOR = "tiled_floor"
+    SEPARATE_KITCHEN = "separate_kitchen"
 
 
 class ImovelwebAmenityArea(str, Enum):
@@ -253,7 +277,7 @@ class ImovelwebParkingSpaces(str, Enum):
 
 class ImovelwebPostingStatus(str, Enum):
     """
-    Whether a listing is live; a development keeps its sold or withdrawn units, `offline`.
+    Whether a listing is live.
     """
 
     ONLINE = "online"
@@ -274,8 +298,9 @@ class ImovelwebPropertyKind(str, Enum):
     """
     A listing's property type: the five the search filters by, and the kinds of new
     development: towers (`new_development_vertical`), houses (`new_development_horizontal`),
-    both (`new_development_mixed`), lots (`land_subdivision`) and whole buildings
-    (`building`).
+    both (`new_development_mixed`), commercial units (`new_development_commercial`), lots
+    (`land_subdivision`), whole buildings (`building`) and condominiums of buildings
+    (`building_condominium`).
     """
 
     APARTMENT = "apartment"
@@ -286,8 +311,10 @@ class ImovelwebPropertyKind(str, Enum):
     NEW_DEVELOPMENT_VERTICAL = "new_development_vertical"
     NEW_DEVELOPMENT_HORIZONTAL = "new_development_horizontal"
     NEW_DEVELOPMENT_MIXED = "new_development_mixed"
+    NEW_DEVELOPMENT_COMMERCIAL = "new_development_commercial"
     LAND_SUBDIVISION = "land_subdivision"
     BUILDING = "building"
+    BUILDING_CONDOMINIUM = "building_condominium"
 
 
 class ImovelwebPropertySubtype(str, Enum):
@@ -544,7 +571,8 @@ class ImovelwebDevelopmentStep(BaseModel):
 class ImovelwebDevelopmentUnit(BaseModel):
     """
     One unit of a development, a listing of its own. `created_at` is when the unit was
-    listed.
+    listed. `status` is null: a development page sends every unit as OFFLINE (kept in
+    `raw.status`), live or not, so `/listings/{posting_id}` on the unit's id has its status.
     """
 
     ad_tier: ImovelwebAdTierValue | None
@@ -582,20 +610,30 @@ class ImovelwebDevelopmentUnit(BaseModel):
 
 class ImovelwebDevelopmentUnitRaw(BaseModel):
     """
-    Feature codes and highlight names this API does not know, and `whatsApp` when this API
-    could not read a number in it.
+    Feature codes and highlight names this API does not know, `whatsApp` when this API
+    could not read a number in it, and imovelweb's `status`, OFFLINE on every unit a
+    development page lists.
     """
 
     alt: bool
     developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
     enableBannerFicha: bool
+    expenses: ImovelwebRawPrice | None = None
     highlightedFeatures: list[str]
     mainFeatures: dict[str, ImovelwebRawFeature]
+    ownershipRede: str | None = None
     pixelPlus: bool
+    plans: list[ImovelwebRawDetailPicture] | None = None
+    postingType: str | None = None
     publicationAreaId: str
+    realEstateSubTypeId: str | None = None
+    realEstateTypeId: str | None = None
     requestVisit5A: ImovelwebRequestVisitRaw
     showFirst360: bool
+    status: str
+    tour: ImovelwebRawMedia | None = None
     unsafe: bool
+    videos: list[ImovelwebRawMedia] | None = None
     whatsApp: str | None = None
 
 
@@ -624,6 +662,9 @@ class ImovelwebListing(BaseModel):
     `ai_description` is imovelweb's own generated summary, when it wrote one; `logo_url` is a
     development's own logo. `published_days_ago` is 0 for today; a listing without a date has
     null. `units` lists a development's units when imovelweb sends them with the search.
+    `duplicate_group_id` names the group of publishers' copies the listing belongs to, the
+    same on every copy, and is null for a listing no one else publishes. Search results carry
+    no IPTU: imovelweb sends it as null; `/listings/{posting_id}` has it.
     """
 
     ad_tier: ImovelwebAdTierValue | None
@@ -636,6 +677,7 @@ class ImovelwebListing(BaseModel):
     description: str | None
     development: ImovelwebDevelopment | None
     duplicate: ImovelwebListingDuplicate | None
+    duplicate_group_id: str | None
     generated_title: str | None
     has_floor_plans: bool
     has_tour: bool
@@ -675,7 +717,9 @@ class ImovelwebListingDetail(BaseModel):
     A listing page. `description` is plain text with line breaks kept; `has_duplicates`
     is true when other publishers list the same property, which
     `/listings/{posting_id}/publishers` lists. `view_count` and `popularity_message` are
-    imovelweb's own counters, when it shows them.
+    imovelweb's own counters, when it shows them. `iptu` is the property tax as the page's
+    price block shows it, in whole reais; imovelweb gives no period and advertisers enter
+    yearly or monthly amounts, so read it with the description.
     """
 
     ad_tier: ImovelwebAdTierValue | None
@@ -691,6 +735,7 @@ class ImovelwebListingDetail(BaseModel):
     generated_title: str | None
     has_duplicates: bool
     id: str
+    iptu: ImovelwebMoney | None
     is_development_unit: bool
     is_foreclosure_auction: bool
     is_premier: bool
@@ -722,13 +767,13 @@ class ImovelwebListingDetail(BaseModel):
 class ImovelwebListingDetailPublisher(BaseModel):
     """
     The publisher on a listing page. `partial_phone` is the first digits imovelweb shows
-    before its contact form; `/publishers/{publisher_id}` has the full numbers.
+    before its contact form; `/publishers/{publisher_id}` has the full numbers and the
+    publisher's `is_premier`, which a listing page does not carry.
     """
 
     chat_url: str | None
     creci: str | None
     id: str | None
-    is_premium: bool | None
     logo_url: str | None
     name: str | None
     partial_phone: str | None
@@ -744,24 +789,33 @@ class ImovelwebListingDetailRaw(BaseModel):
     """
 
     cronut5A: ImovelwebRequestVisitRaw
+    developmentUrl: str | None = None
     enableBannerFicha: bool
     featuresWithIcon: list[int]
     flagsFeatures: list[ImovelwebRawFeature]
+    haveVideo: bool | None = None
     mainFeatures: dict[str, ImovelwebRawFeature]
+    ownershipRede: str | None = None
     pixelPlus: bool
+    postingType: str | None = None
+    promotion: ImovelwebRawPromotion | None = None
     publicationAreaId: str | None
+    realEstateTypeId: str | None = None
     requestVisit5A: bool | str
+    status: str | None = None
+    tour: ImovelwebRawMedia | None = None
+    videos: list[ImovelwebRawMedia] | None = None
     whatsApp: str | None = None
 
 
 class ImovelwebListingDuplicate(BaseModel):
     """
-    Another publisher's listing of the same property; `/listings/{posting_id}/publishers`
-    lists them all.
+    The listing is one of several publishers' copies of the same property. `url` is
+    imovelweb's page for the group, which lists every copy; `has_whatsapp` is whether the group
+    offers a WhatsApp contact. `/listings/{posting_id}/publishers` lists the copies.
     """
 
     has_whatsapp: bool
-    listing_id: str
     url: str
 
 
@@ -821,6 +875,7 @@ class ImovelwebListingPublisherRaw(BaseModel):
     parentPublisher: Any
     publisherStatistics: Any
     publisherTags: list[int]
+    publisherTypeId: str | None = None
     quantity_posting_by_operation_type: Any
     slotFilterUrl: Any
 
@@ -839,7 +894,6 @@ class ImovelwebListingRaw(BaseModel):
     action: Any
     alphanumeric_key: str
     alt: bool
-    avisoDuplicado: str | None
     developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
     earlyDemandCronut: bool
     features: Any
@@ -851,13 +905,17 @@ class ImovelwebListingRaw(BaseModel):
     leadWhatsappPostingRequestData: bool
     mainFeatures: dict[str, ImovelwebRawFeature]
     ownerDomain: Any
+    ownershipRede: str | None = None
     pixelPlus: bool
+    postingType: str | None = None
     publicationAreaId: str
     publisherSlot: str
+    realEstateTypeId: str | None = None
     requestVisit5A: ImovelwebRequestVisitRaw
     slot: int | None
     slotColor: Any
     sponsor: Any
+    status: str | None = None
     triggerPill: str | None = None
     trigger_pills: list[str]
     viewPhoneAnonymousLead: bool
@@ -1076,12 +1134,17 @@ class ImovelwebPublisherRatings(BaseModel):
 
 
 class ImovelwebPublisherRatingsRaw(BaseModel):
-    scoreReputation: float
+    """
+    `scoreReputation` is null for an agency imovelweb marks as new.
+    """
+
+    scoreReputation: float | None
 
 
 class ImovelwebPublisherRaw(BaseModel):
     isApproved: bool
     isPublisher5A: bool
+    publisherTypeId: str | None = None
 
 
 class ImovelwebRatingQuestion(BaseModel):
@@ -1134,6 +1197,21 @@ class ImovelwebRawAppliedFilterUnit(BaseModel):
     symbol: str
 
 
+class ImovelwebRawDetailPicture(BaseModel):
+    height: int | None
+    multimediaTypeId: int
+    order: int
+    resizeUrl1200x1200: str
+    resizeUrl720x532: str
+    title: str
+    url100x75: str
+    url1200x1200: str
+    url215x159: str
+    url360x266: str
+    url730x532: str
+    width: int | None
+
+
 class ImovelwebRawDevelopmentData(BaseModel):
     ambientes: ImovelwebRawNumberRange
     bathrooms: ImovelwebRawNumberRange
@@ -1171,15 +1249,30 @@ class ImovelwebRawFeature(BaseModel):
     value: str | None
 
 
+class ImovelwebRawMedia(BaseModel):
+    """
+    A video or virtual tour: `reference` is a YouTube id or the tour's URL.
+    """
+
+    order: int
+    preview: str | None = None
+    reference: str
+
+
 class ImovelwebRawNumberRange(BaseModel):
     tuple0: float | None = None
     tuple1: float | None = None
 
 
 class ImovelwebRawPrice(BaseModel):
+    """
+    A development unit's condo fee carries only `currency`, `amount` and
+    `formattedAmount`.
+    """
+
     amount: float | None
     currency: str
-    currencyId: str | None
+    currencyId: str | None = None
     formattedAmount: str | None
     isoCode: str | None = None
 
@@ -1192,6 +1285,11 @@ class ImovelwebRawPriceRange(BaseModel):
 class ImovelwebRawPricesByOperationType(BaseModel):
     operationTypeName: str
     prices: list[ImovelwebRawPrice]
+
+
+class ImovelwebRawPromotion(BaseModel):
+    description: str
+    title: str
 
 
 class ImovelwebRawRequestVisitUrl(BaseModel):
@@ -1261,7 +1359,10 @@ class ImovelwebSimilarListingRaw(BaseModel):
     descripcionNormalized: str | None
     developmentData: ImovelwebRawDevelopmentData | None
     mainFeatures: dict[str, ImovelwebRawFeature]
+    operationType: str | None = None
+    postingType: str | None = None
     publicationAreaId: str | None
+    realestateType: str | None = None
 
 
 class ImovelwebSimilarListings(BaseModel):
@@ -1303,7 +1404,7 @@ class ListListingPublishersParams(BaseModel):
 
 
 class ListListingsParams(BaseModel):
-    cursor: Annotated[str | None, Field(max_length=64, pattern="^[A-Za-z0-9_-]*$")] = ""
+    cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a page number, so send it with the same filters and sort as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` at page 1,000 (30,000 listings), the deepest page imovelweb serves; narrow the filters to reach the rest. imovelweb's `relevance` order changes over minutes, so a long crawl that pages by relevance can skip or repeat listings.
     """
