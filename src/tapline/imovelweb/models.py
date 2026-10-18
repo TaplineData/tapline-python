@@ -714,12 +714,12 @@ class ImovelwebListing(BaseModel):
 
 class ImovelwebListingDetail(BaseModel):
     """
-    A listing page. `description` is plain text with line breaks kept; `has_duplicates`
-    is true when other publishers list the same property, which
-    `/listings/{posting_id}/publishers` lists. `view_count` and `popularity_message` are
-    imovelweb's own counters, when it shows them. `iptu` is the property tax as the page's
-    price block shows it, in whole reais; imovelweb gives no period and advertisers enter
-    yearly or monthly amounts, so read it with the description.
+    A listing page. `description` is plain text with line breaks kept;
+    `/listings/{posting_id}/publishers` lists the other agencies advertising the same property.
+    `view_count` and `popularity_message` are imovelweb's own counters, when it shows them.
+    `iptu` is the property tax as the page's price block shows it, in whole reais; imovelweb
+    gives no period and advertisers enter yearly or monthly amounts, so read it with the
+    description.
     """
 
     ad_tier: ImovelwebAdTierValue | None
@@ -733,7 +733,6 @@ class ImovelwebListingDetail(BaseModel):
     development: ImovelwebDevelopment | None
     floor_plans: list[ImovelwebPicture]
     generated_title: str | None
-    has_duplicates: bool
     id: str
     iptu: ImovelwebMoney | None
     is_development_unit: bool

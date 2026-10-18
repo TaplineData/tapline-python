@@ -484,7 +484,7 @@ class Imovelweb(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingDetail:
-        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, the IPTU the page shows (`iptu`, no period given), coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
+        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, the IPTU the page shows (`iptu`, no period given), coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `/listings/{posting_id}/publishers` lists the other agencies advertising the same property. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
@@ -502,7 +502,7 @@ class Imovelweb(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingPublishers:
-        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate_group_id`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list; imovelweb answers the same for an id it does not know, so an empty list is checked against the listing page and an unknown id answers 404. Costs 1 credit.
+        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate_group_id`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list, and so does an id imovelweb does not know; both are charged. Costs 1 credit.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
@@ -521,7 +521,7 @@ class Imovelweb(AsyncAPIResource):
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebSimilarListings:
-        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id, so the route reads the listing page first: an id imovelweb does not know answers 404. Costs 1 credit.
+        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings, charged like any other answer. Costs 1 credit.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
@@ -852,7 +852,7 @@ class SyncImovelweb(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingDetail:
-        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, the IPTU the page shows (`iptu`, no period given), coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
+        """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, the IPTU the page shows (`iptu`, no period given), coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `/listings/{posting_id}/publishers` lists the other agencies advertising the same property. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
@@ -870,7 +870,7 @@ class SyncImovelweb(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebListingPublishers:
-        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate_group_id`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list; imovelweb answers the same for an id it does not know, so an empty list is checked against the listing page and an unknown id answers 404. Costs 1 credit.
+        """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate_group_id`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list, and so does an id imovelweb does not know; both are charged. Costs 1 credit.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
@@ -889,7 +889,7 @@ class SyncImovelweb(SyncAPIResource):
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ImovelwebSimilarListings:
-        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id, so the route reads the listing page first: an id imovelweb does not know answers 404. Costs 1 credit.
+        """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings, charged like any other answer. Costs 1 credit.
 
         Args:
             posting_id: imovelweb listing id: the number at the end of a listing URL
