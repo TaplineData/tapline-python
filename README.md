@@ -23,7 +23,7 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | Birdeye | Read token overviews, security checks, trades, candles, pools, trending tokens and launchpad listings on Solana and seven EVM chains, plus trader leaderboards and wallet PnL | [Birdeye guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/birdeye/README.md) |
 | imovelweb | Search Brazilian homes and commercial property for sale, rent, short stays, auction and new developments, map a search, read full listings, and get each agency's phone numbers and ratings | [imovelweb guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/imovelweb/README.md) |
 
-One API key and credit balance work across all eleven services.
+One API key and credit balance work across all twelve services.
 
 ## Get started
 

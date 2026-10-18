@@ -83,13 +83,13 @@ Take the id from `publisher.id` on a search listing.
 - Each record keeps the fields this API does not decode under `raw`, in imovelweb's own names. Fields typed `Any` there were null in every answer imovelweb gave us, so their shape is unknown.
 - `pagination.completion` is `exhausted` at the end, or `depth_limit` at page 1,000 (30,000 listings). Narrow the filters to reach the rest.
 - About a fifth of search listings hide their map position (`location.latitude` is `None`). `get_listing` usually still has coordinates.
-- `publisher.type` is `owner` for an owner selling directly. Owners have no profile, so `get_publisher` answers 404 for them and the listing's `whatsapp` is their contact.
+- `publisher.type` is `owner` for an owner selling directly. Owners have no profile, so their `publisher.url` is `None`, `get_publisher` answers 404 for them, and the listing's `whatsapp` is their contact.
 - `get_listing` gives only the first digits of the agency's phone (`publisher.partial_phone`). `get_publisher` has every number.
 - An amenity this API does not name comes back with `amenity` set to `None`, plus imovelweb's `id` and `label`.
-- `ratings` is `None` when imovelweb keeps no statistics for an agency. An unrated agency has `None` for `review_count`, no `questions` and an `average` of 0.
+- `ratings` is `None` when imovelweb keeps no statistics for an agency. An unrated agency has `None` for `review_count`, `average` and `recommend_percent`, and no `questions`.
 
 ## Handle errors and check costs
 
-Failed calls throw the errors described in the [package guide](../../../README.md#handle-errors). Validation errors (an unknown enum value, a subtype without its type, a minimum above its maximum, a cursor this API did not issue) are not charged. A location id imovelweb does not know answers 400 `invalid_request` naming it, and is not charged. `map_listings` answers 400 on filters imovelweb's map cannot run across the whole country or a state; narrow to a city or neighbourhood. It answers 422 to `max_age="launching_soon"`, which imovelweb's map cannot run anywhere; `list_listings` takes it. An unknown listing or publisher id answers 404 and is charged.
+Failed calls raise the errors described in the [package guide](../../../README.md#handle-errors). Validation errors (an unknown enum value, a subtype without its type, a minimum above its maximum, a cursor this API did not issue) are not charged. A location id imovelweb does not know answers 400 `invalid_request` naming it, and is not charged. `map_listings` answers 400 on filters imovelweb's map cannot run across the whole country or a state; narrow to a city or neighbourhood. It answers 422 to `max_age="launching_soon"`, which imovelweb's map cannot run anywhere; `list_listings` takes it. An unknown listing or publisher id answers 404 and is charged.
 
 The [imovelweb API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=imovelweb_readme#/imovelweb) lists the inputs, response fields, and credit cost for each method.
