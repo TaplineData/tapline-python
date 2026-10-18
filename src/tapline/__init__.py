@@ -37,6 +37,7 @@ from . import (
     goplus,
     imovelweb,
     instagram,
+    linkedin,
     pinterest,
     ponsfamily,
     pumpfun,
@@ -44,6 +45,7 @@ from . import (
     tiktok,
     twitter,
     youtube,
+    zillow,
 )
 from ._client import SyncTaplineClient, TaplineClient
 from ._exceptions import (
@@ -78,6 +80,7 @@ from .resources import (
     Goplus,
     Imovelweb,
     Instagram,
+    Linkedin,
     Pinterest,
     Ponsfamily,
     Pumpfun,
@@ -88,15 +91,18 @@ from .resources import (
     SyncGoplus,
     SyncImovelweb,
     SyncInstagram,
+    SyncLinkedin,
     SyncPinterest,
     SyncPonsfamily,
     SyncPumpfun,
     SyncTiktok,
     SyncTwitter,
     SyncYouTube,
+    SyncZillow,
     Tiktok,
     Twitter,
     YouTube,
+    Zillow,
 )
 
 __all__ = [
@@ -124,6 +130,7 @@ __all__ = [
     "InsufficientCreditsError",
     "InternalServerError",
     "InvalidCursorError",
+    "Linkedin",
     "MissingAPIKeyError",
     "NotFoundError",
     "NotGiven",
@@ -139,6 +146,7 @@ __all__ = [
     "SyncGoplus",
     "SyncImovelweb",
     "SyncInstagram",
+    "SyncLinkedin",
     "SyncPinterest",
     "SyncPonsfamily",
     "SyncPumpfun",
@@ -146,6 +154,7 @@ __all__ = [
     "SyncTiktok",
     "SyncTwitter",
     "SyncYouTube",
+    "SyncZillow",
     "TaplineClient",
     "TaplineError",
     "Tiktok",
@@ -153,6 +162,7 @@ __all__ = [
     "Twitter",
     "UnprocessableEntityError",
     "YouTube",
+    "Zillow",
     "__title__",
     "__version__",
     "airbnb",
@@ -162,6 +172,7 @@ __all__ = [
     "goplus",
     "imovelweb",
     "instagram",
+    "linkedin",
     "not_given",
     "pinterest",
     "ponsfamily",
@@ -170,4 +181,5 @@ __all__ = [
     "tiktok",
     "twitter",
     "youtube",
+    "zillow",
 ]

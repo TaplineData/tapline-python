@@ -9,12 +9,14 @@ from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
 from .imovelweb import Imovelweb, SyncImovelweb
 from .instagram import Instagram, SyncInstagram
+from .linkedin import Linkedin, SyncLinkedin
 from .pinterest import Pinterest, SyncPinterest
 from .ponsfamily import Ponsfamily, SyncPonsfamily
 from .pumpfun import Pumpfun, SyncPumpfun
 from .tiktok import SyncTiktok, Tiktok
 from .twitter import SyncTwitter, Twitter
 from .youtube import SyncYouTube, YouTube
+from .zillow import SyncZillow, Zillow
 
 __all__ = [
     "Airbnb",
@@ -24,6 +26,7 @@ __all__ = [
     "Goplus",
     "Imovelweb",
     "Instagram",
+    "Linkedin",
     "Pinterest",
     "Ponsfamily",
     "Pumpfun",
@@ -34,13 +37,16 @@ __all__ = [
     "SyncGoplus",
     "SyncImovelweb",
     "SyncInstagram",
+    "SyncLinkedin",
     "SyncPinterest",
     "SyncPonsfamily",
     "SyncPumpfun",
     "SyncTiktok",
     "SyncTwitter",
     "SyncYouTube",
+    "SyncZillow",
     "Tiktok",
     "Twitter",
     "YouTube",
+    "Zillow",
 ]

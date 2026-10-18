@@ -8,11 +8,11 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 
 from .._base_client import encode_path
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..imovelweb import (
     ImovelwebDevelopmentStageParam,
     ImovelwebListingDetail,
@@ -37,11 +37,6 @@ from ..imovelweb import (
 __all__ = ["Imovelweb", "SyncImovelweb"]
 
 _PREFIX = "/v1/imovelweb"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _list_listings(
@@ -492,7 +487,8 @@ class Imovelweb(AsyncAPIResource):
         """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -509,7 +505,8 @@ class Imovelweb(AsyncAPIResource):
         """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -527,7 +524,8 @@ class Imovelweb(AsyncAPIResource):
         """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             limit: Listings to return.
             timeout: Overrides the client's timeout for this request.
 
@@ -564,7 +562,8 @@ class Imovelweb(AsyncAPIResource):
         """An agency's or developer's profile: name, its phone text as the publisher writes it (`phone_text`) and parsed into +55 numbers (`phone_numbers`), office address, year joined, live and listed listing counts, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has a null `review_count`, `average` and `recommend_percent`, and no questions). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisher.type` `owner` on a search listing) have no profile page: their ids answer 404, and the listing's `whatsapp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
-            publisher_id: See the API reference.
+            publisher_id: imovelweb publisher (agency, developer or owner) id:
+                `publisher.id` on a listing.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -856,7 +855,8 @@ class SyncImovelweb(SyncAPIResource):
         """One listing's full page: the complete description as plain text (line breaks kept, imovelweb's markup removed), every photo and floor plan in every size, every amenity with the area it belongs to, prices per operation, condo fee, coordinates, publication date, imovelweb's view counter when it shows one, the publisher with CRECI licence and the first digits of its phone (`publisher.partial_phone`; the full numbers are on `/publishers/{publisher_id}`), and a development's stage, ranges and units. `has_duplicates` is true when other publishers list the same property; `/listings/{posting_id}/publishers` lists them. Fields imovelweb sends that this API does not decode stay in `raw`, under imovelweb's names; a code imovelweb adds that this API has no name for yet decodes to null. A listing id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -873,7 +873,8 @@ class SyncImovelweb(SyncAPIResource):
         """Every publisher advertising the same property, when imovelweb groups duplicate listings (search results flag them in `duplicate`): each publisher's own listing id and URL, name, logo and ad tier, but no publisher id or price; fetch each `listing_id` from `/listings/{posting_id}` for those. A listing nobody else advertises answers an empty list. Costs 1 credit.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -891,7 +892,8 @@ class SyncImovelweb(SyncAPIResource):
         """Listings imovelweb shows as similar to this one (same area, type and price band), from imovelweb's compact card: its operation, property type and price arrive as display text and come back decoded, with rooms and areas, address and photos; fetch `/listings/{posting_id}` for the full record. A development or a listing imovelweb pairs with nothing answers an empty list. imovelweb does not check the id: one it does not know answers a couple of generic listings. Costs 1 credit.
 
         Args:
-            posting_id: See the API reference.
+            posting_id: imovelweb listing id: the number at the end of a listing URL
+                (`...-3047460005.html`).
             limit: Listings to return.
             timeout: Overrides the client's timeout for this request.
 
@@ -928,7 +930,8 @@ class SyncImovelweb(SyncAPIResource):
         """An agency's or developer's profile: name, its phone text as the publisher writes it (`phone_text`) and parsed into +55 numbers (`phone_numbers`), office address, year joined, live and listed listing counts, logo, and the ratings buyers gave it (`ratings` is null when imovelweb keeps no statistics for the publisher; an unrated one has a null `review_count`, `average` and `recommend_percent`, and no questions). List its listings with `/listings?publisher_id=`. Owners selling directly (`publisher.type` `owner` on a search listing) have no profile page: their ids answer 404, and the listing's `whatsapp` is their contact. An id imovelweb does not know answers 404. Costs 2 credits.
 
         Args:
-            publisher_id: See the API reference.
+            publisher_id: imovelweb publisher (agency, developer or owner) id:
+                `publisher.id` on a listing.
             timeout: Overrides the client's timeout for this request.
 
         Returns:

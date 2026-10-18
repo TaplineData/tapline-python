@@ -5,7 +5,8 @@ Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``geckoterminal``, ``gmgn``, ``goplus``, ``imovelweb``,
-``instagram``, ``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``),
+``instagram``, ``linkedin``, ``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``,
+``twitter``, ``youtube``, ``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -26,6 +27,7 @@ from .resources import (
     Goplus,
     Imovelweb,
     Instagram,
+    Linkedin,
     Pinterest,
     Ponsfamily,
     Pumpfun,
@@ -36,15 +38,18 @@ from .resources import (
     SyncGoplus,
     SyncImovelweb,
     SyncInstagram,
+    SyncLinkedin,
     SyncPinterest,
     SyncPonsfamily,
     SyncPumpfun,
     SyncTiktok,
     SyncTwitter,
     SyncYouTube,
+    SyncZillow,
     Tiktok,
     Twitter,
     YouTube,
+    Zillow,
 )
 
 __all__ = ["SyncTaplineClient", "TaplineClient"]
@@ -95,6 +100,9 @@ class TaplineClient(AsyncAPIClient):
     instagram: Instagram
     """The Instagram endpoints."""
 
+    linkedin: Linkedin
+    """The LinkedIn endpoints."""
+
     pinterest: Pinterest
     """The Pinterest endpoints."""
 
@@ -112,6 +120,9 @@ class TaplineClient(AsyncAPIClient):
 
     youtube: YouTube
     """The YouTube endpoints."""
+
+    zillow: Zillow
+    """The Zillow endpoints."""
 
     def __init__(
         self,
@@ -165,12 +176,14 @@ class TaplineClient(AsyncAPIClient):
         self.goplus = Goplus(self)
         self.imovelweb = Imovelweb(self)
         self.instagram = Instagram(self)
+        self.linkedin = Linkedin(self)
         self.pinterest = Pinterest(self)
         self.ponsfamily = Ponsfamily(self)
         self.pumpfun = Pumpfun(self)
         self.tiktok = Tiktok(self)
         self.twitter = Twitter(self)
         self.youtube = YouTube(self)
+        self.zillow = Zillow(self)
 
 
 class SyncTaplineClient(SyncAPIClient):
@@ -211,6 +224,9 @@ class SyncTaplineClient(SyncAPIClient):
     instagram: SyncInstagram
     """The Instagram endpoints."""
 
+    linkedin: SyncLinkedin
+    """The LinkedIn endpoints."""
+
     pinterest: SyncPinterest
     """The Pinterest endpoints."""
 
@@ -228,6 +244,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     youtube: SyncYouTube
     """The YouTube endpoints."""
+
+    zillow: SyncZillow
+    """The Zillow endpoints."""
 
     def __init__(
         self,
@@ -281,9 +300,11 @@ class SyncTaplineClient(SyncAPIClient):
         self.goplus = SyncGoplus(self)
         self.imovelweb = SyncImovelweb(self)
         self.instagram = SyncInstagram(self)
+        self.linkedin = SyncLinkedin(self)
         self.pinterest = SyncPinterest(self)
         self.ponsfamily = SyncPonsfamily(self)
         self.pumpfun = SyncPumpfun(self)
         self.tiktok = SyncTiktok(self)
         self.twitter = SyncTwitter(self)
         self.youtube = SyncYouTube(self)
+        self.zillow = SyncZillow(self)
