@@ -54,6 +54,36 @@ class PublicError(str, Enum):
     INTERNAL_ERROR = "internal_error"
 
 
+class SearchKeywordParamsDatePosted(str, Enum):
+    YESTERDAY = "yesterday"
+    THIS_WEEK = "this-week"
+    THIS_MONTH = "this-month"
+    LAST_3_MONTHS = "last-3-months"
+    LAST_6_MONTHS = "last-6-months"
+    ALL_TIME = "all-time"
+
+
+class SearchKeywordParamsSortBy(str, Enum):
+    RELEVANCE = "relevance"
+    MOST_LIKED = "most-liked"
+    DATE_POSTED = "date-posted"
+
+
+class SearchTopParamsPublishTime(str, Enum):
+    YESTERDAY = "yesterday"
+    THIS_WEEK = "this-week"
+    THIS_MONTH = "this-month"
+    LAST_3_MONTHS = "last-3-months"
+    LAST_6_MONTHS = "last-6-months"
+    ALL_TIME = "all-time"
+
+
+class SearchTopParamsSortBy(str, Enum):
+    RELEVANCE = "relevance"
+    MOST_LIKED = "most-liked"
+    DATE_POSTED = "date-posted"
+
+
 class ErrorDetail(BaseModel):
     ctx: dict[str, Any] | None = None
     input: Any = None
@@ -319,33 +349,263 @@ class SearchHashtagParams(BaseModel):
     """
 
 
+class SearchKeywordParams(BaseModel):
+    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
+    """
+    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
+    """
+    date_posted: SearchKeywordParamsDatePosted | None = None
+    """
+    Only videos posted within this window. Omit it for any time.
+    """
+    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
+    """
+    What to search TikTok for.
+    """
+    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
+    """
+    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
+    """
+    sort_by: SearchKeywordParamsSortBy | None = None
+    """
+    `relevance` (default), `most-liked`, or `date-posted`, newest first.
+    """
+    trim: bool | None = None
+    """
+    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    """
+
+
+class SearchTopParams(BaseModel):
+    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
+    """
+    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
+    """
+    publish_time: SearchTopParamsPublishTime | None = None
+    """
+    Only videos posted within this window. Omit it for any time.
+    """
+    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
+    """
+    What to search TikTok for.
+    """
+    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
+    """
+    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
+    """
+    sort_by: SearchTopParamsSortBy | None = None
+    """
+    `relevance` (default), `most-liked`, or `date-posted`, newest first.
+    """
+
+
+class SearchUsersParams(BaseModel):
+    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
+    """
+    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
+    """
+    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
+    """
+    What to search TikTok for.
+    """
+    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
+    """
+    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
+    """
+    trim: bool | None = None
+    """
+    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    """
+
+
+class TikTokAppAweme(BaseModel):
+    add_yours_recommendation: dict[str, str] | None = None
+    added_sound_music_info: TikTokAppAwemeAddedSoundMusicInfo | None = None
+    aigc_info: TikTokAppAwemeAigcInfo | None = None
+    anchors: list[TikTokAppAwemeAnchors] | None
+    animated_image_info: TikTokAppAwemeAnimatedImageInfo | None = None
+    author: TikTokAppAwemeAuthor
+    author_user_id: int
+    aweme_acl: TikTokAppAwemeAwemeAcl | None = None
+    aweme_id: str
+    aweme_type: int | None = None
+    banners: list[TikTokAppAwemeBanners] | None = None
+    batch_index: int | None = None
+    behind_the_song_music_ids: str | None = None
+    behind_the_song_video_music_ids: str | None = None
+    bodydance_score: int | None = None
+    bottom_products: str | None = None
+    branded_content_accounts: str | None = None
+    cha_list: list[TikTokAppAwemeChaList] | None = None
+    challenge_position: str | None = None
+    cmt_swt: bool | None = None
+    collect_stat: int | None = None
+    comment_config: TikTokAppAwemeCommentConfig | None = None
+    comment_topbar_info: str | None = None
+    commerce_config_data: str | None = None
+    commerce_info: TikTokAppAwemeCommerceInfo
+    content_desc: str | None = None
+    content_desc_extra: list[TikTokAppAwemeContentDescExtra] | None = None
+    content_original_type: int | None = None
+    content_size_type: int | None = None
+    content_type: str | None = None
+    cover_labels: str | None = None
+    create_time: int
+    desc: str
+    desc_language: str | None = None
+    disable_search_trending_bar: bool | None = None
+    distance: str | None = None
+    distribute_type: int | None = None
+    ecosystem_perception_enhancement: str | None = None
+    follow_up_first_item_id: str | None = None
+    follow_up_item_id_groups: str | None = None
+    follow_up_publish_from_id: int | None = None
+    geofencing: str | None = None
+    geofencing_regions: str | None = None
+    green_screen_materials: str | None = None
+    group_id: str | None = None
+    has_danmaku: bool | None = None
+    has_vs_entry: bool | None = None
+    hybrid_label: str | None = None
+    image_infos: str | None = None
+    image_post_info: TikTokAppAwemeImagePostInfo | None = None
+    interact_permission: TikTokAppAwemeInteractPermission | None = None
+    interaction_stickers: list[TikTokAppAwemeInteractionStickers] | None = None
+    is_ad: bool | None = None
+    is_ads: bool | None = None
+    is_description_translatable: bool | None = None
+    is_hash_tag: int | None = None
+    is_pgcshow: bool | None = None
+    is_relieve: bool | None = None
+    is_text_sticker_translatable: bool | None = None
+    is_top: int | None = None
+    is_vr: bool | None = None
+    item_comment_settings: int
+    item_distribute_source: str | None = None
+    item_duet: int | None = None
+    item_react: int | None = None
+    item_source_category: int | None = None
+    label_top: TikTokAppAwemeLabelTop | None = None
+    label_top_text: str | None = None
+    log_info: TikTokAppAwemeLogInfo | None = None
+    long_video: str | None = None
+    main_arch_common: str | None = None
+    mask_infos: list[TikTokAppAwemeMaskInfo] | None = None
+    misc_info: str | None = None
+    muf_comment_info_v2: str | None = None
+    music: TikTokAppAwemeMusic | None = None
+    music_begin_time_in_ms: int | None = None
+    music_end_time_in_ms: int | None = None
+    music_selected_from: str | None = None
+    music_title_style: int | None = None
+    music_volume: str | None = None
+    need_vs_entry: bool | None = None
+    nickname_position: str | None = None
+    operator_boost_info: str | None = None
+    origin_comment_ids: str | None = None
+    origin_volume: str | None = None
+    original_client_text: TikTokAppAwemeOriginalClientText | None = None
+    picked_users: list[dict[str, Any]] | None = None
+    playlist_blocked: bool | None = None
+    playlist_info: TikTokAppAwemePlaylistInfo | None = None
+    poi_data: TikTokAppAwemePoiData | None = None
+    position: str | None = None
+    prevent_download: bool | None = None
+    products_info: str | None = None
+    question_list: str | None = None
+    rate: int | None = None
+    reference_tts_voice_ids: str | list[str] | None = None
+    reference_voice_filter_ids: str | list[str] | None = None
+    region: str
+    right_products: str | None = None
+    risk_infos: TikTokAppAwemeRiskInfos | None = None
+    search_highlight: list[TikTokAppAwemeSearchHighlight] | None = None
+    share_info: TikTokAppAwemeShareInfo
+    share_url: str | None = None
+    shoot_tab_name: str | None = None
+    smart_search_info: TikTokAppAwemeSmartSearchInfo | None = None
+    sort_label: str | None = None
+    sound_exemption: int | None = None
+    standard_component_info: TikTokAppAwemeStandardComponentInfo | None = None
+    statistics: TikTokAppAwemeStatistics
+    status: TikTokAppAwemeStatus | None = None
+    sticker_detail: TikTokAppAwemeStickerDetail | None = None
+    stickers: str | None = None
+    suggest_words: TikTokAppAwemeSuggestWords | None = None
+    support_danmaku: bool | None = None
+    survey_info: str | None = None
+    tako_bubble_info: TikTokAppAwemeTakoBubbleInfo | None = None
+    text_extra: list[TikTokAppAwemeTextExtra] | None = None
+    text_sticker_major_lang: str | None = None
+    ttec_suggest_words: TikTokAppAwemeTtecSuggestWords | None = None
+    tts_voice_ids: str | list[str] | None = None
+    uniqid_position: str | None = None
+    user_digged: int | None = None
+    video: TikTokAppAwemeVideo
+    video_control: TikTokAppAwemeVideoControl | None = None
+    video_labels: list[str] | None = None
+    video_text: list[str] | None = None
+    visual_search_info: TikTokAppAwemeVisualSearchInfo | None = None
+    voice_filter_ids: str | list[str] | None = None
+    with_promotional_music: bool | None = None
+    with_survey: bool | None = None
+
+
 class TikTokAppAwemeAddedSoundMusicInfo(BaseModel):
     album: str
     allow_offline_music_to_detail_page: bool | None = None
-    artists: str | None
+    artists: list[TikTokAppAwemeAddedSoundMusicInfoArtists] | None
+    audition_duration: int | None = None
     author: str
     author_deleted: bool
     author_position: str | None
     avatar_medium: TikTokAppAwemeAddedSoundMusicInfoAvatarMedium | None = None
     avatar_thumb: TikTokAppAwemeAddedSoundMusicInfoAvatarThumb | None = None
     binded_challenge_id: int
+    can_be_stitched: bool | None = None
+    can_not_reuse: bool | None = None
     collect_stat: int
+    commercial_right_type: int | None = None
     cover_large: TikTokAppAwemeAddedSoundMusicInfoCoverLarge
     cover_medium: TikTokAppAwemeAddedSoundMusicInfoCoverMedium
     cover_thumb: TikTokAppAwemeAddedSoundMusicInfoCoverThumb
+    create_time: int | None = None
+    dmv_auto_show: bool | None = None
     duration: int
+    duration_high_precision: TikTokAppAwemeAddedSoundMusicInfoDurationHighPrecision | None = None
     external_song_info: list[TikTokAppAwemeAddedSoundMusicInfoExternalSongInfo]
     extra: str
+    has_commerce_right: bool | None = None
+    has_commerce_right_strict: bool | None = None
+    has_human_voice: bool | None = None
     id: int
     id_str: str
+    is_audio_url_with_cookie: bool | None = None
     is_author_artist: bool
     is_commerce_music: bool
+    is_commerce_music_strict: bool | None = None
+    is_matched_metadata: bool | None = None
     is_original: bool
+    is_original_sound: bool | None = None
     is_pgc: bool
+    is_play_music: bool | None = None
+    is_shooting_allow: bool | None = None
+    is_unlimited_music: bool | None = None
+    language: str | None = None
+    log_extra: str | None = None
+    lyric_scene_copyright: TikTokAppAwemeAddedSoundMusicInfoLyricSceneCopyright | None = None
     lyric_short_position: str | None
+    lyrics: list[TikTokAppAwemeAddedSoundMusicInfoLyrics] | None = None
     matched_pgc_sound: TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSound | None = None
+    matched_song: TikTokAppAwemeAddedSoundMusicInfoMatchedSong | None = None
+    meme_song_info: dict[str, str] | None = None
     mid: str
     multi_bit_rate_play_info: str | None
+    music_group_use_count: int | None = None
+    music_group_v3_ids: list[int] | None = None
+    music_release_info: TikTokAppAwemeAddedSoundMusicInfoMusicReleaseInfo | None = None
+    music_ugid: int | None = None
+    music_ugid_use_count: int | None = None
     mute_share: bool
     offline_desc: str
     owner_handle: str
@@ -357,17 +617,47 @@ class TikTokAppAwemeAddedSoundMusicInfo(BaseModel):
     preview_end_time: int
     preview_start_time: float
     recommend_status: int
+    same_group_id_v3: int | None = None
     search_highlight: str | None
     sec_uid: str | None = None
+    shoot_duration: int | None = None
+    sim_group_id_v3: int | None = None
     source_platform: int
     status: int
     strong_beat_url: TikTokAppAwemeAddedSoundMusicInfoStrongBeatUrl | None = None
+    style_value: list[int] | None = None
     tag_list: str | None
     tag_list_v2: str | None
+    theme_tags: list[str] | None = None
+    theme_value: list[int] | None = None
     title: str
-    tt_to_dsp_song_infos: str | None
+    tt_to_dsp_song_infos: list[TikTokAppAwemeAddedSoundMusicInfoTtToDspSongInfos] | None
     uncert_artists: str | None
     user_count: int
+    video_duration: int | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoArtists(BaseModel):
+    avatar: TikTokAppAwemeAddedSoundMusicInfoArtistsAvatar | None = None
+    enter_type: int | None = None
+    follow_status: int | None = None
+    follower_status: int | None = None
+    handle: str | None = None
+    is_block: bool | None = None
+    is_blocked: bool | None = None
+    is_private_account: bool | None = None
+    is_verified: bool | None = None
+    is_visible: bool | None = None
+    nick_name: str | None = None
+    sec_uid: str | None = None
+    status: int | None = None
+    uid: str | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoArtistsAvatar(BaseModel):
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
 
 
 class TikTokAppAwemeAddedSoundMusicInfoAvatarMedium(BaseModel):
@@ -415,24 +705,114 @@ class TikTokAppAwemeAddedSoundMusicInfoCoverThumb(BaseModel):
     width: int
 
 
+class TikTokAppAwemeAddedSoundMusicInfoDurationHighPrecision(BaseModel):
+    audition_duration_precision: float | None = None
+    duration_precision: float | None = None
+    shoot_duration_precision: float | None = None
+    video_duration_precision: float | None = None
+
+
 class TikTokAppAwemeAddedSoundMusicInfoExternalSongInfo(BaseModel):
+    external_app_link: str | None = None
+    external_deep_link: str | None = None
     external_song_key: str
     h5_url: str
     partner_name: str
     partner_song_id: str
 
 
+class TikTokAppAwemeAddedSoundMusicInfoLyricSceneCopyright(BaseModel):
+    lyric_sticker: bool | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoLyrics(BaseModel):
+    lyric_id: int | None = None
+    lyric_type: int | None = None
+
+
 class TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSound(BaseModel):
-    artist_infos: str | None
+    artist_infos: list[TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundArtistInfos] | None
     author: str | None = None
+    cover_medium: TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundCoverMedium | None = None
     mixed_author: str | None = None
     mixed_title: str | None = None
+    music_release_info: TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundMusicReleaseInfo | None = (
+        None
+    )
     title: str | None = None
     uncert_artists: str | None
 
 
+class TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundArtistInfos(BaseModel):
+    avatar: TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundArtistInfosAvatar | None = None
+    enter_type: int | None = None
+    follow_status: int | None = None
+    follower_status: int | None = None
+    handle: str | None = None
+    is_block: bool | None = None
+    is_blocked: bool | None = None
+    is_private_account: bool | None = None
+    is_verified: bool | None = None
+    is_visible: bool | None = None
+    nick_name: str | None = None
+    sec_uid: str | None = None
+    status: int | None = None
+    uid: str | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundArtistInfosAvatar(BaseModel):
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundCoverMedium(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedPgcSoundMusicReleaseInfo(BaseModel):
+    group_release_date: int | None = None
+    is_new_release_song: bool | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedSong(BaseModel):
+    author: str | None = None
+    chorus_info: TikTokAppAwemeAddedSoundMusicInfoMatchedSongChorusInfo | None = None
+    choruses: list[TikTokAppAwemeAddedSoundMusicInfoMatchedSongChorusInfo] | None = None
+    cover_medium: TikTokAppAwemeAddedSoundMusicInfoMatchedSongCoverMedium | None = None
+    full_duration: int | None = None
+    h5_url: str | None = None
+    id: str | None = None
+    performers: list[str] | None = None
+    title: str | None = None
+    verses: list[TikTokAppAwemeAddedSoundMusicInfoMatchedSongChorusInfo] | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedSongChorusInfo(BaseModel):
+    duration_ms: int | None = None
+    start_ms: int | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMatchedSongCoverMedium(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeAddedSoundMusicInfoMusicReleaseInfo(BaseModel):
+    group_release_date: int | None = None
+    is_new_release_song: bool | None = None
+
+
 class TikTokAppAwemeAddedSoundMusicInfoPlayUrl(BaseModel):
     data_size: int | None = None
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str | None = None
@@ -449,8 +829,15 @@ class TikTokAppAwemeAddedSoundMusicInfoStrongBeatUrl(BaseModel):
     width: int
 
 
+class TikTokAppAwemeAddedSoundMusicInfoTtToDspSongInfos(BaseModel):
+    button_type: int | None = None
+    platform: int | None = None
+    song_id: str | None = None
+
+
 class TikTokAppAwemeAigcInfo(BaseModel):
     aigc_label_type: int
+    created_by_ai: bool | None = None
 
 
 class TikTokAppAwemeAnchors(BaseModel):
@@ -464,7 +851,7 @@ class TikTokAppAwemeAnchors(BaseModel):
     id: str
     keyword: str
     log_extra: str
-    schema_: Annotated[str, Field(alias="schema")]
+    schema_: Annotated[str | None, Field(alias="schema")] = None
     thumbnail: TikTokAppAwemeAnchorsThumbnail
     type: int
 
@@ -505,6 +892,7 @@ class TikTokAppAwemeAnimatedImageInfo(BaseModel):
 
 
 class TikTokAppAwemeAuthor(BaseModel):
+    accept_private_policy: bool | None = None
     account_labels: str | None = None
     ad_cover_url: str | None = None
     advance_feature_item_order: str | None = None
@@ -512,8 +900,12 @@ class TikTokAppAwemeAuthor(BaseModel):
     authority_status: int | None = None
     avatar_168x168: TikTokAppAwemeAuthorAvatar168x168 | None = None
     avatar_300x300: TikTokAppAwemeAuthorAvatar300x300 | None = None
+    avatar_larger: TikTokAppAwemeAuthorAvatarLarger | None = None
     avatar_medium: TikTokAppAwemeAuthorAvatarMedium
     avatar_thumb: TikTokAppAwemeAuthorAvatarThumb
+    avatar_uri: str | None = None
+    aweme_count: int | None = None
+    block_status: int | None = None
     bold_fields: str | None = None
     can_message_follow_status_list: str | None = None
     can_set_geofencing: str | None = None
@@ -523,53 +915,96 @@ class TikTokAppAwemeAuthor(BaseModel):
     commerce_user_level: int | None = None
     cover_url: list[str] | None = None
     custom_verify: str | None = None
+    cv_level: str | None = None
+    download_prompt_ts: int | None = None
     download_setting: int | None = None
     duet_setting: int | None = None
+    enable_direct_message: bool | None = None
+    enabled_filter_all_comments: bool | None = None
     enterprise_verify_reason: str | None = None
     events: str | None = None
+    fake_data_info: dict[str, str] | None = None
+    fb_expire_time: int | None = None
     follow_status: int | None = None
+    follower_count: int | None = None
     follower_status: int | None = None
     followers_detail: str | None = None
+    following_count: int | None = None
+    friends_status: int | None = None
     geofencing: str | None = None
+    hide_search: bool | None = None
     homepage_bottom_toast: str | None = None
+    ins_id: str | None = None
     is_ad_fake: bool | None = None
     is_block: bool | None = None
     is_discipline_member: bool | None = None
+    is_mute: int | None = None
+    is_mute_lives: int | None = None
+    is_mute_non_story_post: int | None = None
+    is_mute_story: int | None = None
+    is_private_account: int | None = None
     is_star: bool | None = None
     item_list: str | None = None
     language: str | None = None
+    live_agreement: int | None = None
+    live_commerce: bool | None = None
+    live_verify: int | None = None
     matched_friend: TikTokAppAwemeAuthorMatchedFriend | None = None
+    mention_status: int | None = None
     mutual_relation_avatars: str | None = None
+    name_field: str | None = None
     need_points: str | None = None
+    need_recommend: int | None = None
     nickname: str
+    original_musician: TikTokAppAwemeAuthorOriginalMusician | None = None
     platform_sync_info: str | None = None
     prevent_download: bool | None = None
     qa_status: int | None = None
     region: str | None = None
     relative_users: str | None = None
+    reply_with_video_flag: int | None = None
+    room_data: str | None = None
     room_id: int | None = None
+    room_id_str: str | None = None
     search_highlight: str | None = None
+    search_user_desc: str | None = None
+    search_user_name: str | None = None
     sec_uid: str | None = None
     secret: int | None = None
     share_info: TikTokAppAwemeAuthorShareInfo | None = None
+    shield_comment_notice: int | None = None
+    shield_digg_notice: int | None = None
     shield_edit_field_info: str | None = None
+    shield_follow_notice: int | None = None
     short_id: str | None = None
+    show_image_bubble: bool | None = None
     signature: str | None = None
     social_info: str | None = None
+    special_account: TikTokAppAwemeAuthorSpecialAccount | None = None
+    special_lock: int | None = None
+    status: int | None = None
+    stitch_setting: int | None = None
+    total_favorited: int | None = None
     type_label: list[str] | None = None
     uid: str
     unique_id: str
+    user_canceled: bool | None = None
+    user_mode: int | None = None
+    user_period: int | None = None
     user_profile_guide: str | None = None
+    user_rate: int | None = None
+    user_spark_info: dict[str, str] | None = None
     user_tags: str | None = None
     verification_type: int | None = None
     verify_info: str | None = None
     video_icon: TikTokAppAwemeAuthorVideoIcon | None = None
     white_cover_url: str | None = None
     with_commerce_entry: bool | None = None
+    with_shop_entry: bool | None = None
 
 
 class TikTokAppAwemeAuthorAvatar168x168(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -578,7 +1013,7 @@ class TikTokAppAwemeAuthorAvatar168x168(BaseModel):
 
 
 class TikTokAppAwemeAuthorAvatar300x300(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -586,8 +1021,17 @@ class TikTokAppAwemeAuthorAvatar300x300(BaseModel):
     width: int
 
 
+class TikTokAppAwemeAuthorAvatarLarger(BaseModel):
+    data_size: int | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
 class TikTokAppAwemeAuthorAvatarMedium(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -596,7 +1040,7 @@ class TikTokAppAwemeAuthorAvatarMedium(BaseModel):
 
 
 class TikTokAppAwemeAuthorAvatarThumb(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -607,6 +1051,13 @@ class TikTokAppAwemeAuthorAvatarThumb(BaseModel):
 class TikTokAppAwemeAuthorMatchedFriend(BaseModel):
     repost_items: str | None
     video_items: str | None
+
+
+class TikTokAppAwemeAuthorOriginalMusician(BaseModel):
+    digg_count: int | None = None
+    music_count: int | None = None
+    music_used_count: int | None = None
+    new_release_clip_ids: list[str] | None = None
 
 
 class TikTokAppAwemeAuthorShareInfo(BaseModel):
@@ -628,6 +1079,15 @@ class TikTokAppAwemeAuthorShareInfoShareQrcodeUrl(BaseModel):
     width: int
 
 
+class TikTokAppAwemeAuthorSpecialAccount(BaseModel):
+    special_account_list: list[str] | None = None
+    tt_now: TikTokAppAwemeAuthorSpecialAccountTtNow | None = None
+
+
+class TikTokAppAwemeAuthorSpecialAccountTtNow(BaseModel):
+    tt_now_log_status: int | None = None
+
+
 class TikTokAppAwemeAuthorVideoIcon(BaseModel):
     height: int
     uri: str
@@ -642,8 +1102,9 @@ class TikTokAppAwemeAwemeAcl(BaseModel):
     platform_list: str | None
     press_action_list: str | None
     share_action_list: str | None
-    share_general: TikTokAppAwemeAwemeAclShareGeneral
+    share_general: TikTokAppAwemeAwemeAclShareGeneral | None = None
     share_list_status: int
+    share_third_platform: TikTokAppAwemeAwemeAclShareThirdPlatform | None = None
 
 
 class TikTokAppAwemeAwemeAclDownloadGeneral(BaseModel):
@@ -651,6 +1112,7 @@ class TikTokAppAwemeAwemeAclDownloadGeneral(BaseModel):
     extra: str | None = None
     mute: bool
     show_type: int
+    toast_msg: str | None = None
     transcode: int
 
 
@@ -671,12 +1133,51 @@ class TikTokAppAwemeAwemeAclShareGeneral(BaseModel):
     transcode: int
 
 
+class TikTokAppAwemeAwemeAclShareThirdPlatform(BaseModel):
+    code: int | None = None
+    extra: str | None = None
+    mute: bool | None = None
+    show_type: int | None = None
+    toast_msg: str | None = None
+    transcode: int | None = None
+
+
 class TikTokAppAwemeBanners(BaseModel):
+    customized_info: str | None = None
     key: TikTokAppAwemeBannersKey
+    standard_ui: TikTokAppAwemeBannersStandardUi | None = None
 
 
 class TikTokAppAwemeBannersKey(BaseModel):
     component_key: str
+
+
+class TikTokAppAwemeBannersStandardUi(BaseModel):
+    content: TikTokAppAwemeBannersStandardUiContent | None = None
+    head_icon: str | None = None
+    tail_action: TikTokAppAwemeBannersStandardUiTailAction | None = None
+
+
+class TikTokAppAwemeBannersStandardUiContent(BaseModel):
+    max_lines: int | None = None
+    texts: list[TikTokAppAwemeBannersStandardUiContentTexts] | None = None
+
+
+class TikTokAppAwemeBannersStandardUiContentTexts(BaseModel):
+    action_type: int | None = None
+    body: str | None = None
+    text_color: str | None = None
+
+
+class TikTokAppAwemeBannersStandardUiTailAction(BaseModel):
+    actions: list[TikTokAppAwemeBannersStandardUiTailActionActions] | None = None
+    type: int | None = None
+
+
+class TikTokAppAwemeBannersStandardUiTailActionActions(BaseModel):
+    icon: str | None = None
+    schema_: Annotated[str | None, Field(alias="schema")] = None
+    text: str | None = None
 
 
 class TikTokAppAwemeChaList(BaseModel):
@@ -688,6 +1189,8 @@ class TikTokAppAwemeChaList(BaseModel):
     collect_stat: int
     connect_music: list[str]
     desc: str
+    extra_attr: TikTokAppAwemeChaListExtraAttr | None = None
+    hashtag_profile: str | None = None
     is_challenge: int
     is_commerce: bool
     is_pgcshow: bool
@@ -697,6 +1200,7 @@ class TikTokAppAwemeChaList(BaseModel):
     show_items: str | None
     sub_type: int
     type: int
+    use_count: int | None = None
     user_count: int
     view_count: int
 
@@ -728,6 +1232,10 @@ class TikTokAppAwemeChaListAuthor(BaseModel):
     white_cover_url: str | None
 
 
+class TikTokAppAwemeChaListExtraAttr(BaseModel):
+    is_live: bool | None = None
+
+
 class TikTokAppAwemeChaListShareInfo(BaseModel):
     bool_persist: int
     now_invitation_card_image_urls: str | None
@@ -743,10 +1251,68 @@ class TikTokAppAwemeChaListShareInfo(BaseModel):
 
 
 class TikTokAppAwemeCommentConfig(BaseModel):
-    comment_panel_show_tab_config: str | None
+    comment_panel_show_tab_config: TikTokAppAwemeCommentConfigCommentPanelShowTabConfig | None
+    comment_top_bar_component: list[TikTokAppAwemeCommentConfigCommentTopBarComponent] | None = None
     emoji_recommend_list: list[TikTokAppAwemeCommentConfigEmojiRecommendList]
+    has_author_comment: bool | None = None
+    has_visual_comment: bool | None = None
     long_press_recommend_list: str | None
+    poll_id: int | None = None
+    preload: TikTokAppAwemeCommentConfigPreload | None = None
+    quick_comment: TikTokAppAwemeCommentConfigQuickComment | None = None
     quick_comment_emoji_recommend_list: str | None
+    social_quick_comment: TikTokAppAwemeCommentConfigSocialQuickComment | None = None
+    zero_comment_button_config: TikTokAppAwemeCommentConfigZeroCommentButtonConfig | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentPanelShowTabConfig(BaseModel):
+    comment_tab_info_config: (
+        list[TikTokAppAwemeCommentConfigCommentPanelShowTabConfigCommentTabInfoConfig] | None
+    ) = None
+    max_tab_count: int | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentPanelShowTabConfigCommentTabInfoConfig(BaseModel):
+    priority: int | None = None
+    tab_id: int | None = None
+    tab_name: str | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponent(BaseModel):
+    action: TikTokAppAwemeCommentConfigCommentTopBarComponentAction | None = None
+    biz_id: str | None = None
+    biz_type: int | None = None
+    desc_prefix: TikTokAppAwemeCommentConfigCommentTopBarComponentDescPrefix | None = None
+    desc_suffix: TikTokAppAwemeCommentConfigCommentTopBarComponentDescSuffix | None = None
+    extra: str | None = None
+    icon: TikTokAppAwemeCommentConfigCommentTopBarComponentIcon | None = None
+    name: str | None = None
+    tail_icon: TikTokAppAwemeCommentConfigCommentTopBarComponentTailIcon | None = None
+    template_type: int | None = None
+    tracer_info: str | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponentAction(BaseModel):
+    click_hot_area_type: int | None = None
+    schema_: Annotated[str | None, Field(alias="schema")] = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponentDescPrefix(BaseModel):
+    content: str | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponentDescSuffix(BaseModel):
+    content: str | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponentIcon(BaseModel):
+    is_local: bool | None = None
+    local_type: int | None = None
+
+
+class TikTokAppAwemeCommentConfigCommentTopBarComponentTailIcon(BaseModel):
+    is_local: bool | None = None
+    local_type: int | None = None
 
 
 class TikTokAppAwemeCommentConfigEmojiRecommendList(BaseModel):
@@ -756,13 +1322,64 @@ class TikTokAppAwemeCommentConfigEmojiRecommendList(BaseModel):
     score: int
 
 
+class TikTokAppAwemeCommentConfigPreload(BaseModel):
+    preds: str | None = None
+    type: int | None = None
+
+
+class TikTokAppAwemeCommentConfigQuickComment(BaseModel):
+    enabled: bool | None = None
+    rec_level: int | None = None
+
+
+class TikTokAppAwemeCommentConfigSocialQuickComment(BaseModel):
+    enabled: bool | None = None
+    rec_metrics: TikTokAppAwemeCommentConfigSocialQuickCommentRecMetrics | None = None
+
+
+class TikTokAppAwemeCommentConfigSocialQuickCommentRecMetrics(BaseModel):
+    non_social_enabled: str | None = None
+    p_comment: str | None = None
+    p_skip: str | None = None
+    p_stay_time: str | None = None
+
+
+class TikTokAppAwemeCommentConfigZeroCommentButtonConfig(BaseModel):
+    background_url: TikTokAppAwemeCommentConfigZeroCommentButtonConfigBackgroundUrl | None = None
+    background_url_for_black: (
+        TikTokAppAwemeCommentConfigZeroCommentButtonConfigBackgroundUrlForBlack | None
+    ) = None
+    image_type: int | None = None
+    zero_comment_button_enable: bool | None = None
+    zero_comment_button_main_text: str | None = None
+    zero_comment_button_text: str | None = None
+
+
+class TikTokAppAwemeCommentConfigZeroCommentButtonConfigBackgroundUrl(BaseModel):
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+
+
+class TikTokAppAwemeCommentConfigZeroCommentButtonConfigBackgroundUrlForBlack(BaseModel):
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+
+
 class TikTokAppAwemeCommerceInfo(BaseModel):
-    adv_promotable: bool
-    branded_content_type: int
-    is_diversion_ad: int
+    ad_source: int | None = None
+    adv_promotable: bool | None = None
+    auction_ad_invited: bool | None = None
+    bc_label_test_text: str | None = None
+    brand_organic_type: int | None = None
+    branded_content_type: int | None = None
+    is_diversion_ad: int | None = None
+    organic_log_extra: str | None = None
+    prevent_share: bool | None = None
+    with_comment_filter_words: bool | None = None
 
 
 class TikTokAppAwemeContentDescExtra(BaseModel):
+    aweme_id: str | None = None
     end: int
     hashtag_id: str | None = None
     hashtag_name: str | None = None
@@ -770,6 +1387,8 @@ class TikTokAppAwemeContentDescExtra(BaseModel):
     line_idx: int
     sec_uid: str | None = None
     start: int
+    sub_type: int | None = None
+    tag_id: str | None = None
     type: int
     user_id: str | None = None
 
@@ -777,12 +1396,14 @@ class TikTokAppAwemeContentDescExtra(BaseModel):
 class TikTokAppAwemeImagePostInfo(BaseModel):
     image_post_cover: TikTokAppAwemeImagePostInfoImagePostCover
     images: list[TikTokAppAwemeImagePostInfoImages]
+    music_volume: float | None = None
     post_extra: str
     title: str
+    translation_info: TikTokAppAwemeImagePostInfoTranslationInfo | None = None
 
 
 class TikTokAppAwemeImagePostInfoImagePostCover(BaseModel):
-    bitrate_images: str | None
+    bitrate_images: list[dict[str, Any]] | None
     display_image: TikTokAppAwemeImagePostInfoImagePostCoverDisplayImage
     owner_watermark_image: TikTokAppAwemeImagePostInfoImagePostCoverOwnerWatermarkImage
     thumbnail: TikTokAppAwemeImagePostInfoImagePostCoverThumbnail
@@ -826,8 +1447,10 @@ class TikTokAppAwemeImagePostInfoImagePostCoverUserWatermarkImage(BaseModel):
 
 
 class TikTokAppAwemeImagePostInfoImages(BaseModel):
-    bitrate_images: str | None
+    bitrate_images: list[dict[str, Any]] | None
     display_image: TikTokAppAwemeImagePostInfoImagesDisplayImage
+    live_photo_info: TikTokAppAwemeImagePostInfoImagesLivePhotoInfo | None = None
+    ocr_language: str | None = None
     owner_watermark_image: TikTokAppAwemeImagePostInfoImagesOwnerWatermarkImage
     thumbnail: TikTokAppAwemeImagePostInfoImagesThumbnail
     user_watermark_image: TikTokAppAwemeImagePostInfoImagesUserWatermarkImage
@@ -846,6 +1469,128 @@ class TikTokAppAwemeImagePostInfoImagesDisplayImage(BaseModel):
 class TikTokAppAwemeImagePostInfoImagesDisplayImagePreview(BaseModel):
     data: str
     preview_type: int
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfo(BaseModel):
+    is_live_photo: bool | None = None
+    live_photo: TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhoto | None = None
+    live_photo_type: int | None = None
+    live_photo_vid: str | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhoto(BaseModel):
+    big_thumbs: list[TikTokAppAwemeVideoBigThumbs] | None = None
+    bit_rate: list[TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoBitRate] | None = None
+    bit_rate_audio: list[TikTokAppAwemeVideoBitRateAudio] | None = None
+    cdn_url_expired: int | None = None
+    did_profile_labels: str | None = None
+    download_addr: TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoDownloadAddr | None = None
+    download_no_watermark_addr: (
+        TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoDownloadNoWatermarkAddr | None
+    ) = None
+    duration: int | None = None
+    has_watermark: bool | None = None
+    height: int | None = None
+    is_bytevc1: int | None = None
+    is_h265: int | None = None
+    need_set_token: bool | None = None
+    play_addr: TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddr | None = None
+    play_addr_bytevc1: (
+        TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddrBytevc1 | None
+    ) = None
+    play_addr_h264: TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddrH264 | None = (
+        None
+    )
+    ratio: str | None = None
+    source_HDR_type: int | None = None
+    tags: str | None = None
+    vid_profile_labels: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoBitRate(BaseModel):
+    HDR_bit: str | None = None
+    HDR_type: str | None = None
+    bit_rate: int | None = None
+    dub_infos: str | None = None
+    fid_profile_labels: str | None = None
+    fps: int | None = None
+    gear_name: str | None = None
+    is_bytevc1: int | None = None
+    is_h265: int | None = None
+    play_addr: TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoBitRatePlayAddr | None = None
+    quality_type: int | None = None
+    video_extra: str | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoBitRatePlayAddr(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoDownloadAddr(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoDownloadNoWatermarkAddr(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddr(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddrBytevc1(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeImagePostInfoImagesLivePhotoInfoLivePhotoPlayAddrH264(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
 
 
 class TikTokAppAwemeImagePostInfoImagesOwnerWatermarkImage(BaseModel):
@@ -875,9 +1620,17 @@ class TikTokAppAwemeImagePostInfoImagesUserWatermarkImage(BaseModel):
     width: int
 
 
+class TikTokAppAwemeImagePostInfoTranslationInfo(BaseModel):
+    image_major_language: str | None = None
+    target_language: str | None = None
+    translatable: bool | None = None
+
+
 class TikTokAppAwemeInteractPermission(BaseModel):
+    allow_adding_as_post: TikTokAppAwemeInteractPermissionAllowAddingAsPost | None = None
     allow_adding_to_story: int
     allow_create_sticker: TikTokAppAwemeInteractPermissionAllowCreateSticker
+    allow_story_switch_to_post: dict[str, str] | None = None
     duet: int
     duet_privacy_setting: int
     stitch: int
@@ -885,17 +1638,45 @@ class TikTokAppAwemeInteractPermission(BaseModel):
     upvote: int
 
 
+class TikTokAppAwemeInteractPermissionAllowAddingAsPost(BaseModel):
+    status: int | None = None
+
+
 class TikTokAppAwemeInteractPermissionAllowCreateSticker(BaseModel):
+    disable_toast: str | None = None
     status: int
 
 
 class TikTokAppAwemeInteractionStickers(BaseModel):
     attr: str
+    auto_video_caption_info: TikTokAppAwemeInteractionStickersAutoVideoCaptionInfo | None = None
     index: int
+    is_non_global: bool | None = None
+    is_non_global_v2: bool | None = None
+    material_index: int | None = None
     text_info: str | None = None
     text_sticker_info: TikTokAppAwemeInteractionStickersTextStickerInfo | None = None
     track_info: str
     type: int
+
+
+class TikTokAppAwemeInteractionStickersAutoVideoCaptionInfo(BaseModel):
+    auto_captions: (
+        list[TikTokAppAwemeInteractionStickersAutoVideoCaptionInfoAutoCaptions] | None
+    ) = None
+    is_translatable: bool | None = None
+    location: int | None = None
+    utterances: str | None = None
+
+
+class TikTokAppAwemeInteractionStickersAutoVideoCaptionInfoAutoCaptions(BaseModel):
+    language: str | None = None
+    url: TikTokAppAwemeInteractionStickersAutoVideoCaptionInfoAutoCaptionsUrl | None = None
+
+
+class TikTokAppAwemeInteractionStickersAutoVideoCaptionInfoAutoCaptionsUrl(BaseModel):
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
 
 
 class TikTokAppAwemeInteractionStickersTextStickerInfo(BaseModel):
@@ -920,40 +1701,76 @@ class TikTokAppAwemeLogInfo(BaseModel):
     order: str
 
 
+class TikTokAppAwemeMaskInfo(BaseModel):
+    content: str
+    mask_type: int
+    show_mask: bool
+    title: str
+
+
 class TikTokAppAwemeMusic(BaseModel):
-    album: str
+    album: str | None = None
     allow_offline_music_to_detail_page: bool | None = None
-    artists: str | None
+    artists: list[TikTokAppAwemeMusicArtists] | None
+    audition_duration: int | None = None
     author: str
     author_deleted: bool
     author_position: str | None
     avatar_large: TikTokAppAwemeMusicAvatarLarge | None = None
     avatar_medium: TikTokAppAwemeMusicAvatarMedium | None = None
     avatar_thumb: TikTokAppAwemeMusicAvatarThumb | None = None
-    binded_challenge_id: int
+    binded_challenge_id: int | None = None
+    can_be_stitched: bool | None = None
+    can_not_reuse: bool | None = None
     collect_stat: int
+    commercial_right_type: int | None = None
     cover_hd: TikTokAppAwemeMusicCoverHd | None = None
     cover_large: TikTokAppAwemeMusicCoverLarge
     cover_medium: TikTokAppAwemeMusicCoverMedium
     cover_thumb: TikTokAppAwemeMusicCoverThumb
+    create_time: int | None = None
+    dmv_auto_show: bool | None = None
     duration: int
+    duration_high_precision: TikTokAppAwemeMusicDurationHighPrecision | None = None
     end_time: int | None = None
     external_song_info: list[TikTokAppAwemeMusicExternalSongInfo]
     extra: str
+    has_commerce_right: bool | None = None
+    has_commerce_right_strict: bool | None = None
+    has_human_voice: bool | None = None
     id: int
     id_str: str
-    is_author_artist: bool
-    is_commerce_music: bool
+    is_audio_url_with_cookie: bool | None = None
+    is_author_artist: bool | None = None
+    is_commerce_music: bool | None = None
+    is_commerce_music_strict: bool | None = None
     is_del_video: bool | None = None
+    is_matched_metadata: bool | None = None
     is_original: bool
-    is_pgc: bool
+    is_original_sound: bool | None = None
+    is_pgc: bool | None = None
+    is_play_music: bool | None = None
     is_restricted: bool | None = None
+    is_shooting_allow: bool | None = None
+    is_unlimited_music: bool | None = None
     is_video_self_see: bool | None = None
+    language: str | None = None
+    log_extra: str | None = None
+    lyric_scene_copyright: TikTokAppAwemeMusicLyricSceneCopyright | None = None
     lyric_short_position: str | None
+    lyrics: list[TikTokAppAwemeMusicLyrics] | None = None
     matched_pgc_sound: TikTokAppAwemeMusicMatchedPgcSound | None = None
+    matched_song: TikTokAppAwemeMusicMatchedSong | None = None
+    meme_song_info: dict[str, str] | None = None
     mid: str
     multi_bit_rate_play_info: str | None
+    music_group_use_count: int | None = None
+    music_group_v3_ids: list[int] | None = None
+    music_release_info: TikTokAppAwemeMusicMusicReleaseInfo | None = None
+    music_ugid: int | None = None
+    music_ugid_use_count: int | None = None
     mute_share: bool
+    mute_type: int | None = None
     offline_desc: str
     owner_handle: str
     owner_id: str | None = None
@@ -964,21 +1781,51 @@ class TikTokAppAwemeMusic(BaseModel):
     prevent_item_download_status: int | None = None
     preview_end_time: int
     preview_start_time: float
-    recommend_status: int
+    recommend_status: int | None = None
     redirect: bool | None = None
+    same_group_id_v3: int | None = None
     schema_url: str | None = None
     search_highlight: str | None
     sec_uid: str | None = None
+    shoot_duration: int | None = None
+    sim_group_id_v3: int | None = None
     source_platform: int
     start_time: int | None = None
     status: int
     strong_beat_url: TikTokAppAwemeMusicStrongBeatUrl | None = None
+    style_value: list[int] | None = None
     tag_list: str | None
     tag_list_v2: str | None
+    theme_tags: list[str] | None = None
+    theme_value: list[int] | None = None
     title: str
-    tt_to_dsp_song_infos: str | None
+    tt_to_dsp_song_infos: list[TikTokAppAwemeMusicTtToDspSongInfos] | None
     uncert_artists: str | None
-    user_count: int
+    user_count: int | None = None
+    video_duration: int | None = None
+
+
+class TikTokAppAwemeMusicArtists(BaseModel):
+    avatar: TikTokAppAwemeMusicArtistsAvatar | None = None
+    enter_type: int | None = None
+    follow_status: int | None = None
+    follower_status: int | None = None
+    handle: str | None = None
+    is_block: bool | None = None
+    is_blocked: bool | None = None
+    is_private_account: bool | None = None
+    is_verified: bool | None = None
+    is_visible: bool | None = None
+    nick_name: str | None = None
+    sec_uid: str | None = None
+    status: int | None = None
+    uid: str | None = None
+
+
+class TikTokAppAwemeMusicArtistsAvatar(BaseModel):
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
 
 
 class TikTokAppAwemeMusicAvatarLarge(BaseModel):
@@ -991,7 +1838,7 @@ class TikTokAppAwemeMusicAvatarLarge(BaseModel):
 
 
 class TikTokAppAwemeMusicAvatarMedium(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1000,7 +1847,7 @@ class TikTokAppAwemeMusicAvatarMedium(BaseModel):
 
 
 class TikTokAppAwemeMusicAvatarThumb(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1044,24 +1891,104 @@ class TikTokAppAwemeMusicCoverThumb(BaseModel):
     width: int
 
 
+class TikTokAppAwemeMusicDurationHighPrecision(BaseModel):
+    audition_duration_precision: float | None = None
+    duration_precision: float | None = None
+    shoot_duration_precision: float | None = None
+    video_duration_precision: float | None = None
+
+
 class TikTokAppAwemeMusicExternalSongInfo(BaseModel):
+    external_app_link: str | None = None
+    external_deep_link: str | None = None
     external_song_key: str
     h5_url: str
     partner_name: str
     partner_song_id: str
 
 
+class TikTokAppAwemeMusicLyricSceneCopyright(BaseModel):
+    lyric_sticker: bool | None = None
+
+
+class TikTokAppAwemeMusicLyrics(BaseModel):
+    lyric_id: int | None = None
+    lyric_type: int | None = None
+
+
 class TikTokAppAwemeMusicMatchedPgcSound(BaseModel):
-    artist_infos: str | None
+    artist_infos: list[TikTokAppAwemeMusicMatchedPgcSoundArtistInfos] | None
     author: str | None = None
+    cover_medium: TikTokAppAwemeMusicMatchedPgcSoundCoverMedium | None = None
     mixed_author: str | None = None
     mixed_title: str | None = None
+    music_release_info: TikTokAppAwemeMusicMatchedPgcSoundMusicReleaseInfo | None = None
     title: str | None = None
     uncert_artists: str | None
 
 
+class TikTokAppAwemeMusicMatchedPgcSoundArtistInfos(BaseModel):
+    avatar: TikTokAppAwemeMusicMatchedPgcSoundArtistInfosAvatar | None = None
+    enter_type: int | None = None
+    follow_status: int | None = None
+    follower_status: int | None = None
+    handle: str | None = None
+    is_block: bool | None = None
+    is_blocked: bool | None = None
+    is_private_account: bool | None = None
+    is_verified: bool | None = None
+    is_visible: bool | None = None
+    nick_name: str | None = None
+    sec_uid: str | None = None
+    status: int | None = None
+    uid: str | None = None
+
+
+class TikTokAppAwemeMusicMatchedPgcSoundArtistInfosAvatar(BaseModel):
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+
+
+class TikTokAppAwemeMusicMatchedPgcSoundCoverMedium(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeMusicMatchedPgcSoundMusicReleaseInfo(BaseModel):
+    group_release_date: int | None = None
+    is_new_release_song: bool | None = None
+
+
+class TikTokAppAwemeMusicMatchedSong(BaseModel):
+    author: str
+    chorus_info: TikTokAppAwemeMusicMatchedSongChorusInfo | None = None
+    choruses: list[TikTokAppAwemeMusicMatchedSongChorusInfo] | None = None
+    cover_medium: TikTokAppAwemeMusicCoverMedium | None = None
+    full_duration: int | None = None
+    h5_url: str | None = None
+    id: str
+    performers: list[str] | None = None
+    title: str
+    verses: list[TikTokAppAwemeMusicMatchedSongChorusInfo] | None = None
+
+
+class TikTokAppAwemeMusicMatchedSongChorusInfo(BaseModel):
+    duration_ms: int | None = None
+    start_ms: int | None = None
+
+
+class TikTokAppAwemeMusicMusicReleaseInfo(BaseModel):
+    group_release_date: int | None = None
+    is_new_release_song: bool | None = None
+
+
 class TikTokAppAwemeMusicPlayUrl(BaseModel):
     data_size: int | None = None
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str | None = None
@@ -1078,25 +2005,35 @@ class TikTokAppAwemeMusicStrongBeatUrl(BaseModel):
     width: int
 
 
+class TikTokAppAwemeMusicTtToDspSongInfos(BaseModel):
+    button_type: int | None = None
+    platform: int | None = None
+    song_id: str | None = None
+
+
 class TikTokAppAwemeOriginalClientText(BaseModel):
     markup_text: str
     text_extra: list[TikTokAppAwemeOriginalClientTextTextExtra] | None
 
 
 class TikTokAppAwemeOriginalClientTextTextExtra(BaseModel):
+    aweme_id: str | None = None
+    comment_id: int | None = None
     hashtag_id: str | None = None
     hashtag_name: str | None = None
     is_commerce: bool | None = None
     sec_uid: str | None = None
+    sub_type: int | None = None
     tag_id: str
     type: int
     user_id: str | None = None
 
 
 class TikTokAppAwemePlaylistInfo(BaseModel):
-    index: int
-    item_total: int
+    index: int | None = None
+    item_total: int | None = None
     mix_id: str
+    mix_src: int | None = None
     name: str
 
 
@@ -1104,19 +2041,31 @@ class TikTokAppAwemePoiData(BaseModel):
     address_info: TikTokAppAwemePoiDataAddressInfo
     collect_info: str
     comment_anchor: TikTokAppAwemePoiDataCommentAnchor | None = None
+    icon: TikTokAppAwemePoiDataIcon | None = None
     info_source: str
+    is_collected: bool | None = None
+    is_out_flow_hidden: bool | None = None
+    location_desc: str | None = None
     poi_id: str
     poi_mapkit_collect: bool
     poi_name: str
+    poi_request_extra_params: str | None = None
     poi_review_config: TikTokAppAwemePoiDataPoiReviewConfig | None = None
     poi_type: str
+    real_time_fav_cnt: int | None = None
+    thumbnail: TikTokAppAwemePoiDataThumbnail | None = None
+    type_level: str | None = None
     video_anchor: TikTokAppAwemePoiDataVideoAnchor | None = None
     video_count: int
+    video_tag: TikTokAppAwemePoiDataVideoTag | None = None
 
 
 class TikTokAppAwemePoiDataAddressInfo(BaseModel):
+    address: str | None = None
     city_code: str
     city_name: str
+    geohash: str | None = None
+    l0_geoname_id: str | None = None
     lat: str
     lng: str
     region_code: str
@@ -1125,9 +2074,10 @@ class TikTokAppAwemePoiDataAddressInfo(BaseModel):
 class TikTokAppAwemePoiDataCommentAnchor(BaseModel):
     has_sub_arrow: bool
     hide_list: str | None
+    schema_: Annotated[str | None, Field(alias="schema")] = None
     sub_tag_exp_time: int
     sub_tag_exp_type: int
-    sub_tags: list[TikTokAppAwemePoiDataCommentAnchorSubTags]
+    sub_tags: list[TikTokAppAwemePoiDataCommentAnchorSubTags] | None
     track_info: str
 
 
@@ -1137,24 +2087,51 @@ class TikTokAppAwemePoiDataCommentAnchorSubTags(BaseModel):
     type: int
 
 
+class TikTokAppAwemePoiDataIcon(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
 class TikTokAppAwemePoiDataPoiReviewConfig(BaseModel):
-    show_review_tab: bool
+    show_review_tab: bool | None = None
+
+
+class TikTokAppAwemePoiDataThumbnail(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
 
 
 class TikTokAppAwemePoiDataVideoAnchor(BaseModel):
     has_sub_arrow: bool
     hide_list: str | None
+    poi_card: TikTokAppAwemePoiDataVideoAnchorPoiCard | None = None
+    schema_: Annotated[str | None, Field(alias="schema")] = None
     sub_tag_exp_time: int
     sub_tag_exp_type: int
-    sub_tags: list[TikTokAppAwemePoiDataVideoAnchorSubTags]
+    sub_tags: list[TikTokAppAwemePoiDataVideoAnchorSubTags] | None
     suffix: str
     track_info: str
+
+
+class TikTokAppAwemePoiDataVideoAnchorPoiCard(BaseModel):
+    lynx_schema: str | None = None
 
 
 class TikTokAppAwemePoiDataVideoAnchorSubTags(BaseModel):
     name: str
     priority: int
     type: int
+
+
+class TikTokAppAwemePoiDataVideoTag(BaseModel):
+    schema_: Annotated[str | None, Field(alias="schema")] = None
+    suffix: str | None = None
 
 
 class TikTokAppAwemeRiskInfos(BaseModel):
@@ -1165,17 +2142,27 @@ class TikTokAppAwemeRiskInfos(BaseModel):
     warn: bool
 
 
+class TikTokAppAwemeSearchHighlight(BaseModel):
+    field: str | None = None
+    positions: list[TikTokAppAwemeSearchHighlightPositions] | None = None
+
+
+class TikTokAppAwemeSearchHighlightPositions(BaseModel):
+    begin: int | None = None
+    end: int | None = None
+
+
 class TikTokAppAwemeShareInfo(BaseModel):
     bool_persist: int
     button_display_stratege_source: str | None = None
     now_invitation_card_image_urls: str | None
     share_button_display_mode: int | None = None
     share_desc: str
-    share_desc_info: str
+    share_desc_info: str | None = None
     share_link_desc: str
     share_quote: str
-    share_signature_desc: str
-    share_signature_url: str
+    share_signature_desc: str | None = None
+    share_signature_url: str | None = None
     share_title: str
     share_title_myself: str
     share_title_other: str
@@ -1185,6 +2172,7 @@ class TikTokAppAwemeShareInfo(BaseModel):
 
 
 class TikTokAppAwemeSmartSearchInfo(BaseModel):
+    ai_overview_intent_type: int | None = None
     ask_tako_intent_type: int
     find_similar_intent_type: int
     related_videos_intent_type: int
@@ -1193,6 +2181,32 @@ class TikTokAppAwemeSmartSearchInfo(BaseModel):
 
 class TikTokAppAwemeStandardComponentInfo(BaseModel):
     banner_enabled: bool | None = None
+    button: TikTokAppAwemeStandardComponentInfoButton | None = None
+    high_tag: TikTokAppAwemeStandardComponentInfoHighTag | None = None
+
+
+class TikTokAppAwemeStandardComponentInfoButton(BaseModel):
+    enable_standard_button: bool | None = None
+
+
+class TikTokAppAwemeStandardComponentInfoHighTag(BaseModel):
+    tags: list[TikTokAppAwemeStandardComponentInfoHighTagTags] | None = None
+
+
+class TikTokAppAwemeStandardComponentInfoHighTagTags(BaseModel):
+    key: TikTokAppAwemeStandardComponentInfoHighTagTagsKey | None = None
+    signal: TikTokAppAwemeStandardComponentInfoHighTagTagsSignal | None = None
+
+
+class TikTokAppAwemeStandardComponentInfoHighTagTagsKey(BaseModel):
+    business_id: str | None = None
+    component_key: str | None = None
+
+
+class TikTokAppAwemeStandardComponentInfoHighTagTagsSignal(BaseModel):
+    auto_display: bool | None = None
+    code: int | None = None
+    releasable: bool | None = None
 
 
 class TikTokAppAwemeStatistics(BaseModel):
@@ -1205,9 +2219,9 @@ class TikTokAppAwemeStatistics(BaseModel):
     lose_comment_count: int
     lose_count: int
     play_count: int
-    repost_count: int
+    repost_count: int | None = None
     share_count: int
-    whatsapp_share_count: int
+    whatsapp_share_count: int | None = None
 
 
 class TikTokAppAwemeStatus(BaseModel):
@@ -1219,13 +2233,20 @@ class TikTokAppAwemeStatus(BaseModel):
     is_delete: bool
     is_prohibited: bool
     private_status: int
+    review_result: TikTokAppAwemeStatusReviewResult | None = None
     reviewed: int
     self_see: bool
+    violation_display_status: int | None = None
+
+
+class TikTokAppAwemeStatusReviewResult(BaseModel):
+    review_status: int | None = None
 
 
 class TikTokAppAwemeStickerDetail(BaseModel):
     attributions: str | None
     children: str | None
+    icon_url: TikTokAppAwemeStickerDetailIconUrl | None = None
     id: str
     linked_anchors: str | None
     name: str
@@ -1234,7 +2255,16 @@ class TikTokAppAwemeStickerDetail(BaseModel):
     tags: str | None
 
 
+class TikTokAppAwemeStickerDetailIconUrl(BaseModel):
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
 class TikTokAppAwemeSuggestWords(BaseModel):
+    feed_query_enable_videosug: bool | None = None
     suggest_words: list[TikTokAppAwemeSuggestWordsSuggestWords]
 
 
@@ -1246,8 +2276,25 @@ class TikTokAppAwemeSuggestWordsSuggestWords(BaseModel):
 
 
 class TikTokAppAwemeSuggestWordsSuggestWordsWords(BaseModel):
+    penetrate_info: str | None = None
+    rich_sug_info: TikTokAppAwemeSuggestWordsSuggestWordsWordsRichSugInfo | None = None
     word: str
     word_id: str
+    word_record: TikTokAppAwemeSuggestWordsSuggestWordsWordsWordRecord | None = None
+
+
+class TikTokAppAwemeSuggestWordsSuggestWordsWordsRichSugInfo(BaseModel):
+    sug_icon_type: str | None = None
+    sug_icon_uri: str | None = None
+    sug_reason: str | None = None
+    sug_reason_type: str | None = None
+
+
+class TikTokAppAwemeSuggestWordsSuggestWordsWordsWordRecord(BaseModel):
+    is_personalized: bool | None = None
+    qrec_json_info: str | None = None
+    words_label: str | None = None
+    words_lang: str | None = None
 
 
 class TikTokAppAwemeTakoBubbleInfo(BaseModel):
@@ -1255,13 +2302,16 @@ class TikTokAppAwemeTakoBubbleInfo(BaseModel):
 
 
 class TikTokAppAwemeTextExtra(BaseModel):
+    aweme_id: str | None = None
     end: int
     hashtag_id: str | None = None
     hashtag_name: str | None = None
     is_commerce: bool | None = None
-    line_idx: int
+    line_idx: int | None = None
     sec_uid: str | None = None
     start: int
+    sub_type: int | None = None
+    tag_id: str | None = None
     type: int
     user_id: str | None = None
 
@@ -1272,20 +2322,28 @@ class TikTokAppAwemeTtecSuggestWords(BaseModel):
 
 class TikTokAppAwemeVideo(BaseModel):
     CoverTsp: float | None = None
-    big_thumbs: str | None = None
+    ai_dynamic_cover: TikTokAppAwemeVideoAiDynamicCover | None = None
+    ai_dynamic_cover_bak: TikTokAppAwemeVideoAiDynamicCoverBak | None = None
+    animated_cover: TikTokAppAwemeVideoAnimatedCover | None = None
+    big_thumbs: list[TikTokAppAwemeVideoBigThumbs] | None = None
     bit_rate: list[TikTokAppAwemeVideoBitRate]
     bit_rate_audio: list[TikTokAppAwemeVideoBitRateAudio] | None = None
     cdn_url_expired: int | None = None
     cla_info: TikTokAppAwemeVideoClaInfo | None = None
     cover: TikTokAppAwemeVideoCover
     cover_is_custom: bool | None = None
+    cover_rgb: str | None = None
+    did_profile_labels: str | None = None
     download_addr: TikTokAppAwemeVideoDownloadAddr | None = None
+    download_no_watermark_addr: TikTokAppAwemeVideoDownloadNoWatermarkAddr | None = None
     duration: int
     dynamic_cover: TikTokAppAwemeVideoDynamicCover
     fake_landscape_video_info: TikTokAppAwemeVideoFakeLandscapeVideoInfo | None = None
     has_watermark: bool
     height: int | None = None
     is_bytevc1: int | None = None
+    is_callback: bool | None = None
+    is_long_video: int | None = None
     meta: str | None = None
     misc_download_addrs: str | None = None
     need_set_token: bool | None = None
@@ -1296,20 +2354,65 @@ class TikTokAppAwemeVideo(BaseModel):
     play_addr_h264: TikTokAppAwemeVideoPlayAddrH264 | None = None
     ratio: str | None = None
     source_HDR_type: int | None = None
+    tag: TikTokAppAwemeVideoTag | None = None
     tags: str | None = None
+    vid_profile_labels: str | None = None
+    video_model: str | None = None
     width: int | None = None
 
 
+class TikTokAppAwemeVideoAiDynamicCover(BaseModel):
+    data_size: int | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeVideoAiDynamicCoverBak(BaseModel):
+    data_size: int | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokAppAwemeVideoAnimatedCover(BaseModel):
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+
+
+class TikTokAppAwemeVideoBigThumbs(BaseModel):
+    duration: float | None = None
+    fext: str | None = None
+    img_num: int | None = None
+    img_uris: list[str] | None = None
+    img_url: str | None = None
+    img_urls: list[str] | None = None
+    img_x_len: int | None = None
+    img_x_size: int | None = None
+    img_y_len: int | None = None
+    img_y_size: int | None = None
+    interval: float | None = None
+    uri: str | None = None
+
+
 class TikTokAppAwemeVideoBitRate(BaseModel):
-    HDR_bit: str
-    HDR_type: str
+    HDR_bit: str | None = None
+    HDR_type: str | None = None
     bit_rate: int
     dub_infos: str | None
+    fid_profile_labels: str | None = None
+    fps: int | None = None
     gear_name: str
     is_bytevc1: int
     is_h265: int | None = None
     play_addr: TikTokAppAwemeVideoBitRatePlayAddr
     quality_type: int
+    video_extra: str | None = None
 
 
 class TikTokAppAwemeVideoBitRateAudio(BaseModel):
@@ -1342,7 +2445,8 @@ class TikTokAppAwemeVideoBitRateAudioAudioMetaUrlList(BaseModel):
 
 class TikTokAppAwemeVideoBitRatePlayAddr(BaseModel):
     data_size: int
-    file_hash: str
+    file_cs: str | None = None
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str
@@ -1355,12 +2459,15 @@ class TikTokAppAwemeVideoClaInfo(BaseModel):
     caption_infos: list[TikTokAppAwemeVideoClaInfoCaptionInfos] | None
     captions_type: int
     creator_edited_caption_id: int
+    duplicate_languages: list[str] | None = None
     enable_auto_caption: int
     has_original_audio: int
     hide_original_caption: bool
+    is_author_dubbing_qualified: bool | None = None
     no_caption_reason: int
     no_caption_reason_v2: int
     original_language_info: TikTokAppAwemeVideoClaInfoOriginalLanguageInfo | None = None
+    show_asr_edit_guide_banner: bool | None = None
     vertical_positions: str | None
 
 
@@ -1375,15 +2482,21 @@ class TikTokAppAwemeVideoClaInfoCaptionInfos(BaseModel):
     lang: str
     language_code: str
     language_id: int
+    source_tag: str | None = None
     sub_id: int
     sub_version: str
+    subtitle_type: int | None = None
+    translation_type: int | None = None
+    translator_id: int | None = None
     url: str
     url_list: list[str]
+    variant: str | None = None
 
 
 class TikTokAppAwemeVideoClaInfoOriginalLanguageInfo(BaseModel):
     can_translate_realtime: bool
     can_translate_realtime_skip_translation_lang_check: bool
+    first_subtitle_time: int | None = None
     is_burnin_caption: bool
     lang: str
     language_code: str
@@ -1406,7 +2519,7 @@ class TikTokAppAwemeVideoControl(BaseModel):
 
 
 class TikTokAppAwemeVideoCover(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1416,6 +2529,7 @@ class TikTokAppAwemeVideoCover(BaseModel):
 
 class TikTokAppAwemeVideoDownloadAddr(BaseModel):
     data_size: int | None = None
+    file_cs: str | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1423,8 +2537,20 @@ class TikTokAppAwemeVideoDownloadAddr(BaseModel):
     width: int
 
 
+class TikTokAppAwemeVideoDownloadNoWatermarkAddr(BaseModel):
+    data_size: int | None = None
+    file_cs: str | None = None
+    file_hash: str | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_key: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
 class TikTokAppAwemeVideoDynamicCover(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1441,7 +2567,7 @@ class TikTokAppAwemeVideoFakeLandscapeVideoInfo(BaseModel):
 
 
 class TikTokAppAwemeVideoOriginCover(BaseModel):
-    data_size: int
+    data_size: int | None = None
     height: int
     uri: str
     url_list: list[str]
@@ -1459,10 +2585,11 @@ class TikTokAppAwemeVideoPillarBoxVideoInfo(BaseModel):
 
 class TikTokAppAwemeVideoPlayAddr(BaseModel):
     data_size: int | None = None
+    file_cs: str | None = None
     file_hash: str | None = None
     height: int
     uri: str
-    url_key: str
+    url_key: str | None = None
     url_list: list[str]
     url_prefix: str | None
     width: int
@@ -1470,7 +2597,8 @@ class TikTokAppAwemeVideoPlayAddr(BaseModel):
 
 class TikTokAppAwemeVideoPlayAddrBytevc1(BaseModel):
     data_size: int
-    file_hash: str
+    file_cs: str | None = None
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str
@@ -1481,7 +2609,8 @@ class TikTokAppAwemeVideoPlayAddrBytevc1(BaseModel):
 
 class TikTokAppAwemeVideoPlayAddrH264(BaseModel):
     data_size: int
-    file_hash: str
+    file_cs: str | None = None
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str
@@ -1490,8 +2619,19 @@ class TikTokAppAwemeVideoPlayAddrH264(BaseModel):
     width: int
 
 
+class TikTokAppAwemeVideoTag(BaseModel):
+    background_color: str | None = None
+    en_title: str | None = None
+    enable_lower_tag: bool | None = None
+    font_color: str | None = None
+    opacity: int | None = None
+    title: str | None = None
+    type: str | None = None
+
+
 class TikTokAppAwemeVisualSearchInfo(BaseModel):
     api_control_info: str | None = None
+    author_visual_search_enable: int | None = None
     disable_ecom_content_type: int | None = None
     ecom_nocart_entrance_enable_type: int | None = None
     enable_pre_upload_image_type: int
@@ -1679,10 +2819,13 @@ class TikTokComment(BaseModel):
     allow_download_photo: bool | None = None
     author_pin: bool | None = None
     aweme_id: str
+    boost: int | None = None
+    boost_reason: str | None = None
     cid: str
     collect_stat: int
     comment_language: str
     comment_post_item_ids: str | None
+    content_type: int | None = None
     create_time: int
     digg_count: int
     fold_status: int
@@ -1712,6 +2855,7 @@ class TikTokComment(BaseModel):
     thread_id: int
     trans_btn_style: int
     translated_text_extra: str | None
+    update_reason: str | None = None
     user: TikTokCommentUser
     user_buried: bool
     user_digged: int
@@ -1871,6 +3015,16 @@ class TikTokImagePostInfo(BaseModel):
     title: str
 
 
+class TikTokKeywordSearchItem(BaseModel):
+    aweme_info: TikTokVideoAweme
+
+
+class TikTokKeywordSearchResponse(BaseModel):
+    cursor: int
+    has_more: int
+    search_item_list: list[TikTokKeywordSearchItem]
+
+
 class TikTokOriginalLanguageInfo(BaseModel):
     lang: str
     language_code: str
@@ -1880,7 +3034,7 @@ class TikTokOriginalLanguageInfo(BaseModel):
 class TikTokPlayAddr(BaseModel):
     data_size: int
     file_cs: str
-    file_hash: str
+    file_hash: str | None = None
     height: int
     uri: str
     url_key: str
@@ -1960,6 +3114,37 @@ class TikTokTextExtra(BaseModel):
     user_id: str | None = None
 
 
+class TikTokTopItem(BaseModel):
+    author: TikTokAppAwemeAuthor
+    content_type: str
+    create_time: str
+    desc: str
+    desc_language: str | None = None
+    id: str
+    images: list[str] | None = None
+    is_ad: bool
+    is_top: int
+    music: TikTokTopItemMusic | None = None
+    region: str
+    statistics: TikTokAppAwemeStatistics
+    url: str
+    video: TikTokAppAwemeVideo
+
+
+class TikTokTopItemMusic(BaseModel):
+    author: str
+    duration: int
+    id: int
+    matched_song: TikTokAppAwemeMusicMatchedSong | None = None
+    play_url: str
+    title: str
+
+
+class TikTokTopSearchResponse(BaseModel):
+    cursor: int
+    items: list[TikTokTopItem]
+
+
 class TikTokTranscriptResponse(BaseModel):
     id: str
     transcript: str
@@ -1989,7 +3174,7 @@ class TikTokTrendingItem(BaseModel):
     desc: str
     is_ad: bool
     item_comment_settings: int
-    music: TikTokAppAwemeMusic
+    music: TikTokAppAwemeMusic | None = None
     poi_data: TikTokAppAwemePoiData | None = None
     region: str
     share_info: TikTokAppAwemeShareInfo
@@ -2110,6 +3295,25 @@ class SearchHashtagResponse(
     ]
 
 
+class TikTokTrimmedKeywordSearchResponse(BaseModel):
+    cursor: int
+    search_item_list: list[TikTokTrimmedSearchAweme]
+
+
+class SearchKeywordResponse(
+    RootModel[
+        Annotated[
+            TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
+            Field(union_mode="left_to_right"),
+        ]
+    ]
+):
+    root: Annotated[
+        TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
+        Field(union_mode="left_to_right"),
+    ]
+
+
 class TikTokTrimmedProfileVideosResponse(BaseModel):
     aweme_list: list[TikTokTrimmedAweme]
     has_more: int
@@ -2137,6 +3341,30 @@ class TikTokTrimmedRelationUser(BaseModel):
     nickname: str
     sec_uid: str
     signature: str
+    uid: str
+    unique_id: str
+
+
+class TikTokTrimmedSearchAweme(BaseModel):
+    author: TikTokAppAwemeAuthor
+    aweme_id: str
+    create_time: int
+    create_time_utc: str
+    desc: str
+    desc_language: str | None = None
+    is_ad: bool
+    region: str
+    statistics: TikTokAppAwemeStatistics
+    url: str
+    video: TikTokAppAwemeVideo
+
+
+class TikTokTrimmedSearchUser(BaseModel):
+    avatar_medium: TikTokAppAwemeAuthorAvatarMedium
+    follower_count: int | None = None
+    following_count: int | None = None
+    nickname: str
+    sec_uid: str | None = None
     uid: str
     unique_id: str
 
@@ -2170,6 +3398,11 @@ class TikTokTrimmedTrendingItem(BaseModel):
     statistics: TikTokAppAwemeStatistics
     url: str
     video: TikTokTrendingVideo
+
+
+class TikTokTrimmedUserSearchResponse(BaseModel):
+    cursor: int
+    users: list[TikTokTrimmedSearchUser]
 
 
 class TikTokTrimmedVideoAweme(BaseModel):
@@ -2303,11 +3536,104 @@ class TikTokUserInfoUserProfileTab(BaseModel):
     showQuestionTab: bool
 
 
+class TikTokUserSearchAnswerGlobalDoodleConfig(BaseModel):
+    ab_params: TikTokUserSearchAnswerGlobalDoodleConfigAbParams | None = None
+    display_filter_bar: int | None = None
+    feedback_survey: list[TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurvey] | None = None
+    feel_good: TikTokUserSearchAnswerGlobalDoodleConfigFeelGood | None = None
+    hide_results: bool | None = None
+    hit_dolphin: bool | None = None
+    hit_shark: bool | None = None
+    keyword: str | None = None
+    new_source: str | None = None
+    search_channel: str | None = None
+    tns_search_result: str | None = None
+
+
+class TikTokUserSearchAnswerGlobalDoodleConfigAbParams(BaseModel):
+    user_relation_ship: str | None = None
+
+
+class TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurvey(BaseModel):
+    feedback_type: str | None = None
+    long_stress_info: str | None = None
+    multiple_choices: (
+        list[TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurveyMultipleChoices] | None
+    ) = None
+    send_us_multiple_choices: str | None = None
+
+
+class TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurveyMultipleChoices(BaseModel):
+    key: str | None = None
+    value: str | None = None
+
+
+class TikTokUserSearchAnswerGlobalDoodleConfigFeelGood(BaseModel):
+    extra: str | None = None
+    token: str | None = None
+    token_type: str | None = None
+
+
+class TikTokUserSearchEntry(BaseModel):
+    challenges: list[dict[str, str]] | None
+    effects: list[dict[str, str]] | None
+    items: list[TikTokAppAweme] | None
+    mix_list: list[dict[str, str]] | None
+    musics: list[dict[str, str]] | None
+    position: list[dict[str, int]] | None
+    uniqid_position: list[dict[str, int]] | None
+    user_info: TikTokAppAwemeAuthor
+
+
+class TikTokUserSearchExtra(BaseModel):
+    api_debug_info: str | None = None
+    fatal_item_ids: list[str] | None = None
+    logid: str
+    now: int
+    search_request_id: str | None = None
+    server_stream_time: int | None = None
+
+
+class TikTokUserSearchResponse(BaseModel):
+    challenge_list: list[dict[str, str]] | None = None
+    cursor: int
+    extra: TikTokUserSearchExtra | None = None
+    feedback_type: str | None = None
+    global_doodle_config: TikTokUserSearchAnswerGlobalDoodleConfig | None = None
+    has_more: int
+    input_keyword: str | None = None
+    log_pb: dict[str, str] | None = None
+    music_list: list[dict[str, str]] | None = None
+    qc: str | None = None
+    rid: str
+    status_code: int
+    type: int
+    user_list: list[TikTokUserSearchEntry]
+
+
+class SearchUsersResponse(
+    RootModel[
+        Annotated[
+            TikTokUserSearchResponse | TikTokTrimmedUserSearchResponse,
+            Field(union_mode="left_to_right"),
+        ]
+    ]
+):
+    root: Annotated[
+        TikTokUserSearchResponse | TikTokTrimmedUserSearchResponse,
+        Field(union_mode="left_to_right"),
+    ]
+
+
 class TikTokVideoAweme(BaseModel):
+    ad_aweme_source: int | None = None
+    add_yours_info: TikTokVideoAwemeAddYoursInfo | None = None
     add_yours_recommendation: dict[str, str] | None = None
     added_sound_music_info: TikTokAppAwemeAddedSoundMusicInfo | None = None
+    ai_remix_info: TikTokVideoAwemeAiRemixInfo | None = None
     aigc_info: TikTokAppAwemeAigcInfo | None = None
     anchors: list[TikTokAppAwemeAnchors] | None
+    anchors_extras: str | None = None
     animated_image_info: TikTokAppAwemeAnimatedImageInfo | None = None
     author: TikTokAppAwemeAuthor
     author_user_id: int
@@ -2321,22 +3647,29 @@ class TikTokVideoAweme(BaseModel):
     bodydance_score: int | None = None
     bottom_products: str | None = None
     branded_content_accounts: str | None = None
+    c2pa_info: TikTokVideoAwemeC2paInfo | None = None
+    cc_template_info: TikTokVideoAwemeCcTemplateInfo | None = None
     cha_list: list[TikTokAppAwemeChaList] | None = None
     challenge_position: str | None = None
     cmt_swt: bool | None = None
     collect_stat: int | None = None
+    comment_at_tako_info: TikTokVideoAwemeCommentAtTakoInfo | None = None
     comment_config: TikTokAppAwemeCommentConfig | None = None
     comment_topbar_info: str | None = None
     commerce_config_data: str | None = None
     commerce_info: TikTokAppAwemeCommerceInfo
     content_desc: str | None = None
     content_desc_extra: list[TikTokAppAwemeContentDescExtra] | None = None
+    content_level: int | None = None
+    content_model: TikTokVideoAwemeContentModel | None = None
     content_original_type: int | None = None
     content_size_type: int | None = None
     content_type: str | None = None
     cover_labels: str | None = None
     create_time: int
     create_time_utc: str
+    creation_info: TikTokVideoAwemeCreationInfo | None = None
+    creator_ai_comment: TikTokVideoAwemeCreatorAiComment | None = None
     desc: str
     desc_language: str | None = None
     disable_search_trending_bar: bool | None = None
@@ -2350,92 +3683,398 @@ class TikTokVideoAweme(BaseModel):
     geofencing_regions: str | None = None
     green_screen_materials: str | None = None
     group_id: str | None = None
+    group_id_list: TikTokVideoAwemeGroupIdList | None = None
     has_danmaku: bool | None = None
+    has_ever_advertised: bool | None = None
     has_vs_entry: bool | None = None
+    have_dashboard: bool | None = None
     hybrid_label: str | None = None
+    ic_asset_info: list[TikTokVideoAwemeIcAssetInfo] | None = None
     image_infos: str | None = None
     image_post_info: TikTokAppAwemeImagePostInfo | None = None
     interact_permission: TikTokAppAwemeInteractPermission | None = None
     interaction_stickers: list[TikTokAppAwemeInteractionStickers] | None = None
+    interaction_tag_info: TikTokVideoAwemeInteractionTagInfo | None = None
     is_ad: bool | None = None
     is_ads: bool | None = None
+    is_close_friends_only: bool | None = None
     is_description_translatable: bool | None = None
     is_hash_tag: int | None = None
+    is_nff_or_nr: bool | None = None
+    is_on_this_day: int | None = None
+    is_paid_content: bool | None = None
     is_pgcshow: bool | None = None
+    is_preview: int | None = None
     is_relieve: bool | None = None
     is_text_sticker_translatable: bool | None = None
+    is_title_translatable: bool | None = None
     is_top: int | None = None
     is_vr: bool | None = None
+    item_allow_ai_remix: int | None = None
     item_comment_settings: int
     item_distribute_source: str | None = None
     item_duet: int | None = None
     item_react: int | None = None
     item_source_category: int | None = None
+    item_stitch: int | None = None
     label_top: TikTokAppAwemeLabelTop | None = None
     label_top_text: str | None = None
+    last_post_edit_info: TikTokVideoAwemeLastPostEditInfo | None = None
+    layout_info: TikTokVideoAwemeLayoutInfo | None = None
     log_info: TikTokAppAwemeLogInfo | None = None
     long_video: str | None = None
     main_arch_common: str | None = None
-    mask_infos: list[str] | None = None
+    mask_infos: list[TikTokAppAwemeMaskInfo] | None = None
+    meme_reg_info: dict[str, str] | None = None
     misc_info: str | None = None
+    moderation_aigc_info: TikTokVideoAwemeModerationAigcInfo | None = None
+    moments_mode_info: TikTokVideoAwemeMomentsModeInfo | None = None
     muf_comment_info_v2: str | None = None
-    music: TikTokAppAwemeMusic
+    music: TikTokAppAwemeMusic | None = None
     music_begin_time_in_ms: int | None = None
     music_end_time_in_ms: int | None = None
     music_selected_from: str | None = None
     music_title_style: int | None = None
     music_volume: str | None = None
+    need_trim_step: bool | None = None
     need_vs_entry: bool | None = None
     nickname_position: str | None = None
+    no_selected_music: bool | None = None
     operator_boost_info: str | None = None
     origin_comment_ids: str | None = None
     origin_volume: str | None = None
     original_client_text: TikTokAppAwemeOriginalClientText | None = None
-    picked_users: str | None = None
+    paid_content_info: TikTokVideoAwemePaidContentInfo | None = None
+    picked_users: list[dict[str, Any]] | None = None
     playlist_blocked: bool | None = None
     playlist_info: TikTokAppAwemePlaylistInfo | None = None
     poi_data: TikTokAppAwemePoiData | None = None
+    poi_re_tag_signal: int | None = None
+    poi_trace: TikTokVideoAwemePoiTrace | None = None
     position: str | None = None
     prevent_download: bool | None = None
     products_info: str | None = None
     question_list: str | None = None
+    quick_reply_emojis: list[str] | None = None
     rate: int | None = None
-    reference_tts_voice_ids: str | None = None
-    reference_voice_filter_ids: str | None = None
+    reference_tts_voice_ids: str | list[str] | None = None
+    reference_voice_filter_ids: str | list[str] | None = None
     region: str
+    retry_type: int | None = None
     right_products: str | None = None
     risk_infos: TikTokAppAwemeRiskInfos | None = None
-    search_highlight: str | None = None
+    search_desc: str | None = None
+    search_highlight: list[TikTokAppAwemeSearchHighlight] | None = None
     share_info: TikTokAppAwemeShareInfo
     share_url: str | None = None
     shoot_tab_name: str | None = None
     smart_search_info: TikTokAppAwemeSmartSearchInfo | None = None
+    social_interaction_blob: TikTokVideoAwemeSocialInteractionBlob | None = None
+    solaria_profile: TikTokVideoAwemeSolariaProfile | None = None
     sort_label: str | None = None
     sound_exemption: int | None = None
+    spark_info: TikTokVideoAwemeSparkInfo | None = None
+    special_mode: int | None = None
     standard_component_info: TikTokAppAwemeStandardComponentInfo | None = None
     statistics: TikTokAppAwemeStatistics
     status: TikTokAppAwemeStatus | None = None
     sticker_detail: TikTokAppAwemeStickerDetail | None = None
     stickers: str | None = None
+    story_remix_info: TikTokVideoAwemeStoryRemixInfo | None = None
     suggest_words: TikTokAppAwemeSuggestWords | None = None
     support_danmaku: bool | None = None
     survey_info: str | None = None
     tako_bubble_info: TikTokAppAwemeTakoBubbleInfo | None = None
     text_extra: list[TikTokAppAwemeTextExtra] | None = None
     text_sticker_major_lang: str | None = None
+    title_language: str | None = None
+    tns_ue_feed_info: TikTokVideoAwemeTnsUeFeedInfo | None = None
     ttec_suggest_words: TikTokAppAwemeTtecSuggestWords | None = None
-    tts_voice_ids: list[str] | None = None
+    tts_voice_ids: str | list[str] | None = None
+    ttt_product_recall_type: int | None = None
     uniqid_position: str | None = None
     url: str
+    used_full_song: bool | None = None
     user_digged: int | None = None
     video: TikTokAppAwemeVideo
     video_control: TikTokAppAwemeVideoControl | None = None
     video_labels: list[str] | None = None
     video_text: list[str] | None = None
     visual_search_info: TikTokAppAwemeVisualSearchInfo | None = None
-    voice_filter_ids: str | None = None
+    voice_filter_ids: str | list[str] | None = None
     with_promotional_music: bool | None = None
     with_survey: bool | None = None
+    without_watermark: bool | None = None
+
+
+class TikTokVideoAwemeAddYoursInfo(BaseModel):
+    video_source: int | None = None
+
+
+class TikTokVideoAwemeAiRemixInfo(BaseModel):
+    has_entrance: bool | None = None
+
+
+class TikTokVideoAwemeC2paInfo(BaseModel):
+    aigc_src: str | None = None
+    c2pa_extra_data: str | None = None
+    dedup_err: str | None = None
+    dedup_src: str | None = None
+    first_aigc_src: str | None = None
+    first_src: str | None = None
+    is_capcut: bool | None = None
+    is_tiktok: bool | None = None
+    last_aigc_src: str | None = None
+    last_src: str | None = None
+    total_audio: int | None = None
+    total_err: int | None = None
+    total_img: int | None = None
+    total_src: int | None = None
+    total_vid: int | None = None
+    upload_dur: float | None = None
+
+
+class TikTokVideoAwemeCcTemplateInfo(BaseModel):
+    author_name: str | None = None
+    clip_count: int | None = None
+    desc: str | None = None
+    duration_milliseconds: int | None = None
+    related_music_id: str | None = None
+    template_id: str | None = None
+
+
+class TikTokVideoAwemeCommentAtTakoInfo(BaseModel):
+    show_tako_account: int | None = None
+
+
+class TikTokVideoAwemeContentModel(BaseModel):
+    custom_biz: TikTokVideoAwemeContentModelCustomBiz | None = None
+    standard_biz: TikTokVideoAwemeContentModelStandardBiz | None = None
+
+
+class TikTokVideoAwemeContentModelCustomBiz(BaseModel):
+    aweme_trace: str | None = None
+    high_quality_boost_info: TikTokVideoAwemeContentModelCustomBizHighQualityBoostInfo | None = None
+    high_quality_boost_info_v2: dict[str, str] | None = None
+
+
+class TikTokVideoAwemeContentModelCustomBizHighQualityBoostInfo(BaseModel):
+    description: str | None = None
+    is_high_quality_post: bool | None = None
+    link: str | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBiz(BaseModel):
+    ai_comment_photo: TikTokVideoAwemeContentModelStandardBizAiCommentPhoto | None = None
+    e_commerce: TikTokVideoAwemeContentModelStandardBizECommerce | None = None
+    interaction: TikTokVideoAwemeContentModelStandardBizInteraction | None = None
+    local_alliance_info: TikTokVideoAwemeContentModelStandardBizLocalAllianceInfo | None = None
+    meme_ugc: TikTokVideoAwemeContentModelStandardBizMemeUgc | None = None
+    penalty_context: TikTokVideoAwemeContentModelStandardBizPenaltyContext | None = None
+    tako: TikTokVideoAwemeContentModelStandardBizTako | None = None
+    tts_voice_info: TikTokVideoAwemeContentModelStandardBizTtsVoiceInfo | None = None
+    vc_filter_info: TikTokVideoAwemeContentModelStandardBizVcFilterInfo | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizAiCommentPhoto(BaseModel):
+    enable_comment: bool | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizECommerce(BaseModel):
+    ttec_content_tag: TikTokVideoAwemeContentModelStandardBizECommerceTtecContentTag | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizECommerceTtecContentTag(BaseModel):
+    recommendation_tag_consumer_str: str | None = None
+    recommendation_tag_creator_str: str | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizInteraction(BaseModel):
+    collect: TikTokVideoAwemeContentModelStandardBizInteractionCollect | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizInteractionCollect(BaseModel):
+    creation_ideas_info: (
+        TikTokVideoAwemeContentModelStandardBizInteractionCollectCreationIdeasInfo | None
+    ) = None
+
+
+class TikTokVideoAwemeContentModelStandardBizInteractionCollectCreationIdeasInfo(BaseModel):
+    eligible: bool | None = None
+    reasons: list[str] | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizLocalAllianceInfo(BaseModel):
+    alliance_item_label_text: str | None = None
+    alliance_item_label_type: int | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizMemeUgc(BaseModel):
+    meme_name_v1: str | None = None
+    music_level_v1: int | None = None
+    video_level_v1: int | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizPenaltyContext(BaseModel):
+    arb_content_safety_status: int | None = None
+    aweme_type: int | None = None
+    conclu_refine_reason: int | None = None
+    display_penalty_type: int | None = None
+    display_policy: int | None = None
+    display_ui_type: int | None = None
+    ec_global_verdict: int | None = None
+    is_visitor_owner: bool | None = None
+    reviewed: int | None = None
+    status: int | None = None
+    tns_status: int | None = None
+    user_canceled: int | None = None
+    video_status: int | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizTako(BaseModel):
+    tako_sug_word_list: list[TikTokVideoAwemeContentModelStandardBizTakoTakoSugWordList] | None = (
+        None
+    )
+
+
+class TikTokVideoAwemeContentModelStandardBizTakoTakoSugWordList(BaseModel):
+    ext_pass: str | None = None
+    word: str | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizTtsVoiceInfo(BaseModel):
+    tts_voice_attr: str | None = None
+    tts_voice_reuse_params: str | None = None
+
+
+class TikTokVideoAwemeContentModelStandardBizVcFilterInfo(BaseModel):
+    vc_filter_attr: str | None = None
+
+
+class TikTokVideoAwemeCreationInfo(BaseModel):
+    creation_used_functions: list[str] | None = None
+
+
+class TikTokVideoAwemeCreatorAiComment(BaseModel):
+    eligible_video: bool | None = None
+    has_ai_topic: bool | None = None
+    not_eligible_reason: int | None = None
+
+
+class TikTokVideoAwemeGroupIdList(BaseModel):
+    GroupdIdList0: list[int] | None = None
+    GroupdIdList1: list[int] | None = None
+
+
+class TikTokVideoAwemeIcAssetInfo(BaseModel):
+    anchor_related: TikTokVideoAwemeIcAssetInfoAnchorRelated | None = None
+    asset_id: int | None = None
+    asset_type: str | None = None
+    extra: str | None = None
+    resource_id: int | None = None
+
+
+class TikTokVideoAwemeIcAssetInfoAnchorRelated(BaseModel):
+    filter_code: str | None = None
+    filter_reason: str | None = None
+    status: int | None = None
+
+
+class TikTokVideoAwemeInteractionTagInfo(BaseModel):
+    interest_level: int | None = None
+    tagged_users: list[TikTokVideoAwemeInteractionTagInfoTaggedUsers] | None = None
+    video_label_text: str | None = None
+
+
+class TikTokVideoAwemeInteractionTagInfoTaggedUsers(BaseModel):
+    avatar_168x168: TikTokVideoAwemeInteractionTagInfoTaggedUsersAvatar168x168 | None = None
+    avatar_thumb: TikTokVideoAwemeInteractionTagInfoTaggedUsersAvatarThumb | None = None
+    enterprise_verify_reason: str | None = None
+    follow_status: int | None = None
+    follower_status: int | None = None
+    interest_level: int | None = None
+    invitation_status: int | None = None
+    is_business_account: bool | None = None
+    nickname: str | None = None
+    uid: str | None = None
+    unique_id: str | None = None
+
+
+class TikTokVideoAwemeInteractionTagInfoTaggedUsersAvatar168x168(BaseModel):
+    data_size: int | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokVideoAwemeInteractionTagInfoTaggedUsersAvatarThumb(BaseModel):
+    data_size: int | None = None
+    height: int | None = None
+    uri: str | None = None
+    url_list: list[str] | None = None
+    url_prefix: str | None = None
+    width: int | None = None
+
+
+class TikTokVideoAwemeLastPostEditInfo(BaseModel):
+    last_edit_time: int | None = None
+
+
+class TikTokVideoAwemeLayoutInfo(BaseModel):
+    layout_apply_from: str | None = None
+    layout_mode: str | None = None
+
+
+class TikTokVideoAwemeModerationAigcInfo(BaseModel):
+    creator_guidance_status: int | None = None
+    moderation_aigc_label_type: int | None = None
+    moderation_creator_segment: str | None = None
+    moderation_overlabel_warning: int | None = None
+    moderation_user_label_status: int | None = None
+
+
+class TikTokVideoAwemeMomentsModeInfo(BaseModel):
+    is_moments: int | None = None
+
+
+class TikTokVideoAwemePaidContentInfo(BaseModel):
+    paid_collection_id: int | None = None
+
+
+class TikTokVideoAwemePoiTrace(BaseModel):
+    event_info: str | None = None
+    poi_id: int | None = None
+    unavailable_reason: str | None = None
+
+
+class TikTokVideoAwemeSocialInteractionBlob(BaseModel):
+    auxiliary_model_content: str | None = None
+
+
+class TikTokVideoAwemeSolariaProfile(BaseModel):
+    profile: str | None = None
+
+
+class TikTokVideoAwemeSparkInfo(BaseModel):
+    is_unavailable_region_content: bool | None = None
+    spark_item_id: int | None = None
+    synced_to_spark: bool | None = None
+    tiktok_item_id: int | None = None
+
+
+class TikTokVideoAwemeStoryRemixInfo(BaseModel):
+    is_support_remix: bool | None = None
+
+
+class TikTokVideoAwemeTnsUeFeedInfo(BaseModel):
+    footnote: TikTokVideoAwemeTnsUeFeedInfoFootnote | None = None
+
+
+class TikTokVideoAwemeTnsUeFeedInfoFootnote(BaseModel):
+    can_add_footnote: int | None = None
+    pending_count: int | None = None
 
 
 class TikTokVideoResponse(BaseModel):

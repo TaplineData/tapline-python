@@ -40,11 +40,17 @@ def cases(negative: bool) -> list[str]:
 pytestmark = pytest.mark.live
 
 
+PYTHON_ARGUMENT_NAMES = {
+    "clipId": "clip_id",
+}
+
+
 def arguments(stem: str) -> tuple[dict[str, object], dict[str, object]]:
     request = json.loads((FIXTURES / f"{stem}.request.json").read_text())
     merged: dict[str, object] = dict(request.get("params") or {})
     merged.update(request.get("body") or {})
-    return merged, request.get("expect") or {}
+    renamed = {PYTHON_ARGUMENT_NAMES.get(name, name): value for name, value in merged.items()}
+    return renamed, request.get("expect") or {}
 
 
 @pytest.mark.parametrize("stem", cases(negative=False))
