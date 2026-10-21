@@ -126,9 +126,9 @@ class ExpediaAddress(BaseModel):
 
 
 class ExpediaAmenityGroup(BaseModel):
-    category: str
+    category: str | None
     items: list[str]
-    section: str
+    section: str | None
 
 
 class ExpediaCoordinates(BaseModel):
@@ -154,7 +154,7 @@ class ExpediaHotel(BaseModel):
     guest_rating: ExpediaGuestRating
     id: str
     images: list[ExpediaImage]
-    name: str
+    name: str | None
     neighborhood_description: str | None
     policies: ExpediaHotelPolicies
     star_rating: float | None
@@ -168,7 +168,7 @@ class ExpediaHotelCard(BaseModel):
     guest_rating: ExpediaGuestRating
     id: str
     images: list[ExpediaImage]
-    name: str
+    name: str | None
     price: ExpediaHotelPrice | None
     subtitles: list[str]
     url: str
@@ -193,7 +193,7 @@ class ExpediaHotelReviews(BaseModel):
     hotel_id: str
     pagination: ExpediaCursorPagination
     reviews: list[ExpediaReview]
-    total_count: int
+    total_count: int | None
 
 
 class ExpediaHotelRooms(BaseModel):
@@ -211,7 +211,7 @@ class ExpediaHotelsPage(BaseModel):
     hotels: list[ExpediaHotelCard]
     pagination: ExpediaCursorPagination
     region_id: str
-    total_count: int
+    total_count: int | None
 
 
 class ExpediaImage(BaseModel):
@@ -224,10 +224,10 @@ class ExpediaLocation(BaseModel):
     coordinates: ExpediaCoordinates | None
     country: str | None
     country_code: str | None
-    full_name: str
-    name: str
+    full_name: str | None
+    name: str | None
     region_id: str
-    type: str
+    type: str | None
 
 
 class ExpediaLocations(BaseModel):
@@ -243,7 +243,7 @@ class ExpediaManagementResponse(BaseModel):
 class ExpediaMoney(BaseModel):
     amount: float
     currency: str
-    formatted: str
+    formatted: str | None
 
 
 class ExpediaRatePlan(BaseModel):
@@ -279,14 +279,14 @@ class ExpediaRoom(BaseModel):
     features: list[str]
     id: str
     images: list[ExpediaImage]
-    name: str
+    name: str | None
     rate_plans: list[ExpediaRatePlan]
 
 
 class GetHotelParams(BaseModel):
-    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^\\d{1,12}$")]
+    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
     """
-    Expedia hotel id: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
+    Expedia hotel id, 1 to 2147483647: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
     """
 
 
@@ -295,9 +295,9 @@ class ListHotelReviewsParams(BaseModel):
     """
     `pagination.next_cursor` from the previous page; empty for the first page. The cursor holds only a position, so send it with the same parameters as the page it came from.
     """
-    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^\\d{1,12}$")]
+    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
     """
-    Expedia hotel id: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
+    Expedia hotel id, 1 to 2147483647: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
     """
     sort: ExpediaReviewSort | None = ExpediaReviewSort.MOST_RECENT
     """
@@ -322,9 +322,9 @@ class ListHotelRoomsParams(BaseModel):
     """
     Age of each child in the room, 0 to 17; repeat the parameter per child (`children_ages=4&children_ages=9`), at most 6.
     """
-    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^\\d{1,12}$")]
+    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
     """
-    Expedia hotel id: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
+    Expedia hotel id, 1 to 2147483647: the number after `.h` in a hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on a `/hotels` result.
     """
 
 

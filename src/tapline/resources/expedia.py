@@ -205,9 +205,9 @@ class Expedia(AsyncAPIResource):
         """Returns one hotel's name, star rating, address, coordinates, guest rating, neighborhood description, amenities by category, check-in and house policies, and photo gallery. Costs 2 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -226,9 +226,9 @@ class Expedia(AsyncAPIResource):
         """Returns 10 verified guest reviews per page with the score, title, text, date, stay, traveler type, photos and the hotel's replies. Priced per page. Many reviews carry only a score. An unknown `hotel_id` answers no reviews, as a hotel without reviews does. Costs 2 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. The cursor holds only a position, so send it with the
                 same parameters as the page it came from.
@@ -255,9 +255,9 @@ class Expedia(AsyncAPIResource):
         """Room types for your dates and guests with photos and Expedia's `features` (size, beds, occupancy), and each rate plan's price per payment option: `total` with taxes, `nightly` before. Plans can differ by extras Expedia leaves unnamed here. Costs 3 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             check_in: Arrival date, `YYYY-MM-DD`: today or later, at most 500 days
                 ahead.
             check_out: Departure date, `YYYY-MM-DD`: after `check_in`, at most 28
@@ -398,9 +398,9 @@ class SyncExpedia(SyncAPIResource):
         """Returns one hotel's name, star rating, address, coordinates, guest rating, neighborhood description, amenities by category, check-in and house policies, and photo gallery. Costs 2 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -419,9 +419,9 @@ class SyncExpedia(SyncAPIResource):
         """Returns 10 verified guest reviews per page with the score, title, text, date, stay, traveler type, photos and the hotel's replies. Priced per page. Many reviews carry only a score. An unknown `hotel_id` answers no reviews, as a hotel without reviews does. Costs 2 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. The cursor holds only a position, so send it with the
                 same parameters as the page it came from.
@@ -446,9 +446,9 @@ class SyncExpedia(SyncAPIResource):
         """Room types for your dates and guests with photos and Expedia's `features` (size, beds, occupancy), and each rate plan's price per payment option: `total` with taxes, `nightly` before. Plans can differ by extras Expedia leaves unnamed here. Costs 3 credits.
 
         Args:
-            hotel_id: Expedia hotel id: the number after `.h` in a hotel's Expedia
-                URL (`...Pod-Times-Square.h19681371.Hotel-Information`), or `id` on
-                a `/hotels` result.
+            hotel_id: Expedia hotel id, 1 to 2147483647: the number after `.h` in a
+                hotel's Expedia URL (`...Pod-Times-Square.h19681371.Hotel-
+                Information`), or `id` on a `/hotels` result.
             check_in: Arrival date, `YYYY-MM-DD`: today or later, at most 500 days
                 ahead.
             check_out: Departure date, `YYYY-MM-DD`: after `check_in`, at most 28
