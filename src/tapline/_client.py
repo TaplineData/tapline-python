@@ -4,9 +4,9 @@
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``birdeye``, ``geckoterminal``, ``gmgn``, ``goplus``, ``imovelweb``,
-``instagram``, ``linkedin``, ``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``,
-``twitter``, ``youtube``, ``zillow``),
+service (``airbnb``, ``birdeye``, ``expedia``, ``geckoterminal``, ``gmgn``, ``goplus``,
+``imovelweb``, ``instagram``, ``linkedin``, ``pinterest``, ``ponsfamily``, ``pumpfun``,
+``tiktok``, ``twitter``, ``youtube``, ``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -22,6 +22,7 @@ from ._types import Headers, NotGiven, Timeout, not_given
 from .resources import (
     Airbnb,
     Birdeye,
+    Expedia,
     Geckoterminal,
     Gmgn,
     Goplus,
@@ -33,6 +34,7 @@ from .resources import (
     Pumpfun,
     SyncAirbnb,
     SyncBirdeye,
+    SyncExpedia,
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
@@ -87,6 +89,9 @@ class TaplineClient(AsyncAPIClient):
 
     geckoterminal: Geckoterminal
     """The GeckoTerminal endpoints."""
+
+    expedia: Expedia
+    """The Expedia endpoints."""
 
     gmgn: Gmgn
     """The GMGN endpoints."""
@@ -172,6 +177,7 @@ class TaplineClient(AsyncAPIClient):
         self.airbnb = Airbnb(self)
         self.birdeye = Birdeye(self)
         self.geckoterminal = Geckoterminal(self)
+        self.expedia = Expedia(self)
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
         self.imovelweb = Imovelweb(self)
@@ -211,6 +217,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     geckoterminal: SyncGeckoterminal
     """The GeckoTerminal endpoints."""
+
+    expedia: SyncExpedia
+    """The Expedia endpoints."""
 
     gmgn: SyncGmgn
     """The GMGN endpoints."""
@@ -296,6 +305,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.airbnb = SyncAirbnb(self)
         self.birdeye = SyncBirdeye(self)
         self.geckoterminal = SyncGeckoterminal(self)
+        self.expedia = SyncExpedia(self)
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
         self.imovelweb = SyncImovelweb(self)
