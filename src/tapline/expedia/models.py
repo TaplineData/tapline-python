@@ -3,13 +3,20 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date as date_aliased
 from enum import Enum
 from typing import Annotated, Any, Literal, TypeAlias
 
 from pydantic import Field
 
 from tapline._models import PREFER_ENUM, BaseModel
+
+
+class ExpediaActivitySort(str, Enum):
+    RECOMMENDED = "recommended"
+    PRICE_LOW_TO_HIGH = "price_low_to_high"
+    PRICE_HIGH_TO_LOW = "price_high_to_low"
+    DISCOUNT = "discount"
 
 
 class ExpediaAmenity(str, Enum):
@@ -72,9 +79,21 @@ class ExpediaPropertyType(str, Enum):
 
 
 class ExpediaReviewSort(str, Enum):
+    MOST_RELEVANT = "most_relevant"
     MOST_RECENT = "most_recent"
     HIGHEST_RATING = "highest_rating"
     LOWEST_RATING = "lowest_rating"
+
+
+class ExpediaTravelerType(str, Enum):
+    ALL = "all"
+    BUSINESS = "business"
+    COUPLES = "couples"
+    FAMILIES = "families"
+    FAMILIES_WITH_YOUNG_CHILDREN = "families_with_young_children"
+    GROUPS = "groups"
+    SOLO = "solo"
+    WITH_PETS = "with_pets"
 
 
 class PublicError(str, Enum):
@@ -115,6 +134,92 @@ class ErrorResponse(BaseModel):
     upgrade_url: str | None = None
 
 
+class ExpediaAccessibilityGroup(BaseModel):
+    items: list[str]
+    section: str | None
+
+
+class ExpediaActivitiesPage(BaseModel):
+    activities: list[ExpediaActivityCard]
+    end_date: str
+    pagination: ExpediaCursorPagination
+    region_id: str
+    start_date: str
+    total_count: int | None
+
+
+class ExpediaActivity(BaseModel):
+    address: str | None
+    available_dates: list[str]
+    coordinates: ExpediaCoordinates | None
+    description: str | None
+    duration: str | None
+    end_date: str | None
+    guest_rating: ExpediaGuestRating
+    id: str
+    images: list[ExpediaImage]
+    lead_price: ExpediaActivityPrice | None
+    name: str | None
+    offers: list[ExpediaActivityOffer]
+    reviews: ExpediaActivityReviews
+    sections: list[ExpediaActivitySection]
+    start_date: str | None
+
+
+class ExpediaActivityCard(BaseModel):
+    coordinates: ExpediaCoordinates | None
+    distance: str | None
+    duration: str | None
+    free_cancellation: bool
+    guest_rating: ExpediaGuestRating
+    id: str
+    image: ExpediaImage | None
+    name: str | None
+    partner: str | None
+    price: ExpediaActivityPrice | None
+    url: str | None
+
+
+class ExpediaActivityOffer(BaseModel):
+    description: str | None
+    id: str
+    name: str | None
+    starts_at: str | None
+    tickets: list[ExpediaActivityTicket]
+
+
+class ExpediaActivityPrice(BaseModel):
+    current: ExpediaMoney
+    strikethrough: ExpediaMoney | None
+    unit: str | None
+
+
+class ExpediaActivityReview(BaseModel):
+    activity_date: str | None
+    author: str | None
+    location: str | None
+    published_on: str | None
+    rating: float | None
+    text: str | None
+
+
+class ExpediaActivityReviews(BaseModel):
+    items: list[ExpediaActivityReview]
+    total_count: int | None
+
+
+class ExpediaActivitySection(BaseModel):
+    heading: str | None
+    items: list[str]
+
+
+class ExpediaActivityTicket(BaseModel):
+    label: str | None
+    price: ExpediaMoney | None
+    restriction: str | None
+    strikethrough: ExpediaMoney | None
+
+
 class ExpediaAddress(BaseModel):
     city: str | None
     country_code: str | None
@@ -128,6 +233,17 @@ class ExpediaAmenityGroup(BaseModel):
     category: str | None
     items: list[str]
     section: str | None
+
+
+class ExpediaCalendarDay(BaseModel):
+    available: bool | None
+    check_in_status: str | None
+    check_out_status: str | None
+    date: str
+    max_nights: int | None
+    min_nights: int | None
+    price: ExpediaMoney | None
+    price_label: str | None
 
 
 class ExpediaCoordinates(BaseModel):
@@ -147,6 +263,7 @@ class ExpediaGuestRating(BaseModel):
 
 
 class ExpediaHotel(BaseModel):
+    accessibility: list[ExpediaAccessibilityGroup]
     address: ExpediaAddress
     amenities: list[ExpediaAmenityGroup]
     coordinates: ExpediaCoordinates | None
@@ -156,14 +273,40 @@ class ExpediaHotel(BaseModel):
     name: str | None
     neighborhood_description: str | None
     policies: ExpediaHotelPolicies
+    region_id: str | None
+    region_name: str | None
+    review_categories: list[ExpediaReviewCategory]
+    review_summary: ExpediaReviewSummary | None
     star_rating: float | None
     tagline: str | None
     top_amenities: list[str]
     url: str
 
 
+class ExpediaHotelActivities(BaseModel):
+    activities: list[ExpediaActivityCard]
+    end_date: str
+    hotel_id: str
+    pagination: ExpediaCursorPagination
+    start_date: str
+    total_count: int | None
+
+
+class ExpediaHotelCalendar(BaseModel):
+    check_in: str | None
+    check_out: str | None
+    days: list[ExpediaCalendarDay]
+    first_date: str | None
+    has_daily_availability: bool | None
+    hotel_id: str
+    last_date: str | None
+    notice: str | None
+    price_note: str | None
+
+
 class ExpediaHotelCard(BaseModel):
     badges: list[str]
+    coordinates: ExpediaCoordinates | None
     guest_rating: ExpediaGuestRating
     id: str
     images: list[ExpediaImage]
@@ -201,6 +344,8 @@ class ExpediaHotelRooms(BaseModel):
     check_out: str
     children_ages: list[int]
     hotel_id: str
+    price_insight: ExpediaPriceInsight | None
+    region_id: str | None
     rooms: list[ExpediaRoom]
 
 
@@ -245,8 +390,17 @@ class ExpediaMoney(BaseModel):
     formatted: str | None
 
 
+class ExpediaPriceInsight(BaseModel):
+    label: str | None
+    price_text: str | None
+    summary: str | None
+    typical_max: ExpediaMoney | None
+    typical_min: ExpediaMoney | None
+
+
 class ExpediaRatePlan(BaseModel):
     cancellation_policy: list[str]
+    extras: str | None
     id: str
     prices: list[ExpediaRatePrice]
     scarcity_message: str | None
@@ -262,7 +416,9 @@ class ExpediaRatePrice(BaseModel):
 
 class ExpediaReview(BaseModel):
     author: str | None
+    disliked: list[str]
     id: str
+    liked: list[str]
     management_responses: list[ExpediaManagementResponse]
     photos: list[ExpediaImage]
     published_on: str | None
@@ -274,6 +430,26 @@ class ExpediaReview(BaseModel):
     traveler_types: list[str]
 
 
+class ExpediaReviewCategory(BaseModel):
+    name: str
+    score: float | None
+
+
+class ExpediaReviewSummary(BaseModel):
+    note: str | None
+    sections: list[ExpediaReviewSummarySection]
+
+
+class ExpediaReviewSummarySection(BaseModel):
+    heading: str | None
+    themes: list[ExpediaReviewTheme]
+
+
+class ExpediaReviewTheme(BaseModel):
+    review_count: int | None
+    text: str
+
+
 class ExpediaRoom(BaseModel):
     features: list[str]
     id: str
@@ -282,10 +458,63 @@ class ExpediaRoom(BaseModel):
     rate_plans: list[ExpediaRatePlan]
 
 
+class GetActivityParams(BaseModel):
+    activity_id: Annotated[str, Field(examples=["44823095"], pattern="^[1-9]\\d{0,11}$")]
+    """
+    Activity ID from an activities result or the number after `.a` in an Expedia URL.
+    """
+    end_date: date_aliased | None = None
+    """
+    Last day, on or after `start_date`.
+    """
+    start_date: date_aliased | None = None
+    """
+    First day for availability and prices. Send with `end_date`.
+    """
+
+
+class GetHotelCalendarParams(BaseModel):
+    check_in: date_aliased | None = None
+    """
+    Start of a stay. Moves the window only when it lies past the default range.
+    """
+    check_out: date_aliased | None = None
+    """
+    Check-out date, up to 28 nights later.
+    """
+    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
+    """
+    Hotel ID from a `/hotels` result or the number after `.h` in an Expedia URL.
+    """
+
+
 class GetHotelParams(BaseModel):
     hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
     """
     Hotel ID from a `/hotels` result or the number after `.h` in an Expedia URL.
+    """
+
+
+class ListHotelActivitiesParams(BaseModel):
+    cursor: Annotated[str | None, Field(max_length=200, pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    Previous response's `pagination.next_cursor`. Keep all other parameters unchanged.
+    """
+    end_date: date_aliased
+    """
+    Last day, on or after `start_date`.
+    """
+    hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
+    """
+    Hotel ID from a `/hotels` result or the number after `.h` in an Expedia URL.
+    """
+    sort: ExpediaActivitySort | None = ExpediaActivitySort.RECOMMENDED
+    """
+    Activity order.
+    """
+    start_date: date_aliased
+    """
+    First day. Today or within 500 days.
     """
 
 
@@ -300,7 +529,11 @@ class ListHotelReviewsParams(BaseModel):
     """
     sort: ExpediaReviewSort | None = ExpediaReviewSort.MOST_RECENT
     """
-    `most_recent`, `highest_rating` or `lowest_rating`.
+    Review order.
+    """
+    traveler_type: ExpediaTravelerType | None = ExpediaTravelerType.ALL
+    """
+    Only reviews from this kind of traveler.
     """
 
 
@@ -309,11 +542,11 @@ class ListHotelRoomsParams(BaseModel):
     """
     Number of adults.
     """
-    check_in: date
+    check_in: date_aliased
     """
     Check-in date. Must be today or within 500 days.
     """
-    check_out: date
+    check_out: date_aliased
     """
     Check-out date. Stays can be up to 28 nights.
     """
@@ -324,6 +557,33 @@ class ListHotelRoomsParams(BaseModel):
     hotel_id: Annotated[str, Field(examples=["19681371"], pattern="^[1-9]\\d{0,9}$")]
     """
     Hotel ID from a `/hotels` result or the number after `.h` in an Expedia URL.
+    """
+    region_id: Annotated[str | None, Field(pattern="^\\d{1,20}$")] = None
+    """
+    The hotel's `region_id`, from `/hotels/{hotel_id}`. Needed for `price_insight`.
+    """
+
+
+class SearchActivitiesParams(BaseModel):
+    cursor: Annotated[str | None, Field(max_length=200, pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    Previous response's `pagination.next_cursor`. Keep all other parameters unchanged.
+    """
+    end_date: date_aliased
+    """
+    Last day, on or after `start_date`.
+    """
+    region_id: Annotated[str, Field(pattern="^\\d{1,20}$")]
+    """
+    `region_id` from `/v1/expedia/locations`.
+    """
+    sort: ExpediaActivitySort | None = ExpediaActivitySort.RECOMMENDED
+    """
+    Activity order.
+    """
+    start_date: date_aliased
+    """
+    First day. Today or within 500 days.
     """
 
 
@@ -336,11 +596,11 @@ class SearchHotelsParams(BaseModel):
     """
     Required amenities. Hotels must have every selected value.
     """
-    check_in: date
+    check_in: date_aliased
     """
     Check-in date. Must be today or within 500 days.
     """
-    check_out: date
+    check_out: date_aliased
     """
     Check-out date. Stays can be up to 28 nights.
     """
@@ -397,6 +657,10 @@ class SearchLocationsParams(BaseModel):
     """
 
 
+ExpediaActivitySortParam: TypeAlias = (
+    ExpediaActivitySort
+    | Literal["recommended", "price_low_to_high", "price_high_to_low", "discount"]
+)
 ExpediaAmenityParam: TypeAlias = (
     ExpediaAmenity
     | Literal[
@@ -446,7 +710,20 @@ ExpediaPropertyTypeParam: TypeAlias = (
     ]
 )
 ExpediaReviewSortParam: TypeAlias = (
-    ExpediaReviewSort | Literal["most_recent", "highest_rating", "lowest_rating"]
+    ExpediaReviewSort | Literal["most_relevant", "most_recent", "highest_rating", "lowest_rating"]
+)
+ExpediaTravelerTypeParam: TypeAlias = (
+    ExpediaTravelerType
+    | Literal[
+        "all",
+        "business",
+        "couples",
+        "families",
+        "families_with_young_children",
+        "groups",
+        "solo",
+        "with_pets",
+    ]
 )
 ExpediaCursorCompletionValue: TypeAlias = Annotated[ExpediaCursorCompletion | str, PREFER_ENUM]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

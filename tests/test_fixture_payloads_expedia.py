@@ -17,7 +17,11 @@ import pytest
 
 from conftest import extras
 from tapline.expedia import (
+    ExpediaActivitiesPage,
+    ExpediaActivity,
     ExpediaHotel,
+    ExpediaHotelActivities,
+    ExpediaHotelCalendar,
     ExpediaHotelReviews,
     ExpediaHotelRooms,
     ExpediaHotelsPage,
@@ -44,15 +48,23 @@ def cases(negative: bool) -> list[str]:
 
 
 RESPONSES: dict[str, type[Any]] = {
+    "search_activities": ExpediaActivitiesPage,
+    "get_activity": ExpediaActivity,
     "search_hotels": ExpediaHotelsPage,
     "get_hotel": ExpediaHotel,
+    "list_hotel_activities": ExpediaHotelActivities,
+    "get_hotel_calendar": ExpediaHotelCalendar,
     "list_hotel_reviews": ExpediaHotelReviews,
     "list_hotel_rooms": ExpediaHotelRooms,
     "search_locations": ExpediaLocations,
 }
 METHODS = [
+    "search_activities",
+    "get_activity",
     "search_hotels",
     "get_hotel",
+    "list_hotel_activities",
+    "get_hotel_calendar",
     "list_hotel_reviews",
     "list_hotel_rooms",
     "search_locations",
