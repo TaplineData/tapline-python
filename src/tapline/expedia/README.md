@@ -93,7 +93,11 @@ nearby = tapline.expedia.list_hotel_activities(
     hotel_id="19681371", start_date="2026-12-14", end_date="2026-12-16"
 )
 for activity in nearby.activities:
-    print(activity.name, activity.distance, activity.price.current.formatted if activity.price else None)
+    print(
+        activity.name,
+        activity.distance,
+        activity.price.current.formatted if activity.price else None,
+    )
 ```
 
 ## Read the response
