@@ -89,9 +89,8 @@ Send the same filters with every page. Brave serves 6 pages of web results and 2
 
 ```python
 places = tapline.brave_search.search_places(query="pizza", latitude=41.8781, longitude=-87.6298)
-place_id = places.places[0].id
-if place_id:
-    place = tapline.brave_search.get_place(place_id)
+if places.places and places.places[0].id:
+    place = tapline.brave_search.get_place(places.places[0].id)
     print(place.title, place.address.display_address, place.contact and place.contact.telephone)
 ```
 
@@ -122,6 +121,6 @@ League ids include `39` (Premier League), `12` (NBA), `1` (MLB), `57` (NHL) and 
 
 ## Handle errors and check costs
 
-Failed calls raise the errors described in the [package guide](../../../README.md#handle-errors). Validation errors are not charged: an unknown enum value, malformed coordinates, half a date range, both a departure and an arrival time, a two-year season outside basketball, or a cursor this API did not issue or that goes past the pages Brave serves. An unknown place, conversation, Goggle, league, team or game answers 404 and is charged. A similar-images token Brave did not sign, and a directions or sports request Brave rejects, answer 400 `invalid_request` and are charged.
+Failed calls raise the errors described in the [package guide](../../../README.md#handle-errors). Validation errors are not charged: an unknown enum value, malformed coordinates, half a date range, both a departure and an arrival time, a two-year season outside basketball, or a cursor this API did not issue or that goes past the pages Brave serves. An unknown place, conversation, Goggle, league, team or game answers 404 and is charged. A similar-images token this API cannot decode answers 422 and is not charged; a well-formed token Brave did not sign answers 400 `invalid_request` and is charged, as does a directions or sports request Brave rejects.
 
 The [Brave Search API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=brave_search_readme#/brave_search) lists the inputs, response fields, and credit cost for each method.

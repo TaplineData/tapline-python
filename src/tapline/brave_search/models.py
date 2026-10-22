@@ -1035,14 +1035,16 @@ class BraveSearchSportsFixture(BaseModel):
     id: int
     league: BraveSearchLeague
     lineups: BraveSearchSportsFixtureLineups | None = None
-    penalty_score: BraveSearchUnobservedObject | None = None
+    penalty_score: BraveSearchSportsFixturePenaltyScore | None = None
     phase: str | None = None
     score: BraveSearchSportsFixtureScore
     score_table: BraveSearchSportsFixtureScoreTable | None = None
     sport: str
     start_time: str | None
     start_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    statistics: BraveSearchSportsFixtureStatistics | list[BraveSearchSportsFixtureStatisticsItem]
+    statistics: (
+        BraveSearchSportsFixtureStatistics | list[BraveSearchSportsFixtureStatisticsItem] | None
+    )
     status: BraveSearchSportsFixtureStatus
     teams: BraveSearchSportsFixtureTeams
     type: str
@@ -1126,6 +1128,11 @@ class BraveSearchSportsFixtureLineupsHomeSubstitutesItem(BaseModel):
     photo_url: str
     pos: str
     position: str | None
+
+
+class BraveSearchSportsFixturePenaltyScore(BaseModel):
+    away: int
+    home: int
 
 
 class BraveSearchSportsFixtureScore(BaseModel):
@@ -3680,11 +3687,11 @@ class GetSportsFixtureParams(BaseModel):
     """
     league_id: Annotated[str, Field(examples=["39"], pattern="^[a-z0-9]{1,12}$")]
     """
-    League id: `39` Premier League, `12` NBA, `1` MLB, `57` NHL, `nfl` NFL.
+    League id: `39` Premier League or another football league, `nfl` NFL.
     """
     season: Annotated[str, Field(examples=["2026"], pattern="^\\d{4}(-\\d{4})?$")]
     """
-    Season by its start year, `2026`. NBA and other basketball leagues that span two years take `2026-2027`.
+    Season by its start year, `2026`.
     """
     sport: BraveSearchFixtureSport
     """

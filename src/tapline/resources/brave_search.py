@@ -699,10 +699,9 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             fixture_id: A game `id` from a games answer.
-            league_id: League id: `39` Premier League, `12` NBA, `1` MLB, `57` NHL,
+            league_id: League id: `39` Premier League or another football league,
                 `nfl` NFL.
-            season: Season by its start year, `2026`. NBA and other basketball
-                leagues that span two years take `2026-2027`.
+            season: Season by its start year, `2026`.
             sport: The game's sport.
             timeout: Overrides the client's timeout for this request.
 
@@ -1258,10 +1257,9 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             fixture_id: A game `id` from a games answer.
-            league_id: League id: `39` Premier League, `12` NBA, `1` MLB, `57` NHL,
+            league_id: League id: `39` Premier League or another football league,
                 `nfl` NFL.
-            season: Season by its start year, `2026`. NBA and other basketball
-                leagues that span two years take `2026-2027`.
+            season: Season by its start year, `2026`.
             sport: The game's sport.
             timeout: Overrides the client's timeout for this request.
 

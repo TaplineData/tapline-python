@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
+import re
 import time
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
@@ -59,6 +60,30 @@ def extras(value: Any, trail: str) -> list[str]:
     if isinstance(value, list):
         return [path for i, item in enumerate(value) for path in extras(item, f"{trail}[{i}]")]
     return []
+
+
+CAPTURE_PATH_STEP = re.compile(r"([^.\[\]]+)|\[(\d+)\]")
+
+
+def resolve_derived(request: dict[str, Any], produce: Callable[[str], Any]) -> dict[str, Any]:
+    """Inputs a capture took from another case (a token, a cursor), read from calling that case now.
+
+    ``request["derived"]`` maps a parameter to ``{"$from": stem, "path": ...}``; ``produce``
+    calls the case named by ``stem``. Short-lived values then work long after the capture.
+    """
+    captured_params = request.get("params") or {}
+    resolved: dict[str, Any] = {}
+    for name, source in (request.get("derived") or {}).items():
+        produced = produce(source["$from"])
+        value: Any = (
+            produced.model_dump(mode="json", by_alias=True)
+            if isinstance(produced, pydantic.BaseModel)
+            else produced
+        )
+        for key, index in CAPTURE_PATH_STEP.findall(source["path"]):
+            value = value[int(index)] if index else value[key]
+        resolved[name] = str(value) if isinstance(captured_params.get(name), str) else value
+    return resolved
 
 
 class MockAPI:
