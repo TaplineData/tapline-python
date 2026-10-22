@@ -470,7 +470,7 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             safe_search: Adult-content filter.
             timeout: Overrides the client's timeout for this request.
@@ -517,7 +517,7 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -651,7 +651,7 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -804,7 +804,7 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -827,7 +827,7 @@ class BraveSearch(AsyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1033,7 +1033,7 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             safe_search: Adult-content filter.
             timeout: Overrides the client's timeout for this request.
@@ -1080,7 +1080,7 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1214,7 +1214,7 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1365,7 +1365,7 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1388,7 +1388,7 @@ class SyncBraveSearch(SyncAPIResource):
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
-                `intitle:` and `inurl:` don't.
+                `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on

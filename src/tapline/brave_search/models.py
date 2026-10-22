@@ -3817,7 +3817,7 @@ class ListSportsGamesParams(BaseModel):
 class ListSuggestionsParams(BaseModel):
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:` and `inurl:` don't.
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
 
 
@@ -3850,7 +3850,7 @@ class SearchImagesParams(BaseModel):
     """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:` and `inurl:` don't.
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
@@ -3881,7 +3881,7 @@ class SearchNewsParams(BaseModel):
     """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:` and `inurl:` don't.
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
@@ -3928,7 +3928,7 @@ class SearchParams(BaseModel):
     """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:` and `inurl:` don't.
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
@@ -3974,7 +3974,7 @@ class SearchVideosParams(BaseModel):
     """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:` and `inurl:` don't.
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
