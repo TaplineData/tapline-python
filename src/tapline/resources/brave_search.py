@@ -469,7 +469,8 @@ class BraveSearch(AsyncAPIResource):
         """Search images: up to 200 in one page. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             safe_search: Adult-content filter.
             timeout: Overrides the client's timeout for this request.
@@ -515,7 +516,8 @@ class BraveSearch(AsyncAPIResource):
         """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -648,7 +650,8 @@ class BraveSearch(AsyncAPIResource):
         """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -800,7 +803,8 @@ class BraveSearch(AsyncAPIResource):
         """Autocomplete a search query. Costs 1 credit.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -822,7 +826,8 @@ class BraveSearch(AsyncAPIResource):
         """Search videos. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1027,7 +1032,8 @@ class SyncBraveSearch(SyncAPIResource):
         """Search images: up to 200 in one page. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             safe_search: Adult-content filter.
             timeout: Overrides the client's timeout for this request.
@@ -1073,7 +1079,8 @@ class SyncBraveSearch(SyncAPIResource):
         """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1206,7 +1213,8 @@ class SyncBraveSearch(SyncAPIResource):
         """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
@@ -1356,7 +1364,8 @@ class SyncBraveSearch(SyncAPIResource):
         """Autocomplete a search query. Costs 1 credit.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1378,7 +1387,8 @@ class SyncBraveSearch(SyncAPIResource):
         """Search videos. Costs 5 credits.
 
         Args:
-            query: Search text. Operators such as `site:`, quotes and `-term` work.
+            query: Search text. Operators such as `site:`, quotes and `-term` work;
+                `intitle:` and `inurl:` don't.
             country: Country to search from.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first. Send it with the same filters. Brave serves 6 pages on
