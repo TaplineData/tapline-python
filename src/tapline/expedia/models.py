@@ -217,7 +217,6 @@ class ExpediaActivityTicket(BaseModel):
     label: str | None
     price: ExpediaMoney | None
     restriction: str | None
-    strikethrough: ExpediaMoney | None
 
 
 class ExpediaAddress(BaseModel):
