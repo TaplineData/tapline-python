@@ -309,7 +309,7 @@ class BraveSearch(AsyncAPIResource):
         conversation_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchAiAnswer:
-        """Get the AI-written answer to a search, with its cited sources. Costs 2 credits.
+        """Get the AI-written answer to a search, with its cited sources. Costs 5 credits.
 
         Args:
             conversation_id: `ai_answer.conversation_id` from `/search`.
@@ -466,7 +466,7 @@ class BraveSearch(AsyncAPIResource):
         safe_search: BraveSearchSafeSearchParam = "moderate",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchImagesPage:
-        """Search images: up to 200 in one page. Costs 2 credits.
+        """Search images: up to 200 in one page. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -487,7 +487,7 @@ class BraveSearch(AsyncAPIResource):
         token: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchSimilarImages:
-        """List images that look like an image result. Costs 2 credits.
+        """List images that look like an image result. Costs 5 credits.
 
         Args:
             token: `similar_images_token` of an image result from `/images`; it
@@ -512,7 +512,7 @@ class BraveSearch(AsyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchNewsPage:
-        """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 2 credits.
+        """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -555,7 +555,7 @@ class BraveSearch(AsyncAPIResource):
         query: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchPlacesPage:
-        """Search places around a point: up to 100 businesses, addresses and areas within about 8 km. Costs 3 credits.
+        """Search places around a point: up to 100 businesses, addresses and areas within about 8 km. Costs 8 credits.
 
         Args:
             latitude: Latitude of the search center.
@@ -600,7 +600,7 @@ class BraveSearch(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchPlace:
-        """Get one place with its contact details, hours, photos and reviews. Costs 2 credits.
+        """Get one place with its contact details, hours, photos and reviews. Costs 5 credits.
 
         Args:
             place_id: A place id: `places[].id` from `/places` or
@@ -645,7 +645,7 @@ class BraveSearch(AsyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 2 credits.
+        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -819,7 +819,7 @@ class BraveSearch(AsyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchVideosPage:
-        """Search videos. Costs 2 credits.
+        """Search videos. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -867,7 +867,7 @@ class SyncBraveSearch(SyncAPIResource):
         conversation_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchAiAnswer:
-        """Get the AI-written answer to a search, with its cited sources. Costs 2 credits.
+        """Get the AI-written answer to a search, with its cited sources. Costs 5 credits.
 
         Args:
             conversation_id: `ai_answer.conversation_id` from `/search`.
@@ -1024,7 +1024,7 @@ class SyncBraveSearch(SyncAPIResource):
         safe_search: BraveSearchSafeSearchParam = "moderate",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchImagesPage:
-        """Search images: up to 200 in one page. Costs 2 credits.
+        """Search images: up to 200 in one page. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -1045,7 +1045,7 @@ class SyncBraveSearch(SyncAPIResource):
         token: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchSimilarImages:
-        """List images that look like an image result. Costs 2 credits.
+        """List images that look like an image result. Costs 5 credits.
 
         Args:
             token: `similar_images_token` of an image result from `/images`; it
@@ -1070,7 +1070,7 @@ class SyncBraveSearch(SyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchNewsPage:
-        """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 2 credits.
+        """Search news articles. Results carry a relative age, not a timestamp; the source sends none. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -1113,7 +1113,7 @@ class SyncBraveSearch(SyncAPIResource):
         query: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchPlacesPage:
-        """Search places around a point: up to 100 businesses, addresses and areas within about 8 km. Costs 3 credits.
+        """Search places around a point: up to 100 businesses, addresses and areas within about 8 km. Costs 8 credits.
 
         Args:
             latitude: Latitude of the search center.
@@ -1158,7 +1158,7 @@ class SyncBraveSearch(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchPlace:
-        """Get one place with its contact details, hours, photos and reviews. Costs 2 credits.
+        """Get one place with its contact details, hours, photos and reviews. Costs 5 credits.
 
         Args:
             place_id: A place id: `places[].id` from `/places` or
@@ -1203,7 +1203,7 @@ class SyncBraveSearch(SyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 2 credits.
+        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.
@@ -1375,7 +1375,7 @@ class SyncBraveSearch(SyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchVideosPage:
-        """Search videos. Costs 2 credits.
+        """Search videos. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work.

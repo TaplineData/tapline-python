@@ -31,16 +31,16 @@ The web, news and video searches take `country`, `safe_search`, `freshness` and 
 
 | Method | Key inputs | Returns | Credits |
 | --- | --- | --- | --- |
-| `search` | `query`, the filters, `spellcheck`, `goggle_url`, `cursor` | 20 web results per page with the news, videos, places, discussions, cards and AI answer shown beside them | 2 |
-| `get_ai_answer` | `conversation_id` | Brave's AI-written answer in markdown, with its sources and follow-up questions | 2 |
-| `search_news` | `query`, the filters, `cursor` | news articles with their outlet and relative age | 2 |
-| `search_videos` | `query`, the filters, `cursor` | videos with their creator, duration and thumbnail | 2 |
-| `search_images` | `query`, `country`, `safe_search` | up to 200 images in one page | 2 |
-| `list_similar_images` | `token` | images that look like an image result | 2 |
+| `search` | `query`, the filters, `spellcheck`, `goggle_url`, `cursor` | 20 web results per page with the news, videos, places, discussions, cards and AI answer shown beside them | 5 |
+| `get_ai_answer` | `conversation_id` | Brave's AI-written answer in markdown, with its sources and follow-up questions | 5 |
+| `search_news` | `query`, the filters, `cursor` | news articles with their outlet and relative age | 5 |
+| `search_videos` | `query`, the filters, `cursor` | videos with their creator, duration and thumbnail | 5 |
+| `search_images` | `query`, `country`, `safe_search` | up to 200 images in one page | 5 |
+| `list_similar_images` | `token` | images that look like an image result | 5 |
 | `list_suggestions` | `query` | autocomplete suggestions, with entity names and pictures | 1 |
-| `search_places` | `query`, `latitude`, `longitude` | up to 100 businesses, addresses and areas within about 8 km | 3 |
+| `search_places` | `query`, `latitude`, `longitude` | up to 100 businesses, addresses and areas within about 8 km | 8 |
 | `list_place_suggestions` | `query`, `latitude`, `longitude` | place autocomplete near the point | 1 |
-| `get_place` | `place_id` | one place: address, phone, hours, photos, ratings and reviews | 2 |
+| `get_place` | `place_id` | one place: address, phone, hours, photos, ratings and reviews | 5 |
 | `get_place_description` | `place_id` | Brave's AI-written description of the place in markdown | 1 |
 | `get_directions` | `origin`, `destination`, `via`, `profile`, `avoid`, a departure or arrival time | driving, walking or cycling routes with turn-by-turn steps | 1 |
 | `get_transit_directions` | `origin`, `destination`, `exclude_modes`, `max_changes`, `max_walking_meters`, `wheelchair_accessible`, a time | public transit routes with lines, stops and departure times | 1 |
