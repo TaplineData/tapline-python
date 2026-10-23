@@ -70,6 +70,8 @@ if page.ai_answer and page.ai_answer.is_possible:
 
 `get_ai_answer` takes the `conversation_id` of a recent search. Brave kept the ids we tested readable for at least 90 minutes.
 
+Queries take `site:`, quotes, `-term`, `OR`, `filetype:` and `inbody:`. Brave asks for a captcha on `intitle:`, `inurl:`, `intext:`, `inanchor:` and their `allin` forms, and on `site:linkedin.com/in` in web search, so the API answers those with an uncharged 422. Use `site:www.linkedin.com/in` for profiles.
+
 ## Page through results
 
 ```python

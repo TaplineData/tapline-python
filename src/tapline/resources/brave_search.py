@@ -647,7 +647,7 @@ class BraveSearch(AsyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
+        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. `site:linkedin.com/in` is refused upstream; send `site:www.linkedin.com/in`. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
@@ -1210,7 +1210,7 @@ class SyncBraveSearch(SyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. Costs 5 credits.
+        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. `site:linkedin.com/in` is refused upstream; send `site:www.linkedin.com/in`. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
