@@ -5,6 +5,7 @@ from __future__ import annotations
 from .airbnb import Airbnb, SyncAirbnb
 from .birdeye import Birdeye, SyncBirdeye
 from .brave_search import BraveSearch, SyncBraveSearch
+from .expedia import Expedia, SyncExpedia
 from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
@@ -23,6 +24,7 @@ __all__ = [
     "Airbnb",
     "Birdeye",
     "BraveSearch",
+    "Expedia",
     "Geckoterminal",
     "Gmgn",
     "Goplus",
@@ -35,6 +37,7 @@ __all__ = [
     "SyncAirbnb",
     "SyncBirdeye",
     "SyncBraveSearch",
+    "SyncExpedia",
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",
