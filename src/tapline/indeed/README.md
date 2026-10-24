@@ -91,7 +91,7 @@ print(pay.reported_pay.report_count, pay.reported_pay.year and pay.reported_pay.
 
 ## Read the response
 
-- `job.key` is what `get_job` takes, the same as `jk` in an Indeed viewjob URL. Pass the job's own `country` to `get_job`: Indeed sends a job's pay only on the site it was posted on.
+- `job.key` is what `get_job` takes, the same as `jk` in an Indeed viewjob URL. Pass `get_job` the `country` you searched with: Indeed sends a job's pay only on the site that listed it.
 - `pay.text` is the pay as the posting shows it and `pay.posted` the parsed range, exact amount or bound. `pay.estimated` is Indeed's own estimate when the posting has no pay.
 - `company` is `None` when Indeed links no company page to the job; `company_name_as_posted` is the name the posting shows.
 - `attributes` groups Indeed's codes by kind (job types, work settings, schedules, benefits, education and more). Each `code` works in the `attribute` and `exclude_attribute` filters.

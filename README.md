@@ -27,7 +27,7 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | Brave Search | Search the web, news, videos and images, get Brave's AI answers with their sources, find places, get driving and transit directions, and read sports standings, games and box scores | [Brave Search guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/brave_search/README.md) |
 | Indeed | Search job postings with pay, attributes and apply details on 62 country sites, read companies with their ratings and jobs, look up reported pay, and get search suggestions | [Indeed guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/indeed/README.md) |
 
-One API key and credit balance work across all seventeen services.
+One API key and credit balance work across all sixteen services listed above.
 
 ## Get started
 

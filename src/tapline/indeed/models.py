@@ -834,7 +834,7 @@ class ListCompanyJobsParams(BaseModel):
     """
     cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
     """
-    `pagination.next_cursor` or `previous_cursor` of the last page, URL-encoded; send the same search and `limit` with it.
+    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
     """
     exclude_attribute: Annotated[
         list[ExcludeAttributeItem] | None,
@@ -993,7 +993,7 @@ class SearchJobsParams(BaseModel):
     """
     cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
     """
-    `pagination.next_cursor` or `previous_cursor` of the last page, URL-encoded; send the same search and `limit` with it.
+    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
     """
     exclude_attribute: Annotated[
         list[ExcludeAttributeItem] | None,

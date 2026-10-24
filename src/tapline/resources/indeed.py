@@ -229,7 +229,7 @@ class Indeed(AsyncAPIResource):
     """The Indeed endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.indeed`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -347,8 +347,8 @@ class Indeed(AsyncAPIResource):
             attribute: Attribute `code` from a job (skill, benefit, licence); repeat
                 for jobs carrying every code.
             country: Indeed country site, as an ISO code (`gb` is the UK).
-            cursor: `pagination.next_cursor` or `previous_cursor` of the last page,
-                URL-encoded; send the same search and `limit` with it.
+            cursor: `pagination.next_cursor` or `previous_cursor` of the last page;
+                send the same search and `limit` with it.
             exclude_attribute: Attribute `code` to leave out; jobs carrying any of
                 them drop.
             exclude_job_type: Job types to leave out, from the `job_type` values.
@@ -433,8 +433,8 @@ class Indeed(AsyncAPIResource):
             attribute: Attribute `code` from a job (skill, benefit, licence); repeat
                 for jobs carrying every code.
             country: Indeed country site, as an ISO code (`gb` is the UK).
-            cursor: `pagination.next_cursor` or `previous_cursor` of the last page,
-                URL-encoded; send the same search and `limit` with it.
+            cursor: `pagination.next_cursor` or `previous_cursor` of the last page;
+                send the same search and `limit` with it.
             exclude_attribute: Attribute `code` to leave out; jobs carrying any of
                 them drop.
             exclude_company: Company `key` whose jobs to leave out.
@@ -623,7 +623,7 @@ class SyncIndeed(SyncAPIResource):
     """The Indeed endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.indeed`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -741,8 +741,8 @@ class SyncIndeed(SyncAPIResource):
             attribute: Attribute `code` from a job (skill, benefit, licence); repeat
                 for jobs carrying every code.
             country: Indeed country site, as an ISO code (`gb` is the UK).
-            cursor: `pagination.next_cursor` or `previous_cursor` of the last page,
-                URL-encoded; send the same search and `limit` with it.
+            cursor: `pagination.next_cursor` or `previous_cursor` of the last page;
+                send the same search and `limit` with it.
             exclude_attribute: Attribute `code` to leave out; jobs carrying any of
                 them drop.
             exclude_job_type: Job types to leave out, from the `job_type` values.
@@ -827,8 +827,8 @@ class SyncIndeed(SyncAPIResource):
             attribute: Attribute `code` from a job (skill, benefit, licence); repeat
                 for jobs carrying every code.
             country: Indeed country site, as an ISO code (`gb` is the UK).
-            cursor: `pagination.next_cursor` or `previous_cursor` of the last page,
-                URL-encoded; send the same search and `limit` with it.
+            cursor: `pagination.next_cursor` or `previous_cursor` of the last page;
+                send the same search and `limit` with it.
             exclude_attribute: Attribute `code` to leave out; jobs carrying any of
                 them drop.
             exclude_company: Company `key` whose jobs to leave out.
