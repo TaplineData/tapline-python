@@ -264,29 +264,17 @@ class GetSalariesParams(BaseModel):
 
 class IndeedApply(BaseModel):
     """
-    Indeed Apply, decoded from the token Indeed sends with the job; title, company and location are the text Indeed passes to the employer's apply system.
+    Indeed Apply, decoded from the token Indeed sends with the job; every field is null when the token does not decode.
 
-    `ats_job_id` is the job's id in that system, `post_url` the endpoint Indeed posts applications to and
-    `questions_ref` Indeed's reference to the screening questions (neither is for callers to open). `api_token`
-    and `job_meta` are opaque Indeed Apply values. `required_resume_fields` and `optional_resume_fields` list the
-    résumé sections the application requires or offers, comma-separated (`phone,education,skills`).
-    `key` holds the raw token only when part of it did not decode.
+    `ats_job_id` is the job's id in the employer's applicant system. `required_resume_fields` and
+    `optional_resume_fields` list the résumé sections the application requires or offers, comma-separated
+    (`phone,education,skills`).
     """
 
     advertiser_number: str | None
-    api_token: str | None
     asks_for: IndeedApplyAsks | None
     ats_job_id: str | None
-    company_name: str | None
-    finish_url: str | None
-    is_mobile: bool | None
-    job_meta: str | None
-    job_title: str | None
-    key: str | None
-    location_text: str | None
     optional_resume_fields: str | None
-    post_url: str | None
-    questions_ref: str | None
     required_resume_fields: str | None
 
 
@@ -522,7 +510,7 @@ class IndeedJob(BaseModel):
     attributes: IndeedJobAttributes
     company: IndeedCompanySummary | None
     company_name_as_posted: str | None
-    description_html: str | None
+    description: str | None
     detailed_salary: str | None
     employer_activity: IndeedEmployerActivity | None
     employer_reference: str | None
@@ -654,7 +642,7 @@ class IndeedJobSearchPage(BaseModel):
 
 class IndeedJobSearchResult(BaseModel):
     job: IndeedJob
-    snippet: IndeedText | None
+    snippet: str | None
 
 
 class IndeedJobStatus(BaseModel):
@@ -785,11 +773,6 @@ class IndeedSalaries(BaseModel):
 
 class IndeedSuggestions(BaseModel):
     suggestions: list[str]
-
-
-class IndeedText(BaseModel):
-    html: str | None
-    text: str | None
 
 
 class IndeedTitleFacet(BaseModel):
