@@ -246,7 +246,7 @@ class Indeed(AsyncAPIResource):
         location: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanyDirectory:
-        """List companies by name, industry or the job titles they hire for, optionally in one place, with their ratings. Costs 1 credit.
+        """List companies by name, industry or the job titles they hire for, optionally in one place, with their ratings. Costs 2 credits.
 
         Args:
             query: Company name, industry word or job title.
@@ -273,7 +273,7 @@ class Indeed(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanySuggestions:
-        """Find companies by name, with the keys the company routes take. Costs 1 credit.
+        """Find companies by name, with the keys the company routes take. Costs 2 credits.
 
         Args:
             query: Company name, or its start.
@@ -299,7 +299,7 @@ class Indeed(AsyncAPIResource):
         language: IndeedLanguageParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompany:
-        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 1 credit.
+        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 2 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -339,7 +339,7 @@ class Indeed(AsyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 7 credits.
+        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 10 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -426,7 +426,7 @@ class Indeed(AsyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 7 credits.
+        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 10 credits.
 
         Args:
             query: Job title, skill or company, as typed into Indeed.
@@ -496,7 +496,7 @@ class Indeed(AsyncAPIResource):
         country: IndeedCountryParam = "us",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJob:
-        """Get one job posting's full record by its key. Costs 1 credit.
+        """Get one job posting's full record by its key. Costs 2 credits.
 
         Args:
             job_key: Indeed job key: `key` of a search result, or `jk` in a viewjob
@@ -518,7 +518,7 @@ class Indeed(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedPopularSearches:
-        """List the searches run most on a country site. Costs 1 credit.
+        """List the searches run most on a country site. Costs 2 credits.
 
         Args:
             country: Indeed country site, as an ISO code (`gb` is the UK).
@@ -542,7 +542,7 @@ class Indeed(AsyncAPIResource):
         job_title: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedSalaries:
-        """Get average reported pay per pay period for a place, optionally one job title or company. Costs 1 credit.
+        """Get average reported pay per pay period for a place, optionally one job title or company. Costs 2 credits.
 
         Args:
             location: Country, state or city as Indeed's path (`US`, `US/TX`,
@@ -569,7 +569,7 @@ class Indeed(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedSuggestions:
-        """Suggest job searches for partly typed text. Costs 1 credit.
+        """Suggest job searches for partly typed text. Costs 2 credits.
 
         Args:
             query: The text typed so far.
@@ -598,7 +598,7 @@ class Indeed(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedLocationSuggestions:
-        """Suggest places for partly typed text. Costs 1 credit.
+        """Suggest places for partly typed text. Costs 2 credits.
 
         Args:
             query: City, state or postcode typed so far.
@@ -640,7 +640,7 @@ class SyncIndeed(SyncAPIResource):
         location: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanyDirectory:
-        """List companies by name, industry or the job titles they hire for, optionally in one place, with their ratings. Costs 1 credit.
+        """List companies by name, industry or the job titles they hire for, optionally in one place, with their ratings. Costs 2 credits.
 
         Args:
             query: Company name, industry word or job title.
@@ -667,7 +667,7 @@ class SyncIndeed(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanySuggestions:
-        """Find companies by name, with the keys the company routes take. Costs 1 credit.
+        """Find companies by name, with the keys the company routes take. Costs 2 credits.
 
         Args:
             query: Company name, or its start.
@@ -693,7 +693,7 @@ class SyncIndeed(SyncAPIResource):
         language: IndeedLanguageParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompany:
-        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 1 credit.
+        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 2 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -733,7 +733,7 @@ class SyncIndeed(SyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 7 credits.
+        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 10 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -820,7 +820,7 @@ class SyncIndeed(SyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 7 credits.
+        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 10 credits.
 
         Args:
             query: Job title, skill or company, as typed into Indeed.
@@ -890,7 +890,7 @@ class SyncIndeed(SyncAPIResource):
         country: IndeedCountryParam = "us",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJob:
-        """Get one job posting's full record by its key. Costs 1 credit.
+        """Get one job posting's full record by its key. Costs 2 credits.
 
         Args:
             job_key: Indeed job key: `key` of a search result, or `jk` in a viewjob
@@ -912,7 +912,7 @@ class SyncIndeed(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedPopularSearches:
-        """List the searches run most on a country site. Costs 1 credit.
+        """List the searches run most on a country site. Costs 2 credits.
 
         Args:
             country: Indeed country site, as an ISO code (`gb` is the UK).
@@ -936,7 +936,7 @@ class SyncIndeed(SyncAPIResource):
         job_title: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedSalaries:
-        """Get average reported pay per pay period for a place, optionally one job title or company. Costs 1 credit.
+        """Get average reported pay per pay period for a place, optionally one job title or company. Costs 2 credits.
 
         Args:
             location: Country, state or city as Indeed's path (`US`, `US/TX`,
@@ -963,7 +963,7 @@ class SyncIndeed(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedSuggestions:
-        """Suggest job searches for partly typed text. Costs 1 credit.
+        """Suggest job searches for partly typed text. Costs 2 credits.
 
         Args:
             query: The text typed so far.
@@ -992,7 +992,7 @@ class SyncIndeed(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedLocationSuggestions:
-        """Suggest places for partly typed text. Costs 1 credit.
+        """Suggest places for partly typed text. Costs 2 credits.
 
         Args:
             query: City, state or postcode typed so far.
