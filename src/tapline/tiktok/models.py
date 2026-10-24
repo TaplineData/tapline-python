@@ -54,36 +54,6 @@ class PublicError(str, Enum):
     INTERNAL_ERROR = "internal_error"
 
 
-class SearchKeywordParamsDatePosted(str, Enum):
-    YESTERDAY = "yesterday"
-    THIS_WEEK = "this-week"
-    THIS_MONTH = "this-month"
-    LAST_3_MONTHS = "last-3-months"
-    LAST_6_MONTHS = "last-6-months"
-    ALL_TIME = "all-time"
-
-
-class SearchKeywordParamsSortBy(str, Enum):
-    RELEVANCE = "relevance"
-    MOST_LIKED = "most-liked"
-    DATE_POSTED = "date-posted"
-
-
-class SearchTopParamsPublishTime(str, Enum):
-    YESTERDAY = "yesterday"
-    THIS_WEEK = "this-week"
-    THIS_MONTH = "this-month"
-    LAST_3_MONTHS = "last-3-months"
-    LAST_6_MONTHS = "last-6-months"
-    ALL_TIME = "all-time"
-
-
-class SearchTopParamsSortBy(str, Enum):
-    RELEVANCE = "relevance"
-    MOST_LIKED = "most-liked"
-    DATE_POSTED = "date-posted"
-
-
 class ErrorDetail(BaseModel):
     ctx: dict[str, Any] | None = None
     input: Any = None
@@ -144,7 +114,7 @@ class GetCommentsParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
     url: Annotated[
         str,
@@ -169,7 +139,7 @@ class GetFollowersParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
     user_id: Annotated[
         str | None, Field(examples=["6659752019493208069"], pattern="^[0-9]{1,20}$")
@@ -190,14 +160,14 @@ class GetFollowingParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
 
 
 class GetProfileParams(BaseModel):
     cache_max_age: GetProfileParamsCacheMaxAge | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
+    Ignored. Every request fetches a fresh response and is charged.
     """
     handle: Annotated[
         str | None,
@@ -236,7 +206,7 @@ class GetProfileVideosParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
     user_id: Annotated[
         str | None, Field(examples=["6659752019493208069"], pattern="^[0-9]{1,20}$")
@@ -289,7 +259,7 @@ class GetTranscriptParams(BaseModel):
     """
     use_ai_as_fallback: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: only captions TikTok already has are returned.
+    Ignored. Only captions already available from TikTok are returned.
     """
 
 
@@ -300,14 +270,14 @@ class GetTrendingFeedParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
 
 
 class GetVideoParams(BaseModel):
     cache_max_age: GetVideoParamsCacheMaxAge | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
+    Ignored. Every request fetches a fresh response and is charged.
     """
     get_transcript: bool | None = None
     """
@@ -319,7 +289,7 @@ class GetVideoParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
     url: Annotated[
         str,
@@ -345,210 +315,8 @@ class SearchHashtagParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
+    Set to `true` to return fewer fields per item.
     """
-
-
-class SearchKeywordParams(BaseModel):
-    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
-    """
-    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
-    """
-    date_posted: SearchKeywordParamsDatePosted | None = None
-    """
-    Only videos posted within this window. Omit it for any time.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
-    """
-    What to search TikTok for.
-    """
-    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
-    """
-    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
-    """
-    sort_by: SearchKeywordParamsSortBy | None = None
-    """
-    `relevance` (default), `most-liked`, or `date-posted`, newest first.
-    """
-    trim: bool | None = None
-    """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
-    """
-
-
-class SearchTopParams(BaseModel):
-    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
-    """
-    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
-    """
-    publish_time: SearchTopParamsPublishTime | None = None
-    """
-    Only videos posted within this window. Omit it for any time.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
-    """
-    What to search TikTok for.
-    """
-    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
-    """
-    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
-    """
-    sort_by: SearchTopParamsSortBy | None = None
-    """
-    `relevance` (default), `most-liked`, or `date-posted`, newest first.
-    """
-
-
-class SearchUsersParams(BaseModel):
-    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
-    """
-    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
-    """
-    What to search TikTok for.
-    """
-    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
-    """
-    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
-    """
-    trim: bool | None = None
-    """
-    Set to `true` for the trimmed answer Scrape Creators returns: fewer keys per item.
-    """
-
-
-class TikTokAppAweme(BaseModel):
-    add_yours_recommendation: dict[str, str] | None = None
-    added_sound_music_info: TikTokAppAwemeAddedSoundMusicInfo | None = None
-    aigc_info: TikTokAppAwemeAigcInfo | None = None
-    anchors: list[TikTokAppAwemeAnchors] | None
-    animated_image_info: TikTokAppAwemeAnimatedImageInfo | None = None
-    author: TikTokAppAwemeAuthor
-    author_user_id: int
-    aweme_acl: TikTokAppAwemeAwemeAcl | None = None
-    aweme_id: str
-    aweme_type: int | None = None
-    banners: list[TikTokAppAwemeBanners] | None = None
-    batch_index: int | None = None
-    behind_the_song_music_ids: str | None = None
-    behind_the_song_video_music_ids: str | None = None
-    bodydance_score: int | None = None
-    bottom_products: str | None = None
-    branded_content_accounts: str | None = None
-    cha_list: list[TikTokAppAwemeChaList] | None = None
-    challenge_position: str | None = None
-    cmt_swt: bool | None = None
-    collect_stat: int | None = None
-    comment_config: TikTokAppAwemeCommentConfig | None = None
-    comment_topbar_info: str | None = None
-    commerce_config_data: str | None = None
-    commerce_info: TikTokAppAwemeCommerceInfo
-    content_desc: str | None = None
-    content_desc_extra: list[TikTokAppAwemeContentDescExtra] | None = None
-    content_original_type: int | None = None
-    content_size_type: int | None = None
-    content_type: str | None = None
-    cover_labels: str | None = None
-    create_time: int
-    desc: str
-    desc_language: str | None = None
-    disable_search_trending_bar: bool | None = None
-    distance: str | None = None
-    distribute_type: int | None = None
-    ecosystem_perception_enhancement: str | None = None
-    follow_up_first_item_id: str | None = None
-    follow_up_item_id_groups: str | None = None
-    follow_up_publish_from_id: int | None = None
-    geofencing: str | None = None
-    geofencing_regions: str | None = None
-    green_screen_materials: str | None = None
-    group_id: str | None = None
-    has_danmaku: bool | None = None
-    has_vs_entry: bool | None = None
-    hybrid_label: str | None = None
-    image_infos: str | None = None
-    image_post_info: TikTokAppAwemeImagePostInfo | None = None
-    interact_permission: TikTokAppAwemeInteractPermission | None = None
-    interaction_stickers: list[TikTokAppAwemeInteractionStickers] | None = None
-    is_ad: bool | None = None
-    is_ads: bool | None = None
-    is_description_translatable: bool | None = None
-    is_hash_tag: int | None = None
-    is_pgcshow: bool | None = None
-    is_relieve: bool | None = None
-    is_text_sticker_translatable: bool | None = None
-    is_top: int | None = None
-    is_vr: bool | None = None
-    item_comment_settings: int
-    item_distribute_source: str | None = None
-    item_duet: int | None = None
-    item_react: int | None = None
-    item_source_category: int | None = None
-    label_top: TikTokAppAwemeLabelTop | None = None
-    label_top_text: str | None = None
-    log_info: TikTokAppAwemeLogInfo | None = None
-    long_video: str | None = None
-    main_arch_common: str | None = None
-    mask_infos: list[TikTokAppAwemeMaskInfo] | None = None
-    misc_info: str | None = None
-    muf_comment_info_v2: str | None = None
-    music: TikTokAppAwemeMusic | None = None
-    music_begin_time_in_ms: int | None = None
-    music_end_time_in_ms: int | None = None
-    music_selected_from: str | None = None
-    music_title_style: int | None = None
-    music_volume: str | None = None
-    need_vs_entry: bool | None = None
-    nickname_position: str | None = None
-    operator_boost_info: str | None = None
-    origin_comment_ids: str | None = None
-    origin_volume: str | None = None
-    original_client_text: TikTokAppAwemeOriginalClientText | None = None
-    picked_users: list[dict[str, Any]] | None = None
-    playlist_blocked: bool | None = None
-    playlist_info: TikTokAppAwemePlaylistInfo | None = None
-    poi_data: TikTokAppAwemePoiData | None = None
-    position: str | None = None
-    prevent_download: bool | None = None
-    products_info: str | None = None
-    question_list: str | None = None
-    rate: int | None = None
-    reference_tts_voice_ids: str | list[str] | None = None
-    reference_voice_filter_ids: str | list[str] | None = None
-    region: str
-    right_products: str | None = None
-    risk_infos: TikTokAppAwemeRiskInfos | None = None
-    search_highlight: list[TikTokAppAwemeSearchHighlight] | None = None
-    share_info: TikTokAppAwemeShareInfo
-    share_url: str | None = None
-    shoot_tab_name: str | None = None
-    smart_search_info: TikTokAppAwemeSmartSearchInfo | None = None
-    sort_label: str | None = None
-    sound_exemption: int | None = None
-    standard_component_info: TikTokAppAwemeStandardComponentInfo | None = None
-    statistics: TikTokAppAwemeStatistics
-    status: TikTokAppAwemeStatus | None = None
-    sticker_detail: TikTokAppAwemeStickerDetail | None = None
-    stickers: str | None = None
-    suggest_words: TikTokAppAwemeSuggestWords | None = None
-    support_danmaku: bool | None = None
-    survey_info: str | None = None
-    tako_bubble_info: TikTokAppAwemeTakoBubbleInfo | None = None
-    text_extra: list[TikTokAppAwemeTextExtra] | None = None
-    text_sticker_major_lang: str | None = None
-    ttec_suggest_words: TikTokAppAwemeTtecSuggestWords | None = None
-    tts_voice_ids: str | list[str] | None = None
-    uniqid_position: str | None = None
-    user_digged: int | None = None
-    video: TikTokAppAwemeVideo
-    video_control: TikTokAppAwemeVideoControl | None = None
-    video_labels: list[str] | None = None
-    video_text: list[str] | None = None
-    visual_search_info: TikTokAppAwemeVisualSearchInfo | None = None
-    voice_filter_ids: str | list[str] | None = None
-    with_promotional_music: bool | None = None
-    with_survey: bool | None = None
 
 
 class TikTokAppAwemeAddedSoundMusicInfo(BaseModel):
@@ -3015,16 +2783,6 @@ class TikTokImagePostInfo(BaseModel):
     title: str
 
 
-class TikTokKeywordSearchItem(BaseModel):
-    aweme_info: TikTokVideoAweme
-
-
-class TikTokKeywordSearchResponse(BaseModel):
-    cursor: int
-    has_more: int
-    search_item_list: list[TikTokKeywordSearchItem]
-
-
 class TikTokOriginalLanguageInfo(BaseModel):
     lang: str
     language_code: str
@@ -3112,37 +2870,6 @@ class TikTokTextExtra(BaseModel):
     sub_type: int
     type: int
     user_id: str | None = None
-
-
-class TikTokTopItem(BaseModel):
-    author: TikTokAppAwemeAuthor
-    content_type: str
-    create_time: str
-    desc: str
-    desc_language: str | None = None
-    id: str
-    images: list[str] | None = None
-    is_ad: bool
-    is_top: int
-    music: TikTokTopItemMusic | None = None
-    region: str
-    statistics: TikTokAppAwemeStatistics
-    url: str
-    video: TikTokAppAwemeVideo
-
-
-class TikTokTopItemMusic(BaseModel):
-    author: str
-    duration: int
-    id: int
-    matched_song: TikTokAppAwemeMusicMatchedSong | None = None
-    play_url: str
-    title: str
-
-
-class TikTokTopSearchResponse(BaseModel):
-    cursor: int
-    items: list[TikTokTopItem]
 
 
 class TikTokTranscriptResponse(BaseModel):
@@ -3295,25 +3022,6 @@ class SearchHashtagResponse(
     ]
 
 
-class TikTokTrimmedKeywordSearchResponse(BaseModel):
-    cursor: int
-    search_item_list: list[TikTokTrimmedSearchAweme]
-
-
-class SearchKeywordResponse(
-    RootModel[
-        Annotated[
-            TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
-            Field(union_mode="left_to_right"),
-        ]
-    ]
-):
-    root: Annotated[
-        TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
-        Field(union_mode="left_to_right"),
-    ]
-
-
 class TikTokTrimmedProfileVideosResponse(BaseModel):
     aweme_list: list[TikTokTrimmedAweme]
     has_more: int
@@ -3341,30 +3049,6 @@ class TikTokTrimmedRelationUser(BaseModel):
     nickname: str
     sec_uid: str
     signature: str
-    uid: str
-    unique_id: str
-
-
-class TikTokTrimmedSearchAweme(BaseModel):
-    author: TikTokAppAwemeAuthor
-    aweme_id: str
-    create_time: int
-    create_time_utc: str
-    desc: str
-    desc_language: str | None = None
-    is_ad: bool
-    region: str
-    statistics: TikTokAppAwemeStatistics
-    url: str
-    video: TikTokAppAwemeVideo
-
-
-class TikTokTrimmedSearchUser(BaseModel):
-    avatar_medium: TikTokAppAwemeAuthorAvatarMedium
-    follower_count: int | None = None
-    following_count: int | None = None
-    nickname: str
-    sec_uid: str | None = None
     uid: str
     unique_id: str
 
@@ -3398,11 +3082,6 @@ class TikTokTrimmedTrendingItem(BaseModel):
     statistics: TikTokAppAwemeStatistics
     url: str
     video: TikTokTrendingVideo
-
-
-class TikTokTrimmedUserSearchResponse(BaseModel):
-    cursor: int
-    users: list[TikTokTrimmedSearchUser]
 
 
 class TikTokTrimmedVideoAweme(BaseModel):
@@ -3534,95 +3213,6 @@ class TikTokUserInfoUserProfileTab(BaseModel):
     showMusicTab: bool
     showPlayListTab: bool
     showQuestionTab: bool
-
-
-class TikTokUserSearchAnswerGlobalDoodleConfig(BaseModel):
-    ab_params: TikTokUserSearchAnswerGlobalDoodleConfigAbParams | None = None
-    display_filter_bar: int | None = None
-    feedback_survey: list[TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurvey] | None = None
-    feel_good: TikTokUserSearchAnswerGlobalDoodleConfigFeelGood | None = None
-    hide_results: bool | None = None
-    hit_dolphin: bool | None = None
-    hit_shark: bool | None = None
-    keyword: str | None = None
-    new_source: str | None = None
-    search_channel: str | None = None
-    tns_search_result: str | None = None
-
-
-class TikTokUserSearchAnswerGlobalDoodleConfigAbParams(BaseModel):
-    user_relation_ship: str | None = None
-
-
-class TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurvey(BaseModel):
-    feedback_type: str | None = None
-    long_stress_info: str | None = None
-    multiple_choices: (
-        list[TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurveyMultipleChoices] | None
-    ) = None
-    send_us_multiple_choices: str | None = None
-
-
-class TikTokUserSearchAnswerGlobalDoodleConfigFeedbackSurveyMultipleChoices(BaseModel):
-    key: str | None = None
-    value: str | None = None
-
-
-class TikTokUserSearchAnswerGlobalDoodleConfigFeelGood(BaseModel):
-    extra: str | None = None
-    token: str | None = None
-    token_type: str | None = None
-
-
-class TikTokUserSearchEntry(BaseModel):
-    challenges: list[dict[str, str]] | None
-    effects: list[dict[str, str]] | None
-    items: list[TikTokAppAweme] | None
-    mix_list: list[dict[str, str]] | None
-    musics: list[dict[str, str]] | None
-    position: list[dict[str, int]] | None
-    uniqid_position: list[dict[str, int]] | None
-    user_info: TikTokAppAwemeAuthor
-
-
-class TikTokUserSearchExtra(BaseModel):
-    api_debug_info: str | None = None
-    fatal_item_ids: list[str] | None = None
-    logid: str
-    now: int
-    search_request_id: str | None = None
-    server_stream_time: int | None = None
-
-
-class TikTokUserSearchResponse(BaseModel):
-    challenge_list: list[dict[str, str]] | None = None
-    cursor: int
-    extra: TikTokUserSearchExtra | None = None
-    feedback_type: str | None = None
-    global_doodle_config: TikTokUserSearchAnswerGlobalDoodleConfig | None = None
-    has_more: int
-    input_keyword: str | None = None
-    log_pb: dict[str, str] | None = None
-    music_list: list[dict[str, str]] | None = None
-    qc: str | None = None
-    rid: str
-    status_code: int
-    type: int
-    user_list: list[TikTokUserSearchEntry]
-
-
-class SearchUsersResponse(
-    RootModel[
-        Annotated[
-            TikTokUserSearchResponse | TikTokTrimmedUserSearchResponse,
-            Field(union_mode="left_to_right"),
-        ]
-    ]
-):
-    root: Annotated[
-        TikTokUserSearchResponse | TikTokTrimmedUserSearchResponse,
-        Field(union_mode="left_to_right"),
-    ]
 
 
 class TikTokVideoAweme(BaseModel):
