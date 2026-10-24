@@ -10,6 +10,7 @@ from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
 from .imovelweb import Imovelweb, SyncImovelweb
+from .indeed import Indeed, SyncIndeed
 from .instagram import Instagram, SyncInstagram
 from .linkedin import Linkedin, SyncLinkedin
 from .pinterest import Pinterest, SyncPinterest
@@ -29,6 +30,7 @@ __all__ = [
     "Gmgn",
     "Goplus",
     "Imovelweb",
+    "Indeed",
     "Instagram",
     "Linkedin",
     "Pinterest",
@@ -42,6 +44,7 @@ __all__ = [
     "SyncGmgn",
     "SyncGoplus",
     "SyncImovelweb",
+    "SyncIndeed",
     "SyncInstagram",
     "SyncLinkedin",
     "SyncPinterest",

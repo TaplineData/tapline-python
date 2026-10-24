@@ -5,8 +5,9 @@ Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``geckoterminal``,
-``gmgn``, ``goplus``, ``imovelweb``, ``instagram``, ``linkedin``, ``pinterest``,
-``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
+``gmgn``, ``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``,
+``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``,
+``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -28,6 +29,7 @@ from .resources import (
     Gmgn,
     Goplus,
     Imovelweb,
+    Indeed,
     Instagram,
     Linkedin,
     Pinterest,
@@ -41,6 +43,7 @@ from .resources import (
     SyncGmgn,
     SyncGoplus,
     SyncImovelweb,
+    SyncIndeed,
     SyncInstagram,
     SyncLinkedin,
     SyncPinterest,
@@ -106,6 +109,9 @@ class TaplineClient(AsyncAPIClient):
 
     imovelweb: Imovelweb
     """The imovelweb endpoints."""
+
+    indeed: Indeed
+    """The Indeed endpoints."""
 
     instagram: Instagram
     """The Instagram endpoints."""
@@ -187,6 +193,7 @@ class TaplineClient(AsyncAPIClient):
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
         self.imovelweb = Imovelweb(self)
+        self.indeed = Indeed(self)
         self.instagram = Instagram(self)
         self.linkedin = Linkedin(self)
         self.pinterest = Pinterest(self)
@@ -238,6 +245,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     imovelweb: SyncImovelweb
     """The imovelweb endpoints."""
+
+    indeed: SyncIndeed
+    """The Indeed endpoints."""
 
     instagram: SyncInstagram
     """The Instagram endpoints."""
@@ -319,6 +329,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
         self.imovelweb = SyncImovelweb(self)
+        self.indeed = SyncIndeed(self)
         self.instagram = SyncInstagram(self)
         self.linkedin = SyncLinkedin(self)
         self.pinterest = SyncPinterest(self)

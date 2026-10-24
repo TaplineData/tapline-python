@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tapline"
-description = "Typed Python SDK for Tapline's web scraping APIs for YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Expedia and Brave Search."
+description = "Typed Python SDK for Tapline's web scraping APIs for YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Expedia, Brave Search and Indeed."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -32,6 +32,7 @@ keywords = [
   "flights",
   "airfare",
   "brave-search",
+  "indeed",
   "api",
   "client",
   "sdk",
@@ -49,6 +50,8 @@ keywords = [
   "twitter-api",
   "search-api",
   "serp-api",
+  "jobs-api",
+  "job-postings",
   "crypto-data",
   "dex-data",
 ]
