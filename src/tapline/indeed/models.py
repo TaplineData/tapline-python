@@ -522,7 +522,7 @@ class IndeedJob(BaseModel):
     attributes: IndeedJobAttributes
     company: IndeedCompanySummary | None
     company_name_as_posted: str | None
-    description: IndeedText | None
+    description_html: str | None
     detailed_salary: str | None
     employer_activity: IndeedEmployerActivity | None
     employer_reference: str | None

@@ -299,7 +299,7 @@ class Indeed(AsyncAPIResource):
         language: IndeedLanguageParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompany:
-        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 2 credits.
+        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 1 credit.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -339,7 +339,7 @@ class Indeed(AsyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 31 credits.
+        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 13 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -426,7 +426,7 @@ class Indeed(AsyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 31 credits.
+        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 13 credits.
 
         Args:
             query: Job title, skill or company, as typed into Indeed.
@@ -496,7 +496,7 @@ class Indeed(AsyncAPIResource):
         country: IndeedCountryParam = "us",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJob:
-        """Get one job posting's full record by its key. Costs 3 credits.
+        """Get one job posting's full record by its key. Costs 2 credits.
 
         Args:
             job_key: Indeed job key: `key` of a search result, or `jk` in a viewjob
@@ -693,7 +693,7 @@ class SyncIndeed(SyncAPIResource):
         language: IndeedLanguageParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompany:
-        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 2 credits.
+        """Get a company's profile, employee ratings, happiness scores and average pay in the country. Costs 1 credit.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -733,7 +733,7 @@ class SyncIndeed(SyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 31 credits.
+        """List a company's job postings, up to 25 per call, with the filters job search takes. Costs 13 credits.
 
         Args:
             company_key: Indeed company key, from `/v1/indeed/companies/search` or a
@@ -820,7 +820,7 @@ class SyncIndeed(SyncAPIResource):
         work_setting: Sequence[IndeedWorkSettingParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJobSearchPage:
-        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 31 credits.
+        """Search job postings by keywords, place and filters, up to 25 per call; every result carries the full job record. Costs 13 credits.
 
         Args:
             query: Job title, skill or company, as typed into Indeed.
@@ -890,7 +890,7 @@ class SyncIndeed(SyncAPIResource):
         country: IndeedCountryParam = "us",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedJob:
-        """Get one job posting's full record by its key. Costs 3 credits.
+        """Get one job posting's full record by its key. Costs 2 credits.
 
         Args:
             job_key: Indeed job key: `key` of a search result, or `jk` in a viewjob
