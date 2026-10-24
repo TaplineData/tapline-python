@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import extras
+from conftest import extras, resolve_derived
 from tapline import APIStatusError, SyncTaplineClient
 
 FIXTURES = (
@@ -45,19 +45,25 @@ PYTHON_ARGUMENT_NAMES = {
 }
 
 
-def arguments(stem: str) -> tuple[dict[str, object], dict[str, object]]:
+def call(tapline: SyncTaplineClient, stem: str) -> object:
+    kwargs, _ = arguments(tapline, stem)
+    return getattr(tapline.tiktok, stem.split(".", 1)[0])(**kwargs)
+
+
+def arguments(tapline: SyncTaplineClient, stem: str) -> tuple[dict[str, object], dict[str, object]]:
     request = json.loads((FIXTURES / f"{stem}.request.json").read_text())
     merged: dict[str, object] = dict(request.get("params") or {})
     merged.update(request.get("body") or {})
+    merged.update(resolve_derived(request, lambda source: call(tapline, source)))
     renamed = {PYTHON_ARGUMENT_NAMES.get(name, name): value for name, value in merged.items()}
     return renamed, request.get("expect") or {}
 
 
 @pytest.mark.parametrize("stem", cases(negative=False))
 def test_a_method_returns_a_response_its_model_fully_describes(stem: str) -> None:
-    kwargs, _ = arguments(stem)
     method = stem.split(".", 1)[0]
     with SyncTaplineClient() as tapline:
+        kwargs, _ = arguments(tapline, stem)
         response = getattr(tapline.tiktok, method)(**kwargs)
 
     assert extras(response, method) == []
@@ -65,9 +71,10 @@ def test_a_method_returns_a_response_its_model_fully_describes(stem: str) -> Non
 
 @pytest.mark.parametrize("stem", cases(negative=True))
 def test_a_bad_request_raises_the_documented_error(stem: str) -> None:
-    kwargs, expect = arguments(stem)
-    with SyncTaplineClient() as tapline, pytest.raises(APIStatusError) as caught:
-        getattr(tapline.tiktok, stem.split(".", 1)[0])(**kwargs)
+    with SyncTaplineClient() as tapline:
+        kwargs, expect = arguments(tapline, stem)
+        with pytest.raises(APIStatusError) as caught:
+            getattr(tapline.tiktok, stem.split(".", 1)[0])(**kwargs)
 
     assert caught.value.status_code == expect["status"]
     assert caught.value.code == expect["code"]
