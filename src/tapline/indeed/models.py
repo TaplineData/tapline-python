@@ -268,7 +268,9 @@ class IndeedApply(BaseModel):
 
     `ats_job_id` is the job's id in that system, `post_url` the endpoint Indeed posts applications to and
     `questions_ref` Indeed's reference to the screening questions (neither is for callers to open). `api_token`
-    and `job_meta` are opaque Indeed Apply values. `key` holds the raw token only when part of it did not decode.
+    and `job_meta` are opaque Indeed Apply values. `required_resume_fields` and `optional_resume_fields` list the
+    résumé sections the application requires or offers, comma-separated (`phone,education,skills`).
+    `key` holds the raw token only when part of it did not decode.
     """
 
     advertiser_number: str | None
@@ -285,6 +287,7 @@ class IndeedApply(BaseModel):
     optional_resume_fields: str | None
     post_url: str | None
     questions_ref: str | None
+    required_resume_fields: str | None
 
 
 class IndeedApplyAsks(BaseModel):
