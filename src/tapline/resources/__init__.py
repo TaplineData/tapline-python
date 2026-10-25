@@ -6,6 +6,9 @@ from .airbnb import Airbnb, SyncAirbnb
 from .birdeye import Birdeye, SyncBirdeye
 from .brave_search import BraveSearch, SyncBraveSearch
 from .expedia import Expedia, SyncExpedia
+from .facebook import Facebook, SyncFacebook
+from .facebook_ad_library import FacebookAdLibrary, SyncFacebookAdLibrary
+from .facebook_marketplace import FacebookMarketplace, SyncFacebookMarketplace
 from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
 from .goplus import Goplus, SyncGoplus
@@ -26,6 +29,9 @@ __all__ = [
     "Birdeye",
     "BraveSearch",
     "Expedia",
+    "Facebook",
+    "FacebookAdLibrary",
+    "FacebookMarketplace",
     "Geckoterminal",
     "Gmgn",
     "Goplus",
@@ -40,6 +46,9 @@ __all__ = [
     "SyncBirdeye",
     "SyncBraveSearch",
     "SyncExpedia",
+    "SyncFacebook",
+    "SyncFacebookAdLibrary",
+    "SyncFacebookMarketplace",
     "SyncGeckoterminal",
     "SyncGmgn",
     "SyncGoplus",

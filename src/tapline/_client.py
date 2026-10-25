@@ -4,10 +4,10 @@
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``geckoterminal``,
-``gmgn``, ``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``,
-``pinterest``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``,
-``zillow``),
+service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``facebook``,
+``facebook_ad_library``, ``facebook_marketplace``, ``geckoterminal``, ``gmgn``,
+``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``, ``pinterest``,
+``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -25,6 +25,9 @@ from .resources import (
     Birdeye,
     BraveSearch,
     Expedia,
+    Facebook,
+    FacebookAdLibrary,
+    FacebookMarketplace,
     Geckoterminal,
     Gmgn,
     Goplus,
@@ -39,6 +42,9 @@ from .resources import (
     SyncBirdeye,
     SyncBraveSearch,
     SyncExpedia,
+    SyncFacebook,
+    SyncFacebookAdLibrary,
+    SyncFacebookMarketplace,
     SyncGeckoterminal,
     SyncGmgn,
     SyncGoplus,
@@ -100,6 +106,15 @@ class TaplineClient(AsyncAPIClient):
 
     expedia: Expedia
     """The Expedia endpoints."""
+
+    facebook: Facebook
+    """The Facebook endpoints."""
+
+    facebook_ad_library: FacebookAdLibrary
+    """The Facebook Ad Library endpoints."""
+
+    facebook_marketplace: FacebookMarketplace
+    """The Facebook Marketplace endpoints."""
 
     gmgn: Gmgn
     """The GMGN endpoints."""
@@ -190,6 +205,9 @@ class TaplineClient(AsyncAPIClient):
         self.brave_search = BraveSearch(self)
         self.geckoterminal = Geckoterminal(self)
         self.expedia = Expedia(self)
+        self.facebook = Facebook(self)
+        self.facebook_ad_library = FacebookAdLibrary(self)
+        self.facebook_marketplace = FacebookMarketplace(self)
         self.gmgn = Gmgn(self)
         self.goplus = Goplus(self)
         self.imovelweb = Imovelweb(self)
@@ -236,6 +254,15 @@ class SyncTaplineClient(SyncAPIClient):
 
     expedia: SyncExpedia
     """The Expedia endpoints."""
+
+    facebook: SyncFacebook
+    """The Facebook endpoints."""
+
+    facebook_ad_library: SyncFacebookAdLibrary
+    """The Facebook Ad Library endpoints."""
+
+    facebook_marketplace: SyncFacebookMarketplace
+    """The Facebook Marketplace endpoints."""
 
     gmgn: SyncGmgn
     """The GMGN endpoints."""
@@ -326,6 +353,9 @@ class SyncTaplineClient(SyncAPIClient):
         self.brave_search = SyncBraveSearch(self)
         self.geckoterminal = SyncGeckoterminal(self)
         self.expedia = SyncExpedia(self)
+        self.facebook = SyncFacebook(self)
+        self.facebook_ad_library = SyncFacebookAdLibrary(self)
+        self.facebook_marketplace = SyncFacebookMarketplace(self)
         self.gmgn = SyncGmgn(self)
         self.goplus = SyncGoplus(self)
         self.imovelweb = SyncImovelweb(self)
