@@ -97,7 +97,9 @@ class APIError(TaplineError):
 
 
 class APIResponseValidationError(APIError):
-    """Raised when a successful response does not match the expected schema.
+    """Raised when a successful response body is not valid JSON.
+
+    Decoded JSON is never rejected for a schema mismatch.
 
     The API answered, so the failure is a contract mismatch rather than a
     caller mistake: report ``request_id`` when filing it.

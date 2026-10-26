@@ -27,9 +27,11 @@ from respx import MockRouter
 
 from tapline import SyncTaplineClient, TaplineClient
 from tapline import _base_client as base_client
+from tapline.ponsfamily import MarketTrade
 
 TEST_API_KEY = "tapline-test-key"
 VIDEO_ID = "dQw4w9WgXcQ"
+PONS_TOKEN = "0x39dBED3a2bd333467115dE45665cC57F813C4571"
 
 CAPTURES = Path(__file__).parent / "fixtures" / "youtube"
 
@@ -143,6 +145,12 @@ class Engine:
         result = self.client.close()
         if inspect.isawaitable(result):
             await result
+
+
+async def fetch_market_trades(engine: Engine) -> list[MarketTrade]:
+    """``ponsfamily.get_market_trades``, the first endpoint that answers a JSON array."""
+    result = engine.client.ponsfamily.get_market_trades(PONS_TOKEN)
+    return await result if inspect.isawaitable(result) else result
 
 
 @pytest.fixture

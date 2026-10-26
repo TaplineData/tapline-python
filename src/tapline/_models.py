@@ -19,6 +19,10 @@ class BaseModel(pydantic.BaseModel):
     installed client. Read them through :attr:`model_extra`, or as plain
     attributes.
 
+    The HTTP client constructs responses without validation. Missing required
+    fields read as ``None``; unexpected values are preserved as sent. Explicit
+    calls to ``model_validate`` still validate against the declared schema.
+
     :attr:`model_fields_set` names the fields the server actually sent. That is
     the reliable way to tell an omitted field from one the server sent as
     ``null`` — it matters for the ``fields`` projection on

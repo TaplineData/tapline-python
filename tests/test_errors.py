@@ -3,13 +3,12 @@ failures ``httpx`` raises on its own behalf."""
 
 from __future__ import annotations
 
-import inspect
 from typing import get_args
 
 import httpx
 import pytest
 
-from conftest import TEST_API_KEY, VIDEO_ID, ClientClass, Engine, MockAPI
+from conftest import TEST_API_KEY, VIDEO_ID, ClientClass, Engine, MockAPI, fetch_market_trades
 from spec import youtube_paths
 from tapline import (
     APIConnectionError,
@@ -32,7 +31,6 @@ from tapline.ponsfamily import MarketTrade
 
 REQUEST_ID = "req_01JBTAPLINE"
 METADATA_PATH = f"/v1/youtube/videos/{VIDEO_ID}/metadata"
-PONS_TOKEN = "0x39dBED3a2bd333467115dE45665cC57F813C4571"
 
 DOCUMENTED_ERRORS = frozenset(
     error for path in youtube_paths() if not path.is_demo for error in path.errors
@@ -264,32 +262,18 @@ class TestUnparseableBodies:
         assert excinfo.value.body == ["not", "an", "envelope"]
 
 
-async def fetch_market_trades(engine: Engine) -> list[MarketTrade]:
-    """``ponsfamily.get_market_trades``, the first endpoint that answers a JSON array."""
-    result = engine.client.ponsfamily.get_market_trades(PONS_TOKEN)
-    return await result if inspect.isawaitable(result) else result
-
-
-class TestResponseValidation:
-    async def test_a_success_body_that_misses_a_required_field(
-        self, api: MockAPI, engine: Engine
-    ) -> None:
-        api.respond(httpx.Response(200, json={}, headers={"X-Request-ID": REQUEST_ID}))
-
-        with pytest.raises(APIResponseValidationError) as excinfo:
-            await engine.call("metadata", VIDEO_ID)
-
-        assert excinfo.value.status_code == 200
-        assert excinfo.value.request_id == REQUEST_ID
-        assert "VideoMetadataResponse" in str(excinfo.value)
-
+class TestResponseDecoding:
     async def test_a_success_body_that_is_not_json(self, api: MockAPI, engine: Engine) -> None:
-        api.respond(httpx.Response(200, text="<html>hello</html>"))
+        api.respond(
+            httpx.Response(200, text="<html>hello</html>", headers={"X-Request-ID": REQUEST_ID})
+        )
 
         with pytest.raises(APIResponseValidationError) as excinfo:
             await engine.call("metadata", VIDEO_ID)
 
         assert "not valid JSON" in str(excinfo.value)
+        assert excinfo.value.status_code == 200
+        assert excinfo.value.request_id == REQUEST_ID
 
     async def test_a_204_is_still_a_validation_failure_not_a_silent_none(
         self, api: MockAPI, engine: Engine
@@ -299,7 +283,7 @@ class TestResponseValidation:
         with pytest.raises(APIResponseValidationError):
             await engine.call("metadata", VIDEO_ID)
 
-    async def test_a_json_array_validates_into_a_list_of_models(
+    async def test_a_json_array_is_constructed_as_a_list_of_models(
         self, api: MockAPI, engine: Engine
     ) -> None:
         api.respond(httpx.Response(200, json=[{"side": "buy", "blockNumber": 1}, {"side": "sell"}]))
@@ -310,17 +294,6 @@ class TestResponseValidation:
         assert all(isinstance(trade, MarketTrade) for trade in trades)
         assert [trade.side for trade in trades] == ["buy", "sell"]
         assert trades[0].blockNumber == 1
-
-    async def test_a_bad_item_in_a_json_array_names_the_list_type(
-        self, api: MockAPI, engine: Engine
-    ) -> None:
-        api.respond(httpx.Response(200, json=[{"side": "buy"}, {"blockNumber": "not-a-block"}]))
-
-        with pytest.raises(APIResponseValidationError) as excinfo:
-            await fetch_market_trades(engine)
-
-        assert "did not match list[MarketTrade]" in str(excinfo.value)
-        assert "1.blockNumber" in str(excinfo.value)
 
 
 class TestFailuresHttpxRaisesItself:

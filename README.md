@@ -182,6 +182,12 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+## Read responses
+
+Responses support nested attribute access, such as `response.data.coins`, without runtime schema validation. Missing required fields read as `None`. Unexpected values and new fields are preserved, so type hints describe the expected response, not a guarantee about the data returned. If an object or list has an unexpected JSON shape, that value is returned unchanged.
+
+Use `model_fields_set` to see which fields the server sent. To export a response, including values that differ from their annotations, use `response.model_dump(mode="json", by_alias=True, exclude_unset=True, warnings=False)`. Explicit calls to a model's `model_validate()` still validate data when you choose to do so.
+
 ## Handle errors
 
 Failed requests raise an `APIStatusError`. Use its status, error code, and request ID to decide what to do or to contact support.
@@ -197,6 +203,8 @@ except APIStatusError as error:
 ```
 
 Authentication, credit, rate-limit, timeout, and connection failures also have their own exception classes. The client retries temporary network and server failures.
+
+A successful response with an invalid or empty JSON body raises `APIResponseValidationError`. Schema differences do not raise this error.
 
 ## Full API reference
 

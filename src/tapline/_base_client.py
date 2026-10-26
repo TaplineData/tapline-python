@@ -22,7 +22,7 @@ enums become their value, and lists repeat the key (``features=hd&features=4k``)
 because that is what FastAPI parses back into a list.
 
 Neither engine decides anything for itself: :class:`BaseClient` resolves the
-configuration, builds the request and validates the response, and
+configuration, builds the request and constructs the response, and
 ``_RetryBudget`` decides whether and when to send it again. All a twin adds is
 how it awaits — the send, the sleep, and the close.
 
@@ -45,7 +45,6 @@ from __future__ import annotations
 
 import abc
 import asyncio
-import functools
 import logging
 import os
 import time
@@ -54,11 +53,10 @@ from email.utils import parsedate_to_datetime
 from enum import Enum
 from random import random
 from types import TracebackType
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import ClassVar, Generic, TypeVar
 from urllib.parse import quote
 
 import httpx
-import pydantic
 from typing_extensions import Self, override
 
 from ._constants import (
@@ -80,6 +78,7 @@ from ._exceptions import (
     make_request_error,
     make_status_error,
 )
+from ._response import construct_response
 from ._types import Body, Headers, NotGiven, PrimitiveQueryValue, Query, Timeout, not_given
 
 __all__ = ["AsyncAPIClient", "BaseClient", "SyncAPIClient", "encode_path"]
@@ -276,14 +275,8 @@ def _parse_base_url(base_url: str | httpx.URL | None) -> httpx.URL:
     return url.copy_with(raw_path=url.raw_path + b"/")
 
 
-@functools.cache
-def _build_response_adapter(cast_to: object) -> pydantic.TypeAdapter[Any]:
-    """The validator for one response type, built once: a model or ``list[Model]``."""
-    return pydantic.TypeAdapter(cast_to)
-
-
 class BaseClient(abc.ABC, Generic[_HttpxClientT]):
-    """Configuration, request building, and response validation, shared by both engines."""
+    """Configuration, request building, and response construction, shared by both engines."""
 
     _client: _HttpxClientT
     _httpx_client_class: ClassVar[type[httpx.Client] | type[httpx.AsyncClient]]
@@ -405,15 +398,7 @@ class BaseClient(abc.ABC, Generic[_HttpxClientT]):
             raise APIResponseValidationError(
                 response, "The API returned a body that is not valid JSON."
             ) from err
-        # mypy does not count type[...] as Hashable, which functools.cache requires.
-        response_type: object = cast_to
-        try:
-            validated: _ResponseT = _build_response_adapter(response_type).validate_python(payload)
-        except pydantic.ValidationError as err:
-            raise APIResponseValidationError(
-                response, f"The API response did not match {err.title}:\n{err}"
-            ) from err
-        return validated
+        return construct_response(payload, cast_to)
 
 
 class SyncAPIClient(BaseClient[httpx.Client]):
@@ -478,7 +463,7 @@ class SyncAPIClient(BaseClient[httpx.Client]):
             APIConnectionError: No response the client could read came back —
                 a network failure, a timeout, a redirect loop, or a client that
                 has been closed.
-            APIResponseValidationError: The body did not match ``cast_to``.
+            APIResponseValidationError: The body is not valid JSON.
         """
         request = self._build_request(method, path, params=params, json=json, timeout=timeout)
         budget = _RetryBudget(self.max_retries)
@@ -576,7 +561,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient]):
             APIConnectionError: No response the client could read came back —
                 a network failure, a timeout, a redirect loop, or a client that
                 has been closed.
-            APIResponseValidationError: The body did not match ``cast_to``.
+            APIResponseValidationError: The body is not valid JSON.
         """
         request = self._build_request(method, path, params=params, json=json, timeout=timeout)
         budget = _RetryBudget(self.max_retries)
