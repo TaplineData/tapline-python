@@ -51,7 +51,14 @@ def _construct_value(value: object, annotation: object) -> object:
                         values[name] = None
                 return annotation.model_construct(_fields_set=fields_set, **values)
         elif issubclass(annotation, Enum):
-            return next((member for member in annotation if member.value == value), value)
+            return next(
+                (
+                    member
+                    for member in annotation
+                    if type(member.value) is type(value) and member.value == value
+                ),
+                value,
+            )
     return value
 
 
@@ -93,7 +100,10 @@ def _shape_score(value: object, annotation: object) -> tuple[int, int]:
                         missing -= 1
                 return matched, missing
         elif issubclass(annotation, Enum):
-            return (2 if any(member.value == value for member in annotation) else 0), 0
+            matches = any(
+                type(member.value) is type(value) and member.value == value for member in annotation
+            )
+            return (2 if matches else 0), 0
         else:
             return int(type(value) is annotation), 0
     return 0, 0

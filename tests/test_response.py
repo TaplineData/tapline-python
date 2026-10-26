@@ -14,6 +14,7 @@ import pytest
 from conftest import CAPTURES, captured
 from tapline._models import BaseModel
 from tapline._response import construct_response
+from tapline.facebook_marketplace.models import ListedWithin
 from test_fixture_payloads import returned_model
 
 
@@ -89,3 +90,21 @@ def test_response_construction_never_runs_validators(count: object) -> None:
     response = construct_response({"count": count}, ResponseWithValidators)
 
     assert response.count == count
+
+
+class ResponseWithIntegerEnum(BaseModel):
+    listed_within: ListedWithin | bool
+
+
+@pytest.mark.parametrize("value", [True, 1.0, "1", 999])
+def test_an_integer_enum_never_coerces_other_primitive_types(value: object) -> None:
+    response = construct_response({"listed_within": value}, ResponseWithIntegerEnum)
+
+    assert response.listed_within is value
+    assert construct_response(value, ListedWithin) is value
+
+
+def test_a_known_integer_enum_keeps_its_member() -> None:
+    response = construct_response({"listed_within": 1}, ResponseWithIntegerEnum)
+
+    assert response.listed_within is ListedWithin.INTEGER_1
