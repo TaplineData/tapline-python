@@ -12,14 +12,6 @@ from pydantic import Field, RootModel
 from tapline._models import PREFER_ENUM, BaseModel
 
 
-class DatePostedEnum(str, Enum):
-    """
-    Only all-time search is supported.
-    """
-
-    ALL_TIME = "all-time"
-
-
 class GetProfileParamsCacheMaxAge(str, Enum):
     FIELD_1D = "1d"
     FIELD_3D = "3d"
@@ -60,53 +52,6 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
-
-
-class PublishTimeEnum(str, Enum):
-    """
-    Only all-time search is supported.
-    """
-
-    ALL_TIME = "all-time"
-
-
-class Region1Enum(str, Enum):
-    """
-    Search from the US. Other regions are not supported.
-    """
-
-    US = "US"
-
-
-class RegionEnum(str, Enum):
-    """
-    Search from the US. Other regions are not supported.
-    """
-
-    US = "US"
-
-
-class SortBy1Enum(str, Enum):
-    """
-    Only relevance order is supported.
-    """
-
-    RELEVANCE = "relevance"
-
-
-class SortByEnum(str, Enum):
-    """
-    Only relevance order is supported.
-    """
-
-    RELEVANCE = "relevance"
-
-
-class DatePosted(RootModel[DatePostedEnum | None]):
-    root: DatePostedEnum | None = None
-    """
-    Only all-time search is supported.
-    """
 
 
 class ErrorDetail(BaseModel):
@@ -355,27 +300,6 @@ class GetVideoParams(BaseModel):
     """
 
 
-class PublishTime(RootModel[PublishTimeEnum | None]):
-    root: PublishTimeEnum | None = None
-    """
-    Only all-time search is supported.
-    """
-
-
-class Region1(RootModel[Region1Enum | None]):
-    root: Region1Enum | None = None
-    """
-    Search from the US. Other regions are not supported.
-    """
-
-
-class Region(RootModel[RegionEnum | None]):
-    root: RegionEnum | None = None
-    """
-    Search from the US. Other regions are not supported.
-    """
-
-
 class SearchHashtagParams(BaseModel):
     cursor: Annotated[int | None, Field(ge=0)] = None
     """
@@ -392,62 +316,6 @@ class SearchHashtagParams(BaseModel):
     trim: bool | None = None
     """
     Set to `true` to return fewer fields per item.
-    """
-
-
-class SearchKeywordParams(BaseModel):
-    date_posted: DatePosted | None = None
-    """
-    Only all-time search is supported.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
-    """
-    What to search TikTok for.
-    """
-    region: Region | None = None
-    """
-    Search from the US. Other regions are not supported.
-    """
-    sort_by: SortBy | None = None
-    """
-    Only relevance order is supported.
-    """
-    trim: bool | None = None
-    """
-    Set to `true` to return fewer fields per item.
-    """
-
-
-class SearchTopParams(BaseModel):
-    publish_time: PublishTime | None = None
-    """
-    Only all-time search is supported.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
-    """
-    What to search TikTok for.
-    """
-    region: Region1 | None = None
-    """
-    Search from the US. Other regions are not supported.
-    """
-    sort_by: SortBy1 | None = None
-    """
-    Only relevance order is supported.
-    """
-
-
-class SortBy1(RootModel[SortBy1Enum | None]):
-    root: SortBy1Enum | None = None
-    """
-    Only relevance order is supported.
-    """
-
-
-class SortBy(RootModel[SortByEnum | None]):
-    root: SortByEnum | None = None
-    """
-    Only relevance order is supported.
     """
 
 
@@ -733,7 +601,6 @@ class TikTokAppAwemeAddedSoundMusicInfoTtToDspSongInfos(BaseModel):
     button_type: int | None = None
     platform: int | None = None
     song_id: str | None = None
-    token: TikTokAppAwemeMusicToken | None = None
 
 
 class TikTokAppAwemeAigcInfo(BaseModel):
@@ -790,10 +657,6 @@ class TikTokAppAwemeAnchorsThumbnail(BaseModel):
 class TikTokAppAwemeAnimatedImageInfo(BaseModel):
     effect: int
     type: int
-
-
-class TikTokAppAwemeAppleMusicToken(BaseModel):
-    developer_token: str
 
 
 class TikTokAppAwemeAuthor(BaseModel):
@@ -1153,52 +1016,6 @@ class TikTokAppAwemeChaListShareInfo(BaseModel):
     share_title_myself: str
     share_title_other: str
     share_url: str
-
-
-class TikTokAppAwemeCollabInfo(BaseModel):
-    collaborators: list[TikTokAppAwemeCollaborator]
-    should_display_tag: bool
-
-
-class TikTokAppAwemeCollaborator(BaseModel):
-    collab_status: int
-    user_info: TikTokAppAwemeCollaboratorUser
-
-
-class TikTokAppAwemeCollaboratorUser(BaseModel):
-    account_labels: None
-    ad_cover_url: None
-    advance_feature_item_order: None
-    advanced_feature_info: None
-    avatar_thumb: TikTokAppAwemeAuthorAvatarThumb
-    bold_fields: None
-    can_message_follow_status_list: None
-    can_set_geofencing: None
-    cha_list: None
-    cover_url: None
-    custom_verify: str
-    enterprise_verify_reason: str
-    events: None
-    follow_status: int
-    follower_count: int
-    followers_detail: None
-    geofencing: None
-    homepage_bottom_toast: None
-    item_list: None
-    mutual_relation_avatars: None
-    need_points: None
-    nickname: str
-    platform_sync_info: None
-    relative_users: None
-    search_highlight: None
-    secret: int
-    shield_edit_field_info: None
-    type_label: None
-    uid: str
-    unique_id: str
-    user_profile_guide: None
-    user_tags: None
-    white_cover_url: None
 
 
 class TikTokAppAwemeCommentConfig(BaseModel):
@@ -1956,15 +1773,10 @@ class TikTokAppAwemeMusicStrongBeatUrl(BaseModel):
     width: int
 
 
-class TikTokAppAwemeMusicToken(BaseModel):
-    apple_music_token: TikTokAppAwemeAppleMusicToken
-
-
 class TikTokAppAwemeMusicTtToDspSongInfos(BaseModel):
     button_type: int | None = None
     platform: int | None = None
     song_id: str | None = None
-    token: TikTokAppAwemeMusicToken | None = None
 
 
 class TikTokAppAwemeOriginalClientText(BaseModel):
@@ -2132,12 +1944,7 @@ class TikTokAppAwemeSmartSearchInfo(BaseModel):
     ask_tako_intent_type: int
     find_similar_intent_type: int
     related_videos_intent_type: int
-    tea_data: TikTokAppAwemeSmartSearchTeaData | None = None
     title_smart_search_panel_type: int
-
-
-class TikTokAppAwemeSmartSearchTeaData(BaseModel):
-    s_s_has_tako_stat: int
 
 
 class TikTokAppAwemeStandardComponentInfo(BaseModel):
@@ -2226,12 +2033,12 @@ class TikTokAppAwemeStickerDetailIconUrl(BaseModel):
 
 class TikTokAppAwemeSuggestWords(BaseModel):
     feed_query_enable_videosug: bool | None = None
-    suggest_words: list[TikTokAppAwemeSuggestWordsSuggestWords] | None
+    suggest_words: list[TikTokAppAwemeSuggestWordsSuggestWords]
 
 
 class TikTokAppAwemeSuggestWordsSuggestWords(BaseModel):
     hint_text: str
-    qrec_virtual_enable: str | None = None
+    qrec_virtual_enable: str
     scene: str
     words: list[TikTokAppAwemeSuggestWordsSuggestWordsWords]
 
@@ -2976,14 +2783,6 @@ class TikTokImagePostInfo(BaseModel):
     title: str
 
 
-class TikTokKeywordSearchItem(BaseModel):
-    aweme_info: TikTokVideoAweme
-
-
-class TikTokKeywordSearchResponse(BaseModel):
-    search_item_list: list[TikTokKeywordSearchItem]
-
-
 class TikTokOriginalLanguageInfo(BaseModel):
     lang: str
     language_code: str
@@ -3071,36 +2870,6 @@ class TikTokTextExtra(BaseModel):
     sub_type: int
     type: int
     user_id: str | None = None
-
-
-class TikTokTopItem(BaseModel):
-    author: TikTokAppAwemeAuthor
-    content_type: str
-    create_time: str
-    desc: str
-    desc_language: str | None = None
-    id: str
-    images: list[str] | None = None
-    is_ad: bool
-    is_top: int
-    music: TikTokTopItemMusic | None = None
-    region: str
-    statistics: TikTokAppAwemeStatistics
-    url: str
-    video: TikTokAppAwemeVideo
-
-
-class TikTokTopItemMusic(BaseModel):
-    author: str
-    duration: int
-    id: int
-    matched_song: TikTokAppAwemeMusicMatchedSong | None = None
-    play_url: str
-    title: str
-
-
-class TikTokTopSearchResponse(BaseModel):
-    items: list[TikTokTopItem]
 
 
 class TikTokTranscriptResponse(BaseModel):
@@ -3253,24 +3022,6 @@ class SearchHashtagResponse(
     ]
 
 
-class TikTokTrimmedKeywordSearchResponse(BaseModel):
-    search_item_list: list[TikTokTrimmedSearchAweme]
-
-
-class SearchKeywordResponse(
-    RootModel[
-        Annotated[
-            TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
-            Field(union_mode="left_to_right"),
-        ]
-    ]
-):
-    root: Annotated[
-        TikTokKeywordSearchResponse | TikTokTrimmedKeywordSearchResponse,
-        Field(union_mode="left_to_right"),
-    ]
-
-
 class TikTokTrimmedProfileVideosResponse(BaseModel):
     aweme_list: list[TikTokTrimmedAweme]
     has_more: int
@@ -3300,20 +3051,6 @@ class TikTokTrimmedRelationUser(BaseModel):
     signature: str
     uid: str
     unique_id: str
-
-
-class TikTokTrimmedSearchAweme(BaseModel):
-    author: TikTokAppAwemeAuthor
-    aweme_id: str
-    create_time: int
-    create_time_utc: str
-    desc: str
-    desc_language: str | None = None
-    is_ad: bool
-    region: str
-    statistics: TikTokAppAwemeStatistics
-    url: str
-    video: TikTokAppAwemeVideo
 
 
 class TikTokTrimmedTrendingFeedResponse(BaseModel):
@@ -3505,7 +3242,6 @@ class TikTokVideoAweme(BaseModel):
     cha_list: list[TikTokAppAwemeChaList] | None = None
     challenge_position: str | None = None
     cmt_swt: bool | None = None
-    collab_info: TikTokAppAwemeCollabInfo | None = None
     collect_stat: int | None = None
     comment_at_tako_info: TikTokVideoAwemeCommentAtTakoInfo | None = None
     comment_config: TikTokAppAwemeCommentConfig | None = None
