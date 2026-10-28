@@ -177,6 +177,8 @@ ENDPOINTS = (
         path=f"{PREFIX}/videos/{VIDEO_ID}/subtitles",
         response={
             "transcript": "1\n00:00:00,000 --> 00:00:01,000\nhello\n",
+            "language": "pt-BR",
+            "track_id": "pt-BR",
             "is_auto_generated": False,
             "metadata": {
                 "video_id": VIDEO_ID,
@@ -189,12 +191,16 @@ ENDPOINTS = (
         args=(VIDEO_ID,),
         optional={
             "language": "pt-BR",
+            "fallback_languages": ["fr", "*"],
             "subtitle_format": SubtitleFormat.JSON3,
             "source": SubtitleSource.MANUAL,
             "country": "BR",
         },
         default_query="language=en&subtitle_format=srt&source=any",
-        explicit_query="language=pt-BR&subtitle_format=json3&source=manual&country=BR",
+        explicit_query=(
+            "language=pt-BR&fallback_languages=fr%2C%2A&subtitle_format=json3"
+            "&source=manual&country=BR"
+        ),
     ),
     Endpoint(
         method="subtitle_tracks",

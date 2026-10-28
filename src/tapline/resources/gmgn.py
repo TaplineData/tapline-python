@@ -857,7 +857,7 @@ class Gmgn(AsyncAPIResource):
     """The Gmgn endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.gmgn`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -886,7 +886,7 @@ class Gmgn(AsyncAPIResource):
         requests: Sequence[TrendingChainRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHotSearchesResponse:
-        """Most-searched tokens per chain, same ranking payload as trending but scored on GMGN search volume. Costs 2 credits.
+        """Most-searched tokens per chain, same ranking payload as trending but scored by search volume. Costs 2 credits.
 
         Args:
             requests: One entry per chain. GMGN ranks every entry in a single
@@ -936,7 +936,7 @@ class Gmgn(AsyncAPIResource):
         requests: Sequence[TrendingChainRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingTokensResponse:
-        """Trending token leaderboards. GMGN ranks every requested chain in one upstream call and returns one bucket per request entry, in the same order. Costs 2 credits.
+        """Trending token leaderboards. Returns one bucket per requested chain, in the same order. Costs 2 credits.
 
         Args:
             requests: One entry per chain. GMGN ranks every entry in a single
@@ -1062,7 +1062,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetLaunchpadTaxPolicyResponse:
-        """Per-launchpad tax and trading-limit rules for the chain, with the localized warning text GMGN shows for each. Costs 2 credits.
+        """Per-launchpad tax and trading-limit rules for the chain, with the localized warning text for each. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1080,7 +1080,7 @@ class Gmgn(AsyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMultiTokenFullInfoResponse:
-        """Everything GMGN knows about each token in one call: pool, security, rug check, creator stats, trade stats and all-time high. Costs 2 credits.
+        """Returns full records for each token in one call: pool, security, rug check, creator stats, trade stats and all-time high. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1271,7 +1271,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletInfoResponse:
-        """Smart-money profile for a wallet: labels, socials and aggregate performance. GMGN's smart-money backend does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
+        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1352,7 +1352,7 @@ class Gmgn(AsyncAPIResource):
         groups: Sequence[TokenSignalGroupRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenSignalsResponse:
-        """Tokens currently firing GMGN surge signals, with the market-cap snapshot at each trigger. Costs 2 credits.
+        """Tokens currently firing surge signals, with the market-cap snapshot at each trigger. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1397,7 +1397,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenAiNarrativeResponse:
-        """GMGN's generated plain-language summary of what the token is, in English and both Chinese scripts. Costs 2 credits.
+        """Returns a generated plain-language summary of the token in English and both Chinese scripts. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1473,7 +1473,7 @@ class Gmgn(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenCommunityMessagesResponse:
-        """Messages posted to a token's GMGN community feed, with each author's wallet and X handle. Costs 2 credits.
+        """Messages posted to a token's community feed, with each author's wallet and social handle. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1495,7 +1495,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenDevInfoResponse:
-        """Creator wallet status and holdings, top-10 holder rate, DexScreener paid-promotion flags, and the creator's Twitter token-launch history. Costs 2 credits.
+        """Creator wallet status and holdings, top-10 holder rate, DexScreener paid-promotion flags, and the creator's token-launch history. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1533,7 +1533,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenFeeInfoResponse:
-        """Per-pool fee configuration plus the security and launchpad summary GMGN shows beside it. Costs 2 credits.
+        """Per-pool fee configuration plus its security and launchpad summary. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1640,7 +1640,7 @@ class Gmgn(AsyncAPIResource):
         limit: int = 100,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenLiquidityResponse:
-        """Add and remove liquidity events for the token, newest first. GMGN serves this on Solana only; every other chain answers HTTP 400. Use /liquidity-stats for the rest. Costs 2 credits.
+        """Add and remove liquidity events for the token, newest first. This endpoint is available on Solana only; every other chain answers HTTP 400. Use /liquidity-stats for the rest. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1682,7 +1682,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenLiquidityTrendResponse:
-        """Aggregate pool size and pool count across the token's liquidity pools. GMGN serves this on Solana only; every other chain answers HTTP 400. Costs 2 credits.
+        """Aggregate pool size and pool count across the token's liquidity pools. This endpoint is available on Solana only; every other chain answers HTTP 400. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1783,7 +1783,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetRecommendSlippageResponse:
-        """Slippage GMGN recommends for buying and for selling a token, with its tax flag and volatility score. Costs 2 credits.
+        """Recommended slippage for buying and selling a token, with its tax flag and volatility score. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1939,7 +1939,7 @@ class Gmgn(AsyncAPIResource):
         maker: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTradesResponse:
-        """Individual trades in a token, newest first. Paginate with the `next` cursor; the upstream page size is fixed. Costs 2 credits.
+        """Individual trades in a token, newest first. Paginate with the `next` cursor; the page size is fixed. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -1966,7 +1966,7 @@ class Gmgn(AsyncAPIResource):
         maker: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTradesV2Response:
-        """Trade history from GMGN's multi-region feed, with maker tags on every fill. Serves a fixed 50-trade page; paginate with `cursor` from the previous page's `data.next`. Costs 2 credits.
+        """Trade history from a multi-region feed, with maker tags on every fill. Serves a fixed 50-trade page; paginate with `cursor` from the previous page's `data.next`. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2097,7 +2097,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletChainBalancesResponse:
-        """Native balance and held-token count per chain. GMGN ignores the chain segment and answers for every chain it indexes, so one call covers all of them. Costs 2 credits.
+        """Native balance and held-token count per chain. The chain segment is ignored, so one call covers all indexed chains. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2136,7 +2136,7 @@ class Gmgn(AsyncAPIResource):
         period: WalletRankPeriodParam = "7d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletResponse:
-        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. GMGN's smart-money backend does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
+        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2180,7 +2180,7 @@ class Gmgn(AsyncAPIResource):
         period: WalletStatPeriodParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletStatResponse:
-        """Wallet P&L for the window: realized profit, cost basis, buy/sell counts, win rate and the P&L multiple distribution. Served on every GMGN chain, including the ones /wallet-pnl cannot reach. Costs 2 credits.
+        """Wallet P&L for the window: realized profit, cost basis, buy/sell counts, win rate and the P&L multiple distribution. Served on every supported chain, including the ones /wallet-pnl cannot reach. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2198,7 +2198,7 @@ class SyncGmgn(SyncAPIResource):
     """The Gmgn endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.gmgn`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -2227,7 +2227,7 @@ class SyncGmgn(SyncAPIResource):
         requests: Sequence[TrendingChainRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHotSearchesResponse:
-        """Most-searched tokens per chain, same ranking payload as trending but scored on GMGN search volume. Costs 2 credits.
+        """Most-searched tokens per chain, same ranking payload as trending but scored by search volume. Costs 2 credits.
 
         Args:
             requests: One entry per chain. GMGN ranks every entry in a single
@@ -2277,7 +2277,7 @@ class SyncGmgn(SyncAPIResource):
         requests: Sequence[TrendingChainRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingTokensResponse:
-        """Trending token leaderboards. GMGN ranks every requested chain in one upstream call and returns one bucket per request entry, in the same order. Costs 2 credits.
+        """Trending token leaderboards. Returns one bucket per requested chain, in the same order. Costs 2 credits.
 
         Args:
             requests: One entry per chain. GMGN ranks every entry in a single
@@ -2403,7 +2403,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetLaunchpadTaxPolicyResponse:
-        """Per-launchpad tax and trading-limit rules for the chain, with the localized warning text GMGN shows for each. Costs 2 credits.
+        """Per-launchpad tax and trading-limit rules for the chain, with the localized warning text for each. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2421,7 +2421,7 @@ class SyncGmgn(SyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMultiTokenFullInfoResponse:
-        """Everything GMGN knows about each token in one call: pool, security, rug check, creator stats, trade stats and all-time high. Costs 2 credits.
+        """Returns full records for each token in one call: pool, security, rug check, creator stats, trade stats and all-time high. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2610,7 +2610,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletInfoResponse:
-        """Smart-money profile for a wallet: labels, socials and aggregate performance. GMGN's smart-money backend does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
+        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2691,7 +2691,7 @@ class SyncGmgn(SyncAPIResource):
         groups: Sequence[TokenSignalGroupRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenSignalsResponse:
-        """Tokens currently firing GMGN surge signals, with the market-cap snapshot at each trigger. Costs 2 credits.
+        """Tokens currently firing surge signals, with the market-cap snapshot at each trigger. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2736,7 +2736,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenAiNarrativeResponse:
-        """GMGN's generated plain-language summary of what the token is, in English and both Chinese scripts. Costs 2 credits.
+        """Returns a generated plain-language summary of the token in English and both Chinese scripts. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2812,7 +2812,7 @@ class SyncGmgn(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenCommunityMessagesResponse:
-        """Messages posted to a token's GMGN community feed, with each author's wallet and X handle. Costs 2 credits.
+        """Messages posted to a token's community feed, with each author's wallet and social handle. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2834,7 +2834,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenDevInfoResponse:
-        """Creator wallet status and holdings, top-10 holder rate, DexScreener paid-promotion flags, and the creator's Twitter token-launch history. Costs 2 credits.
+        """Creator wallet status and holdings, top-10 holder rate, DexScreener paid-promotion flags, and the creator's token-launch history. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2872,7 +2872,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenFeeInfoResponse:
-        """Per-pool fee configuration plus the security and launchpad summary GMGN shows beside it. Costs 2 credits.
+        """Per-pool fee configuration plus its security and launchpad summary. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2979,7 +2979,7 @@ class SyncGmgn(SyncAPIResource):
         limit: int = 100,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenLiquidityResponse:
-        """Add and remove liquidity events for the token, newest first. GMGN serves this on Solana only; every other chain answers HTTP 400. Use /liquidity-stats for the rest. Costs 2 credits.
+        """Add and remove liquidity events for the token, newest first. This endpoint is available on Solana only; every other chain answers HTTP 400. Use /liquidity-stats for the rest. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3021,7 +3021,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenLiquidityTrendResponse:
-        """Aggregate pool size and pool count across the token's liquidity pools. GMGN serves this on Solana only; every other chain answers HTTP 400. Costs 2 credits.
+        """Aggregate pool size and pool count across the token's liquidity pools. This endpoint is available on Solana only; every other chain answers HTTP 400. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3122,7 +3122,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetRecommendSlippageResponse:
-        """Slippage GMGN recommends for buying and for selling a token, with its tax flag and volatility score. Costs 2 credits.
+        """Recommended slippage for buying and selling a token, with its tax flag and volatility score. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3278,7 +3278,7 @@ class SyncGmgn(SyncAPIResource):
         maker: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTradesResponse:
-        """Individual trades in a token, newest first. Paginate with the `next` cursor; the upstream page size is fixed. Costs 2 credits.
+        """Individual trades in a token, newest first. Paginate with the `next` cursor; the page size is fixed. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3305,7 +3305,7 @@ class SyncGmgn(SyncAPIResource):
         maker: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTradesV2Response:
-        """Trade history from GMGN's multi-region feed, with maker tags on every fill. Serves a fixed 50-trade page; paginate with `cursor` from the previous page's `data.next`. Costs 2 credits.
+        """Trade history from a multi-region feed, with maker tags on every fill. Serves a fixed 50-trade page; paginate with `cursor` from the previous page's `data.next`. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3436,7 +3436,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletChainBalancesResponse:
-        """Native balance and held-token count per chain. GMGN ignores the chain segment and answers for every chain it indexes, so one call covers all of them. Costs 2 credits.
+        """Native balance and held-token count per chain. The chain segment is ignored, so one call covers all indexed chains. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3475,7 +3475,7 @@ class SyncGmgn(SyncAPIResource):
         period: WalletRankPeriodParam = "7d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletResponse:
-        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. GMGN's smart-money backend does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
+        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3519,7 +3519,7 @@ class SyncGmgn(SyncAPIResource):
         period: WalletStatPeriodParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletStatResponse:
-        """Wallet P&L for the window: realized profit, cost basis, buy/sell counts, win rate and the P&L multiple distribution. Served on every GMGN chain, including the ones /wallet-pnl cannot reach. Costs 2 credits.
+        """Wallet P&L for the window: realized profit, cost basis, buy/sell counts, win rate and the P&L multiple distribution. Served on every supported chain, including the ones /wallet-pnl cannot reach. Costs 2 credits.
 
         Args:
             chain: See the API reference.

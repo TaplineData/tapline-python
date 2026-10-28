@@ -8,11 +8,9 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-
 from .._base_client import encode_path
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..goplus import (
     GetEvmTokenSecurityResponse,
     GetSolanaTokenSecurityResponse,
@@ -22,11 +20,6 @@ from ..goplus import (
 __all__ = ["Goplus", "SyncGoplus"]
 
 _PREFIX = "/v1/goplus"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _get_evm_token_security(chain_id: str, address: str) -> Request[GetEvmTokenSecurityResponse]:
@@ -58,7 +51,7 @@ class Goplus(AsyncAPIResource):
     """The Goplus endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.goplus`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -73,11 +66,13 @@ class Goplus(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEvmTokenSecurityResponse:
-        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the lowercased address and leaves it empty when it has no token at that address on that chain. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for an EVM token, including honeypot, tax, ownership, mint, holder, and liquidity data. Costs 3 credits.
 
         Args:
-            chain_id: See the API reference.
-            address: See the API reference.
+            chain_id: EVM chain id as GoPlus numbers it, such as 1 Ethereum, 56 BNB
+                Chain or 8453 Base. The enum lists every EVM chain GoPlus token
+                security supports.
+            address: Token contract address: 0x plus 40 hex characters, any case.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -91,10 +86,10 @@ class Goplus(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolanaTokenSecurityResponse:
-        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the mint. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for a Solana token, including authority, Token-2022, holder, and liquidity data. Costs 3 credits.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -108,10 +103,10 @@ class Goplus(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTronTokenSecurityResponse:
-        """GoPlus token security for one Tron TRC-20 token: honeypot, tax, owner and mint flags, blacklist, top holders and CEX listings. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the base58 address in its original case. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for a Tron TRC-20 token, including honeypot, tax, ownership, mint, blacklist, holder, and exchange data. Costs 3 credits.
 
         Args:
-            address: See the API reference.
+            address: TRC-20 token contract address, base58 starting with T.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -124,7 +119,7 @@ class SyncGoplus(SyncAPIResource):
     """The Goplus endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.goplus`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -139,11 +134,13 @@ class SyncGoplus(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEvmTokenSecurityResponse:
-        """GoPlus token security for one EVM token: honeypot, tax, owner and mint flags, top holders and liquidity. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the lowercased address and leaves it empty when it has no token at that address on that chain. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for an EVM token, including honeypot, tax, ownership, mint, holder, and liquidity data. Costs 3 credits.
 
         Args:
-            chain_id: See the API reference.
-            address: See the API reference.
+            chain_id: EVM chain id as GoPlus numbers it, such as 1 Ethereum, 56 BNB
+                Chain or 8453 Base. The enum lists every EVM chain GoPlus token
+                security supports.
+            address: Token contract address: 0x plus 40 hex characters, any case.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -157,10 +154,10 @@ class SyncGoplus(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolanaTokenSecurityResponse:
-        """GoPlus token security for one Solana mint: mint, freeze, close and metadata authorities, Token-2022 transfer fee and hook, top holders and liquidity. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the mint. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for a Solana token, including authority, Token-2022, holder, and liquidity data. Costs 3 credits.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -174,10 +171,10 @@ class SyncGoplus(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTronTokenSecurityResponse:
-        """GoPlus token security for one Tron TRC-20 token: honeypot, tax, owner and mint flags, blacklist, top holders and CEX listings. The GoPlus envelope comes back unchanged. `code` 1 means complete data and 2 partial, and code 3 also passes through. GoPlus keys `result` by the base58 address in its original case. Powered by GoPlus Security. Costs 3 credits.
+        """Returns security checks for a Tron TRC-20 token, including honeypot, tax, ownership, mint, blacklist, holder, and exchange data. Costs 3 credits.
 
         Args:
-            address: See the API reference.
+            address: TRC-20 token contract address, base58 starting with T.
             timeout: Overrides the client's timeout for this request.
 
         Returns:

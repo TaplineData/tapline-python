@@ -145,12 +145,15 @@ SUBTITLE_TRACKS = {
     "auto_count": 1,
     "manual": [
         {
+            "id": "en",
             "language": "en",
             "language_name": "English",
             "formats": ["srt", "vtt", "json3", "ttml", "txt"],
         }
     ],
-    "auto": [{"language": "pt-BR", "language_name": None, "formats": ["srt", "txt"]}],
+    "auto": [
+        {"id": "pt-BR", "language": "pt-BR", "language_name": None, "formats": ["srt", "txt"]}
+    ],
 }
 
 SUBTITLE_METADATA = {
@@ -163,6 +166,8 @@ SUBTITLE_METADATA = {
 
 SUBTITLES = {
     "transcript": "1\n00:00:01,040 --> 00:00:03,040\nWe're no strangers\n",
+    "language": "en",
+    "track_id": "en",
     "is_auto_generated": True,
     "metadata": SUBTITLE_METADATA,
 }
@@ -374,6 +379,11 @@ class TestEveryResponse:
         assert tracks.manual[0].formats == list(SubtitleFormat)
         assert tracks.auto[0].formats == [SubtitleFormat.SRT, SubtitleFormat.TXT]
 
+    def test_a_track_carries_the_id_that_requests_it(self) -> None:
+        tracks = SubtitleTracksResponse.model_validate(SUBTITLE_TRACKS)
+
+        assert [track.id for track in tracks.manual + tracks.auto] == ["en", "pt-BR"]
+
     def test_a_thumbnail_without_a_url_does_not_reject_the_response(self) -> None:
         blank = {"url": None, "width": None, "height": None}
 
@@ -412,10 +422,20 @@ class TestSubtitleTranscript:
         assert response.is_auto_generated is True
         assert response.metadata.duration == 212
 
+    def test_a_transcript_names_the_track_it_was_served_from(self) -> None:
+        response = SubtitleResponse.model_validate(
+            {**SUBTITLES, "language": "en", "track_id": "en.uYU-mmqFLq8"}
+        )
+
+        assert response.language == "en"
+        assert response.track_id == "en.uYU-mmqFLq8"
+
     def test_a_json3_transcript_becomes_an_object(self) -> None:
         response = SubtitleResponse.model_validate(
             {
                 "transcript": JSON3_TRANSCRIPT,
+                "language": "en",
+                "track_id": "en",
                 "is_auto_generated": True,
                 "metadata": SUBTITLE_METADATA,
             }
@@ -492,7 +512,7 @@ class TestUpstreamChange:
         assert type(parsed.completion) is str
 
     def test_a_newly_served_subtitle_format_does_not_reject_the_track_list(self) -> None:
-        track = {"language": "en", "language_name": None, "formats": ["srt", "srv3"]}
+        track = {"id": "en", "language": "en", "language_name": None, "formats": ["srt", "srv3"]}
 
         parsed = SubtitleTracksResponse.model_validate({**SUBTITLE_TRACKS, "auto": [track]})
 

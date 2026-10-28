@@ -100,9 +100,9 @@ def _playlist(playlist_id: str, *, limit: int) -> Request[PlaylistResponse]:
     )
 
 
-def _comma_joined(fields: str | Sequence[str] | None) -> str | None:
-    """Render a projection the way the server reads it, as one joined string."""
-    return fields if fields is None or isinstance(fields, str) else ",".join(fields)
+def _comma_joined(values: str | Sequence[str] | None) -> str | None:
+    """Render a list the way the server reads it, as one joined string."""
+    return values if values is None or isinstance(values, str) else ",".join(values)
 
 
 def _metadata(
@@ -122,6 +122,7 @@ def _subtitles(
     video_id: str,
     *,
     language: str,
+    fallback_languages: str | Sequence[str] | None,
     subtitle_format: SubtitleFormatParam,
     source: SubtitleSourceParam,
     country: str | None,
@@ -131,6 +132,7 @@ def _subtitles(
         SubtitleResponse,
         {
             "language": language,
+            "fallback_languages": _comma_joined(fallback_languages),
             "subtitle_format": subtitle_format,
             "source": source,
             "country": country,
@@ -228,7 +230,7 @@ class YouTube(AsyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchResponse:
-        """Search YouTube and return matching results. Costs 2 credits.
+        """Search YouTube and return matching results. Costs 3 credits.
 
         Args:
             query: Search text, 1–200 characters. Surrounding whitespace is
@@ -313,7 +315,7 @@ class YouTube(AsyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ChannelVideosResponse:
-        """List a channel's uploads, one cursor page at a time. Costs 2 credits.
+        """List a channel's uploads, one cursor page at a time. Costs 3 credits.
 
         Args:
             channel_id: Channel ID (``UC…``), ``@handle``, or channel URL, as
@@ -385,7 +387,7 @@ class YouTube(AsyncAPIResource):
         country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> VideoMetadataResponse:
-        """Get public metadata for a video. Costs 2 credits.
+        """Get public metadata for a video. Costs 3 credits.
 
         Args:
             video_id: Eleven-character video ID, or a ``watch?v=``,
@@ -423,6 +425,7 @@ class YouTube(AsyncAPIResource):
         video_id: str,
         *,
         language: str = "en",
+        fallback_languages: str | Sequence[str] | None = None,
         subtitle_format: SubtitleFormatParam = SubtitleFormat.SRT,
         source: SubtitleSourceParam = SubtitleSource.ANY,
         country: str | None = None,
@@ -433,10 +436,16 @@ class YouTube(AsyncAPIResource):
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.
             language: Language tag of the track, such as ``"en"``, ``"pt-BR"``,
-                ``"es-419"``, or ``"zh-Hans"``. ``"orig"`` asks for the video's
-                original audio language, and a ``-orig`` suffix (``"en-orig"``)
-                for that language's untranslated track. Call
-                :meth:`subtitle_tracks` for the tags a video actually has.
+                ``"es-419"``, or ``"zh-Hans"``, or a ``-orig`` suffix
+                (``"en-orig"``) for that language's untranslated track. It must
+                match a track the video has; YouTube's auto-translation is not
+                offered. A track :attr:`~tapline.youtube.SubtitleTrackItem.id`
+                requests that exact track. Call :meth:`subtitle_tracks` for both.
+            fallback_languages: Languages to try, in order, when ``language``
+                has no track, as a sequence or an already comma-joined string.
+                At most 20; a final ``"*"`` accepts any language, starting with
+                the video's spoken one. The response's ``language`` says which
+                was served.
             subtitle_format: Document format — ``srt``, ``vtt``, ``json3``,
                 ``ttml``, or ``txt`` for the cue text alone, one line per cue.
             source: Which track to serve — ``manual`` (human-authored),
@@ -452,18 +461,20 @@ class YouTube(AsyncAPIResource):
             ``str`` for every other format.
 
         Raises:
-            NotFoundError: The video has no track matching ``language``,
-                ``source``, and ``subtitle_format``.
+            NotFoundError: The video has no track matching ``language`` or
+                any ``fallback_languages`` entry, ``source``, and
+                ``subtitle_format``.
             PermissionDeniedError: The video is private, age-gated,
                 members-only, or blocked in the region the request went
                 through; set ``country`` for the last.
-            UnprocessableEntityError: ``language`` is not a registered
-                language tag.
+            UnprocessableEntityError: ``language`` or a ``fallback_languages``
+                entry is not a registered language tag.
         """
         return await self._send(
             _subtitles(
                 video_id,
                 language=language,
+                fallback_languages=fallback_languages,
                 subtitle_format=subtitle_format,
                 source=source,
                 country=country,
@@ -507,7 +518,7 @@ class YouTube(AsyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> CommentsResponse:
-        """Get a video's comment threads, one cursor page at a time. Costs 2 credits.
+        """Get a video's comment threads, one cursor page at a time. Costs 3 credits.
 
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.
@@ -666,7 +677,7 @@ class SyncYouTube(SyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchResponse:
-        """Search YouTube and return matching results. Costs 2 credits.
+        """Search YouTube and return matching results. Costs 3 credits.
 
         Args:
             query: Search text, 1–200 characters. Surrounding whitespace is
@@ -751,7 +762,7 @@ class SyncYouTube(SyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ChannelVideosResponse:
-        """List a channel's uploads, one cursor page at a time. Costs 2 credits.
+        """List a channel's uploads, one cursor page at a time. Costs 3 credits.
 
         Args:
             channel_id: Channel ID (``UC…``), ``@handle``, or channel URL, as
@@ -823,7 +834,7 @@ class SyncYouTube(SyncAPIResource):
         country: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> VideoMetadataResponse:
-        """Get public metadata for a video. Costs 2 credits.
+        """Get public metadata for a video. Costs 3 credits.
 
         Args:
             video_id: Eleven-character video ID, or a ``watch?v=``,
@@ -859,6 +870,7 @@ class SyncYouTube(SyncAPIResource):
         video_id: str,
         *,
         language: str = "en",
+        fallback_languages: str | Sequence[str] | None = None,
         subtitle_format: SubtitleFormatParam = SubtitleFormat.SRT,
         source: SubtitleSourceParam = SubtitleSource.ANY,
         country: str | None = None,
@@ -869,10 +881,16 @@ class SyncYouTube(SyncAPIResource):
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.
             language: Language tag of the track, such as ``"en"``, ``"pt-BR"``,
-                ``"es-419"``, or ``"zh-Hans"``. ``"orig"`` asks for the video's
-                original audio language, and a ``-orig`` suffix (``"en-orig"``)
-                for that language's untranslated track. Call
-                :meth:`subtitle_tracks` for the tags a video actually has.
+                ``"es-419"``, or ``"zh-Hans"``, or a ``-orig`` suffix
+                (``"en-orig"``) for that language's untranslated track. It must
+                match a track the video has; YouTube's auto-translation is not
+                offered. A track :attr:`~tapline.youtube.SubtitleTrackItem.id`
+                requests that exact track. Call :meth:`subtitle_tracks` for both.
+            fallback_languages: Languages to try, in order, when ``language``
+                has no track, as a sequence or an already comma-joined string.
+                At most 20; a final ``"*"`` accepts any language, starting with
+                the video's spoken one. The response's ``language`` says which
+                was served.
             subtitle_format: Document format — ``srt``, ``vtt``, ``json3``,
                 ``ttml``, or ``txt`` for the cue text alone, one line per cue.
             source: Which track to serve — ``manual`` (human-authored),
@@ -888,18 +906,20 @@ class SyncYouTube(SyncAPIResource):
             ``str`` for every other format.
 
         Raises:
-            NotFoundError: The video has no track matching ``language``,
-                ``source``, and ``subtitle_format``.
+            NotFoundError: The video has no track matching ``language`` or
+                any ``fallback_languages`` entry, ``source``, and
+                ``subtitle_format``.
             PermissionDeniedError: The video is private, age-gated,
                 members-only, or blocked in the region the request went
                 through; set ``country`` for the last.
-            UnprocessableEntityError: ``language`` is not a registered
-                language tag.
+            UnprocessableEntityError: ``language`` or a ``fallback_languages``
+                entry is not a registered language tag.
         """
         return self._send(
             _subtitles(
                 video_id,
                 language=language,
+                fallback_languages=fallback_languages,
                 subtitle_format=subtitle_format,
                 source=source,
                 country=country,
@@ -943,7 +963,7 @@ class SyncYouTube(SyncAPIResource):
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> CommentsResponse:
-        """Get a video's comment threads, one cursor page at a time. Costs 2 credits.
+        """Get a video's comment threads, one cursor page at a time. Costs 3 credits.
 
         Args:
             video_id: Video ID or supported video URL, as for :meth:`metadata`.

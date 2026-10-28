@@ -8,10 +8,8 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..linkedin import (
     LinkedinCompanyPostsResponse,
     LinkedinCompanyResponse,
@@ -26,11 +24,6 @@ from ..linkedin import (
 __all__ = ["Linkedin", "SyncLinkedin"]
 
 _PREFIX = "/v1/linkedin"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _get_company(*, url: str) -> Request[LinkedinCompanyResponse]:
@@ -90,7 +83,7 @@ class Linkedin(AsyncAPIResource):
     """The Linkedin endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.linkedin`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -104,7 +97,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyResponse:
-        """A LinkedIn company, school or showcase page: `id` (LinkedIn's numeric company id, as a string), name, description, `location` (city, state, country), employee count, exact follower count, website, logo, cover image, slogan, industry, size, founding year, headquarters, type, specialties, similar and affiliated pages, featured employees (name, profile link and photo) and the latest posts. Field names match Scrape Creators' company endpoint, without its status and credit metadata. LinkedIn no longer shows guests the Crunchbase funding block or featured employees' titles, so neither is returned. Fields LinkedIn leaves out for a page are `null`. Costs 1 credit.
+        """Returns a company, school, or showcase page with its profile details, follower and employee counts, specialties, related pages, featured employees, and latest posts. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -128,7 +121,7 @@ class Linkedin(AsyncAPIResource):
         page: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyPostsResponse:
-        """A company, school or showcase page's posts, 10 per page, newest first: URL, id, publish time (from the post id), full text, reaction and comment counts, the author and whether the page reposted it (`isRepost`: `true` whenever the post's author is not the page). For a repost, `author` is the original author, and `url`, `id` and `datePublished` follow the post LinkedIn links from the card: the original when LinkedIn links it, otherwise the repost. LinkedIn shows guests 7 pages at most; `hasNextPage` is `false` on the last. Page 1 costs one LinkedIn page load; later pages reuse the page's pagination token for 6 hours. Costs 1 credit.
+        """Returns posts from a company, school, or showcase page, 10 per page, newest first. Each item includes its text, publish time, engagement, author, and repost status. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -153,7 +146,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobResponse:
-        """One LinkedIn job posting: title, company, location, relative posting age (LinkedIn's job page carries no absolute date; `/jobs/search` cards do), applicant count, salary when the employer publishes a pay range, the full description as text and HTML, seniority level, employment type, industries, and `easyApply`: `true` when the job takes LinkedIn Easy Apply, `false` when it applies on the employer's site (LinkedIn shows guests no external apply URL). Costs 1 credit.
+        """Returns one job with its company, location, posting age, applicant count, salary when available, full description, seniority, employment type, industries, and application method. Costs 1 credit.
 
         Args:
             url: A LinkedIn job URL: `https://www.linkedin.com/jobs/view/<id>/`
@@ -179,7 +172,7 @@ class Linkedin(AsyncAPIResource):
         posted_within: PostedWithinParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobsSearchResponse:
-        """LinkedIn's public job search, 10 jobs per page: id, URL, title, company with logo, location, posting date and benefits badge (LinkedIn shows guests no salary on search cards). LinkedIn's guest search honours keywords, location or geo id (the geo id wins when both are sent), distance, posting window, company ids and Easy Apply; it ignores job type, experience level, remote and sort filters for guests, so they are not offered. Without `location` or `geo_id`, LinkedIn picks the country of our exit IP, so send one. Pass `pagination.next_cursor` back for the next page. When there is no next page, `pagination.completion` says why: `exhausted` (the search has no more jobs) or `depth_limit` (LinkedIn's guest search stops at 1,000 results). Loose keywords still match some jobs, so an empty first page is rare. Costs 1 credit.
+        """Searches jobs by keyword, location, company, posting window, distance, and application method. Returns 10 jobs per page. Pass `pagination.next_cursor` back for the next page. Costs 1 credit.
 
         Args:
             company_ids: Comma-separated LinkedIn numeric company ids, up to 20 (the
@@ -221,7 +214,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostResponse:
-        """One LinkedIn post (`/posts/...`, `/feed/update/urn:li:...`) or Pulse article (`/pulse/...`): title, headline, full text (`description`), publish time, reaction and comment counts, author with follower count when LinkedIn shows it, the comments LinkedIn shows guests (about 10), images and the native video file at its highest bitrate. For articles, `moreArticles` lists the author's other articles. `activityUrn` and `contentUrn` are LinkedIn's activity and share/ugcPost URNs when the page exposes them. `name` is LinkedIn's page title for the post. A missing post answers 404 for every URL form. Costs 1 credit.
+        """Returns one post or article with its text, publish time, engagement, author, comments, images, and native video. Missing posts return 404. Costs 1 credit.
 
         Args:
             url: A LinkedIn post or article URL:
@@ -242,7 +235,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostTranscriptResponse:
-        """The captions of a LinkedIn post's native video as plain text, from LinkedIn's own auto-captions (no AI transcription). A post without captions answers 404 `not_found`, which is charged like any answer LinkedIn gave; Scrape Creators returns those for free. `transcriptNotAvailable` is always `false` on a 200 and kept for Scrape Creators compatibility. Costs 1 credit.
+        """Returns the auto-generated captions for a post's native video as plain text. Posts without captions return 404 `not_found`. Costs 1 credit.
 
         Args:
             url: A LinkedIn post URL with a native video:
@@ -263,7 +256,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """A member's public LinkedIn profile as a logged-out visitor sees it: name, headline, photo, location, exact follower count, connections, About, experience and education (schema.org `Organization` objects with `@type` and a `member` role), articles, recent posts and reposts (`recentPosts`), likes and comments (`activity`), publications, projects, recommendations, websites and the "People also viewed" list (`similarProfiles`). Field names match Scrape Creators' profile endpoint, without its top-level status and credit metadata. `member.title` is the job title for experience and the degree and field for education. LinkedIn masks some members' employers and role descriptions with asterisks for guests; they arrive masked, and their titles are `null`. Role dates follow LinkedIn's structured data: a year as an integer (`2018`) or a month as `"YYYY-MM"`. `similarProfiles[].subtitle` is the line LinkedIn shows under each name: usually the current company, sometimes the member's About text. A profile that does not exist or is not public answers 404. Costs 2 credits.
+        """Returns a member profile with its headline, bio, location, follower count, experience, education, recent activity, projects, publications, recommendations, and similar profiles. Missing or unavailable profiles return 404. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,
@@ -282,7 +275,7 @@ class SyncLinkedin(SyncAPIResource):
     """The Linkedin endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.linkedin`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -296,7 +289,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyResponse:
-        """A LinkedIn company, school or showcase page: `id` (LinkedIn's numeric company id, as a string), name, description, `location` (city, state, country), employee count, exact follower count, website, logo, cover image, slogan, industry, size, founding year, headquarters, type, specialties, similar and affiliated pages, featured employees (name, profile link and photo) and the latest posts. Field names match Scrape Creators' company endpoint, without its status and credit metadata. LinkedIn no longer shows guests the Crunchbase funding block or featured employees' titles, so neither is returned. Fields LinkedIn leaves out for a page are `null`. Costs 1 credit.
+        """Returns a company, school, or showcase page with its profile details, follower and employee counts, specialties, related pages, featured employees, and latest posts. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -320,7 +313,7 @@ class SyncLinkedin(SyncAPIResource):
         page: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyPostsResponse:
-        """A company, school or showcase page's posts, 10 per page, newest first: URL, id, publish time (from the post id), full text, reaction and comment counts, the author and whether the page reposted it (`isRepost`: `true` whenever the post's author is not the page). For a repost, `author` is the original author, and `url`, `id` and `datePublished` follow the post LinkedIn links from the card: the original when LinkedIn links it, otherwise the repost. LinkedIn shows guests 7 pages at most; `hasNextPage` is `false` on the last. Page 1 costs one LinkedIn page load; later pages reuse the page's pagination token for 6 hours. Costs 1 credit.
+        """Returns posts from a company, school, or showcase page, 10 per page, newest first. Each item includes its text, publish time, engagement, author, and repost status. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -345,7 +338,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobResponse:
-        """One LinkedIn job posting: title, company, location, relative posting age (LinkedIn's job page carries no absolute date; `/jobs/search` cards do), applicant count, salary when the employer publishes a pay range, the full description as text and HTML, seniority level, employment type, industries, and `easyApply`: `true` when the job takes LinkedIn Easy Apply, `false` when it applies on the employer's site (LinkedIn shows guests no external apply URL). Costs 1 credit.
+        """Returns one job with its company, location, posting age, applicant count, salary when available, full description, seniority, employment type, industries, and application method. Costs 1 credit.
 
         Args:
             url: A LinkedIn job URL: `https://www.linkedin.com/jobs/view/<id>/`
@@ -371,7 +364,7 @@ class SyncLinkedin(SyncAPIResource):
         posted_within: PostedWithinParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobsSearchResponse:
-        """LinkedIn's public job search, 10 jobs per page: id, URL, title, company with logo, location, posting date and benefits badge (LinkedIn shows guests no salary on search cards). LinkedIn's guest search honours keywords, location or geo id (the geo id wins when both are sent), distance, posting window, company ids and Easy Apply; it ignores job type, experience level, remote and sort filters for guests, so they are not offered. Without `location` or `geo_id`, LinkedIn picks the country of our exit IP, so send one. Pass `pagination.next_cursor` back for the next page. When there is no next page, `pagination.completion` says why: `exhausted` (the search has no more jobs) or `depth_limit` (LinkedIn's guest search stops at 1,000 results). Loose keywords still match some jobs, so an empty first page is rare. Costs 1 credit.
+        """Searches jobs by keyword, location, company, posting window, distance, and application method. Returns 10 jobs per page. Pass `pagination.next_cursor` back for the next page. Costs 1 credit.
 
         Args:
             company_ids: Comma-separated LinkedIn numeric company ids, up to 20 (the
@@ -413,7 +406,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostResponse:
-        """One LinkedIn post (`/posts/...`, `/feed/update/urn:li:...`) or Pulse article (`/pulse/...`): title, headline, full text (`description`), publish time, reaction and comment counts, author with follower count when LinkedIn shows it, the comments LinkedIn shows guests (about 10), images and the native video file at its highest bitrate. For articles, `moreArticles` lists the author's other articles. `activityUrn` and `contentUrn` are LinkedIn's activity and share/ugcPost URNs when the page exposes them. `name` is LinkedIn's page title for the post. A missing post answers 404 for every URL form. Costs 1 credit.
+        """Returns one post or article with its text, publish time, engagement, author, comments, images, and native video. Missing posts return 404. Costs 1 credit.
 
         Args:
             url: A LinkedIn post or article URL:
@@ -434,7 +427,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostTranscriptResponse:
-        """The captions of a LinkedIn post's native video as plain text, from LinkedIn's own auto-captions (no AI transcription). A post without captions answers 404 `not_found`, which is charged like any answer LinkedIn gave; Scrape Creators returns those for free. `transcriptNotAvailable` is always `false` on a 200 and kept for Scrape Creators compatibility. Costs 1 credit.
+        """Returns the auto-generated captions for a post's native video as plain text. Posts without captions return 404 `not_found`. Costs 1 credit.
 
         Args:
             url: A LinkedIn post URL with a native video:
@@ -455,7 +448,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """A member's public LinkedIn profile as a logged-out visitor sees it: name, headline, photo, location, exact follower count, connections, About, experience and education (schema.org `Organization` objects with `@type` and a `member` role), articles, recent posts and reposts (`recentPosts`), likes and comments (`activity`), publications, projects, recommendations, websites and the "People also viewed" list (`similarProfiles`). Field names match Scrape Creators' profile endpoint, without its top-level status and credit metadata. `member.title` is the job title for experience and the degree and field for education. LinkedIn masks some members' employers and role descriptions with asterisks for guests; they arrive masked, and their titles are `null`. Role dates follow LinkedIn's structured data: a year as an integer (`2018`) or a month as `"YYYY-MM"`. `similarProfiles[].subtitle` is the line LinkedIn shows under each name: usually the current company, sometimes the member's About text. A profile that does not exist or is not public answers 404. Costs 2 credits.
+        """Returns a member profile with its headline, bio, location, follower count, experience, education, recent activity, projects, publications, recommendations, and similar profiles. Missing or unavailable profiles return 404. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,

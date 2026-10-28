@@ -200,7 +200,7 @@ class ActivityRankInfoParams(BaseModel):
 
 
 class AddressListRequest(BaseModel):
-    addresses: list[str]
+    addresses: Annotated[list[str], Field(min_length=1)]
 
 
 class AggedTokenTradesParams(BaseModel):
@@ -2860,8 +2860,8 @@ class TokenSecurity(BaseModel):
     open_source: int
     privileges: Any
     renounced: int | None
-    renounced_freeze_account: bool
-    renounced_mint: bool
+    renounced_freeze_account: bool | None = None
+    renounced_mint: bool | None = None
     sell_tax: str
     top_10_holder_rate: str
     total_buy_tax: str | None = None

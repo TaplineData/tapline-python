@@ -15,6 +15,10 @@ __all__ = [
 class SubtitleTrackItem(BaseModel):
     """One language a video has captions in."""
 
+    id: str
+    """This exact track, to pass as ``language`` to ``youtube.subtitles`` when a
+    video has more than one track in a language."""
+
     language: str
     """BCP-47 tag to pass as ``language`` to ``youtube.subtitles``."""
 
@@ -69,6 +73,13 @@ class SubtitleResponse(BaseModel):
     format — ``srt``, ``vtt``, ``ttml`` and ``txt``. Branch on
     ``isinstance(transcript, str)`` to narrow it.
     """
+
+    language: str
+    """Language of the served track, which differs from the requested one when a
+    ``fallback_languages`` entry was used."""
+
+    track_id: str
+    """The :attr:`SubtitleTrackItem.id` of the served track."""
 
     is_auto_generated: bool
     """Whether the served track was machine-generated."""

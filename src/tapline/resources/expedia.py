@@ -303,7 +303,7 @@ class Expedia(AsyncAPIResource):
     """The Expedia endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.expedia`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -808,7 +808,7 @@ class SyncExpedia(SyncAPIResource):
     """The Expedia endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.expedia`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,

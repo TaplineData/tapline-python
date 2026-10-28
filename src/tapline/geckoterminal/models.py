@@ -1218,11 +1218,23 @@ class RevivalRadarPoolsResponseMetaSections(BaseModel):
 
 
 class SearchAttributes(BaseModel):
-    dexes: list[str]
+    dexes: list[SearchAttributesDexes] | list[str]
     networks: list[SearchAttributesNetworks] | list[str]
     pairs: list[str]
     pools: list[SearchAttributesPools] | list[str]
     tags: list[SearchAttributesTags] | list[str]
+
+
+class SearchAttributesDexes(BaseModel):
+    identifier: str
+    image_url: str
+    name: str
+    network: TrendAttributesNewPoolsNetwork
+    pools_count: int
+    rank_by_volume_usd_24h: int
+    swap_count_24h: int
+    swap_volume_usd_24h: str
+    type: str
 
 
 class SearchAttributesNetworks(BaseModel):
@@ -1240,10 +1252,10 @@ class SearchAttributesPools(BaseModel):
     address: str
     api_address: str
     dex: TrendAttributesNewPoolsDex
-    fdv_in_usd: str
+    fdv_in_usd: str | None
     from_volume_in_usd: str
     gt_score: float
-    market_cap_in_usd: str
+    market_cap_in_usd: str | None
     network: TrendAttributesNewPoolsNetwork
     on_coingecko: bool
     pool_creation_date: str
@@ -1259,7 +1271,7 @@ class SearchAttributesPools(BaseModel):
 
 class SearchAttributesPoolsTokens(BaseModel):
     address: str
-    holder_count: int
+    holder_count: int | None
     image_url: str
     is_base_token: bool
     is_verified: bool

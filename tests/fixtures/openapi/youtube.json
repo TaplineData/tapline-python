@@ -1,6 +1,6 @@
 {
-  "source": "https://api.tapline.sh/openapi.json",
-  "captured_at": "2026-10-07T04:43:43+00:00",
+  "source": "spec/openapi.json, dumped offline from scraping-api c2ab0122",
+  "captured_at": "2026-10-28T00:02:55+00:00",
   "paths": {
     "/v1/youtube/demo/search": {
       "credits": null,
@@ -201,7 +201,8 @@
         "language": "en",
         "subtitle_format": "srt",
         "source": "any",
-        "country": null
+        "country": null,
+        "fallback_languages": null
       },
       "required": [],
       "errors": {
@@ -315,7 +316,7 @@
       }
     },
     "/v1/youtube/search": {
-      "credits": 2,
+      "credits": 3,
       "response_model": "SearchResponse",
       "query_params": {
         "query": null,
@@ -364,7 +365,7 @@
       }
     },
     "/v1/youtube/channels/{channel_id}/videos": {
-      "credits": 2,
+      "credits": 3,
       "response_model": "ChannelVideosResponse",
       "query_params": {
         "content_type": "videos",
@@ -477,7 +478,7 @@
       }
     },
     "/v1/youtube/videos/{video_id}/metadata": {
-      "credits": 2,
+      "credits": 3,
       "response_model": "VideoMetadataResponse",
       "query_params": {
         "fields": null,
@@ -558,7 +559,8 @@
         "language": "en",
         "subtitle_format": "srt",
         "source": "any",
-        "country": null
+        "country": null,
+        "fallback_languages": null
       },
       "required": [],
       "errors": {
@@ -634,7 +636,7 @@
       }
     },
     "/v1/youtube/videos/{video_id}/comments": {
-      "credits": 2,
+      "credits": 3,
       "response_model": "CommentsResponse",
       "query_params": {
         "sort": "top",

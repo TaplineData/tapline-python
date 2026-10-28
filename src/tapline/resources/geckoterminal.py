@@ -429,7 +429,7 @@ class Geckoterminal(AsyncAPIResource):
     """The Geckoterminal endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.geckoterminal`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -452,8 +452,10 @@ class Geckoterminal(AsyncAPIResource):
         """OHLCV bars for a pair, at the requested resolution and denomination. Costs 2 credits.
 
         Args:
-            pool_id: See the API reference.
-            pair_id: See the API reference.
+            pool_id: GeckoTerminal numeric pool id, as returned in a pool resource's
+                `id`.
+            pair_id: GeckoTerminal numeric pair id, from the pool's `pairs`
+                relationship.
             from_timestamp: Unix timestamp for the start of the window.
             to_timestamp: Unix timestamp for the end of the window.
             currency: Denomination of the bar prices.
@@ -517,7 +519,7 @@ class Geckoterminal(AsyncAPIResource):
         sort: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> NetworksResponse:
-        """Every chain GeckoTerminal indexes, with its identifier, image and native currency. Costs 2 credits.
+        """Every indexed chain, with its identifier, image, and native currency. Costs 2 credits.
 
         Args:
             sort: Ordering applied to the chain list, e.g. `-24h_volume`.
@@ -556,7 +558,7 @@ class Geckoterminal(AsyncAPIResource):
         """Newly created pools on one chain, newest first. Costs 2 credits.
 
         Args:
-            network: See the API reference.
+            network: GeckoTerminal network identifier.
             page: 1-based result page.
             pool_creation_hours_ago_lte: Only include pools created within this many
                 hours.
@@ -602,7 +604,7 @@ class Geckoterminal(AsyncAPIResource):
         """Screen pools on one chain, optionally narrowed to a single DEX. Costs 2 credits.
 
         Args:
-            network: See the API reference.
+            network: GeckoTerminal network identifier.
             buy_tax: Buy tax percentage.
             buys: Buy count over the chosen window.
             dex: Restrict to a single DEX on this network, by identifier.
@@ -670,8 +672,8 @@ class Geckoterminal(AsyncAPIResource):
         """Full pool detail: price, reserves, GT score, security metrics, tokens, DEX and developer. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             base_token: Index of the token to quote the pool in.
             timeout: Overrides the client's timeout for this request.
 
@@ -690,8 +692,8 @@ class Geckoterminal(AsyncAPIResource):
         """Other pools trading the same base token, with their liquidity and 24h volume. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -715,8 +717,8 @@ class Geckoterminal(AsyncAPIResource):
         """Swaps in a pool over a time window, grouped by sender wallet. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             from_timestamp: Unix timestamp for the start of the window.
             pair_id: Pair id from the pool's `pairs` relationship.
             to_timestamp: Unix timestamp for the end of the window.
@@ -757,8 +759,8 @@ class Geckoterminal(AsyncAPIResource):
         """Individual swaps in a pool. Defaults to the latest swaps when neither cursor is supplied. Pass a unix timestamp or a returned cursor to paginate. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             pair_id: Pair id from the pool's `pairs` relationship.
             inverted: Quote prices in the other token of the pair.
             page_after: Return swaps older than this cursor. Defaults to the current
@@ -793,8 +795,8 @@ class Geckoterminal(AsyncAPIResource):
         """Descriptions, socials and metadata for both tokens in a pool, as last snapshotted. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -813,8 +815,8 @@ class Geckoterminal(AsyncAPIResource):
         """Holder count over time, as a series of snapshots. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            token_address: See the API reference.
+            network: GeckoTerminal network identifier.
+            token_address: On-chain token address.
             period: Look-back window for the snapshot series.
             timeout: Overrides the client's timeout for this request.
 
@@ -835,8 +837,8 @@ class Geckoterminal(AsyncAPIResource):
         """Largest holders of a token, with each holder's balance and share of supply. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            token_address: See the API reference.
+            network: GeckoTerminal network identifier.
+            token_address: On-chain token address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1024,8 +1026,8 @@ class Geckoterminal(AsyncAPIResource):
         """Pools belonging to one category, restricted to a single chain. Costs 2 credits.
 
         Args:
-            tag: See the API reference.
-            network: See the API reference.
+            tag: Category slug, as returned by the tags endpoint.
+            network: GeckoTerminal network identifier.
             page: 1-based result page.
             timeout: Overrides the client's timeout for this request.
 
@@ -1044,7 +1046,7 @@ class Geckoterminal(AsyncAPIResource):
         """Pools belonging to one category, across every chain. Costs 2 credits.
 
         Args:
-            tag: See the API reference.
+            tag: Category slug, as returned by the tags endpoint.
             page: 1-based result page.
             timeout: Overrides the client's timeout for this request.
 
@@ -1062,7 +1064,8 @@ class Geckoterminal(AsyncAPIResource):
         """Other tokens launched by the same developer, with each one's market cap and top pool. Costs 2 credits.
 
         Args:
-            developer_detail_id: See the API reference.
+            developer_detail_id: Id of a `token_developer_detail` resource embedded
+                in a pool response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1079,7 +1082,8 @@ class Geckoterminal(AsyncAPIResource):
         """Most profitable wallets in a token, with realised and unrealised PnL, buys, sells and balance. Costs 2 credits.
 
         Args:
-            token_id: See the API reference.
+            token_id: GeckoTerminal numeric token id, as returned in a token
+                resource's `id`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1097,8 +1101,9 @@ class Geckoterminal(AsyncAPIResource):
         """One wallet's position in one token: buys, sells, balance and PnL. Costs 2 credits.
 
         Args:
-            token_id: See the API reference.
-            wallet_address: See the API reference.
+            token_id: GeckoTerminal numeric token id, as returned in a token
+                resource's `id`.
+            wallet_address: Wallet address to scope the token position to.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1111,7 +1116,7 @@ class Geckoterminal(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TrendingLinksResponse:
-        """The curated shortcuts GeckoTerminal pins above its trending table. Costs 2 credits.
+        """Returns the curated shortcuts pinned above the trending table. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1169,7 +1174,7 @@ class SyncGeckoterminal(SyncAPIResource):
     """The Geckoterminal endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.geckoterminal`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -1192,8 +1197,10 @@ class SyncGeckoterminal(SyncAPIResource):
         """OHLCV bars for a pair, at the requested resolution and denomination. Costs 2 credits.
 
         Args:
-            pool_id: See the API reference.
-            pair_id: See the API reference.
+            pool_id: GeckoTerminal numeric pool id, as returned in a pool resource's
+                `id`.
+            pair_id: GeckoTerminal numeric pair id, from the pool's `pairs`
+                relationship.
             from_timestamp: Unix timestamp for the start of the window.
             to_timestamp: Unix timestamp for the end of the window.
             currency: Denomination of the bar prices.
@@ -1257,7 +1264,7 @@ class SyncGeckoterminal(SyncAPIResource):
         sort: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> NetworksResponse:
-        """Every chain GeckoTerminal indexes, with its identifier, image and native currency. Costs 2 credits.
+        """Every indexed chain, with its identifier, image, and native currency. Costs 2 credits.
 
         Args:
             sort: Ordering applied to the chain list, e.g. `-24h_volume`.
@@ -1296,7 +1303,7 @@ class SyncGeckoterminal(SyncAPIResource):
         """Newly created pools on one chain, newest first. Costs 2 credits.
 
         Args:
-            network: See the API reference.
+            network: GeckoTerminal network identifier.
             page: 1-based result page.
             pool_creation_hours_ago_lte: Only include pools created within this many
                 hours.
@@ -1342,7 +1349,7 @@ class SyncGeckoterminal(SyncAPIResource):
         """Screen pools on one chain, optionally narrowed to a single DEX. Costs 2 credits.
 
         Args:
-            network: See the API reference.
+            network: GeckoTerminal network identifier.
             buy_tax: Buy tax percentage.
             buys: Buy count over the chosen window.
             dex: Restrict to a single DEX on this network, by identifier.
@@ -1410,8 +1417,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Full pool detail: price, reserves, GT score, security metrics, tokens, DEX and developer. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             base_token: Index of the token to quote the pool in.
             timeout: Overrides the client's timeout for this request.
 
@@ -1430,8 +1437,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Other pools trading the same base token, with their liquidity and 24h volume. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1455,8 +1462,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Swaps in a pool over a time window, grouped by sender wallet. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             from_timestamp: Unix timestamp for the start of the window.
             pair_id: Pair id from the pool's `pairs` relationship.
             to_timestamp: Unix timestamp for the end of the window.
@@ -1497,8 +1504,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Individual swaps in a pool. Defaults to the latest swaps when neither cursor is supplied. Pass a unix timestamp or a returned cursor to paginate. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             pair_id: Pair id from the pool's `pairs` relationship.
             inverted: Quote prices in the other token of the pair.
             page_after: Return swaps older than this cursor. Defaults to the current
@@ -1533,8 +1540,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Descriptions, socials and metadata for both tokens in a pool, as last snapshotted. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            address: See the API reference.
+            network: GeckoTerminal network identifier.
+            address: On-chain pool address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1553,8 +1560,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Holder count over time, as a series of snapshots. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            token_address: See the API reference.
+            network: GeckoTerminal network identifier.
+            token_address: On-chain token address.
             period: Look-back window for the snapshot series.
             timeout: Overrides the client's timeout for this request.
 
@@ -1575,8 +1582,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Largest holders of a token, with each holder's balance and share of supply. Costs 2 credits.
 
         Args:
-            network: See the API reference.
-            token_address: See the API reference.
+            network: GeckoTerminal network identifier.
+            token_address: On-chain token address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1764,8 +1771,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Pools belonging to one category, restricted to a single chain. Costs 2 credits.
 
         Args:
-            tag: See the API reference.
-            network: See the API reference.
+            tag: Category slug, as returned by the tags endpoint.
+            network: GeckoTerminal network identifier.
             page: 1-based result page.
             timeout: Overrides the client's timeout for this request.
 
@@ -1784,7 +1791,7 @@ class SyncGeckoterminal(SyncAPIResource):
         """Pools belonging to one category, across every chain. Costs 2 credits.
 
         Args:
-            tag: See the API reference.
+            tag: Category slug, as returned by the tags endpoint.
             page: 1-based result page.
             timeout: Overrides the client's timeout for this request.
 
@@ -1802,7 +1809,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Other tokens launched by the same developer, with each one's market cap and top pool. Costs 2 credits.
 
         Args:
-            developer_detail_id: See the API reference.
+            developer_detail_id: Id of a `token_developer_detail` resource embedded
+                in a pool response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1819,7 +1827,8 @@ class SyncGeckoterminal(SyncAPIResource):
         """Most profitable wallets in a token, with realised and unrealised PnL, buys, sells and balance. Costs 2 credits.
 
         Args:
-            token_id: See the API reference.
+            token_id: GeckoTerminal numeric token id, as returned in a token
+                resource's `id`.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1837,8 +1846,9 @@ class SyncGeckoterminal(SyncAPIResource):
         """One wallet's position in one token: buys, sells, balance and PnL. Costs 2 credits.
 
         Args:
-            token_id: See the API reference.
-            wallet_address: See the API reference.
+            token_id: GeckoTerminal numeric token id, as returned in a token
+                resource's `id`.
+            wallet_address: Wallet address to scope the token position to.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1851,7 +1861,7 @@ class SyncGeckoterminal(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TrendingLinksResponse:
-        """The curated shortcuts GeckoTerminal pins above its trending table. Costs 2 credits.
+        """Returns the curated shortcuts pinned above the trending table. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.

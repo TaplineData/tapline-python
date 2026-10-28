@@ -87,22 +87,91 @@ class PublicError(str, Enum):
 
 
 class AnalyticsDay(BaseModel):
+    curveUsd: float | None = None
+    feesUsd: float | None = None
     launches: int | None = None
+    otherPoolsUsd: float | None = None
+    ponsPoolsUsd: float | None = None
+    ponsStockTradingUsd: float | None = None
+    quoteEthUsd: float | None = None
+    quoteOtherUsd: float | None = None
+    quoteStableUsd: float | None = None
+    quoteStockUsd: float | None = None
+    revenueUsd: float | None = None
+    rwaUsd: float | None = None
+    stockLaunches: int | None = None
+    stockTradingUsd: float | None = None
     timestamp: int | None = None
     trades: int | None = None
     volumeUsd: float | None = None
 
 
-class AnalyticsTotals(BaseModel):
-    creatorEarningsUsd: float | None = None
-    launches24h: int | None = None
-    launchesAllTime: int | None = None
-    protocolRevenueUsd: float | None = None
-    trades24h: int | None = None
-    tradesAllTime: int | None = None
-    uniqueDevelopers: int | None = None
-    volumeUsd24h: float | None = None
-    volumeUsdAllTime: float | None = None
+class AnalyticsEarnings(BaseModel):
+    creatorUsd: float | None = None
+    protocolUsd: float | None = None
+    v1: AnalyticsVersionEarnings | None = None
+    v2: AnalyticsVersionEarnings | None = None
+
+
+class AnalyticsFeeFlow(BaseModel):
+    sink: str | None = None
+    source: str | None = None
+    usd: float | None = None
+
+
+class AnalyticsIndexer(BaseModel):
+    feeClaims: int | None = None
+    launchedTokens: int | None = None
+    lockedPositions: int | None = None
+    totalTokens: int | None = None
+    uniqueDeployers: int | None = None
+
+
+class AnalyticsLeader(BaseModel):
+    address: str | None = None
+    logo: str | None = None
+    name: str | None = None
+    quote: str | None = None
+    quoteSymbol: str | None = None
+    symbol: str | None = None
+    trades: int | None = None
+    usd: float | None = None
+
+
+class AnalyticsLeaders(BaseModel):
+    allTime: list[AnalyticsLeader] | None = None
+    last30d: list[AnalyticsLeader] | None = None
+    stockQuoted: list[AnalyticsLeader] | None = None
+
+
+class AnalyticsMilestone(BaseModel):
+    dayNumber: int | None = None
+    timestamp: int | None = None
+    usd: float | None = None
+
+
+class AnalyticsMonth(BaseModel):
+    feesUsd: float | None = None
+    flows: list[AnalyticsFeeFlow] | None = None
+    month: str | None = None
+    revenueUsd: float | None = None
+    toBuybacksUsd: float | None = None
+    toCreatorsUsd: float | None = None
+    toUniswapUsd: float | None = None
+
+
+class AnalyticsStock(BaseModel):
+    address: str | None = None
+    coins: int | None = None
+    ponsShare: float | None = None
+    ponsShare30d: float | None = None
+    symbol: str | None = None
+    totalUsd: float | None = None
+
+
+class AnalyticsVersionEarnings(BaseModel):
+    creatorUsd: float | None = None
+    protocolUsd: float | None = None
 
 
 class CommunityMarketCap(BaseModel):
@@ -324,11 +393,19 @@ class ForumSession(BaseModel):
 
 
 class GetAnalyticsResponse(BaseModel):
+    allPools: bool | None = None
+    earnings: AnalyticsEarnings | None = None
     generatedAt: int | None = None
+    indexer: AnalyticsIndexer | None = None
     latestDay: int | None = None
+    leaders: AnalyticsLeaders | None = None
+    milestones: list[AnalyticsMilestone] | None = None
+    months: list[AnalyticsMonth] | None = None
     series: list[AnalyticsDay] | None = None
+    source: str | None = None
     sourceUrl: str | None = None
-    totals: AnalyticsTotals | None = None
+    stocks: list[AnalyticsStock] | None = None
+    today: AnalyticsDay | None = None
 
 
 class GetCreatorHoldingsResponse(BaseModel):
@@ -844,15 +921,15 @@ class ListLaunchesParams(BaseModel):
     """
     graduated_page: Annotated[int | None, Field(ge=1)] = 1
     """
-    Page of graduated launches.
+    Page number echoed in the graduated block.
     """
     graduated_page_size: Annotated[int | None, Field(ge=1, le=100)] = 10
     """
-    Graduated launches per page.
+    Page size echoed in the graduated block.
     """
     include_graduated: bool | None = True
     """
-    Include the graduated board in the response.
+    Include the graduated block (counts only; pons sends no graduated items).
     """
     page: Annotated[int | None, Field(ge=1)] = 1
     """

@@ -480,9 +480,13 @@ class AthParams(BaseModel):
 
 class Attachment(BaseModel):
     contentType: str
+    externalAssetId: str | None = None
     filename: str
     key: str
     kind: str
+    playback: Playback | None = None
+    processingStatus: str | None = None
+    provider: str | None = None
     size: int
     url: str
 
@@ -537,6 +541,7 @@ class Bounty(BaseModel):
     fundedAt: str
     latestDisputePublishedAt: str | None = None
     likeCount: int
+    location: Location | None = None
     onChainBountyId: str
     publishedAt: str
     pumpBountiesProgramId: str
@@ -554,6 +559,15 @@ class Bounty(BaseModel):
     unbanInfo: Baninfo | None = None
     unbanRequest: Unbanrequest | None = None
     verification: Verification | None = None
+
+
+class BountyDraftResolution(BaseModel):
+    decisionHashHex: str
+    decisionVersion: int
+    outcomeType: str
+    recordedAt: str
+    winnerCount: int | None = None
+    winners: list[BountyResolutionHistoryWinner] | None = None
 
 
 class BountyFeedRecentParams(BaseModel):
@@ -588,8 +602,8 @@ class BountyResolution(BaseModel):
     outcomeType: str
     payedOutAt: str | None = None
     recordedAt: str
-    winnerCount: int
-    winners: list[Winner]
+    winnerCount: int | None = None
+    winners: list[Winner] | None = None
 
 
 class BountyResolutionHistory(BaseModel):
@@ -597,8 +611,8 @@ class BountyResolutionHistory(BaseModel):
     disputeEndsAt: str
     outcomeType: str
     recordedAt: str
-    winnerCount: int
-    winners: list[BountyResolutionHistoryWinner]
+    winnerCount: int | None = None
+    winners: list[BountyResolutionHistoryWinner] | None = None
 
 
 class BountyResolutionHistoryWinner(BaseModel):
@@ -1182,6 +1196,7 @@ class Coin(BaseModel):
     cto_address: str | None = None
     depth: int | None = None
     description: str | None = None
+    fdv_usd: float | None = None
     graduated_pool: str | None = None
     hidden: bool | None = None
     hide_banner: bool
@@ -1199,9 +1214,9 @@ class Coin(BaseModel):
     last_reply: int | None = None
     last_trade_timestamp: int | None = None
     livestream_ban_expiry: int
-    market_cap: float
+    market_cap: float | None = None
     market_cap_quote: float | None = None
-    market_cap_usd: float
+    market_cap_usd: float | None = None
     mayhem: Mayhem | None = None
     mayhem_state: str | None = None
     metadata_uri: str | None = None
@@ -1212,30 +1227,33 @@ class Coin(BaseModel):
     num_participants: int | None = None
     platform: str | None = None
     pool_address: str
+    price_usd: float | None = None
     program: str | None = None
-    protocol: str
+    protocol: str | None = None
     pump_swap_pool: str | None = None
-    quote_decimals: int
+    quote_decimals: int | None = None
     quote_mint: str | None = None
     quote_token_program: str | None = None
     real_quote_reserves: int | None = None
     real_sol_reserves: int | None = None
     real_token_reserves: int | None = None
-    reply_count: int
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
+    source: str | None = None
     symbol: str
     telegram: str | None = None
     thumbnail: str | None = None
     thumbnail_updated_at: int | None = None
     token_program: str | None = None
+    tokenized_agent: bool | None = None
     total_supply: int | str | None = None
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
-    updated_at: int
-    usd_market_cap: float
+    updated_at: int | None = None
+    usd_market_cap: float | None = None
     verified: bool
     video_uri: str | None = None
     virtual_quote_reserves: int | None = None
@@ -1369,19 +1387,22 @@ class CoinParams(BaseModel):
 
 class CoinPosition(BaseModel):
     accountKind: str | None = None
-    amountBought: float
-    amountBoughtUsd: float
+    amountBought: float | None
+    amountBoughtUsd: float | None
     amountHeld: float
     callout: PositionCallout
     contentKind: str
     costBasisAmount: float
     costBasisUsd: float | str | None
+    followerCount: int | None = None
     isVerified: bool
     pnlPercentage: float | str | None
     pnlUsd: float
     profileImage: str
     quote: PositionQuote | None
     realizedPnlUsd: float
+    receiptBasisUsd: float | None = None
+    resolvedAvatarDecoration: str | None = None
     tokenPriceUsd: float | None
     totalCallouts: int
     userId: str
@@ -1456,17 +1477,22 @@ class CoinsBatch(BaseModel):
     creator: str
     depth: int | None = None
     description: str | None = None
+    fdv_usd: float | None = None
+    hidden: bool | None = None
     hide_banner: bool
     image_uri: str
+    indexed_by_pump: bool | None = None
     initialized: bool
-    inverted: bool
+    inverted: bool | None = None
+    is_backfill: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool
+    is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool | None = None
     last_trade_timestamp: int | None = None
     livestream_ban_expiry: int
-    market_cap: float
+    market_cap: float | None = None
     market_cap_quote: float
     market_cap_usd: float
     metadata_uri: str
@@ -1475,32 +1501,35 @@ class CoinsBatch(BaseModel):
     name: str
     nsfw: bool
     pool_address: str
+    price_usd: float | None = None
     program: str
     protocol: str
     pump_swap_pool: str
     quote_decimals: int
     quote_mint: str
     quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
+    real_quote_reserves: int | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
+    source: str | None = None
     symbol: str
     telegram: str | None = None
     token_program: str
+    tokenized_agent: bool | None = None
     total_supply: int
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str
-    updated_at: int
+    updated_at: int | None = None
     usd_market_cap: float | None = None
     verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
+    virtual_quote_reserves: int | None = None
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
     volume_1h_usd: float | None = None
     website: str
 
@@ -1765,6 +1794,29 @@ class Daily(BaseModel):
     medianMultiple: float
     onePointFiveXPercent: float
     onePointTwoXPercent: float
+    ranks: TailRanks | None = None
+    tailAth1hUsd: float | None = None
+    tailAth24hUsd: float | None = None
+    tailAth4hUsd: float | None = None
+    tailAthHist1h: TailHistogram | None = None
+    tailAthHist24h: TailHistogram | None = None
+    tailAthHist4h: TailHistogram | None = None
+    tailBuyers: int | None = None
+    tailCallouts: int | None = None
+    tailCallouts1h: int | None = None
+    tailCallouts24h: int | None = None
+    tailCallouts4h: int | None = None
+    tailCohort1h: int | None = None
+    tailCohort24h: int | None = None
+    tailCohort4h: int | None = None
+    tailPnl1hUsd: float | None = None
+    tailPnl24hUsd: float | None = None
+    tailPnl4hUsd: float | None = None
+    tailPnlHist1h: TailHistogram | None = None
+    tailPnlHist24h: TailHistogram | None = None
+    tailPnlHist4h: TailHistogram | None = None
+    tailUniqueBuyers: int | None = None
+    tailVolumeUsd: float | None = None
     totalCallouts: int
     twoXPercent: float
 
@@ -1797,9 +1849,9 @@ class DataToken(BaseModel):
     tokenPnL: Tokenpnl
     token_image: str | None
     token_mint: str
-    token_name: str
+    token_name: str | None
     token_price: float
-    token_symbol: str
+    token_symbol: str | None
     value: float
 
 
@@ -1983,6 +2035,7 @@ class Follower(BaseModel):
     followers: int
     kind: str | None = None
     profile_image: str
+    resolved_avatar_decoration: str | None = None
     timestamp: int | str | None
     userId: str | None = None
     user_id: str | None = None
@@ -2279,6 +2332,7 @@ class GetCalloutStatsResponse(BaseModel):
     allTime: Daily
     computedAt: str
     daily: Daily
+    lastRound: Daily | None = None
     monthly: Daily
     weekly: Daily
 
@@ -2596,6 +2650,7 @@ class GetGroupMembersResponse(BaseModel):
 
 class GetGroupMembersResponseMember(BaseModel):
     createdAt: str
+    inCompetition: bool | None = None
     invitedBy: str
     profile: Liker
     role: str
@@ -2648,7 +2703,7 @@ class GetHolderRewardsResponseCoin(BaseModel):
     athMarketCapUsd: float | None
     createdAt: str
     holderRewardsPda: str
-    imageUri: str
+    imageUri: str | None
     isGraduated: bool
     isLive: bool
     isNsfw: bool
@@ -2682,9 +2737,9 @@ class GetHomeFeedResponseCoin(BaseModel):
     coinDescription: None
     coinImage: str | None
     coinMint: str
-    coinName: str
+    coinName: str | None
     followedHolders: None
-    marketCap: float
+    marketCap: float | None
     narrative: None
     platform: str | None = None
     position: CoinPosition
@@ -2693,7 +2748,7 @@ class GetHomeFeedResponseCoin(BaseModel):
     protocol: str | None = None
     recommendationId: str
     recommendationRank: int
-    symbol: str
+    symbol: str | None
 
 
 class GetHotCoinResponse(BaseModel):
@@ -2897,8 +2952,10 @@ class GetMintPositionsResponsePosition(BaseModel):
     profile: Liker | None = None
     profileImage: str | None
     realizedPnlUsd: float
+    receiptBasisUsd: float | None = None
     recommendationId: str | None = None
     recommendationRank: int | None = None
+    resolvedAvatarDecoration: str | None = None
     userId: str
     userName: str
     verifiedBadgeVisible: bool | None = None
@@ -3084,27 +3141,27 @@ class GetPnlLeaderboardPositionsResponse(BaseModel):
 
 
 class GetPnlLeaderboardPositionsResponseEntry(BaseModel):
-    amountBought: float
-    amountBoughtUsd: float
-    amountHeld: float
+    amountBought: float | None
+    amountBoughtUsd: float | None
+    amountHeld: float | None
     avgEntryMcapUsd: float | None
     callout: PositionCallout
     coinMint: str
-    costBasisAmount: float
-    costBasisUsd: float
+    costBasisAmount: float | None
+    costBasisUsd: float | None
     heldValueSol: int
-    isExited: bool
+    isExited: bool | None
     isVerified: bool
     lastRefreshedAtMs: int
     leaderboardPnlUsd: float
-    pnlPercentage: float
+    pnlPercentage: float | None
     pnlUsd: float
     profileImage: str
     rank: int
-    realizedPnlUsd: float
+    realizedPnlUsd: float | None
     userId: str | None = None
     username: str
-    valueUsd: float
+    valueUsd: float | None
     verifiedBadgeVisible: bool | None = None
     walletAddress: str
     xUsername: str | None
@@ -3118,7 +3175,10 @@ class GetPnlLeaderboardResponse(BaseModel):
 
 
 class GetPortfolioSummaryResponse(BaseModel):
+    cache: PortfolioSummaryCache | None = None
+    computedAt: int | None = None
     equityAtWindowStart: CostBasis
+    evmAddress: str | None = None
     from_: Annotated[int, Field(alias="from")]
     heldOpenValue: CostBasis
     maxCapitalDeployed: CostBasis
@@ -3365,6 +3425,13 @@ class GetUserCalloutsResponseCallout(BaseModel):
     quotedCalloutId: None
     replyCount: int
     repostCount: int
+    tailBuyers: int | None = None
+    tailCohort1h: int | None = None
+    tailCohort24h: int | None = None
+    tailCohort4h: int | None = None
+    tailPnl1hUsd: float | None = None
+    tailPnl24hUsd: float | None = None
+    tailPnl4hUsd: float | None = None
     thesis: str
     updateCount: int
     updates: list[Update]
@@ -3400,12 +3467,16 @@ class GetUserCreatedCoinsResponseCoin(BaseModel):
     creator: str
     depth: int | None = None
     description: str | None = None
+    hidden: bool | None = None
     hide_banner: bool
     image_uri: str
+    indexed_by_pump: bool | None = None
     initialized: bool
     inverted: bool | None = None
+    is_backfill: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool | None = None
+    is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool | None = None
     last_trade_timestamp: int | None = None
@@ -3426,14 +3497,15 @@ class GetUserCreatedCoinsResponseCoin(BaseModel):
     quote_decimals: int
     quote_mint: str
     quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
+    real_quote_reserves: int | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
     symbol: str
     token_program: str
+    tokenized_agent: bool | None = None
     total_supply: int
     total_supply_str: str
     transfer_fee_bps: int | None = None
@@ -3442,9 +3514,9 @@ class GetUserCreatedCoinsResponseCoin(BaseModel):
     updated_at: int | None = None
     usd_market_cap: float | None = None
     verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
+    virtual_quote_reserves: int | None = None
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
     volume_1h_usd: float | None = None
     website: str | None = None
 
@@ -3537,6 +3609,7 @@ class GetUserRepostsResponse(BaseModel):
 
 
 class GetUserResponse(BaseModel):
+    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
     avatar_decoration: str | None = None
     bio: str | None
@@ -3552,15 +3625,25 @@ class GetUserResponse(BaseModel):
     last_username_update_timestamp: int | None
     member_count: int
     profile_image: str
+    resolved_avatar_decoration: str | None = None
     userId: str
     username: str
     x_username: str | None
 
 
 class GetUserTradesResponse(BaseModel):
+    coins: list[GetUserTradesResponseCoin] | None = None
     nextCursor: str | None
     traders: list[GetUserTradesResponseTrader]
     trades: list[GetUserTradesResponseTrade]
+
+
+class GetUserTradesResponseCoin(BaseModel):
+    chainId: int
+    image: str | None
+    mint: str
+    name: str | None
+    symbol: str | None
 
 
 class GetUserTradesResponseTrade(BaseModel):
@@ -3710,21 +3793,29 @@ class GetWalletTokenPnlResponseData(BaseModel):
     ui_fee_sol: float | None
     ui_fee_usd: float | None
     unrealized_pnl_sol: float | None
-    unrealized_pnl_sol_mark: float | None
+    unrealized_pnl_sol_mark: float | None = None
     unrealized_pnl_usd: float | None
-    unrealized_pnl_usd_mark: float | None
+    unrealized_pnl_usd_mark: float | None = None
 
 
 class GetWalletTradesResponse(BaseModel):
     chain: str | None = None
     nativeUnit: str | None = None
     pagination: GetWalletTradesResponsePagination
+    token: GetWalletTradesResponseToken | None = None
     trades: list[GetWalletTradesResponseTrade]
 
 
 class GetWalletTradesResponsePagination(BaseModel):
     hasMore: bool
     nextCursor: str | None
+
+
+class GetWalletTradesResponseToken(BaseModel):
+    image: str
+    mint: str
+    name: str
+    symbol: str
 
 
 class GetWalletTradesResponseTrade(BaseModel):
@@ -4073,6 +4164,7 @@ class Legsbymint(BaseModel):
 
 
 class Liker(BaseModel):
+    activeCompetitionEntry: Annotated[None, Field(None)] = None
     bio: str
     createdAt: str
     followerCount: int
@@ -4086,6 +4178,7 @@ class Liker(BaseModel):
     memberCount: int
     membershipPolicy: None
     profileImageUrl: str
+    resolvedAvatarDecoration: str | None = None
     socials: list[Social]
     updatedAt: str
     userId: str
@@ -4206,6 +4299,7 @@ class ListedCoin(BaseModel):
 
 
 class ListedUser(BaseModel):
+    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
     avatar_decoration: str | None
     bio: str | None
@@ -4220,6 +4314,7 @@ class ListedUser(BaseModel):
     last_username_update_timestamp: int | None
     member_count: int
     profile_image: str
+    resolved_avatar_decoration: str | None = None
     userId: str
     username: str
     x_username: str | None
@@ -4233,6 +4328,7 @@ class LiveCoin(BaseModel):
     base_decimals: int | None = None
     bonding_curve: str
     boost_mode: str
+    canonical_pool_liquidity_usd: float | None = None
     chain_id: str
     complete: bool
     created_timestamp: int
@@ -4240,12 +4336,16 @@ class LiveCoin(BaseModel):
     cto_address: str | None = None
     depth: int
     description: str | None = None
+    hidden: bool | None = None
     hide_banner: bool
     image_uri: str
+    indexed_by_pump: bool | None = None
     initialized: bool
     inverted: bool | None = None
+    is_backfill: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool
+    is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool
     king_of_the_hill_timestamp: int | None = None
@@ -4276,10 +4376,10 @@ class LiveCoin(BaseModel):
     quote_decimals: int | None = None
     quote_mint: str | None = None
     quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
+    real_quote_reserves: int | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
     symbol: str
@@ -4287,17 +4387,19 @@ class LiveCoin(BaseModel):
     thumbnail: str
     thumbnail_updated_at: int | None = None
     token_program: str | None = None
+    tokenized_agent: bool | None = None
     total_supply: int
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
-    updated_at: int
+    updated_at: int | None = None
     usd_market_cap: float | None = None
     verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
+    video_uri: str | None = None
+    virtual_quote_reserves: int | None = None
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
     vod_playlist_url: str | None
     website: str | None = None
 
@@ -4373,7 +4475,7 @@ class Location(BaseModel):
 
 
 class MapEntry(BaseModel):
-    endedAt: None
+    endedAt: str | None
     playlistKey: str | None
     playlistKeyHigh: str | None
     playlistKeyLow: str | None
@@ -4395,7 +4497,7 @@ class MarketActivityBatchEntry(BaseModel):
     field_1m: Annotated[GetMarketActivityResponse5m | None, Field(alias="1m")] = None
     field_24h: Annotated[GetMarketActivityResponse5m, Field(alias="24h")]
     field_30m: Annotated[GetMarketActivityResponse5m | None, Field(alias="30m")] = None
-    field_5m: Annotated[GetMarketActivityResponse5m, Field(alias="5m")]
+    field_5m: Annotated[GetMarketActivityResponse5m | None, Field(alias="5m")]
     field_6h: Annotated[GetMarketActivityResponse5m, Field(alias="6h")]
 
 
@@ -4444,7 +4546,7 @@ class MarketActivityParams(BaseModel):
 
 class Mayhem(BaseModel):
     complete_reason: str | None = None
-    mode: str
+    mode: str | None = None
     pause_reason: str | None = None
     state: str
 
@@ -4474,6 +4576,7 @@ class MayhemCoin(BaseModel):
     inverted: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool
+    is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool | None = None
     king_of_the_hill_timestamp: int | None = None
@@ -4600,6 +4703,7 @@ class Member(BaseModel):
 
 
 class Meta(BaseModel):
+    coverageFrom: int | None = None
     walletsAnswered: int
     walletsDegraded: list[Any]
     walletsRequested: int
@@ -4673,6 +4777,10 @@ class MintPositionsParams(BaseModel):
 
 
 class Monad(BaseModel):
+    dust_count: int | None = None
+    dust_value_usd: float | None = None
+    hidden_count: int | None = None
+    hidden_value_usd: float | None = None
     token_count: int
     total_value: float
     wallet_address: str | None
@@ -4698,8 +4806,10 @@ class MultiChainBreakdown(BaseModel):
     ink: Solana | None = None
     megaeth: Solana | None = None
     monad: Monad | None = None
+    polygon: Solana | None = None
     robinhood: Solana
     solana: Solana
+    xlayer: Solana | None = None
 
 
 class Nativeasset(BaseModel):
@@ -4827,6 +4937,7 @@ class Parentbounty(BaseModel):
     createdAt: str
     creatorAddress: str
     criteria: list[Criteria]
+    draftResolution: BountyDraftResolution | None = None
     expiresAt: str
     fundedAt: str
     latestDisputePublishedAt: str | None = None
@@ -4886,6 +4997,8 @@ class Perp(BaseModel):
 class PerpMarket(BaseModel):
     assetClass: str
     chain: str
+    description: str | None = None
+    image_backdrop: str | None = None
     image_uri: str | None = None
     mint: str
     name: str
@@ -5029,6 +5142,11 @@ class Pool(BaseModel):
     chainId: str
 
 
+class PortfolioSummaryCache(BaseModel):
+    filledAtMs: int
+    ttlSeconds: int
+
+
 class PortfolioSummaryParams(BaseModel):
     address: Annotated[
         str,
@@ -5071,9 +5189,11 @@ class Position(BaseModel):
     costBasisAmount: float
     costBasisUsd: float | None
     isExited: bool
+    perp: Annotated[None, Field(None)] = None
     pnlPercentage: float
     pnlUsd: float
     realizedPnlUsd: float
+    receiptBasisUsd: float | None = None
     valueUsd: float | None
 
 
@@ -5109,11 +5229,11 @@ class PositionCallout(BaseModel):
 class PositionCoin(BaseModel):
     imageUri: str | None
     marketCapUsd: float | None
-    name: str
+    name: str | None
     platform: str | None = None
     program: str | None = None
     protocol: str | None = None
-    symbol: str
+    symbol: str | None
     totalSupply: float | None
 
 
@@ -5397,6 +5517,7 @@ class RepostReposter(BaseModel):
 
 
 class Reposter(BaseModel):
+    activeCompetitionEntry: Annotated[None, Field(None)] = None
     bio: str
     createdAt: str
     followerCount: int
@@ -5411,6 +5532,7 @@ class Reposter(BaseModel):
     membershipPolicy: None
     position: Position
     profileImageUrl: str
+    resolvedAvatarDecoration: str | None = None
     socials: list[Social]
     updatedAt: str
     userId: str
@@ -5710,31 +5832,35 @@ class SearchedCoin(BaseModel):
     bonding_curve: str | None = None
     boost_mode: str | None = None
     canonical_pool_liquidity_usd: float | None = None
+    chain: str | None = None
     chain_id: str
     circulating_supply_str: str | None = None
     complete: bool | None = None
-    created_timestamp: int
-    creator: str
+    created_timestamp: int | None = None
+    creator: str | None = None
     cto_address: str | None = None
     depth: int | None = None
     description: str | None = None
+    exact_match: bool | None = None
+    fdv_usd: float | None = None
     graduated_pool: str | None = None
     hidden: bool | None = None
-    hide_banner: bool
+    hide_banner: bool | None = None
     image_uri: str | None = None
     indexed_by_pump: bool | None = None
-    initialized: bool
+    initialized: bool | None = None
     inverted: bool | None = None
     is_backfill: bool | None = None
-    is_banned: bool
+    is_banned: bool | None = None
     is_cashback_enabled: bool | None = None
-    is_currently_live: bool
+    is_charity: bool | None = None
+    is_currently_live: bool | None = None
     is_holder_reward: bool | None = None
     king_of_the_hill_timestamp: int | None = None
     last_reply: int | None = None
     last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float
+    livestream_ban_expiry: int | None = None
+    market_cap: float | None = None
     market_cap_quote: float | None = None
     market_cap_usd: float | None = None
     market_id: str | None = None
@@ -5742,13 +5868,15 @@ class SearchedCoin(BaseModel):
     mayhem_state: str | None = None
     metadata_uri: str | None = None
     mint: str
-    multichain_family: int
-    name: str
-    nsfw: bool
+    multichain_family: int | None = None
+    name: str | None = None
+    nsfw: bool | None = None
     platform: str | None = None
     pool_address: str | None = None
+    preview: bool | None = None
+    price_usd: float | None = None
     program: str | None = None
-    protocol: str
+    protocol: str | None = None
     pump_swap_pool: str | None = None
     quote_decimals: int | None = None
     quote_mint: str | None = None
@@ -5759,21 +5887,23 @@ class SearchedCoin(BaseModel):
     real_token_reserves: int | None = None
     recommendation_id: str | None = None
     recommendation_rank: int | None = None
-    reply_count: int
+    reply_count: int | None = None
     search_priority: bool | None = None
     security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    symbol: str
+    show_name: bool | None = None
+    source: str | None = None
+    symbol: str | None = None
     telegram: str | None = None
     token_program: str | None = None
+    tokenized_agent: bool | None = None
     total_supply: int | None = None
-    total_supply_str: str
+    total_supply_str: str | None = None
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
     updated_at: int | None = None
     usd_market_cap: float | None = None
-    verified: bool
+    verified: bool | None = None
     video_uri: str | None = None
     virtual_quote_reserves: int | None = None
     virtual_sol_reserves: int | None = None
@@ -5857,12 +5987,16 @@ class SimilarCoinResult(BaseModel):
     depth: int | None = None
     description: str | None = None
     graduated_pool: str | None = None
+    hidden: bool | None = None
     hide_banner: bool
     image_uri: str
+    indexed_by_pump: bool | None = None
     initialized: bool
     inverted: bool | None = None
+    is_backfill: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool | None = None
+    is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool | None = None
     last_trade_timestamp: int | None = None
@@ -5883,21 +6017,24 @@ class SimilarCoinResult(BaseModel):
     quote_decimals: int
     quote_mint: str
     quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
+    real_quote_reserves: int | None = None
+    real_sol_reserves: int | None = None
     real_token_reserves: int | None = None
-    reply_count: int
+    recommendation_id: str | None = None
+    recommendation_rank: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
     symbol: str
     telegram: str | None = None
     token_program: str
+    tokenized_agent: bool | None = None
     total_supply: int | str
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
-    updated_at: int
+    updated_at: int | None = None
     usd_market_cap: float
     verified: bool
     virtual_quote_reserves: int | None = None
@@ -5999,6 +6136,35 @@ class Summary(BaseModel):
     totalValueUsd: float | None = None
 
 
+class TailHistogram(BaseModel):
+    buckets: list[TailHistogramBucket]
+    callouts: int
+
+
+class TailHistogramBucket(BaseModel):
+    max: int | None
+    min: int | None
+    pnlUsd: float
+    tailers: int
+
+
+class TailRanks(BaseModel):
+    generatedAt: int
+    population: int
+    tailAth1hUsd: float | None
+    tailAth24hUsd: float | None
+    tailAth4hUsd: float | None
+    tailBuyers: float | None
+    tailCohort1h: float | None
+    tailCohort24h: float | None
+    tailCohort4h: float | None
+    tailPnl1hUsd: float | None
+    tailPnl24hUsd: float | None
+    tailPnl4hUsd: float | None
+    tailUniqueBuyers: float | None
+    tailVolumeUsd: float | None
+
+
 class Token(BaseModel):
     buySpendUsd: float
     chainId: int
@@ -6063,13 +6229,13 @@ class Top(BaseModel):
     participantId: str
     pnlUsd: float
     positionsCount: int
-    profileImageUrl: str
+    profileImageUrl: str | None
     rank: int
     realizedPnlUsd: float
     struck: bool
     topPositions: list[Topposition]
     unrealizedPnlUsd: float
-    username: str
+    username: str | None
     verifiedBadgeVisible: bool
     walletAddress: str | None
 
@@ -6328,8 +6494,8 @@ class TrendingBoardParams(BaseModel):
 
 class TrendingCoin(BaseModel):
     associated_bonding_curve: str | None = None
-    ath_market_cap: float
-    ath_market_cap_timestamp: int
+    ath_market_cap: float | None = None
+    ath_market_cap_timestamp: int | None = None
     banner_uri: str | None = None
     base_decimals: int
     bonding_curve: str | None = None
@@ -6343,6 +6509,7 @@ class TrendingCoin(BaseModel):
     cto_address: str | None = None
     depth: int | None = None
     description: str | None = None
+    fdv_usd: float | None = None
     graduated_pool: str | None = None
     hidden: bool | None = None
     hide_banner: bool
@@ -6356,10 +6523,11 @@ class TrendingCoin(BaseModel):
     is_charity: bool | None = None
     is_currently_live: bool
     is_holder_reward: bool | None = None
+    king_of_the_hill_timestamp: int | None = None
     last_reply: int | None = None
     last_trade_timestamp: int | None = None
     livestream_ban_expiry: int
-    market_cap: float
+    market_cap: float | None = None
     market_cap_quote: float | None = None
     market_cap_usd: float
     metadata_uri: str | None = None
@@ -6370,8 +6538,9 @@ class TrendingCoin(BaseModel):
     num_participants: int | None = None
     platform: str | None = None
     pool_address: str | None = None
+    price_usd: float | None = None
     program: str | None = None
-    protocol: str
+    protocol: str | None = None
     pump_swap_pool: str | None = None
     quote_decimals: int | None = None
     quote_mint: str | None = None
@@ -6379,20 +6548,24 @@ class TrendingCoin(BaseModel):
     real_quote_reserves: int | None = None
     real_sol_reserves: int | None = None
     real_token_reserves: int | None = None
-    reply_count: int
+    recommendation_id: str | None = None
+    recommendation_rank: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
+    source: str | None = None
     symbol: str
     telegram: str | None = None
     thumbnail: str | None = None
     thumbnail_updated_at: int | None = None
     token_program: str | None = None
+    tokenized_agent: bool | None = None
     total_supply: int | str | None = None
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
-    updated_at: int
+    updated_at: int | None = None
     usd_market_cap: float
     verified: bool
     video_uri: str | None = None
@@ -6423,7 +6596,7 @@ class Unrealized(BaseModel):
     cost_basis: CostBasis
     percentage: CostBasis
     pnl: CostBasis
-    pnl_mark: CostBasis
+    pnl_mark: CostBasis | None = None
 
 
 class Update(BaseModel):
@@ -6438,9 +6611,12 @@ class Update(BaseModel):
 
 
 class User(BaseModel):
+    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
     avatar_decoration: str | None = None
     bio: str | None
+    canonical_evm_wallet: str | None = None
+    canonical_svm_wallet: str | None = None
     followers: int
     following: int
     group_badges: list[Any]
@@ -6448,6 +6624,7 @@ class User(BaseModel):
     is_pump_user: bool
     kind: str | None = None
     profile_image: str
+    resolved_avatar_decoration: str | None = None
     userId: str
     username: str
     x_username: str | None
@@ -6736,15 +6913,19 @@ class UsernameExistsParams(BaseModel):
 
 
 class UsersBatch(BaseModel):
+    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
     avatar_decoration: str | None = None
     bio: str | None
+    canonical_evm_wallet: str | None = None
+    canonical_svm_wallet: str | None = None
     followers: int
     following: int
     group_badges: list[GroupBadge]
     is_banned: bool | None = None
     is_pump_user: bool
     profile_image: str
+    resolved_avatar_decoration: str | None = None
     userId: str
     username: str
     x_username: str | None
@@ -6793,6 +6974,7 @@ class VideoFeedCoin(BaseModel):
     base_decimals: int | None = None
     bonding_curve: str
     boost_mode: str
+    canonical_pool_liquidity_usd: float | None = None
     chain_id: str
     complete: bool
     created_timestamp: int
@@ -6801,10 +6983,13 @@ class VideoFeedCoin(BaseModel):
     depth: int
     description: str | None = None
     downrank_score: int | None = None
+    hidden: bool | None = None
     hide_banner: bool
     image_uri: str
+    indexed_by_pump: bool | None = None
     initialized: bool
     inverted: bool | None = None
+    is_backfill: bool | None = None
     is_banned: bool
     is_cashback_enabled: bool
     is_charity: bool | None = None
@@ -6838,10 +7023,10 @@ class VideoFeedCoin(BaseModel):
     quote_decimals: int | None = None
     quote_mint: str | None = None
     quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
+    real_quote_reserves: int | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    reply_count: int | None = None
     security_verdict: SecurityVerdict | None = None
     show_name: bool
     symbol: str
@@ -6849,17 +7034,18 @@ class VideoFeedCoin(BaseModel):
     thumbnail: str | None = None
     thumbnail_updated_at: int | None = None
     token_program: str | None = None
+    tokenized_agent: bool | None = None
     total_supply: int
     total_supply_str: str
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
     twitter: str | None = None
-    updated_at: int
+    updated_at: int | None = None
     usd_market_cap: float | None = None
     verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
+    virtual_quote_reserves: int | None = None
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
     vod_playlist_url: str | None = None
     website: str | None = None
 

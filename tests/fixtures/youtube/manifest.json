@@ -128,29 +128,29 @@
   "subtitle_tracks": {
     "method": "subtitle_tracks",
     "model": "SubtitleTracksResponse",
-    "source": "https://api.tapline.sh",
-    "url": "https://api.tapline.sh/v1/youtube/demo/videos/wt4p2oalmRY/subtitles/tracks",
-    "captured_at": "2026-08-07T17:18:51+00:00"
+    "source": "local scraping-api c2ab0122 demo router",
+    "url": "/v1/youtube/demo/videos/wt4p2oalmRY/subtitles/tracks",
+    "captured_at": "2026-10-28T00:07:35+00:00"
   },
   "subtitles_json3": {
     "method": "subtitles",
     "model": "SubtitleResponse",
-    "source": "local ASGI run of the Tapline demo router",
+    "source": "local scraping-api c2ab0122 demo router",
     "url": "/v1/youtube/demo/videos/jNQXAC9IVRw/subtitles?language=en&subtitle_format=json3&source=manual",
-    "captured_at": "2026-08-07T17:38:29+00:00"
+    "captured_at": "2026-10-28T00:07:38+00:00"
   },
   "subtitles_json3_auto": {
     "method": "subtitles",
     "model": "SubtitleResponse",
-    "source": "local ASGI run of the Tapline demo router",
+    "source": "local scraping-api c2ab0122 demo router",
     "url": "/v1/youtube/demo/videos/bo4ebVkhp28/subtitles?language=en&subtitle_format=json3&source=auto",
-    "captured_at": "2026-08-07T17:38:29+00:00"
+    "captured_at": "2026-10-28T00:07:41+00:00"
   },
   "subtitles_srt": {
     "method": "subtitles",
     "model": "SubtitleResponse",
-    "source": "local ASGI run of the Tapline demo router",
+    "source": "local scraping-api c2ab0122 demo router",
     "url": "/v1/youtube/demo/videos/wt4p2oalmRY/subtitles?language=en&subtitle_format=srt&source=manual",
-    "captured_at": "2026-08-07T17:38:29+00:00"
+    "captured_at": "2026-10-28T00:07:42+00:00"
   }
 }

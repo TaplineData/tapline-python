@@ -9,7 +9,15 @@ from __future__ import annotations
 
 from .models import (
     AnalyticsDay,
-    AnalyticsTotals,
+    AnalyticsEarnings,
+    AnalyticsFeeFlow,
+    AnalyticsIndexer,
+    AnalyticsLeader,
+    AnalyticsLeaders,
+    AnalyticsMilestone,
+    AnalyticsMonth,
+    AnalyticsStock,
+    AnalyticsVersionEarnings,
     ChartRange,
     ChartRangeParam,
     CommunityMarketCap,
@@ -134,7 +142,15 @@ from .models import (
 
 __all__ = [
     "AnalyticsDay",
-    "AnalyticsTotals",
+    "AnalyticsEarnings",
+    "AnalyticsFeeFlow",
+    "AnalyticsIndexer",
+    "AnalyticsLeader",
+    "AnalyticsLeaders",
+    "AnalyticsMilestone",
+    "AnalyticsMonth",
+    "AnalyticsStock",
+    "AnalyticsVersionEarnings",
     "ChartRange",
     "ChartRangeParam",
     "CommunityMarketCap",

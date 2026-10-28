@@ -1723,7 +1723,7 @@ class Pumpfun(AsyncAPIResource):
     """The Pumpfun endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.pumpfun`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -1742,7 +1742,7 @@ class Pumpfun(AsyncAPIResource):
         """Individual fee-sharing shares held by an account. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             cursor: Cursor from a previous page.
             limit: Maximum shares to return.
             timeout: Overrides the client's timeout for this request.
@@ -1761,10 +1761,10 @@ class Pumpfun(AsyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetShareholderFeesResponse:
-        """Deprecated: pump.fun retired this read. This route now answers what `/shareholders/{address}/fees` answers: per-coin fee-sharing earnings with wallet totals. Costs 1 credit.
+        """Deprecated: this read was retired. This route now answers what `/shareholders/{address}/fees` answers: per-coin fee-sharing earnings with wallet totals. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -1778,7 +1778,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAchievementCatalogResponse:
-        """Every achievement pump.fun awards: family, tier, name, threshold and display data. Costs 1 credit.
+        """Every achievement with its family, tier, name, threshold, and display data. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1795,7 +1795,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
-        """The live movers board from pump.fun's advanced indexer, the most current trending signal. Costs 1 credit.
+        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -1815,7 +1815,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
-        """The trending board from pump.fun's advanced indexer, in the movers board's compact entry format. pump.fun labels this body `board: movers` too. Costs 1 credit.
+        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -1835,7 +1835,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 24,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedRecentResponse:
-        """The most recent submissions in the pump.fun go feed. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -1853,7 +1853,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedTrendingResponse:
-        """The trending tab of the pump.fun go feed. Costs 1 credit.
+        """Returns the trending bounty feed. Costs 1 credit.
 
         Args:
             limit: Maximum feed entries to return.
@@ -1925,7 +1925,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountySubmissionCountResponse:
-        """Total bounty submissions pump.fun has received. Costs 1 credit.
+        """Returns the total number of bounty submissions. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1960,7 +1960,7 @@ class Pumpfun(AsyncAPIResource):
         submission_count_gte: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyTasksResponse:
-        """Bounty tasks posted on pump.fun go, with filters for phase, reward, expiry, engagement and distance. Sorting by `distance` needs `lat` and `lng`, which go together. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """Bounty tasks with filters for phase, reward, expiry, engagement and distance. Sorting by `distance` needs `lat` and `lng`, which go together. Pass `cursor` from the previous page for more. Costs 1 credit.
 
         Args:
             coin_address: Restrict to bounties on one Solana coin.
@@ -2082,7 +2082,7 @@ class Pumpfun(AsyncAPIResource):
         """Profiles that liked a callout reply, newest first. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -2105,7 +2105,7 @@ class Pumpfun(AsyncAPIResource):
         """Profiles that reposted a callout reply, newest first. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -2126,7 +2126,7 @@ class Pumpfun(AsyncAPIResource):
         """A reply with its ancestor replies up to the callout it belongs to. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -2143,7 +2143,7 @@ class Pumpfun(AsyncAPIResource):
         """A single callout with its author, thesis, performance and author updates. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -2162,7 +2162,7 @@ class Pumpfun(AsyncAPIResource):
         """Profiles that liked a callout, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -2185,7 +2185,7 @@ class Pumpfun(AsyncAPIResource):
         """Quote posts of a callout: callouts and replies that quote it, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum quotes to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -2213,7 +2213,7 @@ class Pumpfun(AsyncAPIResource):
         """Replies to a callout. Page newest-first with `before_id` (the last reply's id), or by `page` when sorting by `POSITION`. `parent_reply_id` lists one reply's children. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             before_id: Replies older than this reply id. Recency order only, so not
                 with `sort=POSITION` or `PNL`.
             filter: Restrict to a reply audience.
@@ -2253,7 +2253,7 @@ class Pumpfun(AsyncAPIResource):
         """Profiles that reposted a callout, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -2277,11 +2277,12 @@ class Pumpfun(AsyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainCandlesResponse:
-        """OHLCV bars for a coin on any chain pump.fun trades, oldest first: Solana, the EVM chains, and HyperCore perps (`hypercore`, address = coin name such as `BTC`; perps serve `price_usd` and `price_quote` only). Prices are decimal strings. Costs 1 credit.
+        """OHLCV bars for a coin on any supported chain, oldest first: Solana, the EVM chains, and HyperCore perps (`hypercore`, address = coin name such as `BTC`; perps serve `price_usd` and `price_quote` only). Prices are decimal strings. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             resolution: Bar width.
             count: Bars ending at `to`.
             measure: What each bar measures. `market_cap_usd` multiplies the USD
@@ -2318,8 +2319,9 @@ class Pumpfun(AsyncAPIResource):
         """A coin's creator-fee sharing setup and its fee events, newest first: creation, shareholder changes, claims. `sharing` appears only when the coin has a fee-sharing configuration. EVM coins answer with no events. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin lives on.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain.
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -2343,8 +2345,9 @@ class Pumpfun(AsyncAPIResource):
         """A coin's closing-price line on any chain, thinned to `max_points` with LTTB downsampling. Lighter than candles for sparklines. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             resolution: Bar width.
             count: Bars ending at `to`.
             max_points: Most points returned; at or above `count` keeps every bar.
@@ -2380,8 +2383,9 @@ class Pumpfun(AsyncAPIResource):
         """A coin's top holders on any token chain, each flagged as developer, sniper or bundler, with the coin's total holder count. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin lives on.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -2404,11 +2408,12 @@ class Pumpfun(AsyncAPIResource):
         venue: TradeVenueParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainTradesResponse:
-        """A coin's trade tape on any chain, newest first, with running buy and sell aggregates. Pass `cursor` from `nextCursor` for older trades, or page around one trade with `before`/`after` and its `ordinalKey`. A token queried on a chain it does not trade on answers 503 (not charged): pump.fun sends the same answer as a lane outage, so check the coin's `chain_id` on `/coins/{mint}` before retrying. Costs 1 credit.
+        """Returns a coin's trades, newest first, with running buy and sell totals. Pass `nextCursor` as `cursor`, or use `before` and `after` with a trade's `ordinalKey`. A token queried on a chain it does not trade on answers 503 (not charged). Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             after: Trades newer than this `ordinalKey`.
             before: Trades older than this `ordinalKey`.
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -2460,7 +2465,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[VideoFeed]:
-        """pump.fun's curated video feed of livestream clips, with each clip's coin. Costs 1 credit.
+        """Curated video feed of livestream clips, with each clip's coin. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -2480,7 +2485,7 @@ class Pumpfun(AsyncAPIResource):
         timestamp: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[TopVod]:
-        """Most watched clips across pump.fun in a window. Costs 1 credit.
+        """Most watched clips in a window. Costs 1 credit.
 
         Args:
             clip_type: Clip category as pump.fun labels it.
@@ -2517,7 +2522,7 @@ class Pumpfun(AsyncAPIResource):
         sort: CoinSortParam = "created_timestamp",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedCoin]:
-        """The paginated coin list behind pump.fun's board views. Costs 1 credit.
+        """The paginated coin list behind the board views. Costs 1 credit.
 
         Args:
             boost_modes: Keep coins in these boost states. Repeat the parameter for
@@ -2573,7 +2578,7 @@ class Pumpfun(AsyncAPIResource):
         include_nsfw: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to full coin records in one call. pump.fun leaves out addresses it cannot resolve. Today it answers the same records as `/coins/raw-batch`. Costs 1 credit.
+        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), at most 500.
@@ -2597,10 +2602,10 @@ class Pumpfun(AsyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinBoardResponse:
-        """One of pump.fun's ranked coin boards (new, graduating, graduated, movers, charity), across every chain unless `chains` narrows it. Costs 1 credit.
+        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit.
 
         Args:
-            board: See the API reference.
+            board: Which ranked board to read.
             chains: Keep only coins on these chains, at most 8: pump.fun refuses all
                 nine at once. Repeat the parameter for several; omit it for every
                 chain.
@@ -2620,7 +2625,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHotCoinResponse:
-        """The coin pump.fun is surfacing as hot right now; `hotCoin` is `null` most of the time. Costs 1 credit.
+        """The coin currently surfaced as hot; `hotCoin` is usually `null`. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -2686,7 +2691,7 @@ class Pumpfun(AsyncAPIResource):
         source: NarrativeSourceParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinNarrativesResponse:
-        """pump.fun's written narratives for trending, moving and new coins. Pass the answer's `cursor` back while `hasMore` is true. pump.fun answered an empty list for every source and locale in every capture since 2026-10-08. Costs 1 credit.
+        """Written narratives for trending, moving, and new coins. Pass the answer's `cursor` back while `hasMore` is true. The endpoint answered an empty list for every source and locale in every capture since 2026-10-08. Costs 1 credit.
 
         Args:
             cursor: `cursor` from the previous answer; omit for the first page.
@@ -2730,7 +2735,7 @@ class Pumpfun(AsyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to their raw indexer records. Today pump.fun answers the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
+        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 500.
@@ -2750,7 +2755,7 @@ class Pumpfun(AsyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[SimilarCoinResult]:
-        """Coins pump.fun considers similar to the given mint. Costs 1 credit.
+        """Coins similar to the given mint. Costs 1 credit.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
@@ -2773,7 +2778,7 @@ class Pumpfun(AsyncAPIResource):
         sort_order: TopMintsSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTokenMintsResponse:
-        """Addresses of the coins pump.fun treats as top tokens, Solana mints and EVM tokens alike. `/coins/top-mints/chains` adds the chains each one was vetted on. Costs 1 credit.
+        """Addresses of the top tokens, including Solana mints and EVM tokens alike. `/coins/top-mints/chains` adds the chains each one was vetted on. Costs 1 credit.
 
         Args:
             sort_order: Order of the list. Omit for pump.fun's curated order.
@@ -2807,7 +2812,7 @@ class Pumpfun(AsyncAPIResource):
         top_k: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[TrendingCoin]:
-        """Trending coins, the `great-coins` ranking that powers the pump.fun trending rail. Costs 1 credit.
+        """Trending coins from the `great-coins` ranking. Costs 1 credit.
 
         Args:
             top_k: Number of trending coins to return. pump.fun returns fewer when
@@ -2827,10 +2832,10 @@ class Pumpfun(AsyncAPIResource):
         include_livestream_info: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinResponse:
-        """Full record for a single coin on any chain pump.fun supports: a Solana mint or an EVM token address. `chain_id` in the answer is the coin's CAIP-2 chain. An address pump.fun cannot resolve answers 404. Costs 1 credit.
+        """Full record for a single coin on a supported chain: a Solana mint or an EVM token address. `chain_id` in the answer is the coin's CAIP-2 chain. An unresolved address answers 404. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Pin an EVM address that exists on several chains to one of them.
                 A coin that is not on this chain answers 404. Omit to let pump.fun
                 pick.
@@ -2852,10 +2857,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetApprovedCreatorResponse:
-        """Whether the coin's creator is approved to livestream on pump.fun. Costs 1 credit.
+        """Whether the coin's creator is approved to livestream. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -2874,7 +2879,7 @@ class Pumpfun(AsyncAPIResource):
         """All-time-high market cap for a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin. Omit for a Solana pump.fun coin, the original
                 behaviour; set it for an EVM token or to pin a coin to one chain.
             currency: Quote currency.
@@ -2896,7 +2901,7 @@ class Pumpfun(AsyncAPIResource):
         """Top callouts on a coin, Solana mint or EVM token. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin, to pin an EVM token.
             limit: Maximum callouts to return.
             timeout: Overrides the client's timeout for this request.
@@ -2917,10 +2922,10 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 300,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Candle]:
-        """OHLC candles for a coin from pump.fun's swap API, the newest `limit` bars ending now. For bars further back, or every chain and resolution in one shape, see `/chains/{chain}/coins/{address}/candles`, which pages back with `to`. Costs 1 credit.
+        """OHLC candles for a coin, the newest `limit` bars ending now. For bars further back, or every chain and resolution in one shape, see `/chains/{chain}/coins/{address}/candles`, which pages back with `to`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds, as returned by the
                 coin endpoints. pump.fun does not use it to pick the window: any
                 value returns the same series.
@@ -2955,7 +2960,7 @@ class Pumpfun(AsyncAPIResource):
         """How many clips a coin's livestreams produced: total, visible, hidden and deleted. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -2975,7 +2980,7 @@ class Pumpfun(AsyncAPIResource):
         """Clips cut from a coin's livestreams. Pass `lastEvaluatedKey` back as `cursor` while `hasMore` is true. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address.
             clip_type: Clip category as pump.fun labels it: `COMPLETE`, `HIGHLIGHT`
                 or `PREVIEW`. Any other value answers an empty list.
             cursor: `lastEvaluatedKey` from the previous page, with the same
@@ -2999,7 +3004,7 @@ class Pumpfun(AsyncAPIResource):
         """The first trade ever recorded against a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3013,10 +3018,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenHolderCountResponse:
-        """Number of wallets currently holding the coin. pump.fun counts this in a different service from `/coins/{mint}/holder-stats` and the top-holder routes, so the figures can differ by a few percent at the same moment. Costs 1 credit.
+        """Number of wallets currently holding the coin. This is counted separately from `/coins/{mint}/holder-stats` and the top-holder routes, so the figures can differ by a few percent at the same moment. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3033,7 +3038,7 @@ class Pumpfun(AsyncAPIResource):
         """Holder distribution of a Solana coin: holder count, the share of supply held by the top 10, the developer, snipers and bundlers, and lifetime fees in SOL. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3051,7 +3056,7 @@ class Pumpfun(AsyncAPIResource):
         """Realized and unrealized PnL on one coin for a set of holders. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             holders: Holder wallet addresses, 1 to 20.
             timeout: Overrides the client's timeout for this request.
 
@@ -3069,7 +3074,7 @@ class Pumpfun(AsyncAPIResource):
         """The indexer's in-memory snapshot of a coin, refreshed faster than the coin record. Keys starting with `_` are the indexer's cache bookkeeping and appear on some answers only. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3089,7 +3094,7 @@ class Pumpfun(AsyncAPIResource):
         """Downsampled price series used for the sparkline on coin cards. Takes Solana mints and EVM token addresses. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds, as returned by the
                 coin endpoints. pump.fun does not use it to pick the window: any
                 value returns the same series.
@@ -3116,7 +3121,7 @@ class Pumpfun(AsyncAPIResource):
         """Rolling volume, transaction and trader counts for a coin over 5m, 1h, 6h and 24h. A window with no trades is `null`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin. Omit for a Solana pump.fun coin, the original
                 behaviour; set it for an EVM token or to pin a coin to one chain.
             timeout: Overrides the client's timeout for this request.
@@ -3135,7 +3140,7 @@ class Pumpfun(AsyncAPIResource):
         """Mayhem-mode agent state for a coin. Answers `null` when the coin never ran an agent. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3152,7 +3157,7 @@ class Pumpfun(AsyncAPIResource):
         """Buy/sell totals a mayhem-mode agent has accumulated on a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3178,7 +3183,7 @@ class Pumpfun(AsyncAPIResource):
         """Positions traders hold in a coin, with their callouts. `CLOSED_PNL` lists fully exited positions by realized PnL instead. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: `RANKED` only: chain of an EVM coin.
             dust_floor_usd: Ignore positions below this USD value. Refused with
                 `RANKED` and `CLOSED_PNL`.
@@ -3224,7 +3229,7 @@ class Pumpfun(AsyncAPIResource):
         """Creator-fee timeline: creation, distributions and shareholder changes. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum timeline events to return.
             timeout: Overrides the client's timeout for this request.
@@ -3243,7 +3248,7 @@ class Pumpfun(AsyncAPIResource):
         """Largest holders of a Solana coin with their balances and funding sources. For EVM coins use `/chains/{chain}/coins/{address}/top-holders`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3261,10 +3266,10 @@ class Pumpfun(AsyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTraderTradesResponse:
-        """A coin's trades by accounts ranked in the top 50 of any pump.fun PnL leaderboard, across all their wallets: the marks pump.fun draws on its chart. Pass `cursor` from `page.nextCursor` for older trades. Costs 1 credit.
+        """A coin's trades by accounts ranked in the top 50 of any PnL leaderboard, across all their wallets. Pass `cursor` from `page.nextCursor` for older trades. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of an EVM coin. Omit for Solana, or to let pump.fun infer
                 it.
             cursor: `page.nextCursor` from the previous page; omit for the first
@@ -3291,10 +3296,10 @@ class Pumpfun(AsyncAPIResource):
         min_sol_amount: float | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesResponse:
-        """Recent trades for a Solana pump.fun coin, newest first. `baseAmount` and `quoteAmount` are decimal strings in whole units of the coin and its quote token. For any chain, see `/chains/{chain}/coins/{address}/trades`. Costs 1 credit.
+        """Recent trades for a Solana coin, newest first. `baseAmount` and `quoteAmount` are decimal strings in whole units of the coin and its quote token. For any chain, see `/chains/{chain}/coins/{address}/trades`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             cursor: Cursor from a previous page.
             limit: Maximum trades to return.
             min_sol_amount: Drop trades below this SOL size.
@@ -3316,10 +3321,10 @@ class Pumpfun(AsyncAPIResource):
         user_addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesBatchResponse:
-        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals on pump.fun coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
+        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds.
             user_addresses: Wallet addresses (Solana or EVM) to fetch trades for, 1
                 to 30.
@@ -3339,10 +3344,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVanityCheckResponse:
-        """Whether the mint's key came from pump.fun's vanity key pool (`true` or `false`). Costs 1 credit.
+        """Whether the mint's key came from the vanity key pool (`true` or `false`). Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3355,7 +3360,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListCompetitionsResponse:
-        """pump.fun's trading competitions in three buckets: upcoming, live (registration open or running, with the current top entries) and past (the 50 latest, with winners). Costs 1 credit.
+        """Trading competitions in three buckets: upcoming, live (registration open or running, with the current top entries) and past (the 50 latest, with winners). Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -3375,8 +3380,9 @@ class Pumpfun(AsyncAPIResource):
         """One competition entry: its roster as frozen at the start, and each member's counted trades, PnL first. Entry ids come from the competition leaderboard. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
-            entry_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
+            entry_id: Competition entry UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3395,8 +3401,9 @@ class Pumpfun(AsyncAPIResource):
         """One entry's best tokens by PnL during the competition, with coin details. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
-            entry_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
+            entry_id: Competition entry UUID.
             limit: Maximum tokens to return.
             timeout: Overrides the client's timeout for this request.
 
@@ -3418,7 +3425,8 @@ class Pumpfun(AsyncAPIResource):
         """The competition's biggest winning trades across every ranked entry, with coin and trader details. Each trader is capped at `per_member_limit` rows. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
             limit: Maximum rows to return.
             per_member_limit: Rows per trader.
             timeout: Overrides the client's timeout for this request.
@@ -3442,7 +3450,7 @@ class Pumpfun(AsyncAPIResource):
         """One competition and its ranked leaderboard. An unknown id or slug answers 404. Costs 1 credit.
 
         Args:
-            competition: See the API reference.
+            competition: Competition UUID or slug.
             limit: Leaderboard rows to return.
             positions_limit: Top positions shown per row; 0 returns the count only.
             timeout: Overrides the client's timeout for this request.
@@ -3463,10 +3471,10 @@ class Pumpfun(AsyncAPIResource):
         period: FeePeriodParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCreatorFeesResponse:
-        """A creator's fee earnings per quote token, whether any are claimable, and the earnings series over `period` in `interval` buckets. `5m` buckets allow period `1d`; `30m` buckets allow `1d` or `7d`; any other pairing answers 400, not charged. EVM wallets answer with no earnings. Costs 1 credit.
+        """Returns a creator's fee earnings per quote token, claimable status, and an earnings series grouped by `interval` over `period`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             interval: Bucket width. pump.fun's `5m` series has answered 503 (not
                 charged) for every creator tried since 2026-10-08.
             mint: Narrow the earnings to one Solana coin. A Solana creator only.
@@ -3486,10 +3494,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCreatorFeesResponse:
-        """Deprecated: pump.fun retired its lifetime-total read. This route now answers what `/creators/{address}/fees` answers for 30 days; `earned` holds the totals per quote token. Costs 1 credit.
+        """Deprecated: the lifetime-total read was retired. This route now answers what `/creators/{address}/fees` answers for 30 days; `earned` holds the totals per quote token. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3509,7 +3517,7 @@ class Pumpfun(AsyncAPIResource):
         sort: HolderRewardSortParam = "accrued",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHolderRewardsResponse:
-        """pump.fun's holder-rewards book: per coin, the fees accrued to its holder vault, the payouts made and the book totals. Page with `page`: pump.fun answered `next: null` in every probe since 2026-10-08, even with 141,934 matching coins. A `cursor` from `next` would continue a listing and replace every other parameter. Costs 1 credit.
+        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 1 credit.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -3543,7 +3551,7 @@ class Pumpfun(AsyncAPIResource):
         params_id: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGlobalParamsResponse:
-        """Bonding-curve constants of the pump.fun program at a point in time. Costs 1 credit.
+        """Returns bonding-curve constants at a point in time. Costs 1 credit.
 
         Args:
             params_id: Unix time in milliseconds to read the constants at. The
@@ -3566,7 +3574,7 @@ class Pumpfun(AsyncAPIResource):
         """A squad's active members, owner first, with each member's profile and role. Squad ids come from `/leaderboards/pnl/groups`. Costs 1 credit.
 
         Args:
-            group_id: See the API reference.
+            group_id: Squad (group) UUID.
             limit: Maximum members to return.
             offset: Rows to skip.
             timeout: Overrides the client's timeout for this request.
@@ -3585,10 +3593,10 @@ class Pumpfun(AsyncAPIResource):
         period: RollingWindowParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGroupMembersPnlResponse:
-        """A squad's active members ranked by PnL over the window. `rows` is empty until pump.fun publishes the window's ranking. Costs 1 credit.
+        """A squad's active members ranked by PnL over the window. `rows` is empty until the window's ranking is published. Costs 1 credit.
 
         Args:
-            group_id: See the API reference.
+            group_id: Squad (group) UUID.
             period: Ranking window.
             timeout: Overrides the client's timeout for this request.
 
@@ -3606,7 +3614,7 @@ class Pumpfun(AsyncAPIResource):
         updates_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHomeFeedResponse:
-        """The ranked feed on the pump.fun home page: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
+        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
 
         Args:
             chain: Restrict the feed to one chain. pump.fun's feed does not cover
@@ -3693,7 +3701,7 @@ class Pumpfun(AsyncAPIResource):
         min_market_cap_usd: float | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetNewCalloutsCountResponse:
-        """How many new callouts arrived after `since` under the same filters. `capped` is true once the count reaches pump.fun's ceiling. Costs 1 credit.
+        """How many new callouts arrived after `since` under the same filters. `capped` is true once the count reaches the response limit. Costs 1 credit.
 
         Args:
             since: `headToken` from `/home-feed/new`, kept until you reload the
@@ -3763,7 +3771,7 @@ class Pumpfun(AsyncAPIResource):
         sort: LeaderboardSortParam = "combined",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardResponse:
-        """Trader PnL leaderboard: the top 100 traders. pump.fun has no paging past them. Costs 1 credit.
+        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return. pump.fun serves 100 at most.
@@ -3788,7 +3796,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 5,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetFollowSuggestionsResponse:
-        """A random sample of traders from the PnL leaderboard, as pump.fun suggests them to follow. Costs 1 credit.
+        """A random sample of traders from the PnL leaderboard to follow. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return.
@@ -3833,7 +3841,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetOnboardingSuggestionsResponse:
-        """The scored traders pump.fun's mobile app suggests at onboarding. Costs 1 credit.
+        """The scored traders suggested during onboarding. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return.
@@ -3851,7 +3859,7 @@ class Pumpfun(AsyncAPIResource):
         period: PositionsPeriodParam = "daily",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardPositionsResponse:
-        """The positions behind each PnL leaderboard entry: the top 25 at most. pump.fun has no paging past them. Costs 1 credit.
+        """The positions behind each PnL leaderboard entry, limited to the top 25. Costs 1 credit.
 
         Args:
             limit: Maximum positions to return.
@@ -3960,7 +3968,7 @@ class Pumpfun(AsyncAPIResource):
         """The trader leaderboard for one mayhem-mode coin. A coin that never ran an agent answers 404. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4022,7 +4030,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Liker]:
-        """The ten top daily PnL profiles pump.fun shows on its follow screen. Costs 1 credit.
+        """The ten top daily PnL profiles from the follow screen. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -4038,7 +4046,7 @@ class Pumpfun(AsyncAPIResource):
         ids: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVerifiedProfilesResponse:
-        """Whether pump.fun shows its KOL badge for each wallet or user id. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
+        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
 
         Args:
             ids: Wallet addresses (Solana or EVM) or pump.fun user ids to check for
@@ -4148,7 +4156,7 @@ class Pumpfun(AsyncAPIResource):
         identifiers: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ResolveIdentifiersResponse:
-        """Classify up to five identifiers in one call: whether each is a coin (by mint, bonding curve or pool), a Solana wallet, an EVM address or a pump.fun user id, which chain it is on, and its coin or account record. Costs 1 credit.
+        """Classify up to five identifiers in one call: whether each is a coin (by mint, bonding curve or pool), a Solana wallet, an EVM address, or a user ID, which chain it is on, and its coin or account record. Costs 1 credit.
 
         Args:
             identifiers: Identifiers to classify, each at most 128 characters and
@@ -4202,7 +4210,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's creator-fee sharing earnings per coin (earned, claimed, unclaimed per quote token) and its wallet totals. Pass `cursor` from `nextCursor` for more coins. EVM wallets answer with no earnings. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -4216,7 +4224,7 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolPriceResponse:
-        """Current SOL price in USD as pump.fun quotes it. Costs 1 credit.
+        """Returns the current SOL price in USD. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -4232,10 +4240,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUsernameExistsResponse:
-        """Whether a pump.fun username is taken. Costs 1 credit.
+        """Whether a username is taken. Costs 1 credit.
 
         Args:
-            username: See the API reference.
+            username: Username.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4250,7 +4258,7 @@ class Pumpfun(AsyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedUser]:
-        """pump.fun's profile directory, one page at a time. Costs 1 credit.
+        """Returns the profile directory one page at a time. Costs 1 credit.
 
         Args:
             limit: Maximum profiles to return.
@@ -4285,10 +4293,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserResponse:
-        """Profile for a single wallet (Solana or EVM), pump.fun user id or username. Costs 1 credit.
+        """Profile for a single wallet, user ID, or username. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM), pump.fun user id or username.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4305,7 +4313,8 @@ class Pumpfun(AsyncAPIResource):
         """A profile's unlocked achievements and live progress on the tracks still open. Definitions are in `/achievements`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4322,7 +4331,7 @@ class Pumpfun(AsyncAPIResource):
         """Moderation ban record for a wallet. Answers `null` when the wallet has no ban. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4339,7 +4348,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's standing on the callout leaderboard: weekly and all-time appearances, streaks and podium finishes. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4356,7 +4365,8 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's callout performance per rolling window: callout count, hit rates at 1.2x to 10x peak multiples, average and median peak, time to peak and the multiple distribution. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4378,7 +4388,7 @@ class Pumpfun(AsyncAPIResource):
         """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             limit: Maximum callouts to return. pump.fun serves 100 at most.
             page_token: `nextPageToken` from the previous page.
             sort_by: Ranking column.
@@ -4412,8 +4422,8 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's callout on one coin; `callout` is `null` when there is none. Costs 1 credit.
 
         Args:
-            address: See the API reference.
-            mint: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
+            mint: Token mint address.
             quotes_limit: Quote posts of the callout to include.
             timeout: Overrides the client's timeout for this request.
 
@@ -4436,7 +4446,7 @@ class Pumpfun(AsyncAPIResource):
         """Replies and quote posts a wallet has written, with the thread they belong to. Page with `before_id`, the last reply's id. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             before_id: Replies older than this reply id.
             filter: Plain replies, quote posts, or both.
             limit: Maximum replies to return.
@@ -4459,10 +4469,10 @@ class Pumpfun(AsyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCreatedCoinsResponse:
-        """Coins a wallet has launched. pump.fun serves the first 250 at most. Costs 1 credit.
+        """Coins a wallet has launched, up to 250. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             include_nsfw: Include coins flagged not-safe-for-work.
             limit: Maximum coins to return. pump.fun serves 50 at most.
             offset: Rows to skip.
@@ -4485,10 +4495,11 @@ class Pumpfun(AsyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles following a wallet. Without `limit`, `offset` or `sort` this is pump.fun's legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             limit: Page size, up to 1000. Set it, `offset` or `sort` to page past
                 the legacy list's 50 rows.
             offset: Rows to skip.
@@ -4512,7 +4523,8 @@ class Pumpfun(AsyncAPIResource):
         """How many profiles follow a wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4532,7 +4544,8 @@ class Pumpfun(AsyncAPIResource):
         """Search a profile's followers by name, most relevant first. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             search_term: Search term, 2 to 50 characters.
             limit: Maximum profiles to return.
             offset: Rows to skip.
@@ -4555,10 +4568,11 @@ class Pumpfun(AsyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles a wallet follows. Without `limit`, `offset` or `sort` this is pump.fun's legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             limit: Page size, up to 1000. Set it, `offset` or `sort` to page past
                 the legacy list's 50 rows.
             offset: Rows to skip.
@@ -4582,7 +4596,8 @@ class Pumpfun(AsyncAPIResource):
         """How many profiles a wallet follows. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4602,7 +4617,8 @@ class Pumpfun(AsyncAPIResource):
         """Search the profiles a wallet follows by name, most relevant first. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             search_term: Search term, 2 to 50 characters.
             limit: Maximum profiles to return.
             offset: Rows to skip.
@@ -4622,10 +4638,11 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserOverviewResponse:
-        """A profile header in one read: profile, follower and following counts, verified and achievement badges, ban state and created-coin count. Takes a Solana wallet or a pump.fun user id; a wallet with no account is served as an external wallet. Costs 1 credit.
+        """A profile header in one read: profile, follower and following counts, verified and achievement badges, ban state and created-coin count. Takes a Solana wallet or a user ID; a wallet with no account is served as an external wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4643,7 +4660,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's resting HyperCore orders: take-profit, stop-loss and limit. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             dex: HIP-3 dex names to read, each at most 64 characters. Omit for every
                 dex.
             timeout: Overrides the client's timeout for this request.
@@ -4665,7 +4682,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's HyperCore perpetuals history, newest first: fills, funding and transfers. A Solana wallet or user id resolves to its linked EVM wallet; none answers an empty list. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             cursor: `nextCursor` from the previous page; omit for the first page.
             kinds: Row kinds. pump.fun returns fills and transfers by default.
             limit: Maximum rows to return.
@@ -4692,10 +4709,11 @@ class Pumpfun(AsyncAPIResource):
         total_only: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserPortfolioResponse:
-        """A wallet's open or closed positions with net PnL, across Solana and its linked EVM wallets. Takes a wallet, a pump.fun user id or a squad id. Costs 1 credit.
+        """A wallet's open or closed positions with net PnL, across Solana and its linked EVM wallets. Takes a wallet, user ID, or squad ID. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM), pump.fun user id or squad id
+                (UUIDs).
             chain: Only positions on this chain. pump.fun keeps no Monad portfolio.
             filter: Which positions to return.
             filter_spam: Drop positions pump.fun groups as spam before paging.
@@ -4735,7 +4753,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's portfolio value over time (tokens at trusted prices plus cash, linked EVM wallets folded in). Takes a wallet, a username or a squad id. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet, username or squad id.
             period: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -4754,7 +4772,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's PnL curve and totals over a window. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet, username or squad id.
             period: Summary window.
             timeout: Overrides the client's timeout for this request.
 
@@ -4774,7 +4792,7 @@ class Pumpfun(AsyncAPIResource):
         """A wallet's positions in specific coins. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             mints: Token mint addresses to resolve.
             updates_limit: Number of recent position updates to inline.
             timeout: Overrides the client's timeout for this request.
@@ -4798,7 +4816,7 @@ class Pumpfun(AsyncAPIResource):
         """Callouts and replies a wallet has reposted, newest first. Pass `cursor` from `nextCursor` for more. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             cursor: `nextCursor` from the previous page; omit for the first page.
             include_quotes: Interleave the wallet's quote posts.
             limit: Maximum reposts to return.
@@ -4823,10 +4841,10 @@ class Pumpfun(AsyncAPIResource):
         types: Sequence[UserTradeTypeParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserTradesResponse:
-        """An account's token trades, newest first. Takes a wallet or a pump.fun user id. pump.fun documents squad ids as the union of their members' trades, but a squad id answered no trades in our tests. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
+        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             chain: Only trades on this chain. pump.fun serves no Monad trades here.
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum trades to return.
@@ -4873,7 +4891,7 @@ class Pumpfun(AsyncAPIResource):
         """Token balances held by a Solana wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             chain: Restrict to one chain, or `all` for every chain. Omit for Solana
                 tokens only. pump.fun spells HyperEVM `hype`.
             page: One-based page index.
@@ -4897,7 +4915,7 @@ class Pumpfun(AsyncAPIResource):
         """Total portfolio value and native balance for a Solana wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             multi_chain: Aggregate balances across every supported chain.
             timeout: Overrides the client's timeout for this request.
 
@@ -4918,7 +4936,7 @@ class Pumpfun(AsyncAPIResource):
         """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             mints: Solana mint addresses, 1 to 50. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
@@ -4937,8 +4955,8 @@ class Pumpfun(AsyncAPIResource):
         """A Solana wallet's PnL on a single Solana coin. Costs 1 credit.
 
         Args:
-            address: See the API reference.
-            mint: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4952,10 +4970,10 @@ class Pumpfun(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletScreeningResponse:
-        """pump.fun's blocklist screen for a Solana or EVM wallet. The verdict is in the body: `statusCode` 200 (`OK`) means the wallet passes, 405 (`Wallet not allowed`) means pump.fun blocks it. Costs 1 credit.
+        """Returns the blocklist result for a Solana or EVM wallet. The verdict is in the body: `statusCode` 200 (`OK`) means the wallet passes, 405 (`Wallet not allowed`) means the wallet is blocked. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -4973,10 +4991,10 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 200,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletTradesResponse:
-        """A wallet's trades in one coin from pump.fun's PnL service, each with its PnL effect. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. `chain` and `nativeUnit` appear for EVM wallets only. Costs 1 credit.
+        """A wallet's trades in one coin, each with its PnL effect. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. `chain` and `nativeUnit` appear for EVM wallets only. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             mint: Coin address: a Solana mint, or an EVM token for an EVM wallet.
             chain: Chain of an EVM coin. Omit for Solana. When set, the wallet and
                 the coin must both be addresses on that chain.
@@ -5004,7 +5022,7 @@ class Pumpfun(AsyncAPIResource):
         """A Solana wallet's transaction history. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             cursor: Cursor from a previous page.
             dust_filter: Drop dust-sized transactions.
             include_evm: Include EVM chains alongside Solana.
@@ -5025,7 +5043,7 @@ class SyncPumpfun(SyncAPIResource):
     """The Pumpfun endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.pumpfun`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -5044,7 +5062,7 @@ class SyncPumpfun(SyncAPIResource):
         """Individual fee-sharing shares held by an account. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             cursor: Cursor from a previous page.
             limit: Maximum shares to return.
             timeout: Overrides the client's timeout for this request.
@@ -5061,10 +5079,10 @@ class SyncPumpfun(SyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetShareholderFeesResponse:
-        """Deprecated: pump.fun retired this read. This route now answers what `/shareholders/{address}/fees` answers: per-coin fee-sharing earnings with wallet totals. Costs 1 credit.
+        """Deprecated: this read was retired. This route now answers what `/shareholders/{address}/fees` answers: per-coin fee-sharing earnings with wallet totals. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -5078,7 +5096,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAchievementCatalogResponse:
-        """Every achievement pump.fun awards: family, tier, name, threshold and display data. Costs 1 credit.
+        """Every achievement with its family, tier, name, threshold, and display data. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -5095,7 +5113,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
-        """The live movers board from pump.fun's advanced indexer, the most current trending signal. Costs 1 credit.
+        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -5115,7 +5133,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
-        """The trending board from pump.fun's advanced indexer, in the movers board's compact entry format. pump.fun labels this body `board: movers` too. Costs 1 credit.
+        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -5135,7 +5153,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 24,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedRecentResponse:
-        """The most recent submissions in the pump.fun go feed. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -5153,7 +5171,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedTrendingResponse:
-        """The trending tab of the pump.fun go feed. Costs 1 credit.
+        """Returns the trending bounty feed. Costs 1 credit.
 
         Args:
             limit: Maximum feed entries to return.
@@ -5225,7 +5243,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountySubmissionCountResponse:
-        """Total bounty submissions pump.fun has received. Costs 1 credit.
+        """Returns the total number of bounty submissions. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -5260,7 +5278,7 @@ class SyncPumpfun(SyncAPIResource):
         submission_count_gte: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyTasksResponse:
-        """Bounty tasks posted on pump.fun go, with filters for phase, reward, expiry, engagement and distance. Sorting by `distance` needs `lat` and `lng`, which go together. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """Bounty tasks with filters for phase, reward, expiry, engagement and distance. Sorting by `distance` needs `lat` and `lng`, which go together. Pass `cursor` from the previous page for more. Costs 1 credit.
 
         Args:
             coin_address: Restrict to bounties on one Solana coin.
@@ -5382,7 +5400,7 @@ class SyncPumpfun(SyncAPIResource):
         """Profiles that liked a callout reply, newest first. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -5403,7 +5421,7 @@ class SyncPumpfun(SyncAPIResource):
         """Profiles that reposted a callout reply, newest first. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -5422,7 +5440,7 @@ class SyncPumpfun(SyncAPIResource):
         """A reply with its ancestor replies up to the callout it belongs to. Costs 1 credit.
 
         Args:
-            reply_id: See the API reference.
+            reply_id: Callout reply UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -5439,7 +5457,7 @@ class SyncPumpfun(SyncAPIResource):
         """A single callout with its author, thesis, performance and author updates. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -5458,7 +5476,7 @@ class SyncPumpfun(SyncAPIResource):
         """Profiles that liked a callout, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -5479,7 +5497,7 @@ class SyncPumpfun(SyncAPIResource):
         """Quote posts of a callout: callouts and replies that quote it, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum quotes to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -5505,7 +5523,7 @@ class SyncPumpfun(SyncAPIResource):
         """Replies to a callout. Page newest-first with `before_id` (the last reply's id), or by `page` when sorting by `POSITION`. `parent_reply_id` lists one reply's children. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             before_id: Replies older than this reply id. Recency order only, so not
                 with `sort=POSITION` or `PNL`.
             filter: Restrict to a reply audience.
@@ -5545,7 +5563,7 @@ class SyncPumpfun(SyncAPIResource):
         """Profiles that reposted a callout, newest first. Costs 1 credit.
 
         Args:
-            callout_id: See the API reference.
+            callout_id: Callout UUID.
             limit: Maximum profiles to return.
             offset: Rows to skip. pump.fun stops at 10,000.
             timeout: Overrides the client's timeout for this request.
@@ -5569,11 +5587,12 @@ class SyncPumpfun(SyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainCandlesResponse:
-        """OHLCV bars for a coin on any chain pump.fun trades, oldest first: Solana, the EVM chains, and HyperCore perps (`hypercore`, address = coin name such as `BTC`; perps serve `price_usd` and `price_quote` only). Prices are decimal strings. Costs 1 credit.
+        """OHLCV bars for a coin on any supported chain, oldest first: Solana, the EVM chains, and HyperCore perps (`hypercore`, address = coin name such as `BTC`; perps serve `price_usd` and `price_quote` only). Prices are decimal strings. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             resolution: Bar width.
             count: Bars ending at `to`.
             measure: What each bar measures. `market_cap_usd` multiplies the USD
@@ -5610,8 +5629,9 @@ class SyncPumpfun(SyncAPIResource):
         """A coin's creator-fee sharing setup and its fee events, newest first: creation, shareholder changes, claims. `sharing` appears only when the coin has a fee-sharing configuration. EVM coins answer with no events. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin lives on.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain.
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -5635,8 +5655,9 @@ class SyncPumpfun(SyncAPIResource):
         """A coin's closing-price line on any chain, thinned to `max_points` with LTTB downsampling. Lighter than candles for sparklines. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             resolution: Bar width.
             count: Bars ending at `to`.
             max_points: Most points returned; at or above `count` keeps every bar.
@@ -5672,8 +5693,9 @@ class SyncPumpfun(SyncAPIResource):
         """A coin's top holders on any token chain, each flagged as developer, sniper or bundler, with the coin's total holder count. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin lives on.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -5696,11 +5718,12 @@ class SyncPumpfun(SyncAPIResource):
         venue: TradeVenueParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainTradesResponse:
-        """A coin's trade tape on any chain, newest first, with running buy and sell aggregates. Pass `cursor` from `nextCursor` for older trades, or page around one trade with `before`/`after` and its `ordinalKey`. A token queried on a chain it does not trade on answers 503 (not charged): pump.fun sends the same answer as a lane outage, so check the coin's `chain_id` on `/coins/{mint}` before retrying. Costs 1 credit.
+        """Returns a coin's trades, newest first, with running buy and sell totals. Pass `nextCursor` as `cursor`, or use `before` and `after` with a trade's `ordinalKey`. A token queried on a chain it does not trade on answers 503 (not charged). Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the coin trades on; `hypercore` for HyperCore perps.
+            address: Coin address on the chosen chain: a base58 mint on Solana, a 0x
+                token on an EVM chain, or the coin name (such as BTC) on hypercore.
             after: Trades newer than this `ordinalKey`.
             before: Trades older than this `ordinalKey`.
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -5752,7 +5775,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[VideoFeed]:
-        """pump.fun's curated video feed of livestream clips, with each clip's coin. Costs 1 credit.
+        """Curated video feed of livestream clips, with each clip's coin. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -5772,7 +5795,7 @@ class SyncPumpfun(SyncAPIResource):
         timestamp: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[TopVod]:
-        """Most watched clips across pump.fun in a window. Costs 1 credit.
+        """Most watched clips in a window. Costs 1 credit.
 
         Args:
             clip_type: Clip category as pump.fun labels it.
@@ -5809,7 +5832,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: CoinSortParam = "created_timestamp",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedCoin]:
-        """The paginated coin list behind pump.fun's board views. Costs 1 credit.
+        """The paginated coin list behind the board views. Costs 1 credit.
 
         Args:
             boost_modes: Keep coins in these boost states. Repeat the parameter for
@@ -5865,7 +5888,7 @@ class SyncPumpfun(SyncAPIResource):
         include_nsfw: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to full coin records in one call. pump.fun leaves out addresses it cannot resolve. Today it answers the same records as `/coins/raw-batch`. Costs 1 credit.
+        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), at most 500.
@@ -5887,10 +5910,10 @@ class SyncPumpfun(SyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinBoardResponse:
-        """One of pump.fun's ranked coin boards (new, graduating, graduated, movers, charity), across every chain unless `chains` narrows it. Costs 1 credit.
+        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit.
 
         Args:
-            board: See the API reference.
+            board: Which ranked board to read.
             chains: Keep only coins on these chains, at most 8: pump.fun refuses all
                 nine at once. Repeat the parameter for several; omit it for every
                 chain.
@@ -5910,7 +5933,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHotCoinResponse:
-        """The coin pump.fun is surfacing as hot right now; `hotCoin` is `null` most of the time. Costs 1 credit.
+        """The coin currently surfaced as hot; `hotCoin` is usually `null`. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -5976,7 +5999,7 @@ class SyncPumpfun(SyncAPIResource):
         source: NarrativeSourceParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinNarrativesResponse:
-        """pump.fun's written narratives for trending, moving and new coins. Pass the answer's `cursor` back while `hasMore` is true. pump.fun answered an empty list for every source and locale in every capture since 2026-10-08. Costs 1 credit.
+        """Written narratives for trending, moving, and new coins. Pass the answer's `cursor` back while `hasMore` is true. The endpoint answered an empty list for every source and locale in every capture since 2026-10-08. Costs 1 credit.
 
         Args:
             cursor: `cursor` from the previous answer; omit for the first page.
@@ -6020,7 +6043,7 @@ class SyncPumpfun(SyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to their raw indexer records. Today pump.fun answers the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
+        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 500.
@@ -6040,7 +6063,7 @@ class SyncPumpfun(SyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[SimilarCoinResult]:
-        """Coins pump.fun considers similar to the given mint. Costs 1 credit.
+        """Coins similar to the given mint. Costs 1 credit.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
@@ -6063,7 +6086,7 @@ class SyncPumpfun(SyncAPIResource):
         sort_order: TopMintsSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTokenMintsResponse:
-        """Addresses of the coins pump.fun treats as top tokens, Solana mints and EVM tokens alike. `/coins/top-mints/chains` adds the chains each one was vetted on. Costs 1 credit.
+        """Addresses of the top tokens, including Solana mints and EVM tokens alike. `/coins/top-mints/chains` adds the chains each one was vetted on. Costs 1 credit.
 
         Args:
             sort_order: Order of the list. Omit for pump.fun's curated order.
@@ -6097,7 +6120,7 @@ class SyncPumpfun(SyncAPIResource):
         top_k: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[TrendingCoin]:
-        """Trending coins, the `great-coins` ranking that powers the pump.fun trending rail. Costs 1 credit.
+        """Trending coins from the `great-coins` ranking. Costs 1 credit.
 
         Args:
             top_k: Number of trending coins to return. pump.fun returns fewer when
@@ -6117,10 +6140,10 @@ class SyncPumpfun(SyncAPIResource):
         include_livestream_info: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinResponse:
-        """Full record for a single coin on any chain pump.fun supports: a Solana mint or an EVM token address. `chain_id` in the answer is the coin's CAIP-2 chain. An address pump.fun cannot resolve answers 404. Costs 1 credit.
+        """Full record for a single coin on a supported chain: a Solana mint or an EVM token address. `chain_id` in the answer is the coin's CAIP-2 chain. An unresolved address answers 404. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Pin an EVM address that exists on several chains to one of them.
                 A coin that is not on this chain answers 404. Omit to let pump.fun
                 pick.
@@ -6142,10 +6165,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetApprovedCreatorResponse:
-        """Whether the coin's creator is approved to livestream on pump.fun. Costs 1 credit.
+        """Whether the coin's creator is approved to livestream. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6164,7 +6187,7 @@ class SyncPumpfun(SyncAPIResource):
         """All-time-high market cap for a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin. Omit for a Solana pump.fun coin, the original
                 behaviour; set it for an EVM token or to pin a coin to one chain.
             currency: Quote currency.
@@ -6186,7 +6209,7 @@ class SyncPumpfun(SyncAPIResource):
         """Top callouts on a coin, Solana mint or EVM token. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin, to pin an EVM token.
             limit: Maximum callouts to return.
             timeout: Overrides the client's timeout for this request.
@@ -6207,10 +6230,10 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 300,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Candle]:
-        """OHLC candles for a coin from pump.fun's swap API, the newest `limit` bars ending now. For bars further back, or every chain and resolution in one shape, see `/chains/{chain}/coins/{address}/candles`, which pages back with `to`. Costs 1 credit.
+        """OHLC candles for a coin, the newest `limit` bars ending now. For bars further back, or every chain and resolution in one shape, see `/chains/{chain}/coins/{address}/candles`, which pages back with `to`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds, as returned by the
                 coin endpoints. pump.fun does not use it to pick the window: any
                 value returns the same series.
@@ -6245,7 +6268,7 @@ class SyncPumpfun(SyncAPIResource):
         """How many clips a coin's livestreams produced: total, visible, hidden and deleted. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6265,7 +6288,7 @@ class SyncPumpfun(SyncAPIResource):
         """Clips cut from a coin's livestreams. Pass `lastEvaluatedKey` back as `cursor` while `hasMore` is true. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address.
             clip_type: Clip category as pump.fun labels it: `COMPLETE`, `HIGHLIGHT`
                 or `PREVIEW`. Any other value answers an empty list.
             cursor: `lastEvaluatedKey` from the previous page, with the same
@@ -6289,7 +6312,7 @@ class SyncPumpfun(SyncAPIResource):
         """The first trade ever recorded against a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6303,10 +6326,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenHolderCountResponse:
-        """Number of wallets currently holding the coin. pump.fun counts this in a different service from `/coins/{mint}/holder-stats` and the top-holder routes, so the figures can differ by a few percent at the same moment. Costs 1 credit.
+        """Number of wallets currently holding the coin. This is counted separately from `/coins/{mint}/holder-stats` and the top-holder routes, so the figures can differ by a few percent at the same moment. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6323,7 +6346,7 @@ class SyncPumpfun(SyncAPIResource):
         """Holder distribution of a Solana coin: holder count, the share of supply held by the top 10, the developer, snipers and bundlers, and lifetime fees in SOL. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6341,7 +6364,7 @@ class SyncPumpfun(SyncAPIResource):
         """Realized and unrealized PnL on one coin for a set of holders. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             holders: Holder wallet addresses, 1 to 20.
             timeout: Overrides the client's timeout for this request.
 
@@ -6359,7 +6382,7 @@ class SyncPumpfun(SyncAPIResource):
         """The indexer's in-memory snapshot of a coin, refreshed faster than the coin record. Keys starting with `_` are the indexer's cache bookkeeping and appear on some answers only. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6379,7 +6402,7 @@ class SyncPumpfun(SyncAPIResource):
         """Downsampled price series used for the sparkline on coin cards. Takes Solana mints and EVM token addresses. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds, as returned by the
                 coin endpoints. pump.fun does not use it to pick the window: any
                 value returns the same series.
@@ -6406,7 +6429,7 @@ class SyncPumpfun(SyncAPIResource):
         """Rolling volume, transaction and trader counts for a coin over 5m, 1h, 6h and 24h. A window with no trades is `null`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of the coin. Omit for a Solana pump.fun coin, the original
                 behaviour; set it for an EVM token or to pin a coin to one chain.
             timeout: Overrides the client's timeout for this request.
@@ -6425,7 +6448,7 @@ class SyncPumpfun(SyncAPIResource):
         """Mayhem-mode agent state for a coin. Answers `null` when the coin never ran an agent. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Token mint address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6442,7 +6465,7 @@ class SyncPumpfun(SyncAPIResource):
         """Buy/sell totals a mayhem-mode agent has accumulated on a coin. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6468,7 +6491,7 @@ class SyncPumpfun(SyncAPIResource):
         """Positions traders hold in a coin, with their callouts. `CLOSED_PNL` lists fully exited positions by realized PnL instead. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: `RANKED` only: chain of an EVM coin.
             dust_floor_usd: Ignore positions below this USD value. Refused with
                 `RANKED` and `CLOSED_PNL`.
@@ -6514,7 +6537,7 @@ class SyncPumpfun(SyncAPIResource):
         """Creator-fee timeline: creation, distributions and shareholder changes. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum timeline events to return.
             timeout: Overrides the client's timeout for this request.
@@ -6533,7 +6556,7 @@ class SyncPumpfun(SyncAPIResource):
         """Largest holders of a Solana coin with their balances and funding sources. For EVM coins use `/chains/{chain}/coins/{address}/top-holders`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6551,10 +6574,10 @@ class SyncPumpfun(SyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTraderTradesResponse:
-        """A coin's trades by accounts ranked in the top 50 of any pump.fun PnL leaderboard, across all their wallets: the marks pump.fun draws on its chart. Pass `cursor` from `page.nextCursor` for older trades. Costs 1 credit.
+        """A coin's trades by accounts ranked in the top 50 of any PnL leaderboard, across all their wallets. Pass `cursor` from `page.nextCursor` for older trades. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             chain: Chain of an EVM coin. Omit for Solana, or to let pump.fun infer
                 it.
             cursor: `page.nextCursor` from the previous page; omit for the first
@@ -6581,10 +6604,10 @@ class SyncPumpfun(SyncAPIResource):
         min_sol_amount: float | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesResponse:
-        """Recent trades for a Solana pump.fun coin, newest first. `baseAmount` and `quoteAmount` are decimal strings in whole units of the coin and its quote token. For any chain, see `/chains/{chain}/coins/{address}/trades`. Costs 1 credit.
+        """Recent trades for a Solana coin, newest first. `baseAmount` and `quoteAmount` are decimal strings in whole units of the coin and its quote token. For any chain, see `/chains/{chain}/coins/{address}/trades`. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             cursor: Cursor from a previous page.
             limit: Maximum trades to return.
             min_sol_amount: Drop trades below this SOL size.
@@ -6606,10 +6629,10 @@ class SyncPumpfun(SyncAPIResource):
         user_addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesBatchResponse:
-        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals on pump.fun coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
+        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             created_ts: Coin creation timestamp in milliseconds.
             user_addresses: Wallet addresses (Solana or EVM) to fetch trades for, 1
                 to 30.
@@ -6629,10 +6652,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVanityCheckResponse:
-        """Whether the mint's key came from pump.fun's vanity key pool (`true` or `false`). Costs 1 credit.
+        """Whether the mint's key came from the vanity key pool (`true` or `false`). Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6645,7 +6668,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListCompetitionsResponse:
-        """pump.fun's trading competitions in three buckets: upcoming, live (registration open or running, with the current top entries) and past (the 50 latest, with winners). Costs 1 credit.
+        """Trading competitions in three buckets: upcoming, live (registration open or running, with the current top entries) and past (the 50 latest, with winners). Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -6665,8 +6688,9 @@ class SyncPumpfun(SyncAPIResource):
         """One competition entry: its roster as frozen at the start, and each member's counted trades, PnL first. Entry ids come from the competition leaderboard. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
-            entry_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
+            entry_id: Competition entry UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6685,8 +6709,9 @@ class SyncPumpfun(SyncAPIResource):
         """One entry's best tokens by PnL during the competition, with coin details. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
-            entry_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
+            entry_id: Competition entry UUID.
             limit: Maximum tokens to return.
             timeout: Overrides the client's timeout for this request.
 
@@ -6708,7 +6733,8 @@ class SyncPumpfun(SyncAPIResource):
         """The competition's biggest winning trades across every ranked entry, with coin and trader details. Each trader is capped at `per_member_limit` rows. Costs 1 credit.
 
         Args:
-            competition_id: See the API reference.
+            competition_id: Competition UUID. Slugs work on
+                `/competitions/{competition}` only.
             limit: Maximum rows to return.
             per_member_limit: Rows per trader.
             timeout: Overrides the client's timeout for this request.
@@ -6732,7 +6758,7 @@ class SyncPumpfun(SyncAPIResource):
         """One competition and its ranked leaderboard. An unknown id or slug answers 404. Costs 1 credit.
 
         Args:
-            competition: See the API reference.
+            competition: Competition UUID or slug.
             limit: Leaderboard rows to return.
             positions_limit: Top positions shown per row; 0 returns the count only.
             timeout: Overrides the client's timeout for this request.
@@ -6753,10 +6779,10 @@ class SyncPumpfun(SyncAPIResource):
         period: FeePeriodParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCreatorFeesResponse:
-        """A creator's fee earnings per quote token, whether any are claimable, and the earnings series over `period` in `interval` buckets. `5m` buckets allow period `1d`; `30m` buckets allow `1d` or `7d`; any other pairing answers 400, not charged. EVM wallets answer with no earnings. Costs 1 credit.
+        """Returns a creator's fee earnings per quote token, claimable status, and an earnings series grouped by `interval` over `period`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             interval: Bucket width. pump.fun's `5m` series has answered 503 (not
                 charged) for every creator tried since 2026-10-08.
             mint: Narrow the earnings to one Solana coin. A Solana creator only.
@@ -6776,10 +6802,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCreatorFeesResponse:
-        """Deprecated: pump.fun retired its lifetime-total read. This route now answers what `/creators/{address}/fees` answers for 30 days; `earned` holds the totals per quote token. Costs 1 credit.
+        """Deprecated: the lifetime-total read was retired. This route now answers what `/creators/{address}/fees` answers for 30 days; `earned` holds the totals per quote token. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -6799,7 +6825,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: HolderRewardSortParam = "accrued",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHolderRewardsResponse:
-        """pump.fun's holder-rewards book: per coin, the fees accrued to its holder vault, the payouts made and the book totals. Page with `page`: pump.fun answered `next: null` in every probe since 2026-10-08, even with 141,934 matching coins. A `cursor` from `next` would continue a listing and replace every other parameter. Costs 1 credit.
+        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 1 credit.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -6833,7 +6859,7 @@ class SyncPumpfun(SyncAPIResource):
         params_id: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGlobalParamsResponse:
-        """Bonding-curve constants of the pump.fun program at a point in time. Costs 1 credit.
+        """Returns bonding-curve constants at a point in time. Costs 1 credit.
 
         Args:
             params_id: Unix time in milliseconds to read the constants at. The
@@ -6856,7 +6882,7 @@ class SyncPumpfun(SyncAPIResource):
         """A squad's active members, owner first, with each member's profile and role. Squad ids come from `/leaderboards/pnl/groups`. Costs 1 credit.
 
         Args:
-            group_id: See the API reference.
+            group_id: Squad (group) UUID.
             limit: Maximum members to return.
             offset: Rows to skip.
             timeout: Overrides the client's timeout for this request.
@@ -6873,10 +6899,10 @@ class SyncPumpfun(SyncAPIResource):
         period: RollingWindowParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGroupMembersPnlResponse:
-        """A squad's active members ranked by PnL over the window. `rows` is empty until pump.fun publishes the window's ranking. Costs 1 credit.
+        """A squad's active members ranked by PnL over the window. `rows` is empty until the window's ranking is published. Costs 1 credit.
 
         Args:
-            group_id: See the API reference.
+            group_id: Squad (group) UUID.
             period: Ranking window.
             timeout: Overrides the client's timeout for this request.
 
@@ -6894,7 +6920,7 @@ class SyncPumpfun(SyncAPIResource):
         updates_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHomeFeedResponse:
-        """The ranked feed on the pump.fun home page: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
+        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
 
         Args:
             chain: Restrict the feed to one chain. pump.fun's feed does not cover
@@ -6981,7 +7007,7 @@ class SyncPumpfun(SyncAPIResource):
         min_market_cap_usd: float | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetNewCalloutsCountResponse:
-        """How many new callouts arrived after `since` under the same filters. `capped` is true once the count reaches pump.fun's ceiling. Costs 1 credit.
+        """How many new callouts arrived after `since` under the same filters. `capped` is true once the count reaches the response limit. Costs 1 credit.
 
         Args:
             since: `headToken` from `/home-feed/new`, kept until you reload the
@@ -7051,7 +7077,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: LeaderboardSortParam = "combined",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardResponse:
-        """Trader PnL leaderboard: the top 100 traders. pump.fun has no paging past them. Costs 1 credit.
+        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return. pump.fun serves 100 at most.
@@ -7076,7 +7102,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 5,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetFollowSuggestionsResponse:
-        """A random sample of traders from the PnL leaderboard, as pump.fun suggests them to follow. Costs 1 credit.
+        """A random sample of traders from the PnL leaderboard to follow. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return.
@@ -7121,7 +7147,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetOnboardingSuggestionsResponse:
-        """The scored traders pump.fun's mobile app suggests at onboarding. Costs 1 credit.
+        """The scored traders suggested during onboarding. Costs 1 credit.
 
         Args:
             limit: Maximum traders to return.
@@ -7139,7 +7165,7 @@ class SyncPumpfun(SyncAPIResource):
         period: PositionsPeriodParam = "daily",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardPositionsResponse:
-        """The positions behind each PnL leaderboard entry: the top 25 at most. pump.fun has no paging past them. Costs 1 credit.
+        """The positions behind each PnL leaderboard entry, limited to the top 25. Costs 1 credit.
 
         Args:
             limit: Maximum positions to return.
@@ -7246,7 +7272,7 @@ class SyncPumpfun(SyncAPIResource):
         """The trader leaderboard for one mayhem-mode coin. A coin that never ran an agent answers 404. Costs 1 credit.
 
         Args:
-            mint: See the API reference.
+            mint: Coin address: a Solana mint or an EVM token (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7308,7 +7334,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Liker]:
-        """The ten top daily PnL profiles pump.fun shows on its follow screen. Costs 1 credit.
+        """The ten top daily PnL profiles from the follow screen. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -7324,7 +7350,7 @@ class SyncPumpfun(SyncAPIResource):
         ids: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVerifiedProfilesResponse:
-        """Whether pump.fun shows its KOL badge for each wallet or user id. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
+        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
 
         Args:
             ids: Wallet addresses (Solana or EVM) or pump.fun user ids to check for
@@ -7434,7 +7460,7 @@ class SyncPumpfun(SyncAPIResource):
         identifiers: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ResolveIdentifiersResponse:
-        """Classify up to five identifiers in one call: whether each is a coin (by mint, bonding curve or pool), a Solana wallet, an EVM address or a pump.fun user id, which chain it is on, and its coin or account record. Costs 1 credit.
+        """Classify up to five identifiers in one call: whether each is a coin (by mint, bonding curve or pool), a Solana wallet, an EVM address, or a user ID, which chain it is on, and its coin or account record. Costs 1 credit.
 
         Args:
             identifiers: Identifiers to classify, each at most 128 characters and
@@ -7488,7 +7514,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's creator-fee sharing earnings per coin (earned, claimed, unclaimed per quote token) and its wallet totals. Pass `cursor` from `nextCursor` for more coins. EVM wallets answer with no earnings. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             cursor: `nextCursor` from the previous page; omit for the first page.
             timeout: Overrides the client's timeout for this request.
 
@@ -7502,7 +7528,7 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSolPriceResponse:
-        """Current SOL price in USD as pump.fun quotes it. Costs 1 credit.
+        """Returns the current SOL price in USD. Costs 1 credit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -7518,10 +7544,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUsernameExistsResponse:
-        """Whether a pump.fun username is taken. Costs 1 credit.
+        """Whether a username is taken. Costs 1 credit.
 
         Args:
-            username: See the API reference.
+            username: Username.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7536,7 +7562,7 @@ class SyncPumpfun(SyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedUser]:
-        """pump.fun's profile directory, one page at a time. Costs 1 credit.
+        """Returns the profile directory one page at a time. Costs 1 credit.
 
         Args:
             limit: Maximum profiles to return.
@@ -7571,10 +7597,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserResponse:
-        """Profile for a single wallet (Solana or EVM), pump.fun user id or username. Costs 1 credit.
+        """Profile for a single wallet, user ID, or username. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM), pump.fun user id or username.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7591,7 +7617,8 @@ class SyncPumpfun(SyncAPIResource):
         """A profile's unlocked achievements and live progress on the tracks still open. Definitions are in `/achievements`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7608,7 +7635,7 @@ class SyncPumpfun(SyncAPIResource):
         """Moderation ban record for a wallet. Answers `null` when the wallet has no ban. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7625,7 +7652,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's standing on the callout leaderboard: weekly and all-time appearances, streaks and podium finishes. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7642,7 +7669,8 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's callout performance per rolling window: callout count, hit rates at 1.2x to 10x peak multiples, average and median peak, time to peak and the multiple distribution. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7664,7 +7692,7 @@ class SyncPumpfun(SyncAPIResource):
         """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             limit: Maximum callouts to return. pump.fun serves 100 at most.
             page_token: `nextPageToken` from the previous page.
             sort_by: Ranking column.
@@ -7698,8 +7726,8 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's callout on one coin; `callout` is `null` when there is none. Costs 1 credit.
 
         Args:
-            address: See the API reference.
-            mint: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
+            mint: Token mint address.
             quotes_limit: Quote posts of the callout to include.
             timeout: Overrides the client's timeout for this request.
 
@@ -7722,7 +7750,7 @@ class SyncPumpfun(SyncAPIResource):
         """Replies and quote posts a wallet has written, with the thread they belong to. Page with `before_id`, the last reply's id. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             before_id: Replies older than this reply id.
             filter: Plain replies, quote posts, or both.
             limit: Maximum replies to return.
@@ -7745,10 +7773,10 @@ class SyncPumpfun(SyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCreatedCoinsResponse:
-        """Coins a wallet has launched. pump.fun serves the first 250 at most. Costs 1 credit.
+        """Coins a wallet has launched, up to 250. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             include_nsfw: Include coins flagged not-safe-for-work.
             limit: Maximum coins to return. pump.fun serves 50 at most.
             offset: Rows to skip.
@@ -7771,10 +7799,11 @@ class SyncPumpfun(SyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles following a wallet. Without `limit`, `offset` or `sort` this is pump.fun's legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             limit: Page size, up to 1000. Set it, `offset` or `sort` to page past
                 the legacy list's 50 rows.
             offset: Rows to skip.
@@ -7798,7 +7827,8 @@ class SyncPumpfun(SyncAPIResource):
         """How many profiles follow a wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7818,7 +7848,8 @@ class SyncPumpfun(SyncAPIResource):
         """Search a profile's followers by name, most relevant first. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             search_term: Search term, 2 to 50 characters.
             limit: Maximum profiles to return.
             offset: Rows to skip.
@@ -7841,10 +7872,11 @@ class SyncPumpfun(SyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles a wallet follows. Without `limit`, `offset` or `sort` this is pump.fun's legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             limit: Page size, up to 1000. Set it, `offset` or `sort` to page past
                 the legacy list's 50 rows.
             offset: Rows to skip.
@@ -7868,7 +7900,8 @@ class SyncPumpfun(SyncAPIResource):
         """How many profiles a wallet follows. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7888,7 +7921,8 @@ class SyncPumpfun(SyncAPIResource):
         """Search the profiles a wallet follows by name, most relevant first. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             search_term: Search term, 2 to 50 characters.
             limit: Maximum profiles to return.
             offset: Rows to skip.
@@ -7908,10 +7942,11 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserOverviewResponse:
-        """A profile header in one read: profile, follower and following counts, verified and achievement badges, ban state and created-coin count. Takes a Solana wallet or a pump.fun user id; a wallet with no account is served as an external wallet. Costs 1 credit.
+        """A profile header in one read: profile, follower and following counts, verified and achievement badges, ban state and created-coin count. Takes a Solana wallet or a user ID; a wallet with no account is served as an external wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address or pump.fun user id (UUID). pump.fun
+                refuses EVM wallets here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7929,7 +7964,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's resting HyperCore orders: take-profit, stop-loss and limit. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             dex: HIP-3 dex names to read, each at most 64 characters. Omit for every
                 dex.
             timeout: Overrides the client's timeout for this request.
@@ -7951,7 +7986,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's HyperCore perpetuals history, newest first: fills, funding and transfers. A Solana wallet or user id resolves to its linked EVM wallet; none answers an empty list. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             cursor: `nextCursor` from the previous page; omit for the first page.
             kinds: Row kinds. pump.fun returns fills and transfers by default.
             limit: Maximum rows to return.
@@ -7978,10 +8013,11 @@ class SyncPumpfun(SyncAPIResource):
         total_only: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserPortfolioResponse:
-        """A wallet's open or closed positions with net PnL, across Solana and its linked EVM wallets. Takes a wallet, a pump.fun user id or a squad id. Costs 1 credit.
+        """A wallet's open or closed positions with net PnL, across Solana and its linked EVM wallets. Takes a wallet, user ID, or squad ID. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM), pump.fun user id or squad id
+                (UUIDs).
             chain: Only positions on this chain. pump.fun keeps no Monad portfolio.
             filter: Which positions to return.
             filter_spam: Drop positions pump.fun groups as spam before paging.
@@ -8021,7 +8057,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's portfolio value over time (tokens at trusted prices plus cash, linked EVM wallets folded in). Takes a wallet, a username or a squad id. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet, username or squad id.
             period: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -8040,7 +8076,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's PnL curve and totals over a window. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet, username or squad id.
             period: Summary window.
             timeout: Overrides the client's timeout for this request.
 
@@ -8060,7 +8096,7 @@ class SyncPumpfun(SyncAPIResource):
         """A wallet's positions in specific coins. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             mints: Token mint addresses to resolve.
             updates_limit: Number of recent position updates to inline.
             timeout: Overrides the client's timeout for this request.
@@ -8084,7 +8120,7 @@ class SyncPumpfun(SyncAPIResource):
         """Callouts and replies a wallet has reposted, newest first. Pass `cursor` from `nextCursor` for more. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             cursor: `nextCursor` from the previous page; omit for the first page.
             include_quotes: Interleave the wallet's quote posts.
             limit: Maximum reposts to return.
@@ -8109,10 +8145,10 @@ class SyncPumpfun(SyncAPIResource):
         types: Sequence[UserTradeTypeParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserTradesResponse:
-        """An account's token trades, newest first. Takes a wallet or a pump.fun user id. pump.fun documents squad ids as the union of their members' trades, but a squad id answered no trades in our tests. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
+        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             chain: Only trades on this chain. pump.fun serves no Monad trades here.
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum trades to return.
@@ -8159,7 +8195,7 @@ class SyncPumpfun(SyncAPIResource):
         """Token balances held by a Solana wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             chain: Restrict to one chain, or `all` for every chain. Omit for Solana
                 tokens only. pump.fun spells HyperEVM `hype`.
             page: One-based page index.
@@ -8183,7 +8219,7 @@ class SyncPumpfun(SyncAPIResource):
         """Total portfolio value and native balance for a Solana wallet. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             multi_chain: Aggregate balances across every supported chain.
             timeout: Overrides the client's timeout for this request.
 
@@ -8204,7 +8240,7 @@ class SyncPumpfun(SyncAPIResource):
         """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             mints: Solana mint addresses, 1 to 50. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
@@ -8223,8 +8259,8 @@ class SyncPumpfun(SyncAPIResource):
         """A Solana wallet's PnL on a single Solana coin. Costs 1 credit.
 
         Args:
-            address: See the API reference.
-            mint: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
+            mint: Solana mint address. pump.fun refuses EVM tokens here.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -8238,10 +8274,10 @@ class SyncPumpfun(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletScreeningResponse:
-        """pump.fun's blocklist screen for a Solana or EVM wallet. The verdict is in the body: `statusCode` 200 (`OK`) means the wallet passes, 405 (`Wallet not allowed`) means pump.fun blocks it. Costs 1 credit.
+        """Returns the blocklist result for a Solana or EVM wallet. The verdict is in the body: `statusCode` 200 (`OK`) means the wallet passes, 405 (`Wallet not allowed`) means the wallet is blocked. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -8259,10 +8295,10 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 200,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletTradesResponse:
-        """A wallet's trades in one coin from pump.fun's PnL service, each with its PnL effect. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. `chain` and `nativeUnit` appear for EVM wallets only. Costs 1 credit.
+        """A wallet's trades in one coin, each with its PnL effect. Pass `cursor` from `pagination.nextCursor` while `pagination.hasMore` is true. `chain` and `nativeUnit` appear for EVM wallets only. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Wallet address, Solana or EVM (0x).
             mint: Coin address: a Solana mint, or an EVM token for an EVM wallet.
             chain: Chain of an EVM coin. Omit for Solana. When set, the wallet and
                 the coin must both be addresses on that chain.
@@ -8290,7 +8326,7 @@ class SyncPumpfun(SyncAPIResource):
         """A Solana wallet's transaction history. Costs 1 credit.
 
         Args:
-            address: See the API reference.
+            address: Solana wallet address. pump.fun refuses EVM wallets here.
             cursor: Cursor from a previous page.
             dust_filter: Drop dust-sized transactions.
             include_evm: Include EVM chains alongside Solana.

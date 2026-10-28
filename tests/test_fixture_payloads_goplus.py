@@ -49,9 +49,17 @@ RESPONSES: dict[str, type[Any]] = {
 METHODS = ["get_evm_token_security", "get_solana_token_security", "get_tron_token_security"]
 
 
-def test_every_method_has_a_default_fixture() -> None:
-    missing = [m for m in METHODS if not (FIXTURES / f"{m}.default.json").exists()]
+SUCCESS_UNAVAILABLE: dict[str, str] = {}
 
+
+def test_every_method_has_a_default_fixture() -> None:
+    missing = [
+        m
+        for m in METHODS
+        if m not in SUCCESS_UNAVAILABLE and not (FIXTURES / f"{m}.default.json").exists()
+    ]
+
+    assert set(SUCCESS_UNAVAILABLE) <= set(METHODS)
     assert missing == [], f"run the generate-client capture step for {missing}"
 
 

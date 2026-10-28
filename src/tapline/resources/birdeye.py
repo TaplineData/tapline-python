@@ -8,11 +8,9 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-
 from .._base_client import encode_path
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..birdeye import (
     BirdeyeCandleIntervalParam,
     BirdeyeFirstBuyers,
@@ -46,11 +44,6 @@ from ..birdeye import (
 __all__ = ["Birdeye", "SyncBirdeye"]
 
 _PREFIX = "/v1/birdeye"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _list_new_listings(
@@ -257,7 +250,7 @@ class Birdeye(AsyncAPIResource):
     """The Birdeye endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.birdeye`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -275,7 +268,7 @@ class Birdeye(AsyncAPIResource):
         """Up to 30 launchpad tokens at one stage: `new` (newest first), `final_curve` (closest to graduating first, by `progress`), `migrated` (most recently graduated first). Costs 1 credit.
 
         Args:
-            chain: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
             stage: Launch stage.
             timeout: Overrides the client's timeout for this request.
 
@@ -296,8 +289,9 @@ class Birdeye(AsyncAPIResource):
         """Every pool trading the token (up to 300): pool address, pair name (such as `JUP-SOL`), venue, liquidity and 24h volume. Pools without liquidity data sort first in ascending order. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             order: Sort direction.
             sort_by: Pool ordering.
             timeout: Overrides the client's timeout for this request.
@@ -322,8 +316,9 @@ class Birdeye(AsyncAPIResource):
         """USD candles as parallel arrays, oldest first: `o`, `h`, `l`, `c`, `v` and unix seconds in `t`. Up to `count` bars ending before `to` (exclusive), or now when `to` is omitted. Intervals with no trades have no bar. An unknown token answers empty arrays. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             count: Number of candles.
             interval: Candle size.
             to: Return bars strictly before this unix time, in seconds.
@@ -343,11 +338,12 @@ class Birdeye(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenOverview:
-        """A token's market overview from birdeye: price, market cap, liquidity, supply, holder count, social links, and buy, sell, volume, wallet and view counts with change percentages over 30m to 24h windows. Some windows (6h, 12h) appear on Solana only. An address birdeye does not know answers 404. Costs 1 credit.
+        """Returns a token market overview with price, market cap, liquidity, supply, holders, social links, trading activity, and changes across available time windows. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -362,11 +358,12 @@ class Birdeye(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenSecurity:
-        """birdeye's token security checklist. `groups` lists the checks by severity group (Critical, High risk, Medium risk, Neutral); each row's `index` keys its result in the `birdeye` and `goplus` maps (value, level, message). birdeye computes the checks on first request: if it has none yet the route answers 503 (not charged); retry in a minute. Costs 1 credit.
+        """Returns token security checks grouped by severity, with values, levels, and messages. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -385,11 +382,13 @@ class Birdeye(AsyncAPIResource):
         sort_by: BirdeyeTraderSortParam = "total_pnl",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTopTradersPage:
-        """Wallets that traded the token ranked by PnL on it: realized and unrealized PnL, volumes, average buy and sell prices, current balance and birdeye's wallet tags. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Wallets that traded the token ranked by PnL on it: realized and unrealized PnL, volumes, average buy and sell prices, current balance, and wallet tags. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -420,11 +419,12 @@ class Birdeye(AsyncAPIResource):
         side: BirdeyeTradeSideParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenTradesPage:
-        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop after offset 9,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
+        """Returns a token's trades and liquidity events across pools, newest first, with USD volume, price, wallet, venue, and wallet tags. Dedupe paged results by `id`. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -454,10 +454,11 @@ class Birdeye(AsyncAPIResource):
         sort_by: BirdeyeLeaderboardSortParam = "total_pnl",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeLeaderboardPage:
-        """birdeye's trader leaderboard for a period: realized, unrealized and total PnL, volume, trade counts and wallet tags. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Returns a trader leaderboard for a period with realized, unrealized, and total PnL, volume, trade counts, and wallet tags. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -485,10 +486,11 @@ class Birdeye(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTrendingTokens:
-        """birdeye's 20 trending tokens on a chain, or across chains with `all`, with price, liquidity, volume and token metadata. `all` can include chains this API does not serve on other routes (such as `robinhood`); check each item's `network`. Costs 1 credit.
+        """Returns 20 trending tokens on a chain, or across chains with `all`, with price, liquidity, volume and token metadata. `all` can include chains this API does not serve on other routes (such as `robinhood`); check each item's `network`. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
+            chain: Chain to rank tokens on, or `all` for birdeye's multichain
+                ranking.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -504,11 +506,13 @@ class Birdeye(AsyncAPIResource):
         period: BirdeyePnlPeriodParam = "30d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletPnlSummary:
-        """A wallet's trading summary over `period`: realized, unrealized and total PnL, volumes, trade counts, average trade size, the distribution of returns per token and, when birdeye has them, win rate and average win and loss size. birdeye omits fields that are zero, false or empty. A wallet with no trades in the period answers 404. Costs 2 credits.
+        """Returns a wallet's realized, unrealized, and total PnL over `period`, plus volume, trade counts, average trade size, return distribution, and available win-rate data. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             period: Window the summary covers.
             timeout: Overrides the client's timeout for this request.
 
@@ -530,11 +534,13 @@ class Birdeye(AsyncAPIResource):
         sort_by: BirdeyeWalletTokenSortParam = "last_trade",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTokensPage:
-        """Per-token PnL for every token a wallet traded: trade counts, volumes, realized and unrealized PnL, average prices and holding. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Per-token PnL for every token a wallet traded: trade counts, volumes, realized and unrealized PnL, average prices, and holding. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -565,11 +571,13 @@ class Birdeye(AsyncAPIResource):
         token: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTransactionsPage:
-        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -597,7 +605,7 @@ class Birdeye(AsyncAPIResource):
         """A Solana token's first buyers and what each did since: bought more, sold part, sold all or held, with amounts and PnL, plus a summary of the cohort. An unknown token answers an empty `buyers` list. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Solana token mint, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -614,7 +622,7 @@ class Birdeye(AsyncAPIResource):
         """A Solana token's top 100 holders with balance, USD value, the holder's net worth, SOL balance, first transaction time, funding source and wallet tags. An unknown token answers an empty `items` list. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Solana token mint, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -630,10 +638,10 @@ class Birdeye(AsyncAPIResource):
         interval: BirdeyeNetWorthIntervalParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeNetWorthHistory:
-        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points where birdeye has no value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
+        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points without a value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
 
         Args:
-            wallet: See the API reference.
+            wallet: Solana wallet address, base58.
             count: Number of points.
             interval: Spacing of the points.
             timeout: Overrides the client's timeout for this request.
@@ -656,7 +664,7 @@ class Birdeye(AsyncAPIResource):
         """A Solana wallet's current token holdings by USD value, largest first, with the wallet's total value. An empty wallet answers an empty `items` list. Costs 2 credits.
 
         Args:
-            wallet: See the API reference.
+            wallet: Solana wallet address, base58.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -677,7 +685,7 @@ class SyncBirdeye(SyncAPIResource):
     """The Birdeye endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.birdeye`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -695,7 +703,7 @@ class SyncBirdeye(SyncAPIResource):
         """Up to 30 launchpad tokens at one stage: `new` (newest first), `final_curve` (closest to graduating first, by `progress`), `migrated` (most recently graduated first). Costs 1 credit.
 
         Args:
-            chain: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
             stage: Launch stage.
             timeout: Overrides the client's timeout for this request.
 
@@ -716,8 +724,9 @@ class SyncBirdeye(SyncAPIResource):
         """Every pool trading the token (up to 300): pool address, pair name (such as `JUP-SOL`), venue, liquidity and 24h volume. Pools without liquidity data sort first in ascending order. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             order: Sort direction.
             sort_by: Pool ordering.
             timeout: Overrides the client's timeout for this request.
@@ -742,8 +751,9 @@ class SyncBirdeye(SyncAPIResource):
         """USD candles as parallel arrays, oldest first: `o`, `h`, `l`, `c`, `v` and unix seconds in `t`. Up to `count` bars ending before `to` (exclusive), or now when `to` is omitted. Intervals with no trades have no bar. An unknown token answers empty arrays. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             count: Number of candles.
             interval: Candle size.
             to: Return bars strictly before this unix time, in seconds.
@@ -763,11 +773,12 @@ class SyncBirdeye(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenOverview:
-        """A token's market overview from birdeye: price, market cap, liquidity, supply, holder count, social links, and buy, sell, volume, wallet and view counts with change percentages over 30m to 24h windows. Some windows (6h, 12h) appear on Solana only. An address birdeye does not know answers 404. Costs 1 credit.
+        """Returns a token market overview with price, market cap, liquidity, supply, holders, social links, trading activity, and changes across available time windows. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -782,11 +793,12 @@ class SyncBirdeye(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenSecurity:
-        """birdeye's token security checklist. `groups` lists the checks by severity group (Critical, High risk, Medium risk, Neutral); each row's `index` keys its result in the `birdeye` and `goplus` maps (value, level, message). birdeye computes the checks on first request: if it has none yet the route answers 503 (not charged); retry in a minute. Costs 1 credit.
+        """Returns token security checks grouped by severity, with values, levels, and messages. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -805,11 +817,13 @@ class SyncBirdeye(SyncAPIResource):
         sort_by: BirdeyeTraderSortParam = "total_pnl",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTopTradersPage:
-        """Wallets that traded the token ranked by PnL on it: realized and unrealized PnL, volumes, average buy and sell prices, current balance and birdeye's wallet tags. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Wallets that traded the token ranked by PnL on it: realized and unrealized PnL, volumes, average buy and sell prices, current balance, and wallet tags. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -840,11 +854,12 @@ class SyncBirdeye(SyncAPIResource):
         side: BirdeyeTradeSideParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTokenTradesPage:
-        """A token's trades and liquidity events across every pool, newest first, with USD volume, price, wallet, venue and birdeye's wallet tags. The tape moves while you page, so a trade can repeat on the next page: dedupe by `id`. Pages stop after offset 9,000. An unknown token answers an empty page. Priced per page, not per trade. Costs 1 credit.
+        """Returns a token's trades and liquidity events across pools, newest first, with USD volume, price, wallet, venue, and wallet tags. Dedupe paged results by `id`. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
-            address: See the API reference.
+            chain: Chain the token lives on, as birdeye names it.
+            address: Token address on the chosen chain: a base58 mint on Solana, 0x
+                plus 40 hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -874,10 +889,11 @@ class SyncBirdeye(SyncAPIResource):
         sort_by: BirdeyeLeaderboardSortParam = "total_pnl",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeLeaderboardPage:
-        """birdeye's trader leaderboard for a period: realized, unrealized and total PnL, volume, trade counts and wallet tags. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Returns a trader leaderboard for a period with realized, unrealized, and total PnL, volume, trade counts, and wallet tags. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -905,10 +921,11 @@ class SyncBirdeye(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeTrendingTokens:
-        """birdeye's 20 trending tokens on a chain, or across chains with `all`, with price, liquidity, volume and token metadata. `all` can include chains this API does not serve on other routes (such as `robinhood`); check each item's `network`. Costs 1 credit.
+        """Returns 20 trending tokens on a chain, or across chains with `all`, with price, liquidity, volume and token metadata. `all` can include chains this API does not serve on other routes (such as `robinhood`); check each item's `network`. Costs 1 credit.
 
         Args:
-            chain: See the API reference.
+            chain: Chain to rank tokens on, or `all` for birdeye's multichain
+                ranking.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -924,11 +941,13 @@ class SyncBirdeye(SyncAPIResource):
         period: BirdeyePnlPeriodParam = "30d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletPnlSummary:
-        """A wallet's trading summary over `period`: realized, unrealized and total PnL, volumes, trade counts, average trade size, the distribution of returns per token and, when birdeye has them, win rate and average win and loss size. birdeye omits fields that are zero, false or empty. A wallet with no trades in the period answers 404. Costs 2 credits.
+        """Returns a wallet's realized, unrealized, and total PnL over `period`, plus volume, trade counts, average trade size, return distribution, and available win-rate data. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             period: Window the summary covers.
             timeout: Overrides the client's timeout for this request.
 
@@ -948,11 +967,13 @@ class SyncBirdeye(SyncAPIResource):
         sort_by: BirdeyeWalletTokenSortParam = "last_trade",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTokensPage:
-        """Per-token PnL for every token a wallet traded: trade counts, volumes, realized and unrealized PnL, average prices and holding. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """Per-token PnL for every token a wallet traded: trade counts, volumes, realized and unrealized PnL, average prices, and holding. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -983,11 +1004,13 @@ class SyncBirdeye(SyncAPIResource):
         token: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTransactionsPage:
-        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. birdeye omits fields that are zero, false or empty. Costs 2 credits.
+        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. Empty values may be omitted. Costs 2 credits.
 
         Args:
-            chain: See the API reference.
-            wallet: See the API reference.
+            chain: Chain of the wallet PnL data. birdeye computes PnL on these
+                chains only.
+            wallet: Wallet address on the chosen chain: base58 on Solana, 0x plus 40
+                hex characters on an EVM chain.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`
@@ -1015,7 +1038,7 @@ class SyncBirdeye(SyncAPIResource):
         """A Solana token's first buyers and what each did since: bought more, sold part, sold all or held, with amounts and PnL, plus a summary of the cohort. An unknown token answers an empty `buyers` list. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Solana token mint, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1032,7 +1055,7 @@ class SyncBirdeye(SyncAPIResource):
         """A Solana token's top 100 holders with balance, USD value, the holder's net worth, SOL balance, first transaction time, funding source and wallet tags. An unknown token answers an empty `items` list. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Solana token mint, base58.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1048,10 +1071,10 @@ class SyncBirdeye(SyncAPIResource):
         interval: BirdeyeNetWorthIntervalParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeNetWorthHistory:
-        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points where birdeye has no value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
+        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points without a value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
 
         Args:
-            wallet: See the API reference.
+            wallet: Solana wallet address, base58.
             count: Number of points.
             interval: Spacing of the points.
             timeout: Overrides the client's timeout for this request.
@@ -1074,7 +1097,7 @@ class SyncBirdeye(SyncAPIResource):
         """A Solana wallet's current token holdings by USD value, largest first, with the wallet's total value. An empty wallet answers an empty `items` list. Costs 2 credits.
 
         Args:
-            wallet: See the API reference.
+            wallet: Solana wallet address, base58.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page. A cursor holds only a position, so send it with the same
                 sort and filters as the page it came from. `pagination.completion`

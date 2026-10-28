@@ -336,7 +336,7 @@ class Ponsfamily(AsyncAPIResource):
     """The Ponsfamily endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.ponsfamily`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -349,7 +349,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAnalyticsResponse:
-        """Protocol-wide launch, volume, trade and revenue totals plus the daily series behind them. Costs 2 credits.
+        """Protocol-wide daily launches, volume, trades, fees and revenue, with today's running numbers, monthly fee flows, creator and protocol earnings, indexer counts, the top tokens by volume, and the stocks those coins trade against. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -379,7 +379,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEthPriceResponse:
-        """The ETH/USD rate pons prices every launch with. Costs 2 credits.
+        """Returns the ETH/USD rate used to price each launch. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -417,7 +417,7 @@ class Ponsfamily(AsyncAPIResource):
         """One token community with its supply, burn and market-cap figures. Costs 2 credits.
 
         Args:
-            slug: See the API reference.
+            slug: Forum community slug.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -435,8 +435,8 @@ class Ponsfamily(AsyncAPIResource):
         """A wallet's balance in a community token and the posting tier that balance earns it. Costs 2 credits.
 
         Args:
-            token: See the API reference.
-            wallet: See the API reference.
+            token: Token contract address on Robinhood Chain.
+            wallet: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -487,7 +487,7 @@ class Ponsfamily(AsyncAPIResource):
         """One forum post with its vote counts and community metadata. Costs 2 credits.
 
         Args:
-            post_id: See the API reference.
+            post_id: Forum post UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -505,7 +505,7 @@ class Ponsfamily(AsyncAPIResource):
         """The comment thread under a forum post. Costs 2 credits.
 
         Args:
-            post_id: See the API reference.
+            post_id: Forum post UUID.
             sort: Comment ranking.
             timeout: Overrides the client's timeout for this request.
 
@@ -527,13 +527,14 @@ class Ponsfamily(AsyncAPIResource):
         version: LaunchVersionParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListLaunchesResponse:
-        """The pons launchpad explore board: tokens still climbing the bonding curve plus a page of graduated tokens. Costs 2 credits.
+        """Returns the launchpad explore board with tokens still climbing the bonding curve. The response fills `graduated.total` and `graduatedTotal` but sends `graduated.items` empty; use the graduated-launches endpoint for full records. Costs 2 credits.
 
         Args:
             age: Only include launches from this window.
-            graduated_page: Page of graduated launches.
-            graduated_page_size: Graduated launches per page.
-            include_graduated: Include the graduated board in the response.
+            graduated_page: Page number echoed in the graduated block.
+            graduated_page_size: Page size echoed in the graduated block.
+            include_graduated: Include the graduated block (counts only; pons sends
+                no graduated items).
             page: Page of active launches.
             page_size: Active launches per page.
             sort: Ranking column for the active board.
@@ -577,7 +578,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Graduation]:
-        """Every graduation event pons has observed, as token address and graduation block. Costs 2 credits.
+        """Every observed graduation event, as token address and graduation block. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -614,7 +615,7 @@ class Ponsfamily(AsyncAPIResource):
         sort: LaunchSearchSortParam = "relevance",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchLaunchesResponse:
-        """Search every pons launch by name, symbol or contract address. Costs 2 credits.
+        """Search launches by name, symbol, or contract address. Costs 2 credits.
 
         Args:
             age: Only include launches from this window.
@@ -640,7 +641,7 @@ class Ponsfamily(AsyncAPIResource):
         """Price, market cap, liquidity, recent trades and price points for one v1 token. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             include_holders: Include the holder list in the snapshot.
             timeout: Overrides the client's timeout for this request.
 
@@ -660,7 +661,7 @@ class Ponsfamily(AsyncAPIResource):
         """All-time-high price for a token and the block it was set in. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -677,7 +678,7 @@ class Ponsfamily(AsyncAPIResource):
         """Supply burned for a token, in wei. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -695,7 +696,7 @@ class Ponsfamily(AsyncAPIResource):
         """Bucketed price and volume points for a token, at the resolution the range implies. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -714,7 +715,7 @@ class Ponsfamily(AsyncAPIResource):
         """What the deployer did with its own allocation: buys, sells, transfers, burns, and the dumped/moved/burned verdicts. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             deployer: Deployer wallet that launched the token.
             timeout: Overrides the client's timeout for this request.
 
@@ -729,10 +730,10 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketHoldersResponse:
-        """Ranked token holders with balance, supply share and per-holder PnL where pons can compute it. Costs 2 credits.
+        """Ranked token holders with balance, supply share, and per-holder PnL when available. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -749,7 +750,7 @@ class Ponsfamily(AsyncAPIResource):
         """Resting limit-order depth around the current price, bucketed into price bands. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -766,7 +767,7 @@ class Ponsfamily(AsyncAPIResource):
         """The latest observed pool price, the cheap poll the launchpad UI uses. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -783,7 +784,7 @@ class Ponsfamily(AsyncAPIResource):
         """The most recent buys and sells against a token's pool. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -851,7 +852,7 @@ class Ponsfamily(AsyncAPIResource):
         """Static token metadata: supply, socials, pool wiring and the deployer that launched it. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -869,7 +870,7 @@ class Ponsfamily(AsyncAPIResource):
         """Bucketed price and volume points for a v2 launch, with the quote asset's USD rate. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -887,7 +888,7 @@ class Ponsfamily(AsyncAPIResource):
         """Creator-fee escrow for a v2 launch: recipient, quote asset and what has been earned so far. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -904,7 +905,7 @@ class Ponsfamily(AsyncAPIResource):
         """Holder fee-sharing distributor state for a v2 launch, including the latest payout epoch. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -921,7 +922,7 @@ class Ponsfamily(AsyncAPIResource):
         """Ranked holders of a v2 launch. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -938,7 +939,7 @@ class Ponsfamily(AsyncAPIResource):
         """Trades against a v2 (curve) launch, quoted in the launch's own quote asset. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -952,7 +953,7 @@ class Ponsfamily(AsyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletIdentitiesResponse:
-        """Public pons profiles (username, avatar, bio) for the given wallets. Costs 2 credits.
+        """Returns profiles with username, avatar, and bio for the given wallets. Costs 2 credits.
 
         Args:
             addresses: Wallet addresses to resolve, at most 100 per call.
@@ -973,7 +974,7 @@ class Ponsfamily(AsyncAPIResource):
         """Portfolio value over time for a wallet, with the change over the requested window. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -991,7 +992,7 @@ class Ponsfamily(AsyncAPIResource):
         """A wallet's open and closed positions, its trade activity, and realized/unrealized PnL totals. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1005,10 +1006,10 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetProfileResponse:
-        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
+        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate used to price them. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1021,7 +1022,7 @@ class SyncPonsfamily(SyncAPIResource):
     """The Ponsfamily endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.ponsfamily`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -1034,7 +1035,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAnalyticsResponse:
-        """Protocol-wide launch, volume, trade and revenue totals plus the daily series behind them. Costs 2 credits.
+        """Protocol-wide daily launches, volume, trades, fees and revenue, with today's running numbers, monthly fee flows, creator and protocol earnings, indexer counts, the top tokens by volume, and the stocks those coins trade against. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1064,7 +1065,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetEthPriceResponse:
-        """The ETH/USD rate pons prices every launch with. Costs 2 credits.
+        """Returns the ETH/USD rate used to price each launch. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1102,7 +1103,7 @@ class SyncPonsfamily(SyncAPIResource):
         """One token community with its supply, burn and market-cap figures. Costs 2 credits.
 
         Args:
-            slug: See the API reference.
+            slug: Forum community slug.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1120,8 +1121,8 @@ class SyncPonsfamily(SyncAPIResource):
         """A wallet's balance in a community token and the posting tier that balance earns it. Costs 2 credits.
 
         Args:
-            token: See the API reference.
-            wallet: See the API reference.
+            token: Token contract address on Robinhood Chain.
+            wallet: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1172,7 +1173,7 @@ class SyncPonsfamily(SyncAPIResource):
         """One forum post with its vote counts and community metadata. Costs 2 credits.
 
         Args:
-            post_id: See the API reference.
+            post_id: Forum post UUID.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1190,7 +1191,7 @@ class SyncPonsfamily(SyncAPIResource):
         """The comment thread under a forum post. Costs 2 credits.
 
         Args:
-            post_id: See the API reference.
+            post_id: Forum post UUID.
             sort: Comment ranking.
             timeout: Overrides the client's timeout for this request.
 
@@ -1212,13 +1213,14 @@ class SyncPonsfamily(SyncAPIResource):
         version: LaunchVersionParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListLaunchesResponse:
-        """The pons launchpad explore board: tokens still climbing the bonding curve plus a page of graduated tokens. Costs 2 credits.
+        """Returns the launchpad explore board with tokens still climbing the bonding curve. The response fills `graduated.total` and `graduatedTotal` but sends `graduated.items` empty; use the graduated-launches endpoint for full records. Costs 2 credits.
 
         Args:
             age: Only include launches from this window.
-            graduated_page: Page of graduated launches.
-            graduated_page_size: Graduated launches per page.
-            include_graduated: Include the graduated board in the response.
+            graduated_page: Page number echoed in the graduated block.
+            graduated_page_size: Page size echoed in the graduated block.
+            include_graduated: Include the graduated block (counts only; pons sends
+                no graduated items).
             page: Page of active launches.
             page_size: Active launches per page.
             sort: Ranking column for the active board.
@@ -1262,7 +1264,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Graduation]:
-        """Every graduation event pons has observed, as token address and graduation block. Costs 2 credits.
+        """Every observed graduation event, as token address and graduation block. Costs 2 credits.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -1299,7 +1301,7 @@ class SyncPonsfamily(SyncAPIResource):
         sort: LaunchSearchSortParam = "relevance",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchLaunchesResponse:
-        """Search every pons launch by name, symbol or contract address. Costs 2 credits.
+        """Search launches by name, symbol, or contract address. Costs 2 credits.
 
         Args:
             age: Only include launches from this window.
@@ -1323,7 +1325,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Price, market cap, liquidity, recent trades and price points for one v1 token. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             include_holders: Include the holder list in the snapshot.
             timeout: Overrides the client's timeout for this request.
 
@@ -1341,7 +1343,7 @@ class SyncPonsfamily(SyncAPIResource):
         """All-time-high price for a token and the block it was set in. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1358,7 +1360,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Supply burned for a token, in wei. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1376,7 +1378,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Bucketed price and volume points for a token, at the resolution the range implies. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -1395,7 +1397,7 @@ class SyncPonsfamily(SyncAPIResource):
         """What the deployer did with its own allocation: buys, sells, transfers, burns, and the dumped/moved/burned verdicts. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             deployer: Deployer wallet that launched the token.
             timeout: Overrides the client's timeout for this request.
 
@@ -1410,10 +1412,10 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketHoldersResponse:
-        """Ranked token holders with balance, supply share and per-holder PnL where pons can compute it. Costs 2 credits.
+        """Ranked token holders with balance, supply share, and per-holder PnL when available. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1430,7 +1432,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Resting limit-order depth around the current price, bucketed into price bands. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1447,7 +1449,7 @@ class SyncPonsfamily(SyncAPIResource):
         """The latest observed pool price, the cheap poll the launchpad UI uses. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1464,7 +1466,7 @@ class SyncPonsfamily(SyncAPIResource):
         """The most recent buys and sells against a token's pool. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1532,7 +1534,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Static token metadata: supply, socials, pool wiring and the deployer that launched it. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address on Robinhood Chain.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1550,7 +1552,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Bucketed price and volume points for a v2 launch, with the quote asset's USD rate. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -1568,7 +1570,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Creator-fee escrow for a v2 launch: recipient, quote asset and what has been earned so far. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1585,7 +1587,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Holder fee-sharing distributor state for a v2 launch, including the latest payout epoch. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1602,7 +1604,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Ranked holders of a v2 launch. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1619,7 +1621,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Trades against a v2 (curve) launch, quoted in the launch's own quote asset. Costs 2 credits.
 
         Args:
-            token: See the API reference.
+            token: Token contract address of a v2 (curve) launch.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1633,7 +1635,7 @@ class SyncPonsfamily(SyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletIdentitiesResponse:
-        """Public pons profiles (username, avatar, bio) for the given wallets. Costs 2 credits.
+        """Returns profiles with username, avatar, and bio for the given wallets. Costs 2 credits.
 
         Args:
             addresses: Wallet addresses to resolve, at most 100 per call.
@@ -1654,7 +1656,7 @@ class SyncPonsfamily(SyncAPIResource):
         """Portfolio value over time for a wallet, with the change over the requested window. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             range: Chart window.
             timeout: Overrides the client's timeout for this request.
 
@@ -1672,7 +1674,7 @@ class SyncPonsfamily(SyncAPIResource):
         """A wallet's open and closed positions, its trade activity, and realized/unrealized PnL totals. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1686,10 +1688,10 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetProfileResponse:
-        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate pons priced them with. Costs 2 credits.
+        """The launches a wallet deployed or earns fees from, with its claimed and claimable fees on each, alongside the ETH/USD rate used to price them. Costs 2 credits.
 
         Args:
-            address: See the API reference.
+            address: Wallet address.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
