@@ -143,6 +143,7 @@ class PinterestV2BoardCover(BaseModel):
 
 
 class PinterestV2BoardResponse(BaseModel):
+    board: PinterestV2BoardSummary
     pins: list[PinterestV2Pin]
     cursor: str | None
 
@@ -159,6 +160,7 @@ class PinterestV2BoardSummary(BaseModel):
     follower_count: int | None = None
     collaborator_count: int | None = None
     section_count: int | None = None
+    sectionless_pin_count: int | None = None
     place_saves_count: int | None = None
     privacy: str | None = None
     created_at: str | None = None
@@ -168,12 +170,14 @@ class PinterestV2BoardSummary(BaseModel):
     owner: PinterestV2User | None = None
     collaborators: list[PinterestV2User] | None = None
     related_interests: list[PinterestV2RelatedInterest] | None = None
+    category: str | None = None
     is_collaborative: bool | None = None
     is_ads_only: bool | None = None
     has_custom_cover: bool | None = None
     collaborator_requests_enabled: bool | None = None
     cover_pin: PinterestV2BoardCover | None = None
     cover_images: list[PinterestV2Image] | None = None
+    header_images: list[PinterestV2Image] | None = None
     images: list[PinterestV2Image] | None = None
 
 
@@ -259,7 +263,7 @@ class PinterestV2MusicCredit(BaseModel):
 
 class PinterestV2Pin(BaseModel):
     id: str | None = None
-    canonical_pin_id: str | None = None
+    original_pin_id: str | None = None
     product_id: str | None = None
     top_interest_id: int | None = None
     advertiser_id: str | None = None
@@ -273,7 +277,7 @@ class PinterestV2Pin(BaseModel):
     url: str | None = None
     link: str | None = None
     mobile_link: str | None = None
-    canonical_url: str | None = None
+    original_pin_url: str | None = None
     affiliate_link: str | None = None
     metrics: PinterestV2Metrics | None = None
     product_status: PinterestV2ProductStatus | None = None
@@ -318,7 +322,7 @@ class PinterestV2Pin(BaseModel):
 
 class PinterestV2PinResponse(BaseModel):
     id: str | None = None
-    canonical_pin_id: str | None = None
+    original_pin_id: str | None = None
     product_id: str | None = None
     top_interest_id: int | None = None
     advertiser_id: str | None = None
@@ -332,7 +336,7 @@ class PinterestV2PinResponse(BaseModel):
     url: str | None = None
     link: str | None = None
     mobile_link: str | None = None
-    canonical_url: str | None = None
+    original_pin_url: str | None = None
     affiliate_link: str | None = None
     metrics: PinterestV2Metrics | None = None
     product_status: PinterestV2ProductStatus | None = None

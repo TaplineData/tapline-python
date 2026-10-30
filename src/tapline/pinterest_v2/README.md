@@ -34,7 +34,7 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 | `search_pins` | `query`, `cursor` | 1 | `PinterestV2SearchResponse`: `pins`, the refinement `guides` Pinterest suggests, and `cursor` |
 | `get_pin` | `url`: a pin URL on any Pinterest domain, or a `pin.it` share link | 1 | `PinterestV2PinResponse`: one pin with its people, board, metrics, images, video and idea-pin pages |
 | `get_user_boards` | `handle`, `cursor` | 1 | `PinterestV2UserBoardsResponse`: `boards` and `cursor` |
-| `get_board` | `url`: a board URL, such as a board's `url` from `get_user_boards`; `cursor` | 1 | `PinterestV2BoardResponse`: `pins` in board order and `cursor` |
+| `get_board` | `url`: a board URL, such as a board's `url` from `get_user_boards`; `cursor` | 1 | `PinterestV2BoardResponse`: the `board` itself, `pins` in board order and `cursor` |
 
 `trim` is accepted on every method and `cache_max_age` on `get_pin`. Neither changes the response, and every successful call is charged.
 
@@ -93,12 +93,13 @@ with SyncTaplineClient() as tapline:
         print(board.name, board.url, board.pin_count, board.follower_count, owner)
     if boards.boards and boards.boards[0].url:
         page = tapline.pinterest_v2.get_board(url=boards.boards[0].url)
+        print(page.board.name, page.board.pin_count, page.board.category)
         for pin in page.pins:
             saves = pin.metrics.save_count if pin.metrics else None
             print(pin.id, pin.title, pin.link or "uploaded, no link", saves)
 ```
 
-Boards come most recently pinned to first, about 25 per page. A board's `url` is absolute and `get_board` takes it as it is. A pin uploaded without a link has `link=None`.
+Boards come most recently pinned to first, about 25 per page. A board's `url` is absolute and `get_board` takes it as it is. `get_board` also returns the board itself as `board`, the same object `get_user_boards` lists, plus `category`, `sectionless_pin_count` and `header_images` when Pinterest has them. Tapline keeps a board's details for up to 24 hours, so its counts can be that old; the pins are fetched on every call. A pin uploaded without a link has `link=None`.
 
 ## Handle errors and check costs
 
