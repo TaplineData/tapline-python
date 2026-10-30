@@ -8,11 +8,10 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import Literal
 
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..pinterest import (
     PinterestBoardResponse,
     PinterestPinResponse,
@@ -23,11 +22,6 @@ from ..pinterest import (
 __all__ = ["Pinterest", "SyncPinterest"]
 
 _PREFIX = "/v1/pinterest"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _get_board(
@@ -75,7 +69,7 @@ class Pinterest(AsyncAPIResource):
     """The Pinterest endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.pinterest`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -91,7 +85,7 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestBoardResponse:
-        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. About 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """Returns the pins on a board in board order, with images, links, titles, pinner details, and board data. Pass `cursor` back until it is `null`. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -100,8 +94,7 @@ class Pinterest(AsyncAPIResource):
                 returns as `url`.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -117,16 +110,17 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestPinResponse:
-        """One Pinterest pin: title, description, link, dominant color, pinner and origin pinner, board, images at every size (`images_<size>` and `imageSpec_<size>`), counts, video variants and annotations. The fields are Pinterest's own, in camelCase, merged from the two queries the pin page runs, matching Scrape Creators' provider-data fields but omitting its top-level status and credit metadata. `entityId` is the numeric pin id and `id` is Pinterest's node id. Pinterest's `isVideo` is `false` on some video pins; `videos` is set on every one. Accepts pin URLs on any Pinterest domain and pin.it share links. Costs 1 credit.
+        """Returns one pin with its title, description, link, board, pinner, images, video variants, engagement, and annotations. Accepts full pin URLs and pin.it URLs. Costs 1 credit.
 
         Args:
             url: A Pinterest pin URL: `https://www.pinterest.com/pin/<id>/` on any
                 Pinterest domain, the long form with a title
                 (`/pin/<title>--<id>/`), or a `https://pin.it/<code>` share link.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+                The `e1_…` ids in search and board results answer 422: Pinterest
+                does not resolve them for logged-out visitors.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -144,14 +138,13 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestSearchResponse:
-        """Searches Pinterest pins. Each pin is Pinterest's own search result object plus a `url`, the same provider-data fields Scrape Creators returns, without Scrape Creators' top-level status and credit metadata. `id` is the numeric pin id; a pin uploaded without a link has no `link` key. Pinterest sends up to 25 pins per page and the count varies, so keep paging while `cursor` is not `null`; a pin can repeat across pages. Pinterest matches loosely, so most queries return related pins, but a query with no matches answers an empty page, which is charged. Costs 1 credit.
+        """Searches pins and returns images, links, titles, pinner details, and board data. Results contain up to 25 pins per page. Pass `cursor` back until it is `null`. Costs 1 credit.
 
         Args:
             query: What to search Pinterest pins for.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -169,14 +162,13 @@ class Pinterest(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestUserBoardsResponse:
-        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """Returns a user's boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             handle: The Pinterest username, with or without a leading @.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -191,7 +183,7 @@ class SyncPinterest(SyncAPIResource):
     """The Pinterest endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.pinterest`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -207,7 +199,7 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestBoardResponse:
-        """The pins on a public Pinterest board, in board order: Pinterest's own pin objects with images, link, title, pinner, board and aggregated pin data. `id` is the numeric pin id, `link` is `null` on a pin uploaded without one, and Pinterest sends no `pin_join` for board pins. About 25 pins per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """Returns the pins on a board in board order, with images, links, titles, pinner details, and board data. Pass `cursor` back until it is `null`. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -216,8 +208,7 @@ class SyncPinterest(SyncAPIResource):
                 returns as `url`.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -233,16 +224,17 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestPinResponse:
-        """One Pinterest pin: title, description, link, dominant color, pinner and origin pinner, board, images at every size (`images_<size>` and `imageSpec_<size>`), counts, video variants and annotations. The fields are Pinterest's own, in camelCase, merged from the two queries the pin page runs, matching Scrape Creators' provider-data fields but omitting its top-level status and credit metadata. `entityId` is the numeric pin id and `id` is Pinterest's node id. Pinterest's `isVideo` is `false` on some video pins; `videos` is set on every one. Accepts pin URLs on any Pinterest domain and pin.it share links. Costs 1 credit.
+        """Returns one pin with its title, description, link, board, pinner, images, video variants, engagement, and annotations. Accepts full pin URLs and pin.it URLs. Costs 1 credit.
 
         Args:
             url: A Pinterest pin URL: `https://www.pinterest.com/pin/<id>/` on any
                 Pinterest domain, the long form with a title
                 (`/pin/<title>--<id>/`), or a `https://pin.it/<code>` share link.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+                The `e1_…` ids in search and board results answer 422: Pinterest
+                does not resolve them for logged-out visitors.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -260,14 +252,13 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestSearchResponse:
-        """Searches Pinterest pins. Each pin is Pinterest's own search result object plus a `url`, the same provider-data fields Scrape Creators returns, without Scrape Creators' top-level status and credit metadata. `id` is the numeric pin id; a pin uploaded without a link has no `link` key. Pinterest sends up to 25 pins per page and the count varies, so keep paging while `cursor` is not `null`; a pin can repeat across pages. Pinterest matches loosely, so most queries return related pins, but a query with no matches answers an empty page, which is charged. Costs 1 credit.
+        """Searches pins and returns images, links, titles, pinner details, and board data. Results contain up to 25 pins per page. Pass `cursor` back until it is `null`. Costs 1 credit.
 
         Args:
             query: What to search Pinterest pins for.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -283,14 +274,13 @@ class SyncPinterest(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestUserBoardsResponse:
-        """A Pinterest user's public boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
+        """Returns a user's boards, most recently pinned to first: name, URL, description, pin and follower counts, owner and cover images. About 25 boards per page; pass `cursor` back for the next page, which is `null` on the last one. Costs 1 credit.
 
         Args:
             handle: The Pinterest username, with or without a leading @.
             cursor: The `cursor` from the previous page. Omit it, or send it empty,
                 for the first page.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                answer is always the full body.
+            trim: Ignored. The endpoint always returns the full response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:

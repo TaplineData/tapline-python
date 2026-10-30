@@ -21,6 +21,7 @@ from tapline.zillow import (
     ZillowLocations,
     ZillowProperty,
     ZillowPropertyHistory,
+    ZillowPropertyRecords,
     ZillowSearchPage,
 )
 
@@ -48,6 +49,7 @@ RESPONSES: dict[str, type[Any]] = {
     "get_property": ZillowProperty,
     "list_comparables": ZillowComparables,
     "get_property_history": ZillowPropertyHistory,
+    "get_property_records": ZillowPropertyRecords,
     "search_homes": ZillowSearchPage,
 }
 METHODS = [
@@ -55,6 +57,7 @@ METHODS = [
     "get_property",
     "list_comparables",
     "get_property_history",
+    "get_property_records",
     "search_homes",
 ]
 

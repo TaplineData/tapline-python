@@ -42,7 +42,7 @@ _PREFIX = "/v1/facebook/ad-library"
 def _search_ads(
     *,
     ad_type: AdTypeParam = "all",
-    country: str = "US",
+    country: str = "ALL",
     cursor: str = "",
     delivered_after: str | None = None,
     delivered_before: str | None = None,
@@ -76,14 +76,14 @@ def _search_ads(
     )
 
 
-def _get_ad(ad_id: str, *, country: str = "US") -> Request[FacebookAd]:
+def _get_ad(ad_id: str, *, country: str = "ALL") -> Request[FacebookAd]:
     return Request(
         encode_path(_PREFIX + "/ads/{ad_id}", ad_id=ad_id), FacebookAd, {"country": country}
     )
 
 
 def _get_ad_transparency(
-    ad_id: str, *, page_id: str, country: str = "US"
+    ad_id: str, *, page_id: str, country: str = "ALL"
 ) -> Request[FacebookAdTransparency]:
     return Request(
         encode_path(_PREFIX + "/ads/{ad_id}/transparency", ad_id=ad_id),
@@ -93,7 +93,7 @@ def _get_ad_transparency(
 
 
 def _search_advertisers(
-    *, query: str, ad_type: AdTypeParam = "all", country: str = "US"
+    *, query: str, ad_type: AdTypeParam = "all", country: str = "ALL"
 ) -> Request[FacebookAdvertiserSuggestions]:
     return Request(
         _PREFIX + "/advertisers/search",
@@ -102,7 +102,7 @@ def _search_advertisers(
     )
 
 
-def _get_advertiser(page_id: str, *, country: str = "US") -> Request[FacebookAdvertiser]:
+def _get_advertiser(page_id: str, *, country: str = "ALL") -> Request[FacebookAdvertiser]:
     return Request(
         encode_path(_PREFIX + "/advertisers/{page_id}", page_id=page_id),
         FacebookAdvertiser,
@@ -121,7 +121,7 @@ def _get_advertiser_audience(
 
 
 def _list_ad_versions(
-    collation_id: str, *, country: str = "US", cursor: str = ""
+    collation_id: str, *, country: str = "ALL", cursor: str = ""
 ) -> Request[FacebookAdVersionsPage]:
     return Request(
         encode_path(_PREFIX + "/collations/{collation_id}", collation_id=collation_id),
@@ -177,7 +177,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         self,
         *,
         ad_type: AdTypeParam = "all",
-        country: str = "US",
+        country: str = "ALL",
         cursor: str = "",
         delivered_after: str | None = None,
         delivered_before: str | None = None,
@@ -239,7 +239,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         self,
         ad_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAd:
         """Get one Ad Library ad by its id. Costs 3 credits.
@@ -259,7 +259,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         ad_id: str,
         *,
         page_id: str,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdTransparency:
         """Get who paid for an ad, who it benefits, whom it reached in the EU and UK, and its political audience. Costs 3 credits.
@@ -283,7 +283,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         *,
         query: str,
         ad_type: AdTypeParam = "all",
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdvertiserSuggestions:
         """Find advertisers by name. Costs 3 credits.
@@ -305,7 +305,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         self,
         page_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdvertiser:
         """Get an advertiser's Ad Library profile and the first page of its active ads. `/ad-library/ads` with `page_id` pages through the rest. Costs 3 credits.
@@ -345,7 +345,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         self,
         collation_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdVersionsPage:
@@ -376,7 +376,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         """Get the Ad Library report on political and issue ads in a country. Costs 3 credits.
 
         Args:
-            country: ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+            country: ISO 3166-1 alpha-2 country, upper case.
             date: Report day; defaults to the newest published day, two days ago.
             period: Time window; a report Facebook is still building answers 503
                 with `Retry-After`.
@@ -404,7 +404,7 @@ class FacebookAdLibrary(AsyncAPIResource):
         """List the advertisers in the Ad Library report, 20 per page. Costs 3 credits.
 
         Args:
-            country: ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+            country: ISO 3166-1 alpha-2 country, upper case.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page.
             date: Report day; defaults to the newest published day, two days ago.
@@ -440,7 +440,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         self,
         *,
         ad_type: AdTypeParam = "all",
-        country: str = "US",
+        country: str = "ALL",
         cursor: str = "",
         delivered_after: str | None = None,
         delivered_before: str | None = None,
@@ -502,7 +502,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         self,
         ad_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAd:
         """Get one Ad Library ad by its id. Costs 3 credits.
@@ -522,7 +522,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         ad_id: str,
         *,
         page_id: str,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdTransparency:
         """Get who paid for an ad, who it benefits, whom it reached in the EU and UK, and its political audience. Costs 3 credits.
@@ -546,7 +546,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         *,
         query: str,
         ad_type: AdTypeParam = "all",
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdvertiserSuggestions:
         """Find advertisers by name. Costs 3 credits.
@@ -568,7 +568,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         self,
         page_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdvertiser:
         """Get an advertiser's Ad Library profile and the first page of its active ads. `/ad-library/ads` with `page_id` pages through the rest. Costs 3 credits.
@@ -608,7 +608,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         self,
         collation_id: str,
         *,
-        country: str = "US",
+        country: str = "ALL",
         cursor: str = "",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> FacebookAdVersionsPage:
@@ -639,7 +639,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         """Get the Ad Library report on political and issue ads in a country. Costs 3 credits.
 
         Args:
-            country: ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+            country: ISO 3166-1 alpha-2 country, upper case.
             date: Report day; defaults to the newest published day, two days ago.
             period: Time window; a report Facebook is still building answers 503
                 with `Retry-After`.
@@ -667,7 +667,7 @@ class SyncFacebookAdLibrary(SyncAPIResource):
         """List the advertisers in the Ad Library report, 20 per page. Costs 3 credits.
 
         Args:
-            country: ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+            country: ISO 3166-1 alpha-2 country, upper case.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page.
             date: Report day; defaults to the newest published day, two days ago.

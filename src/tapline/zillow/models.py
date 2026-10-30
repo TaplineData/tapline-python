@@ -107,23 +107,27 @@ class ZillowSearchSort(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class GetPropertyHistoryParams(BaseModel):
+    zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
+    """
+    Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
+    """
     metric: ZillowHistoryMetric | None = ZillowHistoryMetric.ZESTIMATE
     """
     Which series: `zestimate` (monthly Zestimate), `rent_zestimate` (monthly Rent Zestimate), `zestimate_change` (monthly year-over-year change as a fraction), `tax_paid` (yearly property tax) or `tax_assessment` (yearly assessed value, as `Land` and `Structure` series).
@@ -132,13 +136,16 @@ class GetPropertyHistoryParams(BaseModel):
     """
     How far back the series goes.
     """
+
+
+class GetPropertyParams(BaseModel):
     zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
     """
     Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
     """
 
 
-class GetPropertyParams(BaseModel):
+class GetPropertyRecordsParams(BaseModel):
     zpid: Annotated[int, Field(examples=[15067360], ge=1, le=999999999999)]
     """
     Zillow property id: the digits before `_zpid` in a home's Zillow URL, or the `zpid` of a property, comparable or address suggestion. Search listings carry it as a string.
@@ -157,6 +164,77 @@ class SearchHomesParams(BaseModel):
     """
     `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a page number, so send it with the same location and filters. `pagination.completion` is `exhausted` at the last page and `depth_limit` at page 20, the deepest Zillow serves; narrow the filters to reach more homes.
     """
+    location: Annotated[
+        str | None,
+        Field(examples=["Austin, TX"], max_length=200, min_length=1, pattern="\\S"),
+    ] = None
+    """
+    Where to search, as you would type it into Zillow: a state, county, city, ZIP code, neighborhood or borough (`Austin, TX`, `94110`, `Brooklyn`). Zillow's first matching region is used and the response's `region` says which; a custom area such as `Bay Area` answers 404. Send this, or `region_id` with `region_type`.
+    """
+    region_id: Annotated[int | None, Field(examples=[20330], ge=1, le=1000000000)] = None
+    """
+    Zillow region id, the `metaData.regionId` of a `/v1/zillow/locations` region suggestion. Send with `region_type`, instead of `location`, to search exactly that region.
+    """
+    region_type: ZillowRegionType | None = None
+    """
+    The region suggestion's `metaData.regionType`; required with `region_id`.
+    """
+    status: ZillowListingStatus | None = ZillowListingStatus.FOR_SALE
+    """
+    `for_sale`, `for_rent`, or `sold` (Zillow's recently sold homes).
+    """
+    sort: ZillowSearchSort | None = ZillowSearchSort.RELEVANCE
+    """
+    Order of results. `relevance` is Zillow's default; on `sold` it already lists the newest sales first, like `newest`. `beds`, `baths`, `sqft` and `lot_size` sort from largest; with `for_rent`, the price sorts order by monthly rent.
+    """
+    min_price: Annotated[int | None, Field(ge=0, le=1000000000)] = None
+    """
+    Lowest price in USD; monthly rent with `status=for_rent`.
+    """
+    max_price: Annotated[int | None, Field(ge=0, le=1000000000)] = None
+    """
+    Highest price in USD; monthly rent with `status=for_rent`.
+    """
+    min_beds: Annotated[int | None, Field(ge=0, le=20)] = None
+    """
+    Fewest bedrooms.
+    """
+    max_beds: Annotated[int | None, Field(ge=0, le=20)] = None
+    """
+    Most bedrooms.
+    """
+    min_baths: Annotated[int | None, Field(ge=0, le=20)] = None
+    """
+    Fewest bathrooms. Zillow counts every bathroom, half baths included, as one.
+    """
+    min_sqft: Annotated[int | None, Field(ge=0, le=1000000)] = None
+    """
+    Smallest living area in square feet.
+    """
+    max_sqft: Annotated[int | None, Field(ge=0, le=1000000)] = None
+    """
+    Largest living area in square feet.
+    """
+    min_lot_sqft: Annotated[int | None, Field(ge=0, le=1000000000)] = None
+    """
+    Smallest lot in square feet.
+    """
+    max_lot_sqft: Annotated[int | None, Field(ge=0, le=1000000000)] = None
+    """
+    Largest lot in square feet.
+    """
+    min_year_built: Annotated[int | None, Field(ge=1700, le=2100)] = None
+    """
+    Built in or after this year.
+    """
+    max_year_built: Annotated[int | None, Field(ge=1700, le=2100)] = None
+    """
+    Built in or before this year.
+    """
+    max_hoa: Annotated[int | None, Field(ge=0, le=1000000)] = None
+    """
+    Highest monthly HOA fee in USD. Homes for sale or sold only.
+    """
     days_on_zillow: ZillowDaysOnZillow | None = None
     """
     Listed within this many days (`1` to `90`) or months (`6m` to `36m`); with `status=sold`, sold within it.
@@ -169,84 +247,9 @@ class SearchHomesParams(BaseModel):
     """
     Words the listing must mention, such as `pool` or `waterfront`.
     """
-    location: Annotated[
-        str | None,
-        Field(examples=["Austin, TX"], max_length=200, min_length=1, pattern="\\S"),
-    ] = None
-    """
-    Where to search, as you would type it into Zillow: a state, county, city, ZIP code, neighborhood or borough (`Austin, TX`, `94110`, `Brooklyn`). Zillow's first matching region is used and the response's `region` says which; a custom area such as `Bay Area` answers 404. Send this, or `region_id` with `region_type`.
-    """
-    max_beds: Annotated[int | None, Field(ge=0, le=20)] = None
-    """
-    Most bedrooms.
-    """
-    max_hoa: Annotated[int | None, Field(ge=0, le=1000000)] = None
-    """
-    Highest monthly HOA fee in USD. Homes for sale or sold only.
-    """
-    max_lot_sqft: Annotated[int | None, Field(ge=0, le=1000000000)] = None
-    """
-    Largest lot in square feet.
-    """
-    max_price: Annotated[int | None, Field(ge=0, le=1000000000)] = None
-    """
-    Highest price in USD; monthly rent with `status=for_rent`.
-    """
-    max_sqft: Annotated[int | None, Field(ge=0, le=1000000)] = None
-    """
-    Largest living area in square feet.
-    """
-    max_year_built: Annotated[int | None, Field(ge=1700, le=2100)] = None
-    """
-    Built in or before this year.
-    """
-    min_baths: Annotated[int | None, Field(ge=0, le=20)] = None
-    """
-    Fewest bathrooms. Zillow counts every bathroom, half baths included, as one.
-    """
-    min_beds: Annotated[int | None, Field(ge=0, le=20)] = None
-    """
-    Fewest bedrooms.
-    """
-    min_lot_sqft: Annotated[int | None, Field(ge=0, le=1000000000)] = None
-    """
-    Smallest lot in square feet.
-    """
-    min_price: Annotated[int | None, Field(ge=0, le=1000000000)] = None
-    """
-    Lowest price in USD; monthly rent with `status=for_rent`.
-    """
-    min_sqft: Annotated[int | None, Field(ge=0, le=1000000)] = None
-    """
-    Smallest living area in square feet.
-    """
-    min_year_built: Annotated[int | None, Field(ge=1700, le=2100)] = None
-    """
-    Built in or after this year.
-    """
-    region_id: Annotated[int | None, Field(examples=[20330], ge=1, le=1000000000)] = None
-    """
-    Zillow region id, the `metaData.regionId` of a `/v1/zillow/locations` region suggestion. Send with `region_type`, instead of `location`, to search exactly that region.
-    """
-    region_type: ZillowRegionType | None = None
-    """
-    The region suggestion's `metaData.regionType`; required with `region_id`.
-    """
-    sort: ZillowSearchSort | None = ZillowSearchSort.RELEVANCE
-    """
-    Order of results. `relevance` is Zillow's default; on `sold` it already lists the newest sales first, like `newest`. `beds`, `baths`, `sqft` and `lot_size` sort from largest; with `for_rent`, the price sorts order by monthly rent.
-    """
-    status: ZillowListingStatus | None = ZillowListingStatus.FOR_SALE
-    """
-    `for_sale`, `for_rent`, or `sold` (Zillow's recently sold homes).
-    """
 
 
 class SearchLocationsParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=12)] = 8
-    """
-    Most suggestions to return; Zillow serves 12 at most.
-    """
     query: Annotated[
         str,
         Field(examples=["1426 Taylor St"], max_length=200, min_length=1, pattern="\\S"),
@@ -258,127 +261,48 @@ class SearchLocationsParams(BaseModel):
     """
     `region` for places (states, counties, cities, ZIP codes, neighborhoods, boroughs and Zillow's custom areas, `regionType` `flex_region`, which search does not take), `address` for homes, `all` for both.
     """
+    limit: Annotated[int | None, Field(ge=1, le=12)] = 8
+    """
+    Most suggestions to return; Zillow serves 12 at most.
+    """
 
 
-class ZillowAutocompleteMetadata(BaseModel):
-    addressType: str | None = None
-    city: str | None = None
-    country: str
-    county: str | None = None
-    countyFIPS: str | None = None
-    lat: float
-    lng: float
-    maloneId: int | None = None
-    regionId: int | None = None
-    regionType: str | None = None
-    state: str
-    streetName: str | None = None
-    streetNumber: str | None = None
-    unitNumber: str | None = None
-    zipCode: str | None = None
-    zpid: int | None = None
+class ZillowAffordabilityEstimateV2(BaseModel):
+    totalMonthlyCost: int | None
+    usedInputs: ZillowAffordabilityInputs
 
 
-class ZillowAutocompleteResult(BaseModel):
-    display: str
-    metaData: ZillowAutocompleteMetadata
-    resultType: str
+class ZillowAffordabilityInputs(BaseModel):
+    fromFinancialProfile: bool | None = None
+    downPaymentAmount: float | None = None
+    downPaymentPercent: int | None = None
+    isDownpaymentPreferencePercent: bool | None = None
+    creditScoreRange: str | None = None
+    rateSource: str | None = None
 
 
-class ZillowComparable(BaseModel):
-    address: ZillowComparableAddress
-    attributionInfo: ZillowComparableAttributionInfo
-    bathrooms: float | None
-    bedrooms: int | None
-    currency: str
-    formattedChip: ZillowComparableFormattedChip
-    hdpTypeDimension: str
-    hdpUrl: str
-    homeStatus: str
-    homeType: str
-    isPremierBuilder: bool
-    isSavedByCurrentSignedInUser: bool | None = None
-    isShowcaseListing: bool | None
-    latitude: float
-    listingMetadata: ZillowComparableListingMetadata
-    listingTypeDimension: str
-    listing_sub_type: ZillowComparableListingSubType
-    livingArea: int | None
-    livingAreaUnits: str | None
-    livingAreaUnitsShort: str | None
-    livingAreaValue: int | None
-    longitude: float
-    lotAreaUnits: str
-    lotAreaValue: float | None
-    lotSize: int | None
-    marketingTreatments: list[str] | None = None
-    miniCardPhotos: list[ZillowComparablePhoto]
-    newConstructionType: str | None
-    parentRegion: ZillowComparableParentRegion | None
-    price: int | None
-    propertyTypeDimension: str
-    providerListingID: str | None
-    state: str
-    zpid: int
+class ZillowAgentPhone(BaseModel):
+    area_code: str
+    prefix: str
+    number: str
 
 
-class ZillowComparableAddress(BaseModel):
-    city: str
-    state: str
-    streetAddress: str
-    zipcode: str
-
-
-class ZillowComparableAttributionInfo(BaseModel):
-    agentName: str | None
-    agentPhoneNumber: str | None
-    brokerName: str | None
-    brokerPhoneNumber: str | None
-    mlsId: str | None
-    mlsName: str | None
-    notMLSSourcedListing: bool | None = None
-    providerLogo: str | None
-    trueStatus: str | None
-
-
-class ZillowComparableChipLocation(BaseModel):
-    fullValue: str | None
-
-
-class ZillowComparableFormattedChip(BaseModel):
-    location: list[ZillowComparableChipLocation]
-
-
-class ZillowComparableListingMetadata(BaseModel):
-    comminglingCategoryIsRulesApplicable: bool
-
-
-class ZillowComparableListingSubType(BaseModel):
-    is_FSBA: bool
-    is_FSBO: bool
-    is_bankOwned: bool
-    is_comingSoon: bool
-    is_forAuction: bool
-    is_foreclosure: bool
-    is_newHome: bool
-
-
-class ZillowComparableParentRegion(BaseModel):
-    name: str
-
-
-class ZillowComparablePhoto(BaseModel):
+class ZillowAgentPhoto(BaseModel):
     url: str
+    width: int
+    height: int
 
 
 class ZillowComparables(BaseModel):
-    items: list[ZillowComparable]
-    zpid: int
+    zpid: str
+    items: list[ZillowPropertySummary]
 
 
 class ZillowCursorPagination(BaseModel):
-    completion: ZillowCursorCompletionValue | None
+    page: int
+    per_page: int
     next_cursor: str | None
+    completion: ZillowCursorCompletionValue | None
 
 
 class ZillowHomeValueChartPoint(BaseModel):
@@ -391,166 +315,64 @@ class ZillowHomeValueChartSeries(BaseModel):
     points: list[ZillowHomeValueChartPoint]
 
 
-class ZillowLatLong(BaseModel):
-    latitude: float | None = None
-    longitude: float | None = None
+class ZillowListedBy(BaseModel):
+    role: str
+    values: list[ZillowListedByValue]
 
 
-class ZillowListing(BaseModel):
-    address: str
-    addressCity: str
-    addressState: str
-    addressStreet: str
-    addressZipcode: str
-    area: int | None = None
-    availabilityCount: int | None = None
-    availabilityDate: str | None = None
-    baths: float | None = None
-    beds: int | None = None
-    brokerName: str | None = None
-    builderName: str | None = None
-    buildingName: str | None = None
-    canSaveBuilding: bool | None = None
-    carouselPhotosComposable: ZillowListingCarouselPhotos | None = None
-    contentType: str | None = None
-    countryCurrency: str | None = None
-    detailUrl: str
-    factsAndFeatures: ZillowListingFactsAndFeatures | None = None
-    flexFieldText: str | None = None
-    has3DModel: bool
-    hasAdditionalAttributions: bool | None = None
-    hasImage: bool | None = None
-    hasOpenHouse: bool | None = None
-    hasVideo: bool | None = None
-    hdpData: ZillowListingHdpData | None = None
-    id: str
-    imgSrc: str
-    info2String: str | None = None
-    info3String: str | None = None
-    info6String: str | None = None
-    isBuilding: bool | None = None
-    isContactable: bool | None = None
-    isFeaturedListing: bool
-    isHomeRec: bool | None = None
-    isInstantTourEnabled: bool | None = None
-    isPaidBuilderNewConstruction: bool
-    isPropertyResultCDP: bool | None = None
-    isShowcaseListing: bool
-    isUndisclosedAddress: bool | None = None
-    isUserClaimingOwner: bool | None = None
-    isUserConfirmedClaim: bool | None = None
-    isZillowOwned: bool | None = None
-    latLong: ZillowLatLong
-    list_: Annotated[bool, Field(alias="list")]
-    listCardRecommendation: ZillowListingCardRecommendation | None = None
-    listPriceIncludesRequiredMonthlyFees: bool | None = None
-    lotAreaString: str | None = None
-    lotId: int | None = None
-    marketingStatusSimplifiedCd: str | None = None
-    marketingTreatments: list[str] | None = None
-    maxBaseRent: int | None = None
-    minBaseRent: int | None = None
-    openHouseDescription: str | None = None
-    openHouseEndDate: str | None = None
-    openHouseStartDate: str | None = None
-    palsId: str | None = None
-    pgapt: str | None = None
-    price: str | None = None
-    providerListingId: str | None = None
-    rawHomeStatusCd: str | None = None
-    relaxed: bool
-    rooms: list[Any] | None = None
-    sgapt: str | None = None
-    shouldShowRequestOnPrice: bool
-    shouldShowZestimateAsPrice: bool | None = None
-    soldPrice: str | None = None
-    statusText: str
-    statusType: str
-    streetViewMetadataURL: str | None = None
-    streetViewURL: str | None = None
-    totalRequiredMonthlyMaxFee: int | None = None
-    totalRequiredMonthlyMinFee: int | None = None
-    unformattedPrice: int | None = None
-    units: list[ZillowListingUnit] | None = None
-    zestimate: int | None = None
-    zpid: str
+class ZillowListedByValue(BaseModel):
+    type: str
+    value: str
 
 
-class ZillowListingCardRecommendation(BaseModel):
-    ctaRecommendations: list[ZillowListingRecommendation] | None = None
-    flexFieldRecommendations: list[ZillowListingRecommendation]
-    zovInsight: ZillowListingZovInsight | None = None
+class ZillowListingAgent(BaseModel):
+    id: str | None = None
+    display_name: str | None = None
+    profile_url: str | None = None
+    reviews_url: str | None = None
+    rating_average: float | None = None
+    review_count: int | None = None
+    first_name: str | None = None
+    business_name: str | None = None
+    badge_type: str | None = None
+    phone: ZillowAgentPhone | None = None
+    recent_sales: int | None = None
+    services_offered: list[int] | None = None
+    is_zillow_pro: bool | None = None
+    photo: ZillowAgentPhoto | None = None
 
 
-class ZillowListingCarouselPhotos(BaseModel):
-    baseUrl: str | None
-    communityBaseUrl: str | None
-    communityPhotoData: list[ZillowListingPhotoKey] | None
-    isStaticUrls: bool
-    photoData: list[ZillowListingPhotoKey] | None
+class ZillowListingAgentAttribution(BaseModel):
+    memberFullName: str | None
+    memberStateLicense: str | None
+    associatedAgentType: str
 
 
 class ZillowListingFactsAndFeatures(BaseModel):
     fullBathroomCount: int
     halfBathroomCount: int | None = None
-    hasAirConditioning: bool
     hasFireplace: bool
-    hasPool: bool
+    hasAirConditioning: bool
     hasSpa: bool
+    hasPool: bool
 
 
-class ZillowListingHdpData(BaseModel):
-    homeInfo: ZillowListingHomeInfo
+class ZillowListingFlags(BaseModel):
+    is_pending: bool | None = None
+    is_fsba: bool | None = None
+    is_fsbo: bool | None = None
+    is_bank_owned: bool | None = None
+    is_coming_soon: bool | None = None
+    is_for_auction: bool | None = None
+    is_foreclosure: bool | None = None
+    is_new_home: bool | None = None
+    is_open_house: bool | None = None
+    is_room_for_rent: bool | None = None
 
 
-class ZillowListingHomeInfo(BaseModel):
-    bathrooms: float | None = None
-    bedrooms: int | None = None
-    city: str
-    comingSoonOnMarketDate: int | None = None
-    contingentListingType: str | None = None
-    country: str
-    currency: str
-    datePriceChanged: int | None = None
-    dateSold: int | None = None
-    daysOnZillow: int
-    group_type: str | None = None
-    homeStatus: str
-    homeStatusForHDP: str
-    homeType: str
-    isFeatured: bool
-    isNonOwnerOccupied: bool
-    isPreforeclosureAuction: bool
-    isPremierBuilder: bool
-    isRentalWithBasePrice: bool | None = None
-    isShowcaseListing: bool
-    isUnmappable: bool
-    isZillowOwned: bool
-    latitude: float | None = None
-    listing_sub_type: ZillowListingSubType
-    livingArea: int | None = None
-    longitude: float | None = None
-    lotAreaUnit: str | None = None
-    lotAreaValue: float | None = None
-    newConstructionType: str | None = None
-    openHouse: str | None = None
-    open_house_info: ZillowListingOpenHouseInfo | None = None
-    price: int | None = None
-    priceChange: int | None = None
-    priceForHDP: int | None = None
-    priceReduction: str | None = None
-    priceSuffix: str | None = None
-    providerListingID: str | None = None
-    rentZestimate: int | None = None
-    shouldHighlight: bool
-    state: str
-    streetAddress: str
-    taxAssessedValue: int | None = None
-    timeOnZillow: int | None = None
-    unit: str | None = None
-    zestimate: int | None = None
-    zipcode: str
-    zpid: int
+class ZillowListingOfficeAttribution(BaseModel):
+    officeName: str | None
+    associatedOfficeType: str
 
 
 class ZillowListingOpenHouseInfo(BaseModel):
@@ -558,279 +380,338 @@ class ZillowListingOpenHouseInfo(BaseModel):
 
 
 class ZillowListingOpenHouseShowing(BaseModel):
-    open_house_end: int
     open_house_start: int
+    open_house_end: int
 
 
-class ZillowListingPhotoKey(BaseModel):
-    photoKey: str
+class ZillowListingProvider(BaseModel):
+    title: str | None = None
+    disclaimerText: Any = None
+    enhancedDescriptionText: Any = None
+    postingWebsiteLinkText: str | None = None
+    sourceText: str | None = None
+    postingWebsiteURL: Any = None
+    showNoContactInfoMessage: bool | None = None
+    agentName: str | None = None
+    agentLicenseNumber: Any = None
+    postingGroupName: str | None = None
+    logos: list[Any] | None = None
+    enhancedVideoURL: Any = None
 
 
-class ZillowListingRecommendation(BaseModel):
-    contentType: str
-    displayString: str
-
-
-class ZillowListingSubType(BaseModel):
-    is_FSBA: bool | None = None
-    is_FSBO: bool | None = None
-    is_bankOwned: bool | None = None
-    is_comingSoon: bool | None = None
-    is_forAuction: bool | None = None
-    is_foreclosure: bool | None = None
-    is_newHome: bool | None = None
-    is_openHouse: bool | None = None
-    is_pending: bool | None = None
-    is_roomForRent: bool | None = None
+class ZillowListingRestrictions(BaseModel):
+    can_commingle_comparables: bool | None = None
+    can_show_automated_valuation: bool | None = None
+    can_show_comparables: bool | None = None
+    can_show_cropped_photos: bool | None = None
+    can_show_non_idx_media: bool | None = None
+    can_show_price_history: bool | None = None
+    can_show_tax_history: bool | None = None
+    can_show_user_generated_content: bool | None = None
+    hide_days_on_site: bool | None = None
+    hide_public_remarks: bool | None = None
+    prefer_mls_photos: bool | None = None
+    show_agent_email: bool | None = None
+    show_agent_phone: bool | None = None
+    show_attribution_above_facts: bool | None = None
+    show_auction_status_as_sold: bool | None = None
+    show_disclaimer_below_attribution: bool | None = None
+    show_feed_logo_in_contact_box: bool | None = None
+    show_listing_office_phone: bool | None = None
+    watermark_photo_bottom_left: bool | None = None
+    watermark_photo_bottom_right: bool | None = None
+    attribute_listing_contact: bool | None = None
+    commingling_rules_apply: bool | None = None
+    commingling_category: bool | None = None
+    listing_agent_must_be_contactable: bool | None = None
+    office_name_precedes_agent_name: bool | None = None
+    password_required_for_market_analysis: bool | None = None
 
 
 class ZillowListingUnit(BaseModel):
-    beds: str
     price: str
+    beds: str
     roomForRent: bool
 
 
-class ZillowListingZovInsight(BaseModel):
-    amenityType: str
-    displayString: str
-    rarity: str
-    regionName: str
+class ZillowLocation(BaseModel):
+    display: str
+    metaData: ZillowLocationMetadata
+    resultType: str
+
+
+class ZillowLocationMetadata(BaseModel):
+    zpid: str | None = None
+    maloneId: int | None = None
+    regionId: int | None = None
+    addressType: str | None = None
+    streetNumber: str | None = None
+    streetName: str | None = None
+    unitNumber: str | None = None
+    city: str | None = None
+    state: str | None = None
+    country: str | None = None
+    zipCode: str | None = None
+    lat: float | None = None
+    lng: float | None = None
+    regionType: str | None = None
+    county: str | None = None
+    countyFIPS: str | None = None
 
 
 class ZillowLocations(BaseModel):
-    items: list[ZillowAutocompleteResult]
+    items: list[ZillowLocation]
+
+
+class ZillowNearbyBuilding(BaseModel):
+    lotId: str | None = None
+    providerListingId: str | None = None
+    bdpLink: str | None = None
+    maxPrice: int | None = None
+    minPrice: int | None = None
+    totalRequiredMonthlyMinFee: int | None = None
+    totalRequiredMonthlyMaxFee: int | None = None
+    photoCount: int | None = None
+    bedroomGroups: list[ZillowPropertyBedroomGroup] | None = None
+    buildingAddress: str | None = None
+    buildingName: str | None = None
+    isLowIncome: bool | None = None
+    isPaidListing: bool | None = None
+    isSeniorHousing: bool | None = None
+    isStudentHousing: bool | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    minBaths: float | None = None
+    minBeds: int | None = None
+    minLivingArea: int | None = None
+    listPriceIncludesRequiredMonthlyFees: bool | None = None
+    marketingTreatments: list[str] | None = None
+    minBaseRent: int | None = None
+    maxBaseRent: int | None = None
+    state: str | None = None
+    photo: ZillowPropertyNeighborhoodMapThumb | None = None
+
+
+class ZillowPhotoGallery(BaseModel):
+    base_url: str | None = None
+    community_base_url: str | None = None
+    photo_keys: list[str] | None = None
+    community_photo_keys: list[str] | None = None
+
+
+class ZillowPriceHistoryAgent(BaseModel):
+    name: str
+    profileUrl: str | None
+    photo: ZillowPriceHistoryAgentPhoto | None
+
+
+class ZillowPriceHistoryAgentPhoto(BaseModel):
+    url: str
 
 
 class ZillowProperty(BaseModel):
-    abbreviatedAddress: str | None = None
-    address: ZillowPropertyAddress
-    affordabilityEstimate: ZillowPropertyAffordabilityEstimate | None = None
-    affordabilityEstimateV2: ZillowPropertyAffordabilityEstimateV2 | None = None
-    attributionInfo: ZillowPropertyAttributionInfo
-    baseRent: int | None = None
-    bathrooms: float | None
-    bedrooms: int | None
-    boroughId: int | None
-    boroughSearchUrl: Any = None
-    brokerId: Any = None
-    brokerIdDimension: str | None = None
-    brokerageName: str | None = None
-    building: ZillowPropertyBuilding | None = None
-    buildingId: str | None = None
-    buyAbilityData: ZillowPropertyBuyAbilityData | None = None
-    city: str
-    cityId: int
-    citySearchUrl: ZillowPropertyRegionLink | None = None
-    comingSoonOnMarketDate: Any = None
-    communityUrl: Any = None
-    contactAgentFormVariant: str | None = None
-    contingentListingType: Any
-    country: str
-    county: str | None = None
-    countyFIPS: str | None = None
-    countyId: int
-    countySearchUrl: ZillowPropertyRegionLink | None = None
-    currency: str
-    datePosted: int | None = None
-    dateSold: int | None = None
-    dateSoldString: str | None = None
-    daysOnZillow: int | None = None
-    description: str | None = None
-    desktopWebHdpImageLink: str | None = None
-    downPaymentAssistance: ZillowPropertyDownPaymentAssistance | None = None
-    editPropertyHistorylink: Any = None
-    favoriteCount: int | None = None
-    featuredListingTypeDimension: str | None = None
-    foreclosureTypes: ZillowPropertyForeclosureTypes | None = None
-    formattedChip: ZillowPropertyFormattedChip
-    hasApprovedThirdPartyVirtualTourUrl: bool | None = None
-    hasBadGeocode: bool | None = None
-    hasPromotion: bool | None = None
-    hasPublicVideo: bool | None = None
-    hdpTypeDimension: str | None = None
-    hdpUrl: str
-    hdpVariant: str | None = None
-    hiResImageLink: str | None = None
-    hideClimateRiskScore: bool | None = None
-    homeInsights: list[ZillowPropertyHomeInsight] | None = None
-    homeStatus: str
-    homeType: str
-    homeValues: Any = None
-    id: str | None = None
-    interactiveFloorPlanUrl: str | None = None
-    isCurrentSignedInAgentResponsible: bool | None = None
-    isCurrentSignedInUserVerifiedOwner: bool | None = None
-    isFeatured: bool | None = None
-    isHousingConnector: bool | None = None
-    isIncomeRestricted: Any = None
-    isInstantTourEnabled: bool | None = None
-    isListedByOwner: bool | None = None
-    isListingClaimedByCurrentSignedInUser: bool | None = None
-    isListingOwnedByCurrentSignedInUser: bool | None = None
-    isNonOwnerOccupied: bool | None = None
-    isPaidMultiFamilyBrokerId: bool | None = None
-    isPreforeclosureAuction: bool | None = None
-    isPremierBuilder: bool
-    isRecentStatusChange: bool | None = None
-    isRentalsLeadCapMet: bool | None = None
-    isShowcaseListing: bool
-    isUndisclosedAddress: bool
-    isVerifiedClaimedByCurrentSignedInUser: bool | None = None
-    isZillowOwned: bool | None = None
-    keystoneHomeStatus: str | None = None
-    lastSoldListing: ZillowPropertyLastSoldListing | None = None
-    lastSoldPrice: int | None
-    latitude: float | None
-    lfaViewPropertyPageUrl: Any = None
-    listPriceIncludesRequiredMonthlyFees: bool | None = None
-    listPriceLow: Any = None
-    listedBy: list[ZillowPropertyListedBy] | None = None
-    listingAccount: Any = None
-    listingAccountUserId: str | None = None
-    listingDataSource: str | None = None
-    listingFeedID: Any = None
-    listingMetadata: dict[str, bool | None]
-    listingOwnerConfigIDs: Any = None
-    listingProvider: ZillowPropertyListingProvider | None = None
-    listingRules: ZillowPropertyListingRules | None = None
-    listingSource: Any = None
-    listingSubType: ZillowPropertyListingSubType | None = None
-    listingTypeDimension: str | None = None
-    listing_sub_type: ZillowPropertyListingFlags
-    livingArea: int | None
-    livingAreaUnits: str | None = None
-    livingAreaUnitsShort: str | None = None
-    livingAreaValue: int | None
-    longitude: float | None
-    lotAreaUnits: str
-    lotAreaValue: float | None
-    lotNumber: Any = None
-    lotPremium: Any = None
-    lotSize: int | None
-    maloneId: str | None = None
-    marketTrendsURL: str | None = None
-    marketingName: str | None = None
-    marketingTreatments: list[str] | None = None
-    marketingType: str | None = None
+    zpid: str
+    node_id: str | None = None
+    palsId: str | None = None
+    boroughId: int | None = None
+    cityId: int | None = None
+    countyId: int | None = None
+    stateId: int | None = None
     mlsid: str | None = None
-    monthlyHoaFee: int | None = None
-    mortgageZHLRates: ZillowPropertyMortgageZHLRates | None = None
-    moveHomeMapLocationLink: Any = None
-    moveInCompletionDate: Any = None
-    moveInReady: bool | None = None
-    nearbyBuildingLinks: list[ZillowPropertyNearbyBuildingLink] | None = None
-    nearbyBuildings: list[ZillowPropertyNearbyBuilding] | None = None
-    nearbyCities: list[ZillowPropertyNearbyRegion] | None = None
-    nearbyHomes: list[ZillowPropertyNearbyHome] | None = None
-    nearbyNeighborhoods: list[ZillowPropertyNearbyRegion] | None = None
-    nearbyZipcodes: list[ZillowPropertyNearbyRegion] | None = None
-    neighborhoodMapThumb: list[ZillowPropertyNeighborhoodMapThumb] | None = None
-    neighborhoodRegion: ZillowPropertyNeighborhoodRegion | None = None
-    neighborhoodSearchUrl: ZillowPropertyRegionPath | None = None
-    newConstructionType: str | None = None
-    odpPropertyModels: ZillowPropertyOdpPropertyModels | None = None
-    openHouseSchedule: list[ZillowPropertyOpenHouseSchedule] | None = None
-    originalPhotos: list[ZillowPropertyPhoto] | None = None
-    ouid: str | None = None
-    ownerAccount: Any = None
-    pageUrlFragment: str | None = None
-    pageViewCount: int | None = None
-    pals: list[ZillowPropertyPal] | None = None
-    palsId: str
+    listingAccountUserId: str | None = None
+    listingFeedID: Any = None
+    brokerId: Any = None
+    buildingId: str | None = None
+    providerListingID: str | None = None
     parcelId: str | None = None
-    parentRegion: ZillowPropertyParentRegion | None = None
-    photoCount: int
-    photos: list[ZillowPropertyPhotoElement] | None = None
-    planNumber: str | None = None
-    postingContact: ZillowPropertyPostingContact | None = None
-    postingPresentationTypes: Any = None
-    postingProductType: str | None = None
+    maloneId: str | None = None
+    source_system_id: int | None = None
+    description: str | None = None
+    hdpUrl: str | None = None
     postingUrl: str | None = None
-    price: int | None
+    virtualTourUrl: str | None = None
+    rentZestimateURL: str | None = None
+    marketTrendsURL: str | None = None
+    interactiveFloorPlanUrl: str | None = None
+    nearbyBuildingLinks: list[ZillowPropertyNearbyBuildingLink] | None = None
+    neighborhoodSearchUrl: Any | None = None
+    stateSearchUrl: Any | None = None
+    countySearchUrl: Any | None = None
+    citySearchUrl: Any | None = None
+    zipcodeSearchUrl: Any | None = None
+    boroughSearchUrl: Any = None
+    communityUrl: Any = None
+    streetViewMetadataUrlMapLightboxAddress: str | None = None
+    price: int | None = None
     priceChange: int | None = None
+    zestimate: int | None = None
+    rentZestimate: int | None = None
+    lastSoldPrice: int | None = None
+    photoCount: int | None = None
+    priceHistory: list[ZillowPropertyPriceHistory] | None = None
+    zestimateMinus30: Any = None
+    tourViewCount: int | None = None
+    pageViewCount: int | None = None
+    favoriteCount: int | None = None
+    totalRequiredMonthlyMinFee: int | None = None
+    totalRequiredMonthlyMaxFee: int | None = None
+    listPriceLow: Any = None
+    rentalApplicationPriceDetail: ZillowPropertyRentalApplicationPriceDetail | None = None
+    zestimateLowPercent: str | None = None
+    zestimateHighPercent: str | None = None
+    homeStatus: str | None = None
+    listing_restrictions: ZillowListingRestrictions | None = None
+    pslMarketingStatus: str | None = None
+    keystoneHomeStatus: str | None = None
+    isIncomeRestricted: Any = None
+    moveInCompletionDate: Any = None
     priceChangeDate: int | None = None
     priceChangeDateString: str | None = None
-    priceHistory: list[ZillowPropertyPriceHistory] | None = None
-    primaryPublicVideo: Any = None
-    propertyEventLogLink: Any = None
-    propertyHasLasViolation: bool | None = None
-    propertyTaxRate: float | None = None
-    propertyTypeDimension: str
-    propertyUpdatePageLink: Any = None
-    providerListingID: str | None = None
-    pslMarketingStatus: str | None = None
-    rentZestimate: int | None = None
-    rentZestimateURL: str | None = None
-    rentalApplicationPriceDetail: ZillowPropertyRentalApplicationPriceDetail | None = None
-    rentalApplicationsAcceptedType: str | None = None
-    rentalAvailableTourTimes: list[Any] | None = None
-    rentalCostsAndFees: ZillowPropertyRentalCostsAndFees | None = None
-    rentalInstantTour: Any = None
-    rentalMarketingTreatments: list[str] | None = None
-    rentalUpsellMessage: ZillowPropertyRentalUpsellMessage | None = None
-    resoFacts: ZillowPropertyResoFacts
-    responsivePhotos: list[ZillowPropertyResponsivePhoto]
-    responsivePhotosOriginalRatio: list[ZillowPropertyPhotoElement] | None = None
-    restimateMinus30: str | None = None
-    richMedia: ZillowPropertyRichMedia | None
-    richMediaVideos: Any = None
-    roomForRent: bool | None = None
-    secondsOnZillow: int | None = None
-    sellingSoon: list[ZillowPropertySellingSoon] | None = None
-    singleXXLPhoto: list[ZillowPropertyNeighborhoodMapThumb] | None = None
-    specNumber: Any = None
-    specialOffers: list[Any] | None = None
-    ssid: int | None = None
-    state: str
-    stateId: int
-    stateSearchUrl: ZillowPropertyRegionPath | None = None
-    staticMap: ZillowPropertyStaticMap | None = None
-    streetAddress: str
-    streetViewMetadataUrlMapLightboxAddress: str | None = None
-    streetViewTileImageUrlMediumAddress: str | None = None
-    streetViewTileImageUrlMediumLatLong: str | None = None
-    summaryFirstPhoto: list[ZillowPropertyPhoto] | None = None
-    taxAssessedValue: int | None = None
+    dateSold: int | None = None
+    comingSoonOnMarketDate: Any = None
+    dateSoldString: str | None = None
+    datePosted: int | None = None
+    attributionInfo: ZillowPropertyAttributionInfo | None = None
+    parentRegion: ZillowPropertyParentRegion | None = None
     thirdPartyVirtualTour: ZillowPropertyThirdPartyVirtualTour | None = None
-    thumb: list[ZillowPropertyNeighborhoodMapThumb] | None = None
-    timeOnZillow: str | None = None
-    timeZone: str
-    totalRequiredMonthlyMaxFee: int | None = None
-    totalRequiredMonthlyMinFee: int | None = None
-    tourAppointmentsForCurrentLoggedInUser: Any = None
-    tourEligibility: ZillowPropertyTourEligibility | None = None
-    tourViewCount: int | None = None
-    virtualTourUrl: str | None = None
+    sellingSoon: list[ZillowPropertySellingSoon] | None = None
+    listing_agent: ZillowListingAgent | None = None
+    resoFacts: ZillowPropertyResoFacts | None = None
+    pals: list[ZillowPropertyPal] | None = None
     vrModel: ZillowPropertyVRModel | None = None
+    nearbyHomes: list[ZillowPropertySummary] | None = None
+    nearbyBuildings: list[ZillowNearbyBuilding] | None = None
+    lastSoldListing: ZillowPropertyLastSoldListing | None = None
+    address: ZillowPropertyAddress | None = None
     whatILove: Any = None
+    home_insights: list[str] | None = None
+    city: str | None = None
+    state: str | None = None
+    streetAddress: str | None = None
+    zipcode: str | None = None
+    country: str | None = None
+    isUndisclosedAddress: bool | None = None
+    homeType: str | None = None
+    currency: str | None = None
+    bedrooms: int | None = None
+    bathrooms: float | None = None
     yearBuilt: int | None = None
-    zestimate: int | None
-    zestimateHighPercent: str | None = None
-    zestimateLowPercent: str | None = None
-    zestimateMinus30: Any = None
-    zipcode: str
-    zipcodeSearchUrl: ZillowPropertyRegionPath | None = None
-    zpid: int
+    livingAreaValue: int | None = None
+    livingAreaUnitsShort: str | None = None
+    listing_sub_type: ZillowListingFlags | None = None
+    listingDataSource: str | None = None
+    brokerageName: str | None = None
+    timeZone: str | None = None
+    openHouseSchedule: list[ZillowPropertyOpenHouseSchedule] | None = None
+    isPremierBuilder: bool | None = None
+    newConstructionType: str | None = None
+    moveInReady: bool | None = None
+    livingArea: int | None = None
+    monthlyHoaFee: int | None = None
+    lotAreaUnits: str | None = None
+    lotAreaValue: float | None = None
+    lotSize: int | None = None
+    contingentListingType: Any = None
+    longitude: float | None = None
+    latitude: float | None = None
+    livingAreaUnits: str | None = None
+    marketingName: str | None = None
+    neighborhoodRegion: ZillowPropertyNeighborhoodRegion | None = None
+    postingProductType: str | None = None
+    propertyTypeDimension: str | None = None
+    listingTypeDimension: str | None = None
+    restimateMinus30: str | None = None
+    staticMap: ZillowPropertyStaticMap | None = None
+    downPaymentAssistance: ZillowPropertyDownPaymentAssistance | None = None
+    affordabilityEstimate: ZillowPropertyAffordabilityEstimate | None = None
+    affordabilityEstimateV2: ZillowAffordabilityEstimateV2 | None = None
+    foreclosureTypes: ZillowPropertyForeclosureTypes | None = None
+    hdpTypeDimension: str | None = None
+    hasApprovedThirdPartyVirtualTourUrl: bool | None = None
+    listingProvider: ZillowListingProvider | None = None
+    marketingType: str | None = None
+    marketingTreatments: list[str] | None = None
+    timeOnZillow: str | None = None
+    daysOnZillow: int | None = None
+    ouid: str | None = None
+    tourEligibility: ZillowPropertyTourEligibility | None = None
+    mortgageZHLRates: ZillowPropertyMortgageZHLRates | None = None
+    propertyTaxRate: float | None = None
+    secondsOnZillow: int | None = None
+    listingAccount: Any = None
+    isZillowOwned: bool | None = None
+    hasPublicVideo: bool | None = None
+    isRecentStatusChange: bool | None = None
+    isNonOwnerOccupied: bool | None = None
+    isPreforeclosureAuction: bool | None = None
+    isFeatured: bool | None = None
+    isShowcaseListing: bool | None = None
+    county: str | None = None
+    rentalApplicationsAcceptedType: str | None = None
+    featuredListingTypeDimension: str | None = None
+    brokerIdDimension: str | None = None
+    isRentalsLeadCapMet: bool | None = None
+    isPaidMultiFamilyBrokerId: bool | None = None
+    isHousingConnector: bool | None = None
+    hasPromotion: bool | None = None
+    planNumber: str | None = None
+    specNumber: Any = None
+    lotNumber: Any = None
+    listPriceIncludesRequiredMonthlyFees: bool | None = None
+    baseRent: int | None = None
+    rentalCostsAndFees: ZillowRentalCostsAndFees | None = None
+    postingContact: ZillowPropertyPostingContact | None = None
+    lotPremium: Any = None
+    roomForRent: bool | None = None
+    homeValues: Any = None
+    rentalMarketingTreatments: list[str] | None = None
+    building: ZillowPropertyBuilding | None = None
+    hasBadGeocode: bool | None = None
+    specialOffers: list[Any] | None = None
+    nearbyCities: list[ZillowPropertyNearbyRegion] | None = None
+    nearbyNeighborhoods: list[ZillowPropertyNearbyRegion] | None = None
+    nearbyZipcodes: list[ZillowPropertyNearbyRegion] | None = None
+    abbreviatedAddress: str | None = None
+    isListedByOwner: bool | None = None
+    isInstantTourEnabled: bool | None = None
+    countyFIPS: str | None = None
+    rentalInstantTour: Any = None
+    rentalAvailableTourTimes: list[Any] | None = None
+    propertyHasLasViolation: bool | None = None
+    taxAssessedValue: int | None = None
+    listingSource: Any = None
+    listed_by: list[ZillowListedBy] | None = None
+    related_properties: list[ZillowRelatedProperties] | None = None
+    tour_scheduling: list[ZillowTourScheduling] | None = None
+    responsivePhotos: list[ZillowPropertyResponsivePhoto] | None = None
+    photos: list[ZillowPropertyPhotoElement] | None = None
+    desktopWebHdpImageLink: str | None = None
+    responsivePhotosOriginalRatio: list[ZillowPropertyPhotoElement] | None = None
+    originalPhotos: list[ZillowPropertyPhoto] | None = None
+    hiResImageLink: str | None = None
+    singleXXLPhoto: list[ZillowPropertyNeighborhoodMapThumb] | None = None
+    summaryFirstPhoto: list[ZillowPropertyPhoto] | None = None
+    streetViewTileImageUrlMediumLatLong: str | None = None
+    streetViewTileImageUrlMediumAddress: str | None = None
+    thumb: list[ZillowPropertyNeighborhoodMapThumb] | None = None
+    neighborhoodMapThumb: list[ZillowPropertyNeighborhoodMapThumb] | None = None
+    richMedia: ZillowPropertyRichMedia | None = None
+    primaryPublicVideo: Any = None
+    richMediaVideos: Any = None
 
 
 class ZillowPropertyAddress(BaseModel):
-    city: str
-    community: Any = None
-    neighborhood: Any = None
-    state: str
     streetAddress: str
-    subdivision: Any = None
+    city: str
+    state: str
     zipcode: str
+    neighborhood: Any = None
+    community: Any = None
+    subdivision: Any = None
 
 
 class ZillowPropertyAffordabilityEstimate(BaseModel):
     totalMonthlyCost: int | None
-
-
-class ZillowPropertyAffordabilityEstimateV2(BaseModel):
-    mortgageChipData: ZillowPropertyMortgageChipData
-    totalMonthlyCost: int | None
-    usedInputs: ZillowPropertyUsedInputs
 
 
 class ZillowPropertyAtAGlanceFact(BaseModel):
@@ -841,36 +722,36 @@ class ZillowPropertyAtAGlanceFact(BaseModel):
 class ZillowPropertyAttributeSource(BaseModel):
     infoString1: str | None
     infoString2: str | None
-    infoString3: Any
+    infoString3: str | None
 
 
 class ZillowPropertyAttributionInfo(BaseModel):
-    agentEmail: Any = None
+    mlsId: str | None
+    trueStatus: str | None
+    lastChecked: str | None = None
+    lastUpdated: str | None = None
+    mlsName: str | None = None
+    listingAgentAttributionContact: Any = None
+    listingAttributionContact: str | None = None
+    notMLSSourcedListing: bool | None = None
     agentName: str | None = None
+    agentEmail: Any = None
     agentPhoneNumber: str | None = None
     brokerName: str | None = None
     brokerPhoneNumber: str | None = None
-    buyerBrokerageName: str | None = None
-    infoString10: str | None = None
-    infoString16: Any = None
+    listingAgreement: Any = None
     infoString3: Any = None
     infoString5: str | None = None
-    lastChecked: str | None = None
-    lastUpdated: str | None = None
-    listingAgentAttributionContact: Any = None
-    listingAgreement: Any = None
-    listingAttributionContact: str | None = None
+    infoString10: str | None = None
+    infoString16: Any = None
     mlsDisclaimer: str | None = None
-    mlsId: str | None
-    mlsName: str | None = None
-    notMLSSourcedListing: bool | None = None
+    buyerBrokerageName: str | None = None
     providerLogo: str | None = None
-    trueStatus: str | None
 
 
 class ZillowPropertyBedroomGroup(BaseModel):
-    beds: str
     price: str
+    beds: str
 
 
 class ZillowPropertyBucket(BaseModel):
@@ -881,28 +762,14 @@ class ZillowPropertyBucket(BaseModel):
 
 class ZillowPropertyBuilding(BaseModel):
     bdpUrl: str
-    buildingAttributes: ZillowPropertyBuildingAttributes
-    buildingName: str
     rentalUnitsSummary: ZillowPropertyRentalUnitsSummary
+    buildingName: str
     streetAddress: str
+    buildingAttributes: ZillowPropertyBuildingAttributes
 
 
 class ZillowPropertyBuildingAttributes(BaseModel):
     incomeRestrictions: Any
-
-
-class ZillowPropertyBuyAbilityData(BaseModel):
-    chipLabel: Any = None
-    hub: ZillowPropertyHub | None = None
-    isEligibleProperty: bool
-
-
-class ZillowPropertyCreditScore(BaseModel):
-    rangeType: str
-
-
-class ZillowPropertyCtaButton(BaseModel):
-    enrollmentStatus: str
 
 
 class ZillowPropertyDownPaymentAssistance(BaseModel):
@@ -913,305 +780,76 @@ class ZillowPropertyEligibility(BaseModel):
     dpa: bool
 
 
-class ZillowPropertyFee(BaseModel):
-    type: str
-    zillowDisclaimers: list[str] | None
-
-
-class ZillowPropertyFeeGroup(BaseModel):
-    fees: list[ZillowPropertyFee]
-
-
-class ZillowPropertyFees(BaseModel):
-    monthly: ZillowPropertyMonthly
-
-
 class ZillowPropertyFeesAndDue(BaseModel):
-    fee: str
     name: str | None
-    phone: Any
     type: str
+    fee: str
+    phone: Any
 
 
 class ZillowPropertyFloorPlan(BaseModel):
-    heroImageUrl: str | None = None
     viewerUrl: str | None = None
+    heroImageUrl: str | None = None
 
 
 class ZillowPropertyForeclosureTypes(BaseModel):
-    isAnyForeclosure: bool | None = None
     isBankOwned: bool
     isForeclosedNFS: bool | None = None
     isPreforeclosure: bool | None = None
-    wasDefault: Any = None
-    wasForeclosed: bool | None = None
+    isAnyForeclosure: bool | None = None
     wasNonRetailAuction: bool
+    wasForeclosed: bool | None = None
+    wasDefault: Any = None
 
 
-class ZillowPropertyFormattedChip(BaseModel):
-    location: list[ZillowPropertyLocation]
+class ZillowPropertyHighlight(BaseModel):
+    text: str | None = None
+    content_type: str | None = None
+    amenity_type: str | None = None
+    rarity: str | None = None
+    region_name: str | None = None
 
 
 class ZillowPropertyHistory(BaseModel):
+    zpid: str
+    series: list[ZillowHomeValueChartSeries]
     metric: ZillowHistoryMetric
     period: ZillowHistoryPeriod
-    series: list[ZillowHomeValueChartSeries]
-    zpid: int
-
-
-class ZillowPropertyHomeInsight(BaseModel):
-    insights: list[ZillowPropertyInsight]
-
-
-class ZillowPropertyHub(BaseModel):
-    ctaButton: ZillowPropertyCtaButton
-    title: str
 
 
 class ZillowPropertyImx(BaseModel):
-    hasLocalizedPhotos: bool
-    isLmsTour: bool
     revisionId: str
     viewerUrl: str
-
-
-class ZillowPropertyInsight(BaseModel):
-    modelId: str
-    phrases: list[str]
-    treatmentId: str
+    hasLocalizedPhotos: bool
+    isLmsTour: bool
 
 
 class ZillowPropertyLastSoldListing(BaseModel):
-    mlsAttribution: Any
     palsId: str | None
+    mlsAttribution: Any
     photos: Any
 
 
-class ZillowPropertyListedBy(BaseModel):
-    elements: list[ZillowPropertyListedByElement]
-    id: str
-    textStyle: Any
-
-
-class ZillowPropertyListedByElement(BaseModel):
-    action: Any
-    id: str
-    text: str
-
-
-class ZillowPropertyListingFlags(BaseModel):
-    is_FSBA: bool | None = None
-    is_FSBO: bool | None = None
-    is_bankOwned: bool | None = None
-    is_comingSoon: bool | None = None
-    is_forAuction: bool | None = None
-    is_foreclosure: bool | None = None
-    is_newHome: bool | None = None
-    is_openHouse: bool | None = None
-    is_pending: bool | None = None
-    is_roomForRent: bool | None = None
-
-
-class ZillowPropertyListingProvider(BaseModel):
-    agentLicenseNumber: Any = None
-    agentName: str | None = None
-    disclaimerText: Any = None
-    enhancedDescriptionText: Any = None
-    enhancedVideoURL: Any = None
-    isZRMSourceText: Any = None
-    logos: list[Any]
-    postingGroupName: str | None = None
-    postingWebsiteLinkText: str | None = None
-    postingWebsiteURL: Any = None
-    showLogos: Any = None
-    showNoContactInfoMessage: bool | None = None
-    sourceText: str | None = None
-    title: str | None = None
-
-
-class ZillowPropertyListingRules(BaseModel):
-    hideDaysOnSiteDisplay: bool | None = None
-    hidePublicRemarks: bool
-
-
-class ZillowPropertyListingSubType(BaseModel):
-    isBankOwned: bool
-    isComingSoon: bool
-    isFSBA: bool
-    isFSBO: bool
-    isForAuction: bool
-    isForeclosure: bool
-    isNewHome: bool
-    isOpenHouse: bool
-    isPending: bool
-
-
-class ZillowPropertyLoan(BaseModel):
-    rateSource: str
-
-
-class ZillowPropertyLocation(BaseModel):
-    fullValue: str | None
-
-
-class ZillowPropertyMonthly(BaseModel):
-    feeGroup: list[ZillowPropertyFeeGroup]
-
-
-class ZillowPropertyMortgageCTA(BaseModel):
-    ctaCopyText: str
-    personalizedCta: ZillowPropertyPersonalizedCta
-    personalizedCtaCopyText: str
-    personalizedRoutingURL: str
-
-
-class ZillowPropertyMortgageChipData(BaseModel):
-    isPersonalized: bool
-    mortgageCTA: ZillowPropertyMortgageCTA
-
-
 class ZillowPropertyMortgageZHLRates(BaseModel):
-    arm5Bucket: ZillowPropertyBucket | None = None
     fifteenYearFixedBucket: ZillowPropertyBucket | None = None
     thirtyYearFixedBucket: ZillowPropertyBucket
-
-
-class ZillowPropertyNavAction(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    analyticsTag: str
-    showAbad: bool
-    urlExperience: ZillowPropertyURLExperience
-
-
-class ZillowPropertyNearbyBuilding(BaseModel):
-    bdpLink: str
-    bedroomGroups: list[ZillowPropertyBedroomGroup]
-    buildingAddress: str
-    buildingName: str | None
-    isLowIncome: bool | None
-    isPaidListing: bool
-    isSeniorHousing: bool | None
-    isStudentHousing: bool
-    latitude: float
-    listPriceIncludesRequiredMonthlyFees: bool
-    listingMetadata: ZillowPropertyNearbyBuildingListingMetadata
-    longitude: float
-    lotId: str
-    marketingTreatments: list[str] | None
-    maxBaseRent: int
-    maxPrice: int
-    minBaseRent: int
-    minBaths: float
-    minBeds: int
-    minLivingArea: int
-    minPrice: int
-    photo: ZillowPropertyNeighborhoodMapThumb
-    photoCount: int | None
-    providerListingId: str
-    showUpdateTime: bool
-    state: str
-    totalRequiredMonthlyMaxFee: int | None
-    totalRequiredMonthlyMinFee: int | None
+    arm5Bucket: ZillowPropertyBucket | None = None
 
 
 class ZillowPropertyNearbyBuildingLink(BaseModel):
     buildingUrl: ZillowPropertyRegionLink
 
 
-class ZillowPropertyNearbyBuildingListingMetadata(BaseModel):
-    BuildingDataG: str
-    BuildingDataH: str
-    BuildingDataI: str
-    BuildingDataJ: str
-    BuildingDataL: str
-    BuildingDataM: str
-    BuildingDataN: str
-    BuildingDataO: str
-    BuildingDataP: str
-
-
-class ZillowPropertyNearbyHome(BaseModel):
-    address: ZillowPropertyNearbyHomeAddress
-    attributionInfo: ZillowPropertyNearbyHomeAttributionInfo
-    baseRent: int | None
-    bathrooms: float | None
-    bedrooms: int | None
-    currency: str
-    formattedChip: ZillowPropertyFormattedChip
-    hdpTypeDimension: str
-    hdpUrl: str
-    homeStatus: str
-    homeType: str
-    isPremierBuilder: bool
-    isShowcaseListing: bool | None
-    latitude: float
-    listPriceIncludesRequiredMonthlyFees: bool | None
-    listingMetadata: ZillowPropertyNearbyHomeListingMetadata
-    listingTypeDimension: str
-    listing_sub_type: ZillowPropertyNearbyHomeListingSubType
-    livingArea: int | None
-    livingAreaUnits: str | None
-    livingAreaUnitsShort: str | None
-    livingAreaValue: int | None
-    longitude: float
-    lotAreaUnits: str
-    lotAreaValue: float | None
-    lotSize: int | None
-    miniCardPhotos: list[ZillowPropertyNeighborhoodMapThumb]
-    newConstructionType: str | None
-    parentRegion: Any
-    price: int | None
-    propertyTypeDimension: str
-    providerListingID: str | None
-    resoFacts: ZillowPropertyNearbyHomeResoFacts
-    state: str
-    totalRequiredMonthlyMaxFee: int | None
-    totalRequiredMonthlyMinFee: int | None
-    zpid: int
-
-
-class ZillowPropertyNearbyHomeAddress(BaseModel):
-    city: str
-    state: str
-    streetAddress: str
-    zipcode: str
-
-
-class ZillowPropertyNearbyHomeAttributionInfo(BaseModel):
-    agentName: str | None
-    agentPhoneNumber: str | None
-    brokerName: str | None
-    brokerPhoneNumber: str | None
-    mlsId: str | None
-    mlsName: str | None
-    providerLogo: str | None
-    trueStatus: str | None
-
-
-class ZillowPropertyNearbyHomeListingMetadata(BaseModel):
-    comminglingCategoryIsRulesApplicable: bool
-
-
-class ZillowPropertyNearbyHomeListingSubType(BaseModel):
-    is_FSBA: bool
-    is_FSBO: bool
-    is_bankOwned: bool
-    is_comingSoon: bool
-    is_forAuction: bool
-    is_foreclosure: bool
-    is_newHome: bool
-
-
 class ZillowPropertyNearbyHomeResoFacts(BaseModel):
-    bathroomsFull: int | None
-    bathroomsHalf: int | None
     bathroomsOneQuarter: int | None
+    bathroomsHalf: int | None
     bathroomsThreeQuarter: int | None
+    bathroomsFull: int | None
 
 
 class ZillowPropertyNearbyRegion(BaseModel):
-    body: Any
     name: str
+    body: Any
     regionUrl: ZillowPropertyRegionPath
 
 
@@ -1223,30 +861,20 @@ class ZillowPropertyNeighborhoodRegion(BaseModel):
     name: str
 
 
-class ZillowPropertyOdpPropertyModels(BaseModel):
-    rentalsSidecar: ZillowPropertyRentalsSidecar
-
-
 class ZillowPropertyOpenHouseSchedule(BaseModel):
-    endTime: str
     startTime: str
+    endTime: str
 
 
 class ZillowPropertyPal(BaseModel):
+    palsId: str
     marketingStatus: str
     marketingType: str
-    palsId: str
 
 
 class ZillowPropertyParentRegion(BaseModel):
-    name: str
     regionId: int | None = None
-
-
-class ZillowPropertyPersonalizedCta(BaseModel):
-    buttonType: str
-    navAction: ZillowPropertyNavAction
-    text: str
+    name: str
 
 
 class ZillowPropertyPhoto(BaseModel):
@@ -1255,11 +883,11 @@ class ZillowPropertyPhoto(BaseModel):
 
 
 class ZillowPropertyPhotoElement(BaseModel):
-    caption: str
     key: str | None = None
-    mixedSources: ZillowPropertyPhotoSources
-    subjectType: str | None = None
+    caption: str
     url: str | None = None
+    subjectType: str | None = None
+    mixedSources: ZillowPropertyPhotoSources
 
 
 class ZillowPropertyPhotoSource(BaseModel):
@@ -1272,31 +900,23 @@ class ZillowPropertyPhotoSources(BaseModel):
     webp: list[ZillowPropertyPhotoSource] | None = None
 
 
-class ZillowPropertyPlacementGroupDecision(BaseModel):
-    experienceName: str
-    experienceType: str
-    placementDecisions: list[Any]
-    placementGroup: str
-
-
 class ZillowPropertyPostingContact(BaseModel):
     name: str | None
     photo: Any
 
 
 class ZillowPropertyPriceHistory(BaseModel):
-    attributeSource: ZillowPropertyAttributeSource | None = None
-    buyerAgent: Any = None
-    date: str
-    event: str | None = None
-    postingIsRental: bool | None = None
-    price: int | None
-    priceChangeRate: float | None = None
+    price: int | None = None
     pricePerSquareFoot: int | None = None
-    sellerAgent: Any = None
-    showCountyLink: bool | None = None
-    source: str | None = None
+    priceChangeRate: float | None = None
+    date: str | None = None
     time: int | None = None
+    event: str | None = None
+    source: str | None = None
+    buyerAgent: ZillowPriceHistoryAgent | None = None
+    sellerAgent: ZillowPriceHistoryAgent | None = None
+    postingIsRental: bool | None = None
+    attributeSource: ZillowPropertyAttributeSource | None = None
 
 
 class ZillowPropertyPropertyTourOptions(BaseModel):
@@ -1305,9 +925,22 @@ class ZillowPropertyPropertyTourOptions(BaseModel):
     tourType: str
 
 
+class ZillowPropertyRecords(BaseModel):
+    zpid: str
+    priceHistory: list[ZillowPropertyPriceHistory]
+    lastSoldPrice: int | None
+    taxHistory: list[ZillowTaxHistoryEntry] | None
+    homeStatus: str
+    dateSold: int | None
+    attributionInfo: ZillowRecordsAttributionInfo
+    schools: list[ZillowSchool]
+    nearbyHomes: list[ZillowPropertySummary] | None
+    resoFacts: ZillowSchoolAssignmentFacts | None
+
+
 class ZillowPropertyRegionLink(BaseModel):
-    path: str
     text: str
+    path: str
 
 
 class ZillowPropertyRegionPath(BaseModel):
@@ -1320,68 +953,74 @@ class ZillowPropertyRentalApplicationPriceDetail(BaseModel):
     isStreetEasy: bool
 
 
-class ZillowPropertyRentalCostsAndFees(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    fees: ZillowPropertyFees
-    leaseDuration: int | None
-
-
 class ZillowPropertyRentalUnitsSummary(BaseModel):
     unitCount: int
 
 
-class ZillowPropertyRentalUpsellMessage(BaseModel):
-    placementGroupDecision: ZillowPropertyPlacementGroupDecision
-
-
-class ZillowPropertyRentalsSidecar(BaseModel):
-    rentalsSidecarListings: list[ZillowPropertyRentalsSidecarListing]
-
-
-class ZillowPropertyRentalsSidecarListing(BaseModel):
-    tourSchedulingPayload: ZillowPropertyTourSchedulingPayload
-
-
 class ZillowPropertyResoFacts(BaseModel):
+    listingId: Any = None
+    additionalParcelsDescription: Any = None
+    zoningDescription: Any = None
+    hoaFeeTotal: str | None = None
+    pricePerSquareFoot: int | None = None
+    storiesTotal: Any = None
+    totalActualRent: Any = None
+    canRaiseHorses: bool | None = None
+    developmentStatus: Any = None
+    hasPetsAllowed: bool | None = None
+    availabilityDate: int | None = None
+    landLeaseExpirationDate: Any = None
+    offerReviewDate: Any = None
+    onMarketDate: int | None = None
+    otherFacts: list[Any] | None = None
+    bedrooms: int | None
+    bathrooms: int | None
+    bathroomsFull: int | None
+    bathroomsThreeQuarter: int | None
+    bathroomsHalf: int | None
+    bathroomsOneQuarter: int | None
+    bathroomsPartial: Any = None
+    homeType: str
+    lotSize: str | None = None
+    yearBuilt: int | None = None
+    propertySubType: list[str] | None = None
+    carportParkingCapacity: int | None = None
+    coveredParkingCapacity: int | None = None
+    garageParkingCapacity: int | None = None
+    hasAttachedGarage: bool | None = None
+    hasCarport: bool | None = None
+    hasGarage: bool | None = None
+    hasOpenParking: bool | None = None
+    openParkingCapacity: int | None = None
+    parkingCapacity: int | None = None
+    parkingFeatures: list[str] | None = None
     aboveGradeFinishedArea: Any = None
     accessibilityFeatures: Any = None
     additionalFeeInfo: Any = None
-    additionalParcelsDescription: Any = None
-    allowedPets: list[str] | None = None
-    appliances: list[str] | None = None
     architecturalStyle: str | None = None
-    associationAmenities: Any = None
+    associations: list[Any] | None = None
     associationFee: Any = None
+    associationAmenities: Any = None
     associationFee2: Any = None
     associationFeeIncludes: Any = None
     associationName: Any = None
     associationName2: Any = None
     associationPhone: Any = None
     associationPhone2: Any = None
-    associations: list[Any] | None = None
+    basementYN: Any = None
+    buildingFeatures: Any = None
+    buildingName: str | None = None
+    appliances: list[str] | None = None
     atAGlanceFacts: list[ZillowPropertyAtAGlanceFact] | None = None
     attic: Any = None
-    availabilityDate: int | None = None
     basement: Any = None
-    basementYN: Any = None
-    bathrooms: int | None
     bathroomsFloat: float | None = None
-    bathroomsFull: int | None
-    bathroomsHalf: int | None
-    bathroomsOneQuarter: int | None
-    bathroomsPartial: Any = None
-    bathroomsThreeQuarter: int | None
-    bedrooms: int | None
     belowGradeFinishedArea: Any = None
     bodyType: Any = None
     builderModel: Any = None
     builderName: str | None = None
     buildingArea: Any = None
     buildingAreaSource: Any = None
-    buildingFeatures: Any = None
-    buildingName: str | None = None
-    canRaiseHorses: bool | None = None
-    carportParkingCapacity: int | None = None
     cityRegion: str | None = None
     commonWalls: Any = None
     communityFeatures: Any = None
@@ -1389,10 +1028,8 @@ class ZillowPropertyResoFacts(BaseModel):
     constructionMaterials: list[str] | None = None
     contingency: Any = None
     cooling: Any = None
-    coveredParkingCapacity: int | None = None
     cropsIncludedYN: Any = None
     cumulativeDaysOnMarket: Any = None
-    developmentStatus: Any = None
     doorFeatures: Any = None
     electric: Any = None
     elevation: Any = None
@@ -1411,7 +1048,6 @@ class ZillowPropertyResoFacts(BaseModel):
     frontageLength: Any = None
     frontageType: Any = None
     furnished: bool | None = None
-    garageParkingCapacity: int | None = None
     gas: Any = None
     greenBuildingVerificationType: Any = None
     greenEnergyEfficient: Any = None
@@ -1421,29 +1057,22 @@ class ZillowPropertyResoFacts(BaseModel):
     greenWaterConservation: Any = None
     hasAdditionalParcels: bool | None = None
     hasAssociation: Any = None
-    hasAttachedGarage: bool | None = None
     hasAttachedProperty: bool | None = None
-    hasCarport: bool | None = None
     hasCooling: bool | None = None
     hasElectricOnProperty: Any = None
     hasFireplace: bool | None = None
-    hasGarage: bool | None = None
     hasHeating: bool | None = None
     hasHomeWarranty: bool | None = None
     hasLandLease: bool | None = None
-    hasOpenParking: bool | None = None
-    hasPetsAllowed: bool | None = None
-    hasPrivatePool: Any = None
     hasRentControl: Any = None
     hasSpa: bool | None = None
+    hasPrivatePool: Any = None
     hasView: bool | None = None
     hasWaterfrontView: Any = None
     heating: list[str] | None = None
     highSchool: Any = None
     highSchoolDistrict: Any = None
     hoaFee: Any = None
-    hoaFeeTotal: str | None = None
-    homeType: str
     horseAmenities: Any = None
     horseYN: Any = None
     inclusions: Any = None
@@ -1454,102 +1083,88 @@ class ZillowPropertyResoFacts(BaseModel):
     isNewConstruction: Any = None
     isSeniorCommunity: Any = None
     landLeaseAmount: Any = None
-    landLeaseExpirationDate: Any = None
     laundryFeatures: list[str] | None = None
     leaseTerm: str | None = None
     levels: Any = None
-    listAOR: Any = None
-    listingId: Any = None
     listingTerms: Any = None
+    lotFeatures: Any = None
+    lotSizeDimensions: Any = None
     livingArea: str | None = None
     livingAreaRange: Any = None
     livingAreaRangeUnits: Any = None
     livingQuarters: list[Any] | None = None
-    lotFeatures: Any = None
-    lotSize: str | None = None
-    lotSizeDimensions: Any = None
     mainLevelBathrooms: Any = None
     mainLevelBedrooms: Any = None
     marketingType: str | None = None
-    media: list[Any] | None = None
     middleOrJuniorSchool: Any = None
     middleOrJuniorSchoolDistrict: Any = None
     municipality: Any = None
     numberOfUnitsInCommunity: Any = None
     numberOfUnitsVacant: Any = None
-    offerReviewDate: Any = None
-    onMarketDate: int | None = None
-    openParkingCapacity: int | None = None
     otherEquipment: Any = None
-    otherFacts: list[Any] | None = None
     otherParking: list[str] | None = None
     otherStructures: list[str] | None = None
     ownership: Any = None
     ownershipType: Any = None
     parcelNumber: str | None = None
     parkName: Any = None
-    parkingCapacity: int | None = None
-    parkingFeatures: list[str] | None = None
     patioAndPorchFeatures: Any = None
     petsMaxWeight: Any = None
     poolFeatures: Any = None
-    pricePerSquareFoot: int | None = None
     propertyCondition: Any = None
-    propertySubType: list[str] | None = None
     roadSurfaceType: Any = None
     roofType: str | None = None
-    roomTypes: Any = None
     rooms: list[Any] | None = None
+    roomTypes: Any = None
     securityFeatures: Any = None
     sewer: Any = None
     spaFeatures: Any = None
     specialListingConditions: Any = None
     stories: int | None = None
     storiesDecimal: float | None = None
-    storiesTotal: Any = None
     structureType: Any = None
     subdivisionName: Any = None
     taxAnnualAmount: int | None = None
     taxAssessedValue: int | None = None
     tenantPays: Any = None
     topography: Any = None
-    totalActualRent: Any = None
     utilities: Any = None
     vegetation: Any = None
     view: list[str] | None = None
     virtualTour: Any = None
-    waterBodyName: Any = None
     waterSource: Any = None
+    waterBodyName: Any = None
+    waterfrontFeatures: Any = None
     waterView: Any = None
     waterViewYN: Any = None
-    waterfrontFeatures: Any = None
     windowFeatures: Any = None
     woodedArea: Any = None
-    yearBuilt: int | None = None
     yearBuiltEffective: Any = None
     zoning: Any = None
-    zoningDescription: Any = None
+    allowedPets: list[str] | None = None
+    listAOR: Any = None
+    media: list[Any] | None = None
 
 
 class ZillowPropertyResponsivePhoto(BaseModel):
-    caption: str | None = None
     key: str | None = None
-    mixedSources: ZillowPropertyPhotoSources
     photoKey: str | None = None
-    subjectType: str | None = None
+    caption: str | None = None
     url: str
+    mixedSources: ZillowPropertyPhotoSources
+    subjectType: str | None = None
 
 
 class ZillowPropertyRichMedia(BaseModel):
-    floorPlan: list[ZillowPropertyFloorPlan] | None = None
-    imx: list[ZillowPropertyImx] | None = None
     virtualTour: list[ZillowPropertyVirtualTour] | None
+    imx: list[ZillowPropertyImx] | None = None
+    floorPlan: list[ZillowPropertyFloorPlan] | None = None
 
 
 class ZillowPropertySellingSoon(BaseModel):
     modelId: str
-    percentile: float
     treatmentId: str
+    percentile: float
 
 
 class ZillowPropertyStaticMap(BaseModel):
@@ -1557,22 +1172,118 @@ class ZillowPropertyStaticMap(BaseModel):
 
 
 class ZillowPropertyStaticMapSource(BaseModel):
-    isHighResolutionStaticMap: bool | None
     url: str
     width: int
+    isHighResolutionStaticMap: bool | None
+
+
+class ZillowPropertySummary(BaseModel):
+    zpid: str
+    palsId: str | None = None
+    providerListingID: str | None = None
+    lotId: str | None = None
+    openHouseDescription: str | None = None
+    hdpUrl: str | None = None
+    streetViewURL: str | None = None
+    streetViewMetadataURL: str | None = None
+    price: int | None = None
+    formattedPrice: str | None = None
+    soldPrice: str | None = None
+    zestimate: int | None = None
+    rentZestimate: int | None = None
+    priceChange: int | None = None
+    priceReduction: str | None = None
+    priceSuffix: str | None = None
+    availabilityCount: int | None = None
+    totalRequiredMonthlyMinFee: int | None = None
+    totalRequiredMonthlyMaxFee: int | None = None
+    is_price_disclosed: bool | None = None
+    homeStatus: str | None = None
+    statusText: str | None = None
+    rawHomeStatus: str | None = None
+    marketingStatus: str | None = None
+    listing_restrictions: ZillowListingRestrictions | None = None
+    dateSold: int | None = None
+    comingSoonOnMarketDate: Any = None
+    datePriceChanged: int | None = None
+    openHouseStartDate: str | None = None
+    openHouseEndDate: str | None = None
+    availabilityDate: str | None = None
+    attributionInfo: ZillowPropertyAttributionInfo | None = None
+    parentRegion: Any | None = None
+    address: ZillowSummaryAddress
+    latitude: float | None = None
+    longitude: float | None = None
+    currency: str | None = None
+    currencySymbol: str | None = None
+    bedrooms: int | None = None
+    bathrooms: float | None = None
+    livingArea: int | None = None
+    livingAreaValue: int | None = None
+    livingAreaUnits: str | None = None
+    livingAreaUnitsShort: str | None = None
+    lotSize: int | None = None
+    lotAreaValue: float | None = None
+    lotAreaUnits: str | None = None
+    lotAreaString: str | None = None
+    homeType: str | None = None
+    taxAssessedValue: int | None = None
+    daysOnZillow: int | None = None
+    timeOnZillow: int | None = None
+    listing_sub_type: ZillowListingFlags | None = None
+    brokerName: str | None = None
+    state: str | None = None
+    country: str | None = None
+    newConstructionType: str | None = None
+    contingentListingType: Any = None
+    marketingTreatments: list[str] | None = None
+    isUnmappable: bool | None = None
+    isPreforeclosureAuction: bool | None = None
+    isNonOwnerOccupied: bool | None = None
+    isPremierBuilder: bool | None = None
+    isZillowOwned: bool | None = None
+    isShowcaseListing: bool | None = None
+    isFeaturedListing: bool | None = None
+    isPaidBuilderNewConstruction: bool | None = None
+    isContactable: bool | None = None
+    isInstantTourEnabled: bool | None = None
+    hasImage: bool | None = None
+    has3DModel: bool | None = None
+    hasVideo: bool | None = None
+    hasAdditionalAttributions: bool | None = None
+    hasOpenHouse: bool | None = None
+    openHouse: str | None = None
+    open_house_info: ZillowListingOpenHouseInfo | None = None
+    highlights: list[ZillowPropertyHighlight] | None = None
+    factsAndFeatures: ZillowListingFactsAndFeatures | None = None
+    resoFacts: ZillowPropertyNearbyHomeResoFacts | None = None
+    units: list[ZillowListingUnit] | None = None
+    rooms: list[Any] | None = None
+    buildingName: str | None = None
+    builderName: str | None = None
+    isBuilding: bool | None = None
+    listPriceIncludesRequiredMonthlyFees: bool | None = None
+    minBaseRent: int | None = None
+    maxBaseRent: int | None = None
+    baseRent: int | None = None
+    group_type: str | None = None
+    unit: str | None = None
+    isRentalWithBasePrice: bool | None = None
+    photos: list[ZillowSummaryPhoto] | None = None
+    photo_gallery: ZillowPhotoGallery | None = None
 
 
 class ZillowPropertyThirdPartyVirtualTour(BaseModel):
-    approved: bool
+    providerKey: str | None
     externalUrl: str | None = None
     lightboxUrl: str | None
-    providerKey: str | None
     staticUrl: str | None = None
+    approved: bool
 
 
 class ZillowPropertyTourAvailability(BaseModel):
-    date: str
     status: str
+    date: str
     times: list[str]
 
 
@@ -1581,50 +1292,150 @@ class ZillowPropertyTourEligibility(BaseModel):
     propertyTourOptions: ZillowPropertyPropertyTourOptions
 
 
-class ZillowPropertyTourSchedulingPayload(BaseModel):
-    inPersonAvailabilityExists: bool | None
-    inPersonTourEnabled: bool
-    instantTourConfigurations: list[Any]
-    liveVideoTourEnabled: bool
-    selfGuidedTourEnabled: bool
-
-
-class ZillowPropertyURLExperience(BaseModel):
-    authAssuranceLevel: str
-    ctaUrl: str
-
-
-class ZillowPropertyUsedInputs(BaseModel):
-    creditScore: ZillowPropertyCreditScore
-    downPaymentAmount: float
-    downPaymentPercent: int
-    fromFinancialProfile: bool
-    isDownpaymentPreferencePercent: bool
-    loan: ZillowPropertyLoan | None
-
-
 class ZillowPropertyVRModel(BaseModel):
-    revisionId: str | None
     vrModelGuid: str | None
+    revisionId: str | None
 
 
 class ZillowPropertyVirtualTour(BaseModel):
     revisionId: str
-    viewerUrl: str
     vrModelGuid: str | None = None
+    viewerUrl: str
+
+
+class ZillowRecordsAttributionInfo(BaseModel):
+    mlsId: str | None
+    lastChecked: str | None
+    lastUpdated: str | None
+    agentName: str | None
+    agentLicenseNumber: str | None
+    agentPhoneNumber: str | None
+    agentEmail: str | None
+    coAgentName: str | None
+    coAgentLicenseNumber: str | None
+    coAgentNumber: str | None
+    buyerAgentName: str | None
+    buyerAgentMemberStateLicense: str | None
+    buyerBrokerageName: str | None
+    brokerName: str | None
+    brokerPhoneNumber: str | None
+    listingAgents: list[ZillowListingAgentAttribution] | None
+    listingOffices: list[ZillowListingOfficeAttribution] | None
+    listingAgreement: str | None
+    mlsName: str | None
+    mlsDisclaimer: str | None
+    notMLSSourcedListing: bool | None
+    providerLogo: str | None
 
 
 class ZillowRegion(BaseModel):
     id: int
     name: str
+    bounds: ZillowRegionBounds | None = None
     type: ZillowRegionType
 
 
+class ZillowRegionBounds(BaseModel):
+    north: float
+    south: float
+    east: float
+    west: float
+
+
+class ZillowRelatedProperties(BaseModel):
+    name: str
+    items: list[ZillowPropertySummary]
+
+
+class ZillowRentalCostsAndFees(BaseModel):
+    leaseDuration: int | None
+    feeGroups: list[ZillowRentalFeeGroup]
+
+
+class ZillowRentalFee(BaseModel):
+    type: str
+    zillowDisclaimers: list[str] | None
+
+
+class ZillowRentalFeeGroup(BaseModel):
+    fees: list[ZillowRentalFee]
+
+
+class ZillowSchool(BaseModel):
+    schoolId: int | None = None
+    districtId: int | None = None
+    name: str
+    link: str
+    rating: int | None
+    themedRatings: list[ZillowSchoolThemedRating] | None = None
+    isAssigned: bool
+    level: str | None = None
+    grades: str
+    type: str | None = None
+    distance: float
+    enrollment: int | None = None
+    studentTeacherRatio: float | None = None
+    studentCounselorRatio: float | None = None
+    percentageOfFullTimeTeachersWhoAreCertified: float | None = None
+    districtName: str | None = None
+
+
+class ZillowSchoolAssignmentFacts(BaseModel):
+    elementarySchool: str | None
+    elementarySchoolDistrict: str | None
+    middleOrJuniorSchool: str | None
+    middleOrJuniorSchoolDistrict: str | None
+    highSchool: str | None
+    highSchoolDistrict: str | None
+
+
+class ZillowSchoolThemedRating(BaseModel):
+    name: str
+    rating: int
+    type: str
+
+
 class ZillowSearchPage(BaseModel):
-    items: list[ZillowListing]
-    pagination: ZillowCursorPagination
+    items: list[ZillowPropertySummary]
     region: ZillowRegion
     total_results: int
+    total_pages: int
+    result_contexts: list[ZillowSearchResultContext] | None = None
+    pagination: ZillowCursorPagination
+
+
+class ZillowSearchResultContext(BaseModel):
+    context_id: int
+    text: str | None
+    image_url: str | None
+
+
+class ZillowSummaryAddress(BaseModel):
+    display: str | None = None
+    streetAddress: str | None = None
+    city: str | None = None
+    state: str | None = None
+    zipcode: str | None = None
+    isUndisclosedAddress: bool | None = None
+
+
+class ZillowSummaryPhoto(BaseModel):
+    url: str
+
+
+class ZillowTaxHistoryEntry(BaseModel):
+    time: int
+    taxPaid: float | None
+    taxIncreaseRate: float
+    value: int | None
+    valueIncreaseRate: float
+
+
+class ZillowTourScheduling(BaseModel):
+    inPersonTourEnabled: bool
+    liveVideoTourEnabled: bool
+    selfGuidedTourEnabled: bool
+    inPersonAvailabilityExists: bool | None
 
 
 ZillowDaysOnZillowParam: TypeAlias = (

@@ -8,11 +8,10 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import Literal
 
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..twitter import (
     TwitterCommunityResponse,
     TwitterCommunityTweetsResponse,
@@ -24,11 +23,6 @@ from ..twitter import (
 __all__ = ["SyncTwitter", "Twitter"]
 
 _PREFIX = "/v1/twitter"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
 
 
 def _get_community(*, url: str) -> Request[TwitterCommunityResponse]:
@@ -77,7 +71,7 @@ class Twitter(AsyncAPIResource):
     """The Twitter endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.twitter`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -91,7 +85,7 @@ class Twitter(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterCommunityResponse:
-        """An X (Twitter) Community as x.com shows it to logged-out visitors, as X's Community object: `rest_id`, name, description, member count, `created_at` (Unix milliseconds), join policy, topic, banners, rules, creator and member facepile. A logged-out viewer is not a member, so `is_member` is false and `role` is NonMember. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/community`: the same path, query parameter and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format. Costs 1 credit.
+        """Returns a Community with its name, description, member count, rules, topic, banners, creator, and member preview. Costs 1 credit.
 
         Args:
             url: Community URL on x.com, twitter.com, mobile.twitter.com or a www.
@@ -109,7 +103,7 @@ class Twitter(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterCommunityTweetsResponse:
-        """The 20 posts x.com ranks by likes in an X (Twitter) Community for logged-out visitors, flattened the way Scrape Creators flattens community posts: the post's `legacy` fields plus `id`, `view_count` and the author as `user`. This is a fixed window: x.com offers no latest feed and no further pages logged-out. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/community/tweets`: the same path, query parameter and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016. Costs 1 credit.
+        """Returns the 20 posts ranked by likes in a Community, with text, engagement, view count, and author data. This fixed window has no cursor. Costs 1 credit.
 
         Args:
             url: Community URL on x.com, twitter.com, mobile.twitter.com or a www.
@@ -129,18 +123,16 @@ class Twitter(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterProfileResponse:
-        """An X (Twitter) account's public profile as x.com shows it to logged-out visitors, as X's User object: `rest_id`, `core` (name, handle, join date), `legacy` (bio, follower, following and post counts, avatar, banner, bio link, pinned post id), `location`, `privacy`, `verification` and `is_blue_verified`. Look the account up by `handle`, or by `user_id`, its numeric id, which still finds it after a handle change; send one of the two. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/profile`: the same path, `handle` and `cache_max_age` parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; `user_id` is Tapline's addition; Tapline caches each profile page for 2 minutes, so a profile can be up to 2 minutes old; `cache_max_age` is accepted and has no effect, and every request is charged; a handle x.com does not know answers 404 not_found, where Scrape Creators answers 200 with no user. Costs 1 credit.
+        """Returns a profile by `handle` or `user_id`, including its bio, follower counts, profile images, location, verification, and pinned post ID. Profile data may be cached for up to two minutes. Costs 1 credit.
 
         Args:
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect. Nothing Tapline answers is older than its 2-minute profile
-                page cache, and every request is charged.
+            cache_max_age: Ignored. Profile data may use a two-minute cache, and
+                every request is charged.
             handle: X handle, with or without a leading @: 1 to 15 letters, digits
                 or underscores. x.com's own page names (explore, home, search, ...)
                 are rejected. Send `handle` or `user_id`, not both.
-            user_id: Numeric X user id (the account's `rest_id`). It still finds the
-                account after the handle changes. Send `handle` or `user_id`, not
-                both.
+            user_id: Numeric X user id. It still finds the account after the handle
+                changes. Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -159,18 +151,16 @@ class Twitter(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterTweetResponse:
-        """One X (Twitter) post as x.com shows it to logged-out visitors, as X's Tweet object: `rest_id`, the author under `core.user_results.result`, `legacy` (full text, created time, counts, entities with every t.co link mapped, media with video variants and bitrates, reply and quote ids), `views`, `note_tweet` with the full text of a long post, `article`, `card`, `edit_control`, and the quoted post under `quoted_status_result`. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/tweet`: the same path, query parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016; `trim` and `cache_max_age` are accepted and have no effect, so the post is fetched live and every request is charged. Costs 1 credit.
+        """Returns one post with its text, engagement, media, author, long-form note, article, card, edit history, and quoted-post data. Costs 1 credit.
 
         Args:
             url: Post URL on x.com, twitter.com, mobile.twitter.com or a www. host:
                 /<handle>/status/<id>, /i/status/<id> or /i/web/status/<id>.
                 Trailing segments such as /photo/1 and query strings such as ?s=20
                 are allowed.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect. Nothing Tapline answers is older than its 2-minute profile
-                page cache, and every request is charged.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                body is the same either way.
+            cache_max_age: Ignored. Profile data may use a two-minute cache, and
+                every request is charged.
+            trim: Ignored. The response is the same either way.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -187,14 +177,13 @@ class Twitter(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterUserTweetsResponse:
-        """An X (Twitter) account's pinned post, if there is one, then the newest original posts x.com shows logged-out visitors, in the order the page shows them. In samples that is 5 posts in all, the pinned post included. `tweets` holds each as X's Tweet object: `rest_id`, the author under `core.user_results.result`, `legacy` (full text, created time, counts, entities with every t.co link mapped, media with video variants and bitrates, reply and quote ids), `views`, `note_tweet` with the full text of a long post, `article`, `card`, `edit_control`, and the quoted post under `quoted_status_result`, plus its `url`. This is a fixed window: x.com offers no further pages logged-out, so there is no cursor. A protected account returns no posts. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/user-tweets`: the same path, query parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016; Tapline caches each profile page for 2 minutes, so the posts can be up to 2 minutes old; `trim` is accepted and has no effect; a handle x.com does not know answers 404 not_found, where Scrape Creators answers 200 with no user. Costs 1 credit.
+        """Returns an account's pinned post and newest original posts with text, engagement, media, links, and quoted-post data. The response contains about five posts and no cursor. Protected accounts return no posts. Costs 1 credit.
 
         Args:
             handle: X handle, with or without a leading @: 1 to 15 letters, digits
                 or underscores. x.com's own page names (explore, home, search, ...)
                 are rejected.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                body is the same either way.
+            trim: Ignored. The response is the same either way.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -207,7 +196,7 @@ class SyncTwitter(SyncAPIResource):
     """The Twitter endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.twitter`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -221,7 +210,7 @@ class SyncTwitter(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterCommunityResponse:
-        """An X (Twitter) Community as x.com shows it to logged-out visitors, as X's Community object: `rest_id`, name, description, member count, `created_at` (Unix milliseconds), join policy, topic, banners, rules, creator and member facepile. A logged-out viewer is not a member, so `is_member` is false and `role` is NonMember. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/community`: the same path, query parameter and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format. Costs 1 credit.
+        """Returns a Community with its name, description, member count, rules, topic, banners, creator, and member preview. Costs 1 credit.
 
         Args:
             url: Community URL on x.com, twitter.com, mobile.twitter.com or a www.
@@ -239,7 +228,7 @@ class SyncTwitter(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterCommunityTweetsResponse:
-        """The 20 posts x.com ranks by likes in an X (Twitter) Community for logged-out visitors, flattened the way Scrape Creators flattens community posts: the post's `legacy` fields plus `id`, `view_count` and the author as `user`. This is a fixed window: x.com offers no latest feed and no further pages logged-out. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/community/tweets`: the same path, query parameter and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016. Costs 1 credit.
+        """Returns the 20 posts ranked by likes in a Community, with text, engagement, view count, and author data. This fixed window has no cursor. Costs 1 credit.
 
         Args:
             url: Community URL on x.com, twitter.com, mobile.twitter.com or a www.
@@ -259,18 +248,16 @@ class SyncTwitter(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterProfileResponse:
-        """An X (Twitter) account's public profile as x.com shows it to logged-out visitors, as X's User object: `rest_id`, `core` (name, handle, join date), `legacy` (bio, follower, following and post counts, avatar, banner, bio link, pinned post id), `location`, `privacy`, `verification` and `is_blue_verified`. Look the account up by `handle`, or by `user_id`, its numeric id, which still finds it after a handle change; send one of the two. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/profile`: the same path, `handle` and `cache_max_age` parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; `user_id` is Tapline's addition; Tapline caches each profile page for 2 minutes, so a profile can be up to 2 minutes old; `cache_max_age` is accepted and has no effect, and every request is charged; a handle x.com does not know answers 404 not_found, where Scrape Creators answers 200 with no user. Costs 1 credit.
+        """Returns a profile by `handle` or `user_id`, including its bio, follower counts, profile images, location, verification, and pinned post ID. Profile data may be cached for up to two minutes. Costs 1 credit.
 
         Args:
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect. Nothing Tapline answers is older than its 2-minute profile
-                page cache, and every request is charged.
+            cache_max_age: Ignored. Profile data may use a two-minute cache, and
+                every request is charged.
             handle: X handle, with or without a leading @: 1 to 15 letters, digits
                 or underscores. x.com's own page names (explore, home, search, ...)
                 are rejected. Send `handle` or `user_id`, not both.
-            user_id: Numeric X user id (the account's `rest_id`). It still finds the
-                account after the handle changes. Send `handle` or `user_id`, not
-                both.
+            user_id: Numeric X user id. It still finds the account after the handle
+                changes. Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -289,18 +276,16 @@ class SyncTwitter(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterTweetResponse:
-        """One X (Twitter) post as x.com shows it to logged-out visitors, as X's Tweet object: `rest_id`, the author under `core.user_results.result`, `legacy` (full text, created time, counts, entities with every t.co link mapped, media with video variants and bitrates, reply and quote ids), `views`, `note_tweet` with the full text of a long post, `article`, `card`, `edit_control`, and the quoted post under `quoted_status_result`. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/tweet`: the same path, query parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016; `trim` and `cache_max_age` are accepted and have no effect, so the post is fetched live and every request is charged. Costs 1 credit.
+        """Returns one post with its text, engagement, media, author, long-form note, article, card, edit history, and quoted-post data. Costs 1 credit.
 
         Args:
             url: Post URL on x.com, twitter.com, mobile.twitter.com or a www. host:
                 /<handle>/status/<id>, /i/status/<id> or /i/web/status/<id>.
                 Trailing segments such as /photo/1 and query strings such as ?s=20
                 are allowed.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect. Nothing Tapline answers is older than its 2-minute profile
-                page cache, and every request is charged.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                body is the same either way.
+            cache_max_age: Ignored. Profile data may use a two-minute cache, and
+                every request is charged.
+            trim: Ignored. The response is the same either way.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -317,14 +302,13 @@ class SyncTwitter(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterUserTweetsResponse:
-        """An X (Twitter) account's pinned post, if there is one, then the newest original posts x.com shows logged-out visitors, in the order the page shows them. In samples that is 5 posts in all, the pinned post included. `tweets` holds each as X's Tweet object: `rest_id`, the author under `core.user_results.result`, `legacy` (full text, created time, counts, entities with every t.co link mapped, media with video variants and bitrates, reply and quote ids), `views`, `note_tweet` with the full text of a long post, `article`, `card`, `edit_control`, and the quoted post under `quoted_status_result`, plus its `url`. This is a fixed window: x.com offers no further pages logged-out, so there is no cursor. A protected account returns no posts. Fields x.com does not show logged-out visitors are left out, never filled with placeholder values: for example `favourites_count`, `listed_count`, `media_count` and a post's `source`. Fields that depend on the viewer hold what every logged-out viewer gets: `favorited`, `retweeted`, `bookmarked`, `relationship_perspectives`, `can_dm` and the other viewer flags are false. Mirrors Scrape Creators' `GET /v1/twitter/user-tweets`: the same path, query parameters and provider-data shape. The path, parameters and provider-data fields match Scrape Creators after changing the base URL to `https://api.tapline.sh`; Tapline omits Scrape Creators' top-level `success`, `credits_charged` and `credits_remaining` metadata, and the `x-api-key` header carries the Tapline API key. Differences from Scrape Creators: fields x.com does not show logged-out visitors are left out, as described above; errors use Tapline's error format; a post author's profile fields (`location`, bio, bio link, banner, pinned post ids and the exact `core.created_at`) come from its profile page, cached for 2 minutes; those lookups are best-effort, so an author whose page fails or takes more than 8 seconds keeps only what x.com embeds with posts, with a `core.created_at` from the timestamp inside the user id that can run up to about 25 minutes early, or none for accounts created before about 2016; Tapline caches each profile page for 2 minutes, so the posts can be up to 2 minutes old; `trim` is accepted and has no effect; a handle x.com does not know answers 404 not_found, where Scrape Creators answers 200 with no user. Costs 1 credit.
+        """Returns an account's pinned post and newest original posts with text, engagement, media, links, and quoted-post data. The response contains about five posts and no cursor. Protected accounts return no posts. Costs 1 credit.
 
         Args:
             handle: X handle, with or without a leading @: 1 to 15 letters, digits
                 or underscores. x.com's own page names (explore, home, search, ...)
                 are rejected.
-            trim: Accepted for Scrape Creators compatibility. It has no effect: the
-                body is the same either way.
+            trim: Ignored. The response is the same either way.
             timeout: Overrides the client's timeout for this request.
 
         Returns:

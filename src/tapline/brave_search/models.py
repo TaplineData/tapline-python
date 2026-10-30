@@ -146,13 +146,13 @@ class PublicError(str, Enum):
 
 
 class BraveSearchAddress(BaseModel):
+    display_address: str
+    street_address: str | None = None
+    house_number: str | None = None
     address_locality: str | None = None
     address_region: str | None = None
-    country: str | None = None
-    display_address: str
-    house_number: str | None = None
     postal_code: str | None = None
-    street_address: str | None = None
+    country: str | None = None
     type: str
 
 
@@ -161,58 +161,72 @@ class BraveSearchAggregateScore(BaseModel):
 
 
 class BraveSearchAiAnswer(BaseModel):
-    blocks: list[BraveSearchAiAnswerBlock]
-    context: list[BraveSearchUnobservedObject]
     conversation_id: str
+    markdown: str
+    urls: list[str]
     entities: list[BraveSearchUnobservedObject]
+    blocks: list[BraveSearchAiAnswerBlock]
+    sources: list[BraveSearchAiAnswerSource]
     follow_up_questions: list[str]
-    images: list[BraveSearchUnobservedObject]
+    references: list[BraveSearchUnobservedObject]
+    qa: list[BraveSearchUnobservedObject]
+    context: list[BraveSearchUnobservedObject]
     main_entity: BraveSearchUnobservedObject | None
     main_entity_infobox: BraveSearchUnobservedObject | None
-    markdown: str
-    other_events: list[BraveSearchUnobservedObject]
     predicate: BraveSearchUnobservedObject | None
-    qa: list[BraveSearchUnobservedObject]
-    references: list[BraveSearchUnobservedObject]
-    sources: list[BraveSearchAiAnswerSource]
     tool_calls: list[BraveSearchAiAnswerToolCallsItem]
-    urls: list[str]
     usage: BraveSearchAiAnswerUsage | None
+    other_events: list[BraveSearchAiAnswerOtherEvent]
+    images: list[BraveSearchUnobservedObject]
 
 
 class BraveSearchAiAnswerBlock(BaseModel):
-    citations: list[BraveSearchAiAnswerCitation]
-    entities: list[BraveSearchAiAnswerBlockEntitiesItem]
     text: str
+    entities: list[BraveSearchAiAnswerBlockEntitiesItem]
+    citations: list[BraveSearchAiAnswerCitation]
 
 
 class BraveSearchAiAnswerBlockEntitiesItem(BaseModel):
-    about: str | None = None
     entity_conversation_id: str
     name: str
+    about: str | None = None
     nonce: str | None = None
     sig: str | None = None
 
 
 class BraveSearchAiAnswerCitation(BaseModel):
-    favicon_url: str
-    snippet: str
     title: str
+    snippet: str
     url: str
+    source_index: int
+    favicon_url: str
+
+
+class BraveSearchAiAnswerOtherEvent(BaseModel):
+    """
+    A non-text stream event that cannot be attached to an answer block.
+    """
+
+    name: str | None = None
+    type: str
+    about: str | None = None
+    conversation: str | None = None
+    nonce: str | None = None
+    sig: str | None = None
 
 
 class BraveSearchAiAnswerSource(BaseModel):
-    description: str
-    favicon_url: str
-    hostname: str
     title: str
+    description: str
     url: str
+    hostname: str
+    favicon_url: str
 
 
 class BraveSearchAiAnswerToolCallsItem(BaseModel):
-    arguments: BraveSearchAiAnswerToolCallsItemArguments
     name: str
     query: str
+    arguments: BraveSearchAiAnswerToolCallsItemArguments
     service_response: BraveSearchUnobservedObject | None
 
 
@@ -221,8 +235,8 @@ class BraveSearchAiAnswerToolCallsItemArguments(BaseModel):
 
 
 class BraveSearchAiAnswerUsage(BaseModel):
-    completion_tokens: int
     prompt_tokens: int
+    completion_tokens: int
     reasoning_tokens: int
 
 
@@ -232,82 +246,79 @@ class BraveSearchCoordinates(BaseModel):
 
 
 class BraveSearchCurrencyConversionQuery(BaseModel):
-    amount: float | None
-    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     from_currency: BraveSearchCurrencyConversionQueryFromCurrency
     to_currency: BraveSearchCurrencyConversionQueryToCurrency
+    amount: float | None
+    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
 
 
 class BraveSearchCurrencyConversionQueryFromCurrency(BaseModel):
+    full_name: str
     code: str
     decimals: int
-    full_name: str
 
 
 class BraveSearchCurrencyConversionQueryToCurrency(BaseModel):
+    full_name: str
     code: str
     decimals: int
-    full_name: str
 
 
 class BraveSearchCursorPagination(BaseModel):
-    completion: BraveSearchCursorCompletionValue | None
     next_cursor: str | None
+    completion: BraveSearchCursorCompletionValue | None
 
 
 class BraveSearchDirections(BaseModel):
-    notices: list[str]
     routes: list[BraveSearchRoute]
-    source: str
+    notices: list[str]
     travel_mode: str
+    source: str
     type: str
 
 
 class BraveSearchGame(BaseModel):
-    aggregate_score: BraveSearchAggregateScore | None = None
-    competition_id: int | None = None
-    events: list[BraveSearchGameEventsItem] | None = None
-    group: str | None = None
+    league_id: str | None
     id: int
-    league_id: int | None = None
-    penalty_score: BraveSearchGamePenaltyScore | None = None
-    phase: str | None = None
-    round: str | None = None
-    score: BraveSearchGameScore | None
-    score_table: BraveSearchGameScoreTable | None = None
-    start_time: str | None
-    start_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     status: BraveSearchGameStatus
+    start_time: str | None
+    events: list[BraveSearchGameEventsItem] | None
+    start_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     teams: BraveSearchGameTeams
+    score: BraveSearchGameScore | None
+    score_table: BraveSearchGameScoreTable | None
+    aggregate_score: BraveSearchAggregateScore | None
+    penalty_score: BraveSearchGamePenaltyScore | None
+    group: str | None
+    round: str | None
     video: BraveSearchGameVideo | None
 
 
 class BraveSearchGameEventsItem(BaseModel):
-    added_minutes: int | None
+    team_id: int
+    player_name: str
     assist_name: str | None
     detail: str
-    elapsed_minutes: int
-    player_name: str
-    team_id: int
     type: str
+    elapsed_minutes: int
+    added_minutes: int | None
 
 
 class BraveSearchGamePenaltyScore(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScore(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTable(BaseModel):
-    errors: BraveSearchGameScoreTableErrors | None = None
+    innings: list[BraveSearchGameScoreTableInningsItem] | None = None
     extra: BraveSearchGameScoreTableExtra | None = None
     hits: BraveSearchGameScoreTableHits | None = None
-    innings: list[BraveSearchGameScoreTableInningsItem] | None = None
-    ot: BraveSearchGameScoreTableOt | None = None
+    errors: BraveSearchGameScoreTableErrors | None = None
     p1: BraveSearchGameScoreTableP1 | None = None
     p2: BraveSearchGameScoreTableP2 | None = None
     p3: BraveSearchGameScoreTableP3 | None = None
@@ -315,112 +326,112 @@ class BraveSearchGameScoreTable(BaseModel):
     q2: BraveSearchGameScoreTableQ2 | None = None
     q3: BraveSearchGameScoreTableQ3 | None = None
     q4: BraveSearchGameScoreTableQ4 | None = None
+    ot: BraveSearchGameScoreTableOt | None = None
     so: BraveSearchGameScoreTableSo | None = None
 
 
 class BraveSearchGameScoreTableErrors(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableExtra(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableHits(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableInningsItem(BaseModel):
-    away: int | None
     home: int | None
+    away: int | None
 
 
 class BraveSearchGameScoreTableOt(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableP1(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableP2(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableP3(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableQ1(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableQ2(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableQ3(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableQ4(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameScoreTableSo(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchGameStatus(BaseModel):
-    added_minutes: int | None = None
     code: str
-    elapsed: int | None = None
-    elapsed_minutes: int | None = None
     label: str | None
+    elapsed_minutes: int | None
+    added_minutes: int | None
 
 
 class BraveSearchGameTeams(BaseModel):
-    away: BraveSearchTeam
     home: BraveSearchTeam
+    away: BraveSearchTeam
 
 
 class BraveSearchGameVideo(BaseModel):
+    url: str
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    thumbnail: str
     type: str
-    url: str
+    thumbnail: str
 
 
 class BraveSearchGoggle(BaseModel):
-    author: str
-    avatar: str
-    description: str
-    digest: str
     goggle_id: str
-    homepage: str | None
-    host_author: str
-    is_public: bool
     name: str
-    popularity: int | None = None
-    source: str | None = None
-    transferred_from: str | None = None
-    transferred_to: str | None = None
-    updated_at: str | None
-    updated_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    description: str
     url: str
+    updated_at: str | None
+    author: str
+    updated_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    host_author: str
+    homepage: str | None
+    source: str | None = None
+    is_public: bool
+    popularity: int | None = None
+    digest: str
+    transferred_to: str | None = None
+    transferred_from: str | None = None
+    avatar: str
 
 
 class BraveSearchGoggleList(BaseModel):
@@ -428,118 +439,94 @@ class BraveSearchGoggleList(BaseModel):
 
 
 class BraveSearchIcon(BaseModel):
-    ext: str | None = None
     href: str
-    rel: str | None = None
     sizes: str | None = None
+    rel: str | None = None
     type: str | None = None
+    ext: str | None = None
 
 
 class BraveSearchImage(BaseModel):
-    alt: str | None = None
-    bg_color: str | None = None
-    click_url: str | None = None
-    content_size: str | None = None
-    format: str | None = None
-    from_tripadvisor: bool | None = None
-    height: int | None = None
-    is_duplicate: bool | None = None
-    is_logo: bool | None = None
-    placeholder_url: str | None = None
-    proxied_url: str | None = None
-    resized_url: str | None = None
-    shown_on_serp: bool | None = None
-    site: BraveSearchSite | None = None
-    theme: str | None = None
     url: str | None = None
+    resized_url: str | None = None
+    proxied_url: str | None = None
+    placeholder_url: str | None = None
+    click_url: str | None = None
+    alt: str | None = None
+    height: int | None = None
     width: int | None = None
+    format: str | None = None
+    content_size: str | None = None
+    site: BraveSearchSite | None = None
+    is_logo: bool | None = None
+    is_duplicate: bool | None = None
+    from_tripadvisor: bool | None = None
+    background_color: str | None = None
+    theme: str | None = None
 
 
 class BraveSearchImageResult(BaseModel):
-    confidence: str | None
-    content_fetched_at: str | None
-    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    description: str
-    family_friendly: bool
-    fetched_at: str | None
-    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    from_context: bool
-    full_title: str | None
-    icons: list[BraveSearchIcon] | None
-    image: BraveSearchImage
-    is_source_both: bool
-    is_source_local: bool
-    language: str | None
-    published_at: str | None
-    similar_images_token: str | None
-    site: BraveSearchSite
-    source: str | None
-    thumbnail: BraveSearchImage
     title: str
+    full_title: str | None
+    description: str
+    language: str | None
     url: str
+    content_fetched_at: str | None
+    published_at: str | None
+    fetched_at: str | None
+    site: BraveSearchSite
+    similar_images_token: str | None
+    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    is_source_local: bool
+    is_source_both: bool
+    source: str | None
+    family_friendly: bool
+    icons: list[BraveSearchIcon] | None
+    from_context: bool
+    confidence: str | None
+    position: int
+    image: BraveSearchImage
+    thumbnail: BraveSearchImage
 
 
 class BraveSearchImagesPage(BaseModel):
-    blur_images: bool
-    page: BraveSearchImagesPagePage
-    query: BraveSearchQuery
     results: list[BraveSearchImageResult]
-
-
-class BraveSearchImagesPagePage(BaseModel):
-    bad_results: str | None
-    title: str
-
-
-class BraveSearchLayout(BaseModel):
-    main: list[BraveSearchLayoutSlot]
-    side: list[BraveSearchLayoutSlot]
-    top: list[BraveSearchLayoutSlot]
-
-
-class BraveSearchLayoutSlot(BaseModel):
-    index: int | None
-    module: str
-    response_key: str | None = None
-    shows_all: bool
+    blur_images: bool
+    query: BraveSearchQuery
+    results_meta: BraveSearchResultsMeta
 
 
 class BraveSearchLeague(BaseModel):
-    has_standings: bool | None = None
-    id: int | str
-    logo_url: str
+    id: str
     name: str
-    round: str | None = None
     season: str
+    round: str | None
+    has_standings: bool | None
+    logo_url: str
 
 
 class BraveSearchNewsPage(BaseModel):
-    layout: BraveSearchLayout
-    page: BraveSearchNewsPagePage
-    pagination: BraveSearchCursorPagination
-    query: BraveSearchQuery
-    reranked_by_goggle: bool
     results: list[BraveSearchNewsResult]
     rich: BraveSearchUnobservedObject | None
-
-
-class BraveSearchNewsPagePage(BaseModel):
-    bad_results: str | None
-    freshness: str | None
-    freshness_code: str | None
-    title: str
+    result_order: list[BraveSearchResultReference]
+    reranked_by_goggle: bool
+    query: BraveSearchQuery
+    results_meta: BraveSearchResultsMeta
+    pagination: BraveSearchCursorPagination
 
 
 class BraveSearchNewsResult(BaseModel):
-    age_label: str | None
+    title: str
     description: str
     description_html: str | None = None
+    url: str
     is_live: bool
+    age_label: str | None
     site: BraveSearchSite
     source: BraveSearchSource | None
+    position: int | None = None
     thumbnail: BraveSearchImage | None
-    title: str
-    url: str
 
 
 class BraveSearchOpeningHours(BaseModel):
@@ -548,66 +535,66 @@ class BraveSearchOpeningHours(BaseModel):
 
 
 class BraveSearchOpeningHoursCurrentDayItem(BaseModel):
-    abbr_name: str
-    closes: str
     full_name: str
+    abbr_name: str
     opens: str
+    closes: str
 
 
 class BraveSearchOpeningHoursDaysItem(BaseModel):
-    abbr_name: str
-    closes: str
     full_name: str
+    abbr_name: str
     opens: str
+    closes: str
 
 
 class BraveSearchPlace(BaseModel):
-    action: BraveSearchUnobservedObject | None
-    address: BraveSearchAddress
+    id: str | None = None
     ai_answer_key: str | None = None
+    title: str
+    full_title: str | None = None
+    description: str | None
+    language: str | None = None
+    url: str | None = None
+    provider_url: str
+    rating: BraveSearchRating | None
+    price_range: str | None
+    rating_score: float | None = None
+    content_fetched_at: str | None = None
+    published_at: str | None = None
+    fetched_at: str | None = None
+    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    spid: str | None = None
+    pid: str | None = None
+    coordinates: BraveSearchCoordinates | None = None
+    address: BraveSearchAddress
+    opening_hours: BraveSearchOpeningHours | None
+    contact: BraveSearchPlaceContact | None
     categories: list[str]
     category: str | None
-    contact: BraveSearchPlaceContact | None
-    content_fetched_at: str | None = None
-    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    coordinates: BraveSearchCoordinates | None = None
     cuisines: list[str] | None
-    description: str | None
-    distance_meters: float | None = None
-    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    family_friendly: bool | None = None
-    fetched_at: str | None = None
-    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    full_title: str | None = None
-    icon_category: str | None
-    icons: list[BraveSearchIcon] | None = None
-    id: str | None = None
-    is_source_both: bool | None = None
-    is_source_local: bool | None = None
-    language: str | None = None
-    opening_hours: BraveSearchOpeningHours | None
-    pictures: BraveSearchPlacePictures | None
-    pid: str | None = None
-    popularity: int | None = None
-    price_range: str | None
-    profiles: list[BraveSearchProfile]
-    provider_url: str
-    published_at: str | None = None
-    rating: BraveSearchRating | None
-    rating_score: float | None = None
-    raw: BraveSearchUnobservedObject | None
-    results: list[BraveSearchPlaceWebResultsItem] | None = None
     reviews: BraveSearchPlaceReviews | None
+    profiles: list[BraveSearchProfile]
+    results: list[BraveSearchPlaceWebResultsItem] | None = None
+    web_results: list[BraveSearchPlaceWebResultsItem] | None = None
+    action: BraveSearchUnobservedObject | None
     source: str | None = None
-    spid: str | None = None
-    thumbnail: BraveSearchImage | None
+    type: str
     timezone: str | None = None
     timezone_offset: int | None
-    title: str
-    type: str
-    url: str | None = None
-    web_results: list[BraveSearchPlaceWebResultsItem] | None = None
+    distance_meters: float | None = None
+    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     zoom_level: int | None = None
+    icons: list[BraveSearchIcon] | None = None
+    family_friendly: bool | None = None
+    popularity: int | None = None
+    is_source_local: bool | None = None
+    is_source_both: bool | None = None
+    raw: BraveSearchUnobservedObject | None
+    icon_category: str | None
+    thumbnail: BraveSearchImage | None
+    pictures: BraveSearchPlacePictures | None
 
 
 class BraveSearchPlaceContact(BaseModel):
@@ -616,144 +603,143 @@ class BraveSearchPlaceContact(BaseModel):
 
 
 class BraveSearchPlaceDescription(BaseModel):
-    markdown: str
     place_id: str
+    markdown: str
 
 
 class BraveSearchPlacePictures(BaseModel):
-    results: list[BraveSearchImage]
     view_more_url: str | None = None
+    results: list[BraveSearchImage]
 
 
 class BraveSearchPlaceReviews(BaseModel):
-    results: list[BraveSearchPlaceReviewsResultsItem]
     reviews_in_foreign_language: bool
     view_more_url: str
+    results: list[BraveSearchPlaceReviewsResultsItem]
 
 
 class BraveSearchPlaceReviewsResultsItem(BaseModel):
-    author: BraveSearchPlaceReviewsResultsItemAuthor
-    date: str | None
-    date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    title: str
     description: str
     language: str
-    rating: BraveSearchRating
     review_url: str
-    title: str
+    rating: BraveSearchRating
+    date: str | None
+    date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    author: BraveSearchPlaceReviewsResultsItemAuthor
 
 
 class BraveSearchPlaceReviewsResultsItemAuthor(BaseModel):
-    email: str | None
     name: str
-    thumbnail: BraveSearchImage | None
-    type: str
     url: str
+    email: str | None
+    type: str
+    thumbnail: BraveSearchImage | None
 
 
 class BraveSearchPlaceSuggestion(BaseModel):
-    address: BraveSearchAddress | None
+    id: str
+    name: str
+    markdown: str
+    label: str | None
+    kind: str
     category: str | None
     coordinates: BraveSearchCoordinates | None
+    address: BraveSearchAddress | None
     distance_meters: float | None
     distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    id: str
-    image: BraveSearchImage | None
-    kind: str
-    label: str | None
-    markdown: str
-    name: str
-    permanently_closed: bool | None
     type: str
+    permanently_closed: bool | None
+    image: BraveSearchImage | None
 
 
 class BraveSearchPlaceSuggestions(BaseModel):
-    query: BraveSearchTextQuery
     suggestions: list[BraveSearchPlaceSuggestion]
+    query: BraveSearchTextQuery
 
 
 class BraveSearchPlaceWebResultsItem(BaseModel):
-    content_fetched_at: str | None
-    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    description: str
-    family_friendly: bool
-    fetched_at: str | None
-    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    full_title: str | None
-    icons: list[BraveSearchIcon] | None
-    is_source_both: bool
-    is_source_local: bool
-    language: str | None
-    published_at: str | None
-    site: BraveSearchSite
-    source: str | None
     title: str
+    full_title: str | None
+    description: str
+    language: str | None
     url: str
+    content_fetched_at: str | None
+    published_at: str | None
+    fetched_at: str | None
+    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    is_source_local: bool
+    is_source_both: bool
+    source: str | None
+    family_friendly: bool
+    icons: list[BraveSearchIcon] | None
+    site: BraveSearchSite
 
 
 class BraveSearchPlacesPage(BaseModel):
-    addresses: list[BraveSearchPlacesPageAddressesItem]
-    center: BraveSearchPlacesPageCenter
+    places: list[BraveSearchPlace]
     cities: list[BraveSearchPlacesPageCitiesItem]
     countries: list[BraveSearchUnobservedObject]
-    highlight: BraveSearchLayoutSlot | None
-    layout: list[BraveSearchLayoutSlot]
-    neighborhoods: list[BraveSearchUnobservedObject]
-    places: list[BraveSearchPlace]
-    query: BraveSearchTextQuery
     regions: list[BraveSearchUnobservedObject]
+    neighborhoods: list[BraveSearchUnobservedObject]
+    addresses: list[BraveSearchPlacesPageAddressesItem]
     streets: list[BraveSearchPlacesPageStreetsItem]
+    result_order: list[BraveSearchResultReference]
+    center: BraveSearchPlacesPageCenter
     suggested_viewport: BraveSearchUnobservedObject | None
+    query: BraveSearchTextQuery
 
 
 class BraveSearchPlacesPageAddressesItem(BaseModel):
-    address: BraveSearchAddress
-    coordinates: BraveSearchCoordinates
-    distance_meters: float | None
-    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     name: str
+    street_imagery_url: str
     pois: list[BraveSearchPlace]
     pois_nearby: list[BraveSearchPlace]
-    spid: str
-    street_imagery_url: str
     type: str
+    coordinates: BraveSearchCoordinates
+    spid: str
     zoom_level: int
+    distance_meters: float | None
+    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    address: BraveSearchAddress
 
 
 class BraveSearchPlacesPageCenter(BaseModel):
-    coordinates: BraveSearchCoordinates
-    country: str
     name: str
+    country: str
+    coordinates: BraveSearchCoordinates
 
 
 class BraveSearchPlacesPageCitiesItem(BaseModel):
-    action: BraveSearchPlacesPageCitiesItemAction
-    attributes: list[list[str]]
-    boundary: BraveSearchPlacesPageCitiesItemBoundary
-    coordinates: BraveSearchCoordinates
-    country: str
+    name: str
     description: str
-    description_ai: str
+    short_description: str
     description_ai_html: str
+    local_time: BraveSearchPlacesPageCitiesItemLocalTime
+    pois: list[BraveSearchPlace]
+    type: str
+    spid: str
+    boundary: BraveSearchPlacesPageCitiesItemBoundary
+    country: str
+    coordinates: BraveSearchCoordinates
+    kind: str
+    description_ai: str
     description_src: str
-    explore_query: str
+    attributes: list[list[str]]
+    itineraries: list[BraveSearchPlacesPageCitiesItemItinerariesItem]
+    weather: BraveSearchUnobservedObject | None
     geonameid: int
     getting_there: list[str]
-    itineraries: list[BraveSearchPlacesPageCitiesItemItinerariesItem]
-    kind: str
-    local_time: BraveSearchPlacesPageCitiesItemLocalTime
-    name: str
-    pois: list[BraveSearchPlace]
+    action: BraveSearchPlacesPageCitiesItemAction
+    explore_query: str
     raw: BraveSearchUnobservedObject | None
-    short_description: str
-    spid: str
     thumbnail: BraveSearchImage
-    type: str
-    weather: BraveSearchUnobservedObject | None
 
 
 class BraveSearchPlacesPageCitiesItemAction(BaseModel):
-    type: str
     url: str
+    type: str
 
 
 class BraveSearchPlacesPageCitiesItemBoundary(BaseModel):
@@ -762,132 +748,149 @@ class BraveSearchPlacesPageCitiesItemBoundary(BaseModel):
 
 
 class BraveSearchPlacesPageCitiesItemBoundaryGeometry(BaseModel):
-    coordinates: list[list[list[float]]]
     type: str
+    coordinates: list[list[list[float]]]
 
 
 class BraveSearchPlacesPageCitiesItemItinerariesItem(BaseModel):
-    max_days: int
-    min_days: int
-    months: list[str]
     name: str
     prompt: str
+    months: list[str]
+    min_days: int
+    max_days: int
 
 
 class BraveSearchPlacesPageCitiesItemLocalTime(BaseModel):
+    time: str
     date: str | None
     date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    time: str
     timezone: str
     utc_relative: str
 
 
 class BraveSearchPlacesPageStreetsItem(BaseModel):
-    address: BraveSearchAddress
-    coordinates: BraveSearchCoordinates
-    distance_meters: float | None
-    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     name: str
+    street_imagery_url: str
     pois: list[BraveSearchPlace]
     pois_nearby: list[BraveSearchPlace]
-    spid: str
-    street_imagery_url: str
     type: str
+    coordinates: BraveSearchCoordinates
+    spid: str
     zoom_level: int
+    distance_meters: float | None
+    distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    address: BraveSearchAddress
 
 
 class BraveSearchProfile(BaseModel):
-    image_url: str
-    long_name: str | None = None
     name: str
-    type: str | None = None
     url: str
+    long_name: str | None = None
+    type: str | None = None
+    image_url: str
 
 
 class BraveSearchQuery(BaseModel):
-    ads_signature: str | None = None
-    ask_for_location: bool | None = None
-    bad_results: bool
-    choice: str | None = None
-    cleaned: str | None = None
-    corrected: str | None
-    corrected_terms: list[BraveSearchQueryCorrectedTermsItem]
-    country: str
-    discussions_cluster: str | None = None
-    is_geolocal: bool | None
-    is_navigational: bool | None = None
-    is_news_breaking: bool | None = None
-    is_rh_forced: bool | None = None
-    is_shopping_query: bool | None = None
-    is_trending: bool | None = None
+    text: str
     language: str | None = None
+    show_strict_warning: bool
+    suggested_goggles: list[BraveSearchGoggle] | None = None
+    corrected: str | None
+    cleaned: str | None = None
+    possible_correction: str | None
+    search_operators: BraveSearchSearchOperators | None
+    safe_search: str
+    is_navigational: bool | None = None
+    is_geolocal: bool | None
     local_decision: str | None
-    local_locations_idx: int | None = None
-    local_query: str | None = None
+    local_locations_index: int | None = None
+    is_trending: bool | None = None
+    is_news_breaking: bool | None = None
+    ask_for_location: bool | None = None
+    spellcheck_off: bool
+    country: str
+    bad_results: bool
     local_query_type: str | None
     more_results_available: bool | None
-    possible_correction: str | None
     related_queries: list[BraveSearchRelatedQuery]
     related_queries_autocomplete_like: bool
-    safe_search: str
-    search_operators: BraveSearchSearchOperators | None
+    corrected_terms: list[BraveSearchQueryCorrectedTermsItem]
+    is_shopping_query: bool | None = None
+    choice: str | None = None
+    local_query: str | None = None
+    discussions_cluster: str | None = None
     should_fallback: bool | None = None
-    show_strict_warning: bool
-    spellcheck_off: bool
-    suggested_goggles: list[BraveSearchGoggle] | None = None
-    text: str
+    is_rh_forced: bool | None = None
 
 
 class BraveSearchQueryCorrectedTermsItem(BaseModel):
-    is_changed: bool
     text: str
+    is_changed: bool
 
 
 class BraveSearchRating(BaseModel):
-    best_rating: float
-    from_tripadvisor: bool
     rating_value: float
+    best_rating: float
     review_count: int | None = None
     source: str | None = None
+    from_tripadvisor: bool
 
 
 class BraveSearchRelatedQuery(BaseModel):
-    parts: list[BraveSearchRelatedQueryPartsItem]
     text: str
+    url: str
+    parts: list[BraveSearchRelatedQueryPartsItem]
 
 
 class BraveSearchRelatedQueryPartsItem(BaseModel):
-    is_highlighted: bool
     text: str
+    is_highlighted: bool
+
+
+class BraveSearchResultReference(BaseModel):
+    result_set: str
+    index: int | None = None
+    includes_all_results: bool | None = None
+    region: str | None = None
+
+
+class BraveSearchResultsMeta(BaseModel):
+    type: str | None = None
+    choice: str | None = None
+    is_divisive_topic: bool | None = None
+    freshness: str | None = None
+    freshness_code: str | None = None
+    no_results: bool | None = None
+    bad_results: str | None
 
 
 class BraveSearchRoute(BaseModel):
+    sections: list[BraveSearchRouteSection]
+    via_roads: list[str] | None = None
     distance_meters: int | None
     distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    sections: list[BraveSearchRouteSection]
     typical_duration_seconds: int | None = None
-    via_roads: list[str] | None = None
 
 
 class BraveSearchRouteSection(BaseModel):
-    agency: BraveSearchRouteSectionAgency | None = None
-    arrival: BraveSearchRouteSectionArrival
     departure: BraveSearchRouteSectionDeparture
+    arrival: BraveSearchRouteSectionArrival
+    steps: list[BraveSearchRouteSectionStepsItem] | None = None
+    stops: list[BraveSearchRouteSectionStopsItem] | None = None
+    transport: BraveSearchRouteSectionTransport
+    next_departures: list[BraveSearchRouteSectionNextDeparturesItem] | None = None
+    agency: BraveSearchRouteSectionAgency | None = None
     distance_meters: int | None
     distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    next_departures: list[BraveSearchRouteSectionNextDeparturesItem] | None = None
+    typical_duration_seconds: int | None = None
     polyline: str
     polyline_format: str
-    steps: list[BraveSearchRouteSectionStepsItem] | None = None
-    stops: list[BraveSearchRouteSectionStopsItem] | None = None
     traffic: list[BraveSearchRouteSectionTrafficItem] | None = None
-    transport: BraveSearchRouteSectionTransport
     type: str
-    typical_duration_seconds: int | None = None
 
 
 class BraveSearchRouteSectionAgency(BaseModel):
@@ -896,25 +899,25 @@ class BraveSearchRouteSectionAgency(BaseModel):
 
 
 class BraveSearchRouteSectionArrival(BaseModel):
-    place: BraveSearchRouteSectionArrivalPlace
     time: str
+    place: BraveSearchRouteSectionArrivalPlace
 
 
 class BraveSearchRouteSectionArrivalPlace(BaseModel):
-    coordinates: BraveSearchCoordinates
     name: str | None = None
     type: str
+    coordinates: BraveSearchCoordinates
 
 
 class BraveSearchRouteSectionDeparture(BaseModel):
-    place: BraveSearchRouteSectionDeparturePlace
     time: str
+    place: BraveSearchRouteSectionDeparturePlace
 
 
 class BraveSearchRouteSectionDeparturePlace(BaseModel):
-    coordinates: BraveSearchCoordinates
     name: str | None = None
     type: str
+    coordinates: BraveSearchCoordinates
 
 
 class BraveSearchRouteSectionNextDeparturesItem(BaseModel):
@@ -923,26 +926,26 @@ class BraveSearchRouteSectionNextDeparturesItem(BaseModel):
 
 
 class BraveSearchRouteSectionNextDeparturesItemTransport(BaseModel):
-    category: str
-    color: str
+    name: str
     headsign: str
     mode: str
-    name: str
+    category: str
+    color: str
     text_color: str
 
 
 class BraveSearchRouteSectionStepsItem(BaseModel):
-    direction: str | None = None
+    instruction: str
+    road: BraveSearchRouteSectionStepsItemRoad | None = None
+    next_road: BraveSearchRouteSectionStepsItemNextRoad | None = None
     distance_meters: int | None
     distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    functional_class: int | None = None
     functional_class_label: str | None = None
-    instruction: str
-    next_road: BraveSearchRouteSectionStepsItemNextRoad | None = None
+    direction: str | None = None
     offset: int
-    road: BraveSearchRouteSectionStepsItemRoad | None = None
+    functional_class: int | None = None
     toward: list[str] | None = None
 
 
@@ -957,120 +960,120 @@ class BraveSearchRouteSectionStepsItemRoad(BaseModel):
 
 
 class BraveSearchRouteSectionStopsItem(BaseModel):
-    coordinates: BraveSearchCoordinates
-    departure_time: str | None
     name: str
+    departure_time: str | None
+    coordinates: BraveSearchCoordinates
 
 
 class BraveSearchRouteSectionTrafficItem(BaseModel):
+    offset: int
     distance_meters: int | None
     distance_meters_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    offset: int
     traffic_ratio: float
 
 
 class BraveSearchRouteSectionTransport(BaseModel):
-    category: str | None = None
-    color: str | None = None
+    name: str | None = None
     headsign: str | None = None
     mode: str
-    name: str | None = None
+    category: str | None = None
+    color: str | None = None
     text_color: str | None = None
 
 
 class BraveSearchSearchOperators(BaseModel):
-    applied: bool | None = None
     cleaned_query: str | None = None
     sites: list[str] | None = None
+    applied: bool | None = None
 
 
 class BraveSearchSerpAiAnswer(BaseModel):
-    answer: BraveSearchAiAnswer | None
-    context: list[BraveSearchUnobservedObject]
     conversation_id: str
+    answer: BraveSearchAiAnswer | None
     entity_infobox_url: str | None
-    is_possible: bool
-    is_triggered: bool
     question: str
+    context: list[BraveSearchUnobservedObject]
     request: BraveSearchSerpAiAnswerRequest | None
+    is_triggered: bool
+    is_possible: bool
 
 
 class BraveSearchSerpAiAnswerRequest(BaseModel):
-    country: str
-    inline_references: bool
     language: str
-    query: str
-    results_hash: str
-    safe_search: str
     version: str
+    query: str
+    country: str
+    safe_search: str
+    results_hash: str
+    inline_references: bool
 
 
 class BraveSearchSimilarImages(BaseModel):
-    might_be_offensive: bool
-    query: BraveSearchQuery
     results: list[BraveSearchImageResult]
     results_are_safe: bool
+    might_be_offensive: bool
+    query: BraveSearchQuery
 
 
 class BraveSearchSite(BaseModel):
-    breadcrumbs: list[str]
-    domain: str
-    favicon_url: str
     hostname: str
+    domain: str
+    breadcrumbs: list[str]
     scheme: str
+    favicon_url: str
 
 
 class BraveSearchSource(BaseModel):
-    image_url: str | None = None
-    long_name: str | None
     name: str
     url: str | None = None
+    long_name: str | None
+    image_url: str | None = None
 
 
 class BraveSearchSportsFixture(BaseModel):
-    aggregate_score: BraveSearchAggregateScore | None = None
-    bulletins: BraveSearchUnobservedObject | None = None
-    event_title: str | None = None
-    events: list[BraveSearchSportsFixtureEventsItem] | None = None
     id: int
-    league: BraveSearchLeague
-    lineups: BraveSearchSportsFixtureLineups | None = None
-    penalty_score: BraveSearchSportsFixturePenaltyScore | None = None
-    phase: str | None = None
-    score: BraveSearchSportsFixtureScore
-    score_table: BraveSearchSportsFixtureScoreTable | None = None
-    sport: str
-    start_time: str | None
-    start_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    event_title: str | None = None
     statistics: (
         BraveSearchSportsFixtureStatistics | list[BraveSearchSportsFixtureStatisticsItem] | None
     )
     status: BraveSearchSportsFixtureStatus
+    start_time: str | None
+    events: list[BraveSearchSportsFixtureEventsItem] | None = None
+    league: BraveSearchLeague
+    start_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     teams: BraveSearchSportsFixtureTeams
-    type: str
+    score: BraveSearchSportsFixtureScore | None
+    score_table: BraveSearchSportsFixtureScoreTable | None = None
+    lineups: BraveSearchSportsFixtureLineups | None = None
+    aggregate_score: BraveSearchAggregateScore | None = None
+    penalty_score: BraveSearchSportsFixturePenaltyScore | None = None
     week: int | None = None
+    round: str | None = None
+    bulletins: BraveSearchUnobservedObject | None = None
+    sport: str
+    type: str
 
 
 class BraveSearchSportsFixtureEventsItem(BaseModel):
-    added_minutes: int | None
+    team_id: int
+    player_name: str | None
     assist_name: str | None
     detail: str
-    elapsed_minutes: int
-    player_name: str | None
-    team_id: int
     type: str
+    elapsed_minutes: int
+    added_minutes: int | None
 
 
 class BraveSearchSportsFixtureLineups(BaseModel):
-    away: BraveSearchSportsFixtureLineupsAway
     home: BraveSearchSportsFixtureLineupsHome
+    away: BraveSearchSportsFixtureLineupsAway
 
 
 class BraveSearchSportsFixtureLineupsAway(BaseModel):
-    coach: BraveSearchSportsFixtureLineupsAwayCoach
     formation: str
     start_xi: list[BraveSearchSportsFixtureLineupsAwayStartXiItem]
     substitutes: list[BraveSearchSportsFixtureLineupsAwaySubstitutesItem]
+    coach: BraveSearchSportsFixtureLineupsAwayCoach
 
 
 class BraveSearchSportsFixtureLineupsAwayCoach(BaseModel):
@@ -1079,30 +1082,30 @@ class BraveSearchSportsFixtureLineupsAwayCoach(BaseModel):
 
 
 class BraveSearchSportsFixtureLineupsAwayStartXiItem(BaseModel):
-    grid: str
-    grid_column: int | None
-    grid_row: int | None
     name: str
-    number: int
-    photo_url: str
-    pos: str
     position: str | None
+    pos: str
+    number: int
+    grid: str
+    grid_row: int | None
+    grid_column: int | None
+    photo_url: str
 
 
 class BraveSearchSportsFixtureLineupsAwaySubstitutesItem(BaseModel):
-    grid: str | None
     name: str
-    number: int
-    photo_url: str
-    pos: str
     position: str | None
+    pos: str
+    number: int
+    grid: str | None
+    photo_url: str
 
 
 class BraveSearchSportsFixtureLineupsHome(BaseModel):
-    coach: BraveSearchSportsFixtureLineupsHomeCoach
     formation: str
     start_xi: list[BraveSearchSportsFixtureLineupsHomeStartXiItem]
     substitutes: list[BraveSearchSportsFixtureLineupsHomeSubstitutesItem]
+    coach: BraveSearchSportsFixtureLineupsHomeCoach
 
 
 class BraveSearchSportsFixtureLineupsHomeCoach(BaseModel):
@@ -1111,66 +1114,66 @@ class BraveSearchSportsFixtureLineupsHomeCoach(BaseModel):
 
 
 class BraveSearchSportsFixtureLineupsHomeStartXiItem(BaseModel):
-    grid: str
-    grid_column: int | None
-    grid_row: int | None
     name: str
-    number: int
-    photo_url: str
-    pos: str
     position: str | None
+    pos: str
+    number: int
+    grid: str
+    grid_row: int | None
+    grid_column: int | None
+    photo_url: str
 
 
 class BraveSearchSportsFixtureLineupsHomeSubstitutesItem(BaseModel):
-    grid: str | None
     name: str
-    number: int
-    photo_url: str
-    pos: str
     position: str | None
+    pos: str
+    number: int
+    grid: str | None
+    photo_url: str
 
 
 class BraveSearchSportsFixturePenaltyScore(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureScore(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureScoreTable(BaseModel):
-    ot: BraveSearchUnobservedObject | None
     q1: BraveSearchSportsFixtureScoreTableQ1 | None
     q2: BraveSearchSportsFixtureScoreTableQ2 | None
     q3: BraveSearchSportsFixtureScoreTableQ3 | None
     q4: BraveSearchSportsFixtureScoreTableQ4 | None
+    ot: BraveSearchUnobservedObject | None
 
 
 class BraveSearchSportsFixtureScoreTableQ1(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureScoreTableQ2(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureScoreTableQ3(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureScoreTableQ4(BaseModel):
-    away: int
     home: int
+    away: int
 
 
 class BraveSearchSportsFixtureStatistics(BaseModel):
-    away: BraveSearchSportsFixtureStatisticsAway
     home: BraveSearchSportsFixtureStatisticsHome
+    away: BraveSearchSportsFixtureStatisticsAway
 
 
 class BraveSearchSportsFixtureStatisticsAway(BaseModel):
@@ -1179,65 +1182,65 @@ class BraveSearchSportsFixtureStatisticsAway(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayer(BaseModel):
-    blocked_kick_stats: list[BraveSearchUnobservedObject]
-    defense_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItem]
-    field_goal_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItem]
-    forced_fumble_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerForcedFumbleStatsItem]
-    inactives: list[BraveSearchSportsFixtureStatisticsAwayPlayerInactivesItem]
-    interception_stats: list[BraveSearchUnobservedObject]
+    rushing_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItem]
+    passing_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItem]
+    receiving_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItem]
+    punting_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItem]
     kick_return_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItem]
-    opponent_fumble_recovered_stats: list[
-        BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItem
-    ]
+    punt_return_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItem]
+    defense_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItem]
+    interception_stats: list[BraveSearchUnobservedObject]
+    own_fumble_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItem]
     own_fumble_recovered_stats: list[
         BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItem
     ]
-    own_fumble_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItem]
-    participation_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerParticipationStatsItem]
-    passing_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItem]
-    pat_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItem]
+    opponent_fumble_recovered_stats: list[
+        BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItem
+    ]
+    forced_fumble_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerForcedFumbleStatsItem]
     penalty_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPenaltyStatsItem]
-    punt_return_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItem]
-    punting_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItem]
-    receiving_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItem]
-    rushing_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItem]
+    blocked_kick_stats: list[BraveSearchUnobservedObject]
+    field_goal_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItem]
+    pat_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItem]
     two_point_conversion_stats: list[BraveSearchUnobservedObject]
+    participation_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerParticipationStatsItem]
+    inactives: list[BraveSearchSportsFixtureStatisticsAwayPlayerInactivesItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItem(BaseModel):
-    assists: int
-    misc_assists: int
-    misc_tackles: int
-    passes_defensed: int
     player: BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItemPlayer
-    sack_yards: float
-    sacks: float
-    safeties: int
-    special_teams_assists: int
-    special_teams_tackles: int
-    stuff_yards: float
-    stuffs: float
     tackles: int
+    assists: int
+    sacks: float
+    sack_yards: float
+    stuffs: float
+    stuff_yards: float
+    passes_defensed: int
+    misc_tackles: int
+    misc_assists: int
+    special_teams_tackles: int
+    special_teams_assists: int
+    safeties: int
     tackles_for_loss: float
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItem(BaseModel):
-    attempts: int
-    blocked: int
-    longest_gain: int
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemPlayer
     made: int
+    attempts: int
+    longest_gain: int
+    blocked: int
     made_details: list[
         BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemMadeDetailsItem
     ]
     missed_details: list[BraveSearchUnobservedObject]
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemPlayer
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemMadeDetailsItem(BaseModel):
@@ -1246,21 +1249,21 @@ class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemMadeDetailsI
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerForcedFumbleStatsItem(BaseModel):
-    number: int
     player: BraveSearchSportsFixtureStatisticsAwayPlayerForcedFumbleStatsItemPlayer
+    number: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerForcedFumbleStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
@@ -1269,264 +1272,264 @@ class BraveSearchSportsFixtureStatisticsAwayPlayerInactivesItem(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerInactivesItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItem(BaseModel):
-    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItemBigPlaysItem]
-    is_long_touchdown: bool
-    longest_gain: int
     player: BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItemPlayer
     returns: int
-    touchdowns: int
     yards: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItem(BaseModel):
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItemPlayer
     total: int
-    touchdowns: int
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItemPlayer
     units: list[
         BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItemUnitsItem
     ]
     yards: int
+    touchdowns: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOpponentFumbleRecoveredStatsItemUnitsItem(
     BaseModel
 ):
+    unit_id: int
     name: str
     number: int
-    unit_id: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItem(BaseModel):
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItemPlayer
     total: int
-    touchdowns: int
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItemPlayer
     yards: int
+    touchdowns: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItem(BaseModel):
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItemPlayer
     total: int
     total_lost: int
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItemPlayer
     units: list[BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItemUnitsItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItemUnitsItem(BaseModel):
+    unit_id: int
     name: str
     number: int
     number_lost: int
-    unit_id: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerParticipationStatsItem(BaseModel):
-    is_game_played: bool
-    is_game_started: bool
     player: BraveSearchSportsFixtureStatisticsAwayPlayerParticipationStatsItemPlayer
+    is_game_started: bool
+    is_game_played: bool
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerParticipationStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItem(BaseModel):
-    attempts: int
-    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemBigPlaysItem]
+    rating: float
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemPlayer
     completions: int
+    attempts: int
+    interceptions: int
+    yards: int
+    yards_per_attempt: str
+    sacked: int
+    sacked_yards_lost: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    interceptions: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemPlayer
-    rating: float
-    sacked: int
-    sacked_yards_lost: int
     targets: int
-    touchdowns: int
-    yards: int
-    yards_per_attempt: str
+    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPassingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItemPlayer
+    made: int
     attempts: int
     blocked: int
-    made: int
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItemPlayer
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPatStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPenaltyStatsItem(BaseModel):
-    accepted: int
     player: BraveSearchSportsFixtureStatisticsAwayPlayerPenaltyStatsItemPlayer
+    accepted: int
     yards: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPenaltyStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItem(BaseModel):
-    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItemBigPlaysItem]
-    fair_catches: int
-    is_long_touchdown: bool
-    longest_gain: int
     player: BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItemPlayer
     returns: int
-    touchdowns: int
     yards: int
+    fair_catches: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItem(BaseModel):
     average: str
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItemPlayer
+    punts: int
+    yards: int
     blocked: int
     in20: int
     longest_gain: int
-    net_average: str
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItemPlayer
-    punts: int
-    return_yards: int
-    returns: int
     touchbacks: int
-    yards: int
+    returns: int
+    return_yards: int
+    net_average: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerPuntingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItem(BaseModel):
-    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemBigPlaysItem]
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemPlayer
+    receptions: int
+    yards: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    targets: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemPlayer
-    receptions: int
-    targets: int
-    touchdowns: int
-    yards: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerReceivingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemPlayer
     attempts: int
-    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemBigPlaysItem]
+    yards: int
+    yards_per_attempt: str
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemPlayer
-    touchdowns: int
-    yards: int
-    yards_per_attempt: str
+    big_plays: list[BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerRushingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
@@ -1536,61 +1539,61 @@ class BraveSearchSportsFixtureStatisticsHome(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayer(BaseModel):
-    blocked_kick_stats: list[BraveSearchUnobservedObject]
-    defense_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItem]
-    field_goal_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItem]
-    forced_fumble_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerForcedFumbleStatsItem]
-    inactives: list[BraveSearchSportsFixtureStatisticsHomePlayerInactivesItem]
-    interception_stats: list[BraveSearchUnobservedObject]
-    kick_return_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItem]
-    opponent_fumble_recovered_stats: list[BraveSearchUnobservedObject]
-    own_fumble_recovered_stats: list[BraveSearchUnobservedObject]
-    own_fumble_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItem]
-    participation_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerParticipationStatsItem]
-    passing_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItem]
-    pat_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItem]
-    penalty_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItem]
-    punt_return_stats: list[BraveSearchUnobservedObject]
-    punting_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItem]
-    receiving_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItem]
     rushing_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItem]
+    passing_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItem]
+    receiving_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItem]
+    punting_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItem]
+    kick_return_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItem]
+    punt_return_stats: list[BraveSearchUnobservedObject]
+    defense_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItem]
+    interception_stats: list[BraveSearchUnobservedObject]
+    own_fumble_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItem]
+    own_fumble_recovered_stats: list[BraveSearchUnobservedObject]
+    opponent_fumble_recovered_stats: list[BraveSearchUnobservedObject]
+    forced_fumble_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerForcedFumbleStatsItem]
+    penalty_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItem]
+    blocked_kick_stats: list[BraveSearchUnobservedObject]
+    field_goal_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItem]
+    pat_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItem]
     two_point_conversion_stats: list[BraveSearchUnobservedObject]
+    participation_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerParticipationStatsItem]
+    inactives: list[BraveSearchSportsFixtureStatisticsHomePlayerInactivesItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItem(BaseModel):
-    assists: int
-    misc_assists: int
-    misc_tackles: int
-    passes_defensed: int
     player: BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItemPlayer
-    sack_yards: float
-    sacks: float
-    safeties: int
-    special_teams_assists: int
-    special_teams_tackles: int
-    stuff_yards: float
-    stuffs: float
     tackles: int
+    assists: int
+    sacks: float
+    sack_yards: float
+    stuffs: float
+    stuff_yards: float
+    passes_defensed: int
+    misc_tackles: int
+    misc_assists: int
+    special_teams_tackles: int
+    special_teams_assists: int
+    safeties: int
     tackles_for_loss: float
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItem(BaseModel):
-    attempts: int
-    blocked: int
-    longest_gain: int
+    player: BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemPlayer
     made: int
+    attempts: int
+    longest_gain: int
+    blocked: int
     made_details: list[
         BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMadeDetailsItem
     ]
     missed_details: list[BraveSearchUnobservedObject]
-    player: BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemPlayer
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMadeDetailsItem(BaseModel):
@@ -1599,21 +1602,21 @@ class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMadeDetailsI
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerForcedFumbleStatsItem(BaseModel):
-    number: int
     player: BraveSearchSportsFixtureStatisticsHomePlayerForcedFumbleStatsItemPlayer
+    number: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerForcedFumbleStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
@@ -1622,378 +1625,327 @@ class BraveSearchSportsFixtureStatisticsHomePlayerInactivesItem(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerInactivesItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItem(BaseModel):
-    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItemBigPlaysItem]
-    is_long_touchdown: bool
-    longest_gain: int
     player: BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItemPlayer
     returns: int
-    touchdowns: int
     yards: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItem(BaseModel):
-    player: BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItemPlayer
     total: int
     total_lost: int
+    player: BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItemPlayer
     units: list[BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItemUnitsItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItemUnitsItem(BaseModel):
+    unit_id: int
     name: str
     number: int
     number_lost: int
-    unit_id: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerParticipationStatsItem(BaseModel):
-    is_game_played: bool
-    is_game_started: bool
     player: BraveSearchSportsFixtureStatisticsHomePlayerParticipationStatsItemPlayer
+    is_game_started: bool
+    is_game_played: bool
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerParticipationStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItem(BaseModel):
-    attempts: int
-    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemBigPlaysItem]
+    rating: float
+    player: BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemPlayer
     completions: int
+    attempts: int
+    interceptions: int
+    yards: int
+    yards_per_attempt: str
+    sacked: int
+    sacked_yards_lost: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    interceptions: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemPlayer
-    rating: float
-    sacked: int
-    sacked_yards_lost: int
     targets: int
-    touchdowns: int
-    yards: int
-    yards_per_attempt: str
+    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPassingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItemPlayer
+    made: int
     attempts: int
     blocked: int
-    made: int
-    player: BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItemPlayer
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPatStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItem(BaseModel):
-    accepted: int
     player: BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItemPlayer
+    accepted: int
     yards: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItem(BaseModel):
     average: str
+    player: BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItemPlayer
+    punts: int
+    yards: int
     blocked: int
     in20: int
     longest_gain: int
-    net_average: str
-    player: BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItemPlayer
-    punts: int
-    return_yards: int
-    returns: int
     touchbacks: int
-    yards: int
+    returns: int
+    return_yards: int
+    net_average: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItem(BaseModel):
-    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemBigPlaysItem]
+    player: BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemPlayer
+    receptions: int
+    yards: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    targets: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemPlayer
-    receptions: int
-    targets: int
-    touchdowns: int
-    yards: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemPlayer
     attempts: int
-    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemBigPlaysItem]
+    yards: int
+    yards_per_attempt: str
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
     first_downs: int
     fumbles: int
     fumbles_lost: int
-    is_long_touchdown: bool
-    longest_gain: int
-    player: BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemPlayer
-    touchdowns: int
-    yards: int
-    yards_per_attempt: str
+    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemBigPlaysItem]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemBigPlaysItem(BaseModel):
+    value: int
     number: int
     touchdowns: int
-    value: int
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerRushingStatsItemPlayer(BaseModel):
+    player_id: int
     first_name: str
     last_name: str
-    player_id: int
     uniform: str
 
 
 class BraveSearchSportsFixtureStatisticsItem(BaseModel):
-    away: int | str
-    home: int | str
     name: str
+    home: int | str
+    away: int | str
 
 
 class BraveSearchSportsFixtureStatus(BaseModel):
-    added_minutes: int | None = None
     code: str
-    elapsed: int | None = None
-    elapsed_minutes: int | None = None
     label: str | None
+    elapsed_minutes: int | None
+    added_minutes: int | None
 
 
 class BraveSearchSportsFixtureTeams(BaseModel):
-    away: BraveSearchSportsFixtureTeamsAway
     home: BraveSearchSportsFixtureTeamsHome
+    away: BraveSearchSportsFixtureTeamsAway
 
 
 class BraveSearchSportsFixtureTeamsAway(BaseModel):
     id: int
-    location: str | None
-    logo_url: str
     name: str
     nickname: str | None
+    location: str | None
+    logo_url: str
 
 
 class BraveSearchSportsFixtureTeamsHome(BaseModel):
     id: int
-    location: str | None
-    logo_url: str
     name: str
     nickname: str | None
+    location: str | None
+    logo_url: str
 
 
 class BraveSearchSportsGames(BaseModel):
-    competitions: list[BraveSearchSportsGamesCompetitionsItem] | None = None
-    date_label: str | None = None
-    date_label_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    focus_time: str | None = None
-    focus_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    game_times: list[str] | None = None
-    game_times_as_sent: list[bool | float | str | BraveSearchUnobservedObject | None] | None = None
     games: list[BraveSearchGame]
-    groups: list[BraveSearchSportsGamesGroupsItem] | None = None
+    team: BraveSearchTeam | None = None
+    competitions: list[BraveSearchSportsGamesCompetitionsItem] | None = None
+    groups: list[BraveSearchStandingsGroup] | None = None
     league: BraveSearchLeague | None = None
     leagues: dict[str, BraveSearchLeague] | None = None
+    game_times: list[str] | None = None
+    game_times_as_sent: list[bool | float | str | BraveSearchUnobservedObject | None] | None = None
+    focus_time: str | None = None
+    focus_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    date_label: str | None = None
+    date_label_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     sport: str
-    team: BraveSearchTeam | None = None
     type: str
 
 
 class BraveSearchSportsGamesCompetitionsItem(BaseModel):
-    id: int
+    id: str
     name: str
     season: str
 
 
-class BraveSearchSportsGamesGroupsItem(BaseModel):
-    groups: list[BraveSearchSportsGamesGroupsItem]
-    name: str
-    standings: list[BraveSearchSportsGamesGroupsItemStandingsItem]
-
-
-class BraveSearchSportsGamesGroupsItemStandingsItem(BaseModel):
-    drawn: int
-    form: str
-    form_results: list[str | None]
-    goals_against: int
-    goals_for: int
-    label: BraveSearchSportsGamesGroupsItemStandingsItemLabel | None
-    lost: int
-    played: int
-    points: int
-    rank: int
-    team: BraveSearchTeam
-    won: int
-
-
-class BraveSearchSportsGamesGroupsItemStandingsItemLabel(BaseModel):
-    i18n: str
-    i18n_opts: BraveSearchSportsGamesGroupsItemStandingsItemLabelI18nOpts
-    kind: str
-    text: str | None
-
-
-class BraveSearchSportsGamesGroupsItemStandingsItemLabelI18nOpts(BaseModel):
-    destination: str
-    phase: str | None = None
-
-
 class BraveSearchSportsStandings(BaseModel):
-    groups: list[BraveSearchSportsStandingsGroupsItem]
+    groups: list[BraveSearchStandingsGroup]
     league: BraveSearchLeague | None = None
     sport: str
     type: str
 
 
-class BraveSearchSportsStandingsGroupsItem(BaseModel):
-    groups: list[BraveSearchSportsStandingsGroupsItemGroupsItem]
-    name: str
-    stage: str | None = None
-    standings: list[BraveSearchSportsStandingsGroupsItemStandingsItem]
-
-
-class BraveSearchSportsStandingsGroupsItemGroupsItem(BaseModel):
-    groups: list[BraveSearchSportsStandingsGroupsItemGroupsItem]
-    name: str
-    standings: list[BraveSearchSportsStandingsGroupsItemGroupsItemStandingsItem]
-
-
-class BraveSearchSportsStandingsGroupsItemGroupsItemStandingsItem(BaseModel):
-    conference_rank: int
-    conference_seed: int
-    division_rank: int
-    division_seed: int
-    drawn: int
-    games_behind: float | None
-    games_behind_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    lost: int
-    points_against: int
-    points_for: int
+class BraveSearchStanding(BaseModel):
     team: BraveSearchTeam
-    win_percentage: float | None
-    win_percentage_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    won: int
-
-
-class BraveSearchSportsStandingsGroupsItemStandingsItem(BaseModel):
-    drawn: int | None = None
-    form: str | None = None
-    form_results: list[str | None] | None = None
-    games_behind: float | None = None
-    games_behind_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    goals_against: int | None = None
-    goals_for: int | None = None
-    label: BraveSearchSportsStandingsGroupsItemStandingsItemLabel | None = None
-    loss_percentage: float | None = None
-    loss_percentage_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    lost: int
-    played: int
+    division_rank: int | None = None
+    division_seed: int | None = None
+    conference_rank: int | None = None
+    conference_seed: int | None = None
+    rank: int | None = None
     points: int | None = None
-    rank: int
-    team: BraveSearchTeam
+    played: int | None = None
+    form: str | None = None
+    won: int
+    drawn: int | None = None
     win_percentage: float | None = None
     win_percentage_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    won: int
+    points_for: int | None = None
+    points_against: int | None = None
+    lost: int
+    goals_for: int | None = None
+    goals_against: int | None = None
+    label: BraveSearchStandingLabel | None = None
+    loss_percentage: float | None = None
+    loss_percentage_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    games_behind: float | None = None
+    games_behind_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    form_results: list[str | None] | None = None
 
 
-class BraveSearchSportsStandingsGroupsItemStandingsItemLabel(BaseModel):
-    i18n: str
-    i18n_opts: BraveSearchSportsStandingsGroupsItemStandingsItemLabelI18nOpts
-    kind: str
+class BraveSearchStandingLabel(BaseModel):
     text: str | None
+    i18n: str
+    i18n_opts: BraveSearchStandingLabelI18nOpts
+    kind: str
 
 
-class BraveSearchSportsStandingsGroupsItemStandingsItemLabelI18nOpts(BaseModel):
+class BraveSearchStandingLabelI18nOpts(BaseModel):
     destination: str
     phase: str | None = None
 
 
+class BraveSearchStandingsGroup(BaseModel):
+    name: str
+    standings: list[BraveSearchStanding]
+    groups: list[BraveSearchStandingsGroup]
+    stage: str | None = None
+
+
 class BraveSearchSuggestion(BaseModel):
-    category: str | None = None
-    description: str | None = None
-    image_url: str | None = None
-    is_logo: bool | None = None
     name: str | None = None
     text: str
+    description: str | None = None
+    category: str | None = None
     type: str
+    is_logo: bool | None = None
+    image_url: str | None = None
 
 
 class BraveSearchSuggestions(BaseModel):
-    query: BraveSearchTextQuery
     suggestions: list[BraveSearchSuggestion]
+    query: BraveSearchTextQuery
 
 
 class BraveSearchSummarizer(BaseModel):
@@ -2003,118 +1955,118 @@ class BraveSearchSummarizer(BaseModel):
 
 class BraveSearchTeam(BaseModel):
     id: int
-    location: str | None = None
-    logo_url: str
     name: str
     nickname: str | None = None
+    location: str | None = None
+    logo_url: str
 
 
 class BraveSearchTeamStatistics(BaseModel):
+    first_downs: BraveSearchTeamStatisticsFirstDowns
+    third_down_efficiency: BraveSearchTeamStatisticsThirdDownEfficiency
+    fourth_down_efficiency: BraveSearchTeamStatisticsFourthDownEfficiency
+    red_zone_efficiency: BraveSearchTeamStatisticsRedZoneEfficiency
+    goal_to_go_efficiency: BraveSearchTeamStatisticsGoalToGoEfficiency
+    game_totals: BraveSearchTeamStatisticsGameTotals
+    rushing: BraveSearchTeamStatisticsRushing
+    passing: BraveSearchTeamStatisticsPassing
+    punting: BraveSearchTeamStatisticsPunting
+    return_totals: BraveSearchTeamStatisticsReturnTotals
+    punt_returning: BraveSearchTeamStatisticsPuntReturning
+    kick_returning: BraveSearchTeamStatisticsKickReturning
+    interceptions: BraveSearchTeamStatisticsInterceptions
     defense: BraveSearchTeamStatisticsDefense
+    penalties: BraveSearchTeamStatisticsPenalties
+    own_fumbles: BraveSearchTeamStatisticsOwnFumbles
+    opponent_fumbles: BraveSearchTeamStatisticsOpponentFumbles
+    time_of_possession: BraveSearchTeamStatisticsTimeOfPossession
     extra_points: BraveSearchTeamStatisticsExtraPoints
     field_goals: BraveSearchTeamStatisticsFieldGoals
-    first_downs: BraveSearchTeamStatisticsFirstDowns
-    fourth_down_efficiency: BraveSearchTeamStatisticsFourthDownEfficiency
-    game_totals: BraveSearchTeamStatisticsGameTotals
-    goal_to_go_efficiency: BraveSearchTeamStatisticsGoalToGoEfficiency
-    interceptions: BraveSearchTeamStatisticsInterceptions
-    kick_returning: BraveSearchTeamStatisticsKickReturning
     kickoffs: BraveSearchTeamStatisticsKickoffs
-    opponent_fumbles: BraveSearchTeamStatisticsOpponentFumbles
-    own_fumbles: BraveSearchTeamStatisticsOwnFumbles
-    passing: BraveSearchTeamStatisticsPassing
-    penalties: BraveSearchTeamStatisticsPenalties
-    punt_returning: BraveSearchTeamStatisticsPuntReturning
-    punting: BraveSearchTeamStatisticsPunting
-    red_zone_efficiency: BraveSearchTeamStatisticsRedZoneEfficiency
-    return_totals: BraveSearchTeamStatisticsReturnTotals
-    rushing: BraveSearchTeamStatisticsRushing
     safeties: int | None = None
-    third_down_efficiency: BraveSearchTeamStatisticsThirdDownEfficiency
-    time_of_possession: BraveSearchTeamStatisticsTimeOfPossession
-    two_point_after4_ot: BraveSearchTeamStatisticsOvertimeConversions | None = None
     two_point_conversions: BraveSearchTeamStatisticsTwoPointConversions
+    two_point_after4_ot: BraveSearchTeamStatisticsOvertimeConversions | None = None
 
 
 class BraveSearchTeamStatisticsDefense(BaseModel):
-    assists: int | None = None
-    forced_fumbles: int | None = None
-    passes_defensed: int | None = None
-    sack_yards: float | None
-    sacks: float | None
-    special_teams_tackles: int | None = None
-    stuff_yards: float | None = None
-    stuffs: float | None = None
     tackles: int | None = None
+    assists: int | None = None
+    passes_defensed: int | None = None
+    forced_fumbles: int | None = None
+    stuffs: float | None = None
+    stuff_yards: float | None = None
     tackles_for_loss: float | None = None
+    special_teams_tackles: int | None = None
+    sacks: float | None
+    sack_yards: float | None
 
 
 class BraveSearchTeamStatisticsExtraPoints(BaseModel):
+    made: int
     attempts: int | None
     blocked: int | None
-    made: int
     percentage: str | None
 
 
 class BraveSearchTeamStatisticsFieldGoals(BaseModel):
+    made: int
     attempts: int
     blocked: int
-    made: int
     percentage: str | None
 
 
 class BraveSearchTeamStatisticsFirstDowns(BaseModel):
+    total: int
+    rushing: int
     passing: int
     penalty: int
-    rushing: int
-    total: int
 
 
 class BraveSearchTeamStatisticsFourthDownEfficiency(BaseModel):
-    attempts: int
     made: int
+    attempts: int
     percentage: str | None
 
 
 class BraveSearchTeamStatisticsGameTotals(BaseModel):
     average: str | None
-    net_yards: int | None
     plays: int
+    net_yards: int | None
     touchdowns: int | None = None
 
 
 class BraveSearchTeamStatisticsGoalToGoEfficiency(BaseModel):
-    attempts: int
     made: int
+    attempts: int
     percentage: str | None
 
 
 class BraveSearchTeamStatisticsInterceptions(BaseModel):
-    is_long_touchdown: bool | None = None
-    longest_gain: int | None = None
     number: int
-    touchdowns: int | None = None
     yards: int
+    touchdowns: int | None = None
+    longest_gain: int | None = None
+    is_long_touchdown: bool | None = None
 
 
 class BraveSearchTeamStatisticsKickReturning(BaseModel):
-    is_long_touchdown: bool | None = None
-    longest_gain: int | None = None
     returns: int | None = None
-    touchdowns: int | None = None
     yards: int
+    touchdowns: int | None = None
+    longest_gain: int | None = None
+    is_long_touchdown: bool | None = None
 
 
 class BraveSearchTeamStatisticsKickoffs(BaseModel):
-    end_zone: int | None
     number: int
+    end_zone: int | None
     touchbacks: int | None
 
 
 class BraveSearchTeamStatisticsOpponentFumbles(BaseModel):
     recovered: int | None
-    touchdowns: int | None
     yards: int | None
+    touchdowns: int | None
 
 
 class BraveSearchTeamStatisticsOvertimeConversions(BaseModel):
@@ -2122,31 +2074,31 @@ class BraveSearchTeamStatisticsOvertimeConversions(BaseModel):
     Two-point tries after the fourth overtime: `{}` until a game gets there, then like `two_point_conversions`.
     """
 
-    attempts: int | None = None
     made: int | None = None
+    attempts: int | None = None
     percentage: str | None = None
 
 
 class BraveSearchTeamStatisticsOwnFumbles(BaseModel):
-    lost: int
     number: int
+    lost: int
     recovered: int | None = None
-    touchdowns: int | None = None
     yards: int | None = None
+    touchdowns: int | None = None
 
 
 class BraveSearchTeamStatisticsPassing(BaseModel):
-    attempts: int
     completions: int
+    attempts: int
     interceptions: int
     net_yards: int | None = None
     net_yards_per_attempt: str | None = None
-    sacked: int | None
-    sacked_yards_lost: int | None
-    touchdowns: int | None = None
     yards: int
     yards_per_attempt: str | None
+    sacked: int | None
+    sacked_yards_lost: int | None
     yards_per_game: int | None
+    touchdowns: int | None = None
 
 
 class BraveSearchTeamStatisticsPenalties(BaseModel):
@@ -2155,11 +2107,11 @@ class BraveSearchTeamStatisticsPenalties(BaseModel):
 
 
 class BraveSearchTeamStatisticsPuntReturning(BaseModel):
-    is_long_touchdown: bool | None = None
-    longest_gain: int | None = None
     returns: int | None = None
-    touchdowns: int | None = None
     yards: int
+    touchdowns: int | None = None
+    longest_gain: int | None = None
+    is_long_touchdown: bool | None = None
 
 
 class BraveSearchTeamStatisticsPunting(BaseModel):
@@ -2169,26 +2121,26 @@ class BraveSearchTeamStatisticsPunting(BaseModel):
 
 
 class BraveSearchTeamStatisticsRedZoneEfficiency(BaseModel):
-    attempts: int
     made: int
+    attempts: int
     percentage: str | None
 
 
 class BraveSearchTeamStatisticsReturnTotals(BaseModel):
-    touchdowns: int | None = None
     yards: int
+    touchdowns: int | None = None
 
 
 class BraveSearchTeamStatisticsRushing(BaseModel):
-    attempts: int
     average: str | None
-    touchdowns: int | None = None
+    attempts: int
     yards: int
+    touchdowns: int | None = None
 
 
 class BraveSearchTeamStatisticsThirdDownEfficiency(BaseModel):
-    attempts: int | None
     made: int | None
+    attempts: int | None
     percentage: str | None
 
 
@@ -2198,8 +2150,8 @@ class BraveSearchTeamStatisticsTimeOfPossession(BaseModel):
 
 
 class BraveSearchTeamStatisticsTwoPointConversions(BaseModel):
-    attempts: int
     made: int
+    attempts: int
     percentage: str | None = None
 
 
@@ -2216,290 +2168,242 @@ class BraveSearchUnobservedObject(BaseModel):
 
 
 class BraveSearchVideoResult(BaseModel):
-    age_label: str | None
-    content_fetched_at: str | None = None
-    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    description: str
-    family_friendly: bool | None = None
-    fetched_at: str | None = None
-    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    full_title: str | None = None
-    icons: list[BraveSearchIcon] | None = None
-    is_source_both: bool | None = None
-    is_source_local: bool | None = None
-    language: str | None = None
-    published_at: str | None
-    publisher: str | None
-    site: BraveSearchSite
-    source: BraveSearchSource | None
-    thumbnail: BraveSearchImage | None
     title: str
-    type: str | None = None
+    full_title: str | None = None
+    description: str
+    language: str | None = None
     url: str
+    published_at: str | None
+    content_fetched_at: str | None = None
+    fetched_at: str | None = None
+    site: BraveSearchSite
+    publisher: str | None
+    source: BraveSearchSource | None
+    age_label: str | None
+    type: str | None = None
+    content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    is_source_local: bool | None = None
+    is_source_both: bool | None = None
+    family_friendly: bool | None = None
+    icons: list[BraveSearchIcon] | None = None
+    position: int | None = None
+    thumbnail: BraveSearchImage | None
     video: BraveSearchVideoResultVideo
 
 
 class BraveSearchVideoResultVideo(BaseModel):
+    embed_url: str | None
     author: BraveSearchVideoResultVideoAuthor | None
     creator: str | None
+    tags: list[str] | None
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    views: int | None
     publisher: str | None
     requires_subscription: bool | None
-    tags: list[str] | None
     thumbnail: BraveSearchImage | None
-    views: int | None
 
 
 class BraveSearchVideoResultVideoAuthor(BaseModel):
-    image_url: str | None
-    long_name: str | None
     name: str
     url: str
+    long_name: str | None
+    image_url: str | None
 
 
 class BraveSearchVideosPage(BaseModel):
-    authors: list[BraveSearchVideosPageAuthorsItem]
-    page: BraveSearchVideosPagePage
-    pagination: BraveSearchCursorPagination
-    query: BraveSearchQuery
     results: list[BraveSearchVideoResult]
+    authors: list[BraveSearchVideosPageAuthorsItem]
     web_results: list[BraveSearchWebResult]
+    query: BraveSearchQuery
+    results_meta: BraveSearchResultsMeta
+    pagination: BraveSearchCursorPagination
 
 
 class BraveSearchVideosPageAuthorsItem(BaseModel):
-    image_url: str | None
-    long_name: str | None
     name: str
     url: str
-
-
-class BraveSearchVideosPagePage(BaseModel):
-    bad_results: str | None
-    freshness: str | None
-    freshness_code: str | None
-    title: str
+    long_name: str | None
+    image_url: str | None
 
 
 class BraveSearchWalletAddress(BaseModel):
+    chains: list[BraveSearchWalletAddressChainsItem]
+    chain: str
     address: str
     balances: list[BraveSearchUnobservedObject]
-    chain: str
-    chains: list[BraveSearchWalletAddressChainsItem]
 
 
 class BraveSearchWalletAddressChainsItem(BaseModel):
-    alt_names: list[str]
     id: str
     name: str
+    alt_names: list[str]
 
 
 class BraveSearchWebPage(BaseModel):
-    ads: BraveSearchWebPageAds | None
-    ai_answer: BraveSearchSerpAiAnswer | None
+    results: list[BraveSearchWebResult]
+    news: BraveSearchWebPageNews | None
+    videos: BraveSearchWebPageVideos | None
     discussions: BraveSearchWebPageDiscussions | None
     faq: BraveSearchWebPageFaq | None
-    images: BraveSearchWebPageImages | None
     infobox: BraveSearchWebPageInfobox | None
-    layout: BraveSearchLayout
     locations: BraveSearchWebPageLocations | None
-    news: BraveSearchWebPageNews | None
-    page: BraveSearchWebPagePage
-    pagination: BraveSearchCursorPagination
-    predicate_entity: BraveSearchUnobservedObject | None
-    qanda: BraveSearchUnobservedObject | None
-    query: BraveSearchQuery
-    recipes: BraveSearchWebPageRecipes | None
-    results: list[BraveSearchWebResult]
-    results_meta: BraveSearchWebPageResultsMeta
     rich: BraveSearchWebPageRich | None
+    recipes: BraveSearchWebPageRecipes | None
+    ads: BraveSearchWebPageAds | None
     summarizer: BraveSearchSummarizer | None
-    videos: BraveSearchWebPageVideos | None
+    qanda: BraveSearchUnobservedObject | None
+    predicate_entity: BraveSearchUnobservedObject | None
+    images: BraveSearchWebPageImages | None
+    ai_answer: BraveSearchSerpAiAnswer | None
+    result_order: list[BraveSearchResultReference]
+    query: BraveSearchQuery
+    results_meta: BraveSearchResultsMeta
+    pagination: BraveSearchCursorPagination
 
 
 class BraveSearchWebPageAds(BaseModel):
+    type: str
+    subtype: str
     provider: BraveSearchUnobservedObject | None
     results: list[BraveSearchWebPageAdsResultsItem]
-    subtype: str
-    type: str
-    widget_signed_impression_url: str | None
 
 
 class BraveSearchWebPageAdsResultsItem(BaseModel):
-    compliance_banner: BraveSearchUnobservedObject | None
-    creative: BraveSearchWebPageAdsResultsItemCreative
+    title: str
     description: str
-    jsonld: BraveSearchWebPageAdsResultsItemJsonld
-    on_load: str
+    url: str
+    creative: BraveSearchWebPageAdsResultsItemCreative
+    content_type: str
+    source: BraveSearchSource
+    site: BraveSearchSite
     product: BraveSearchUnobservedObject | None
     product_cluster: list[BraveSearchUnobservedObject] | None
-    reporting_attributes: BraveSearchWebPageAdsResultsItemReportingAttributes
-    site: BraveSearchSite
-    source: BraveSearchSource
     thumbnail: BraveSearchImage | None
     thumbnail_dark: BraveSearchImage | None
     thumbnail_light: BraveSearchImage | None
-    title: str
-    type_display: str
-    url: str
+    compliance_banner: BraveSearchUnobservedObject | None
 
 
 class BraveSearchWebPageAdsResultsItemCreative(BaseModel):
-    advertiser_id: str
-    campaign_id: str
-    conversion_advertiser_public_key_value: str
-    conversion_observation_window_value: int
-    conversion_type_value: str
-    conversion_url_pattern_value: str
+    placement_id: str
     creative_instance_id: str
     creative_set_id: str
-    description: str
-    headline_text: str
-    landing_page: str
-    optimized: bool
-    placement_id: str
-    rewards_value: str
-    schema_type: str
-    thumbnail: BraveSearchImage
-    thumbnail_organic: bool | None = None
-
-
-class BraveSearchWebPageAdsResultsItemJsonld(BaseModel):
-    creatives: list[BraveSearchWebPageAdsResultsItemJsonldCreativesItem]
-    schema_type: str
-
-
-class BraveSearchWebPageAdsResultsItemJsonldCreativesItem(BaseModel):
-    advertiser_id: str
     campaign_id: str
-    conversion_advertiser_public_key_value: str
-    conversion_observation_window_value: int
-    conversion_type_value: str
-    conversion_url_pattern_value: str
-    creative_instance_id: str
-    creative_set_id: str
-    description: str
+    advertiser_id: str
     headline_text: str
-    landing_page: str
-    optimized: bool
-    placement_id: str
-    rewards_value: str
+    description: str
     schema_type: str
+    landing_page: str
     thumbnail: BraveSearchImage
     thumbnail_organic: bool | None = None
-
-
-class BraveSearchWebPageAdsResultsItemReportingAttributes(BaseModel):
-    ad_display_context: str
-    creative_instance_id: str
-    placement_id: str
 
 
 class BraveSearchWebPageDiscussions(BaseModel):
+    type: str
     reranked_by_goggle: bool
     results: list[BraveSearchWebPageDiscussionsResultsItem]
-    type: str
 
 
 class BraveSearchWebPageDiscussionsResultsItem(BaseModel):
-    age_label: str | None
+    title: str
     description: str
     description_html: str | None = None
-    forum_post: BraveSearchWebPageDiscussionsResultsItemForumPost
-    site: BraveSearchSite
-    title: str
     url: str
+    site: BraveSearchSite
+    age_label: str | None
+    forum_post: BraveSearchWebPageDiscussionsResultsItemForumPost
 
 
 class BraveSearchWebPageDiscussionsResultsItemForumPost(BaseModel):
-    forum_name: str
-    num_answers: int | None = None
-    num_votes: int | None = None
-    question: str | None = None
-    question_html: str | None = None
-    score: str | None = None
     title: str | None = None
-    top_comment: str | None = None
     top_comment_html: str | None = None
+    question_html: str | None = None
+    forum_name: str
+    num_votes: int | None = None
+    num_answers: int | None = None
+    score: str | None = None
+    question: str | None = None
+    top_comment: str | None = None
 
 
 class BraveSearchWebPageFaq(BaseModel):
-    results: list[BraveSearchWebPageFaqResultsItem]
     type: str
+    results: list[BraveSearchWebPageFaqResultsItem]
 
 
 class BraveSearchWebPageFaqResultsItem(BaseModel):
+    title: str
     answer: str
     answer_html: str | None = None
+    url: str
     question: str
     site: BraveSearchSite
-    title: str
-    url: str
 
 
 class BraveSearchWebPageImages(BaseModel):
-    results: list[BraveSearchWebPageImagesResultsItem]
     type: str
+    results: list[BraveSearchWebPageImagesResultsItem]
 
 
 class BraveSearchWebPageImagesResultsItem(BaseModel):
-    confidence: str
+    title: str
     description: str
-    family_friendly: bool
+    url: str
     fetched_at: str | None
     fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    from_context: bool
-    is_source_both: bool
     is_source_local: bool
+    is_source_both: bool
+    family_friendly: bool
+    source: str
     properties: BraveSearchWebPageImagesResultsItemProperties
     site: BraveSearchSite
-    source: str
+    from_context: bool
+    confidence: str
     thumbnail: BraveSearchImage
-    title: str
-    url: str
 
 
 class BraveSearchWebPageImagesResultsItemProperties(BaseModel):
-    height: int
-    placeholder_url: str
-    resized_url: str
     url: str
+    resized_url: str
+    placeholder_url: str
+    height: int
     width: int
 
 
 class BraveSearchWebPageInfobox(BaseModel):
-    results: list[BraveSearchWebPageInfoboxResultsItem]
     type: str
+    results: list[BraveSearchWebPageInfoboxResultsItem]
 
 
 class BraveSearchWebPageInfoboxResultsItem(BaseModel):
-    actions: list[BraveSearchWebPageInfoboxResultsItemActionsItem] | None = None
-    ai_answer: BraveSearchWebPageInfoboxResultsItemAiAnswer | None = None
-    attributes: list[list[str | None]]
-    attributes_shown: int | None = None
-    category: str | None = None
-    coordinates: BraveSearchCoordinates | None = None
-    data: BraveSearchWebPageInfoboxResultsItemData | None = None
-    description: str
-    family_friendly: bool | None = None
-    images: list[BraveSearchImage] | None = None
-    is_source_both: bool | None = None
-    is_source_local: bool | None = None
-    label: str | None = None
-    long_desc: str | None = None
-    movie: BraveSearchWebPageInfoboxResultsItemMovie | None = None
-    position: int | None = None
-    profiles: list[BraveSearchProfile] | None = None
-    providers: list[BraveSearchWebPageInfoboxResultsItemProvidersItem]
-    ratings: list[BraveSearchWebPageInfoboxResultsItemRatingsItem] | None = None
-    site: BraveSearchSite | None = None
-    subtype: str
-    thumbnail: BraveSearchImage | None = None
     title: str
-    type: str
+    description: str
     url: str
     website_url: str | None = None
+    ratings: list[BraveSearchWebPageInfoboxResultsItemRatingsItem] | None = None
+    ai_answer: BraveSearchWebPageInfoboxResultsItemAiAnswer | None = None
+    is_source_local: bool | None = None
+    is_source_both: bool | None = None
+    family_friendly: bool | None = None
+    attributes: list[list[str | None]]
+    category: str | None = None
+    label: str | None = None
+    providers: list[BraveSearchWebPageInfoboxResultsItemProvidersItem]
+    long_desc: str | None = None
+    movie: BraveSearchWebPageInfoboxResultsItemMovie | None = None
+    profiles: list[BraveSearchProfile] | None = None
+    type: str
+    position: int | None = None
+    subtype: str
     zoom_level: int | None = None
+    data: BraveSearchWebPageInfoboxResultsItemData | None = None
+    site: BraveSearchSite | None = None
+    actions: list[BraveSearchWebPageInfoboxResultsItemActionsItem] | None = None
+    coordinates: BraveSearchCoordinates | None = None
+    thumbnail: BraveSearchImage | None = None
+    images: list[BraveSearchImage] | None = None
 
 
 class BraveSearchWebPageInfoboxResultsItemActionsItem(BaseModel):
@@ -2507,14 +2411,14 @@ class BraveSearchWebPageInfoboxResultsItemActionsItem(BaseModel):
 
 
 class BraveSearchWebPageInfoboxResultsItemAiAnswer(BaseModel):
-    context: list[BraveSearchUnobservedObject]
-    conversation: str
-    entity_infobox_url: str
     key: str
-    nonce: str
-    possible: bool
+    entity_infobox_url: str
     query: str
+    conversation: str
+    nonce: str
     trigger: bool
+    possible: bool
+    context: list[BraveSearchUnobservedObject]
 
 
 class BraveSearchWebPageInfoboxResultsItemData(BaseModel):
@@ -2524,119 +2428,99 @@ class BraveSearchWebPageInfoboxResultsItemData(BaseModel):
 
 
 class BraveSearchWebPageInfoboxResultsItemDataAnswer(BaseModel):
-    author: str
     text: str
     upvote_count: int
+    author: str
 
 
 class BraveSearchWebPageInfoboxResultsItemMovie(BaseModel):
-    actors: list[BraveSearchWebPageInfoboxResultsItemMovieActorsItem]
+    name: str
     description: str
+    url: str
+    rating: BraveSearchRating
+    release: str | None = None
     directors: list[BraveSearchWebPageInfoboxResultsItemMovieDirectorsItem] | None = None
+    actors: list[BraveSearchWebPageInfoboxResultsItemMovieActorsItem]
     duration_seconds: int | None = None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     genre: list[str]
-    name: str
     query: str
-    rating: BraveSearchRating
-    release: str | None = None
     thumbnail: BraveSearchImage
-    url: str
 
 
 class BraveSearchWebPageInfoboxResultsItemMovieActorsItem(BaseModel):
     name: str
-    thumbnail: BraveSearchImage
-    type: str
     url: str
+    type: str
+    thumbnail: BraveSearchImage
 
 
 class BraveSearchWebPageInfoboxResultsItemMovieDirectorsItem(BaseModel):
     name: str
-    type: str
     url: str
+    type: str
 
 
 class BraveSearchWebPageInfoboxResultsItemProvidersItem(BaseModel):
-    image_url: str
     name: str
-    type: str
     url: str
+    type: str
+    image_url: str
 
 
 class BraveSearchWebPageInfoboxResultsItemRatingsItem(BaseModel):
-    best_rating: float
-    from_tripadvisor: bool
     rating_value: float
+    best_rating: float
     review_count: int
     source: BraveSearchSource
+    from_tripadvisor: bool
 
 
 class BraveSearchWebPageLocations(BaseModel):
-    address: BraveSearchUnobservedObject | None
-    enhanced: BraveSearchUnobservedObject | None
     results: list[BraveSearchPlace]
     type: str
+    address: BraveSearchUnobservedObject | None
+    enhanced: BraveSearchUnobservedObject | None
 
 
 class BraveSearchWebPageNews(BaseModel):
+    type: str
     reranked_by_goggle: bool
     results: list[BraveSearchNewsResult]
-    type: str
-
-
-class BraveSearchWebPagePage(BaseModel):
-    bad_results: str | None
-    freshness: str | None
-    freshness_code: str | None
-    local_results: bool | None
-    local_selected_result: str | None
-    no_results: bool
-    open_graph: BraveSearchWebPagePageOpenGraph
-    title: str
-
-
-class BraveSearchWebPagePageOpenGraph(BaseModel):
-    description: str | None
-    image_height: int | None
-    image_url: str | None
-    image_width: int | None
-    title: str | None
-    url: str | None
 
 
 class BraveSearchWebPageRecipes(BaseModel):
-    results: list[BraveSearchWebPageRecipesResultsItem]
     type: str
+    results: list[BraveSearchWebPageRecipesResultsItem]
 
 
 class BraveSearchWebPageRecipesResultsItem(BaseModel):
-    calories: int | None = None
-    cook_time: str | None = None
+    title: str
     description: str
     description_html: str | None = None
+    url: str
+    rating: BraveSearchRating | None = None
+    time: str
+    prep_time: str | None = None
+    cook_time: str | None = None
     domain: str
-    favicon_url: str
     ingredients: str
     instructions: list[BraveSearchWebPageRecipesResultsItemInstructionsItem]
-    prep_time: str | None = None
+    servings: int
+    calories: int | None = None
     publisher: str | None = None
-    rating: BraveSearchRating | None = None
     recipe_category: str
     recipe_cuisine: str | None = None
-    servings: int
     thumbnail: BraveSearchImage
-    time: str
-    title: str
-    url: str
+    favicon_url: str
     video: BraveSearchWebPageRecipesResultsItemVideo | None = None
 
 
 class BraveSearchWebPageRecipesResultsItemInstructionsItem(BaseModel):
-    image: list[str]
     name: str | None = None
     text: str
     url: str | None = None
+    image: list[str]
 
 
 class BraveSearchWebPageRecipesResultsItemVideo(BaseModel):
@@ -2645,51 +2529,45 @@ class BraveSearchWebPageRecipesResultsItemVideo(BaseModel):
     thumbnail: BraveSearchImage
 
 
-class BraveSearchWebPageResultsMeta(BaseModel):
-    choice: str | None = None
-    is_divisive_topic: bool | None = None
-    type: str | None = None
-
-
 class BraveSearchWebPageRich(BaseModel):
-    results: list[BraveSearchWebPageRichResultsItem]
     type: str
+    results: list[BraveSearchWebPageRichResultsItem]
 
 
 class BraveSearchWebPageRichResultsItem(BaseModel):
     ai_answer: BraveSearchWebPageRichResultsItemAiAnswer
-    calculator: BraveSearchWebPageRichResultsItemCalculator | None
-    colorpicker: BraveSearchWebPageRichResultsItemColorpicker | None
-    cryptocurrency: BraveSearchWebPageRichResultsItemCryptocurrency | None
-    currency: BraveSearchWebPageRichResultsItemCurrency | None
-    data: BraveSearchWebPageRichResultsItemData
-    definitions: BraveSearchWebPageRichResultsItemDefinitions | None
-    flights: BraveSearchUnobservedObject | None
-    football: BraveSearchWebPageRichResultsItemFootball | None = None
     news: BraveSearchWebPageRichResultsItemNews | None
-    packagetracker: BraveSearchWebPageRichResultsItemPackagetracker | None
-    provider: BraveSearchWebPageRichResultsItemProvider
-    stock: BraveSearchWebPageRichResultsItemStock | None
-    stopwatch: bool
+    data: BraveSearchWebPageRichResultsItemData
     subtype: str
-    timer: BraveSearchWebPageRichResultsItemTimer | None
-    timezones: BraveSearchWebPageRichResultsItemTimezones | None
-    translator: BraveSearchWebPageRichResultsItemTranslator | None
-    unit_conversion: BraveSearchWebPageRichResultsItemUnitConversion | None
-    unixtimestamp: BraveSearchWebPageRichResultsItemUnixtimestamp | None
-    us_election: BraveSearchUnobservedObject | None
-    weather: BraveSearchWebPageRichResultsItemWeather | None
+    provider: BraveSearchWebPageRichResultsItemProvider
+    flights: BraveSearchUnobservedObject | None
+    definitions: BraveSearchWebPageRichResultsItemDefinitions | None
     web3: BraveSearchWebPageRichResultsItemWeb3 | None
+    stock: BraveSearchWebPageRichResultsItemStock | None
+    translator: BraveSearchWebPageRichResultsItemTranslator | None
+    calculator: BraveSearchWebPageRichResultsItemCalculator | None
+    currency: BraveSearchWebPageRichResultsItemCurrency | None
+    us_election: BraveSearchUnobservedObject | None
+    unit_conversion: BraveSearchWebPageRichResultsItemUnitConversion | None
+    timer: BraveSearchWebPageRichResultsItemTimer | None
+    stopwatch: bool
+    packagetracker: BraveSearchWebPageRichResultsItemPackagetracker | None
+    unixtimestamp: BraveSearchWebPageRichResultsItemUnixtimestamp | None
+    weather: BraveSearchWebPageRichResultsItemWeather | None
+    cryptocurrency: BraveSearchWebPageRichResultsItemCryptocurrency | None
+    timezones: BraveSearchWebPageRichResultsItemTimezones | None
+    colorpicker: BraveSearchWebPageRichResultsItemColorpicker | None
+    football: BraveSearchWebPageRichResultsItemFootball | None = None
 
 
 class BraveSearchWebPageRichResultsItemAiAnswer(BaseModel):
-    context: list[BraveSearchUnobservedObject]
-    conversation: str
     key: str
-    nonce: str
-    possible: bool
     query: str
+    conversation: str
+    nonce: str
     trigger: bool
+    possible: bool
+    context: list[BraveSearchUnobservedObject]
 
 
 class BraveSearchWebPageRichResultsItemCalculator(BaseModel):
@@ -2703,75 +2581,75 @@ class BraveSearchWebPageRichResultsItemColorpicker(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemCryptocurrency(BaseModel):
-    intent_type: str
     quote: BraveSearchWebPageRichResultsItemCryptocurrencyQuote
+    intent_type: str
     timeseries: BraveSearchWebPageRichResultsItemCryptocurrencyTimeseries
-    top100_crypto: list[BraveSearchUnobservedObject]
-    vs_currencies: list[str]
     vs_currency: str
+    vs_currencies: list[str]
+    top100_crypto: list[BraveSearchUnobservedObject]
 
 
 class BraveSearchWebPageRichResultsItemCryptocurrencyQuote(BaseModel):
-    ath: float
-    ath_change_percentage: float
-    ath_date: str
-    atl: float
-    atl_change_percentage: float
-    atl_date: str
-    circulating_supply: float
-    current_price: float
-    fully_diluted_valuation: float
-    high_24h: float
     id: str
-    image: str
-    last_updated: str
-    low_24h: float
-    market_cap: float
-    market_cap_change_24h: float
-    market_cap_change_percentage_24h: float
-    market_cap_rank: int
-    max_supply: float | None = None
     name: str
+    current_price: float
+    total_volume: float
     price_change_24h: float
     price_change_percentage_24h: float
-    symbol: str
     total_supply: float
-    total_volume: float
+    ath_date: str
+    atl_date: str
+    last_updated: str
+    symbol: str
+    market_cap: float
+    market_cap_rank: int
+    fully_diluted_valuation: float
+    high_24h: float
+    low_24h: float
+    market_cap_change_24h: float
+    market_cap_change_percentage_24h: float
+    circulating_supply: float
+    max_supply: float | None = None
+    ath: float
+    ath_change_percentage: float
+    atl: float
+    atl_change_percentage: float
+    image: str
 
 
 class BraveSearchWebPageRichResultsItemCryptocurrencyTimeseries(BaseModel):
+    ts_price: list[list[float]]
     time_range: str
     ts_market_cap: list[list[float]]
-    ts_price: list[list[float]]
     ts_volume: list[list[float]]
 
 
 class BraveSearchWebPageRichResultsItemCurrency(BaseModel):
     conversion: BraveSearchWebPageRichResultsItemCurrencyConversion
-    supported_currencies: list[BraveSearchWebPageRichResultsItemCurrencySupportedCurrenciesItem]
     timeseries: BraveSearchWebPageRichResultsItemCurrencyTimeseries
+    supported_currencies: list[BraveSearchWebPageRichResultsItemCurrencySupportedCurrenciesItem]
 
 
 class BraveSearchWebPageRichResultsItemCurrencyConversion(BaseModel):
-    amount: float | None
-    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     date: str | None
     date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    info: BraveSearchWebPageRichResultsItemCurrencyConversionInfo
     query: BraveSearchCurrencyConversionQuery
+    info: BraveSearchWebPageRichResultsItemCurrencyConversionInfo
     result: float
+    amount: float | None
+    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
 
 
 class BraveSearchWebPageRichResultsItemCurrencyConversionInfo(BaseModel):
-    rate: float
     timestamp: str | None
     timestamp_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    rate: float
 
 
 class BraveSearchWebPageRichResultsItemCurrencySupportedCurrenciesItem(BaseModel):
+    full_name: str
     code: str
     decimals: int
-    full_name: str
 
 
 class BraveSearchWebPageRichResultsItemCurrencyTimeseries(BaseModel):
@@ -2780,56 +2658,53 @@ class BraveSearchWebPageRichResultsItemCurrencyTimeseries(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemData(BaseModel):
-    amount: float | None = None
-    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    answer: float | None = None
     coin_id: str | None = None
+    from_language: str | None = None
+    to_language: str | None = None
+    lang: str | None = None
+    answer: float | None = None
     duration_seconds: int | None = None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    expression: str | None = None
-    first_url_position: int | None = None
-    from_language: str | None = None
-    is_forex_to_crypto: bool | None = None
-    is_generic: bool | None = None
-    lang: str | None = None
-    non_altered_word: str | None = None
-    phrase: str | None = None
-    placeholder_from: str | None = None
-    placeholder_to: str | None = None
-    range: str | None = None
-    start_in_edit: bool | None = None
     start_on_load: bool | None = None
-    subintent: str | None = None
-    to_language: str | None = None
-    type: str | None = None
-    vs_currency: str | None = None
+    start_in_edit: bool | None = None
     word: str | None = None
+    non_altered_word: str | None = None
+    type: str | None = None
+    phrase: str | None = None
+    is_generic: bool | None = None
+    subintent: str | None = None
+    vs_currency: str | None = None
+    amount: float | None = None
+    amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    is_forex_to_crypto: bool | None = None
+    range: str | None = None
+    expression: str | None = None
 
 
 class BraveSearchWebPageRichResultsItemDefinitions(BaseModel):
+    language: str
     attribution_text: str
     attribution_url: str
-    audio_available: bool
-    definitions: list[BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItem]
-    language: str
+    word: str
     pronounciation: str | None
     source_dict: str
-    word: str
+    definitions: list[BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItem]
+    audio_available: bool
 
 
 class BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItem(BaseModel):
-    definitions: list[BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItemDefinitionsItem]
     part_of_speech: str
+    definitions: list[BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItemDefinitionsItem]
 
 
 class BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItemDefinitionsItem(BaseModel):
+    text: str
+    text_html: str | None = None
+    related_words: list[str]
     example_uses: list[str]
     labels: list[
         BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItemDefinitionsItemLabelsItem
     ]
-    related_words: list[str]
-    text: str
-    text_html: str | None = None
 
 
 class BraveSearchWebPageRichResultsItemDefinitionsDefinitionsItemDefinitionsItemLabelsItem(
@@ -2847,9 +2722,9 @@ class BraveSearchWebPageRichResultsItemFootball(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemFootballContent(BaseModel):
-    group_standings: list[BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItem]
-    league: BraveSearchLeague
+    league: BraveSearchWebPageRichResultsItemFootballContentLeague
     type: str
+    group_standings: list[BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItem]
 
 
 class BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItem(BaseModel):
@@ -2858,19 +2733,19 @@ class BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItem(BaseMod
 
 
 class BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItemStandingsItem(BaseModel):
-    form: str
-    goals_against: int
+    team: BraveSearchTeam
+    rank: int
+    matches_played: int
+    matches_won: int
+    matches_drawn: int
+    matches_lost: int
     goals_for: int
+    goals_against: int
+    points: int
+    form: str
     label: (
         BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItemStandingsItemLabel | None
     ) = None
-    matches_drawn: int
-    matches_lost: int
-    matches_played: int
-    matches_won: int
-    points: int
-    rank: int
-    team: BraveSearchTeam
 
 
 class BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItemStandingsItemLabel(
@@ -2890,34 +2765,41 @@ class BraveSearchWebPageRichResultsItemFootballContentGroupStandingsItemStanding
     phase: str | None = None
 
 
+class BraveSearchWebPageRichResultsItemFootballContentLeague(BaseModel):
+    id: int
+    name: str
+    season: str
+    logo_url: str
+
+
 class BraveSearchWebPageRichResultsItemNews(BaseModel):
-    articles: list[BraveSearchWebPageRichResultsItemNewsArticlesItem]
-    is_topical: bool
     topic_id: int
+    is_topical: bool
     topics: list[BraveSearchWebPageRichResultsItemNewsTopicsItem]
+    articles: list[BraveSearchWebPageRichResultsItemNewsArticlesItem]
 
 
 class BraveSearchWebPageRichResultsItemNewsArticlesItem(BaseModel):
+    title: str
     description: str
-    extra_snippets: list[str]
-    image_url: str
-    img_small: str
+    url: str
     is_live: bool
     publish_time: str | None
-    publish_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     published_at: str | None
-    published_label: str
-    publisher_name: str
+    publish_time_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     site: BraveSearchSite
-    title: str
-    url: str
+    img_small: str
+    publisher_name: str
+    published_label: str
+    extra_snippets: list[str]
+    image_url: str
 
 
 class BraveSearchWebPageRichResultsItemNewsTopicsItem(BaseModel):
-    index: int
-    query: str
-    score: float
     title: str
+    index: int
+    score: float
+    query: str
 
 
 class BraveSearchWebPageRichResultsItemPackagetracker(BaseModel):
@@ -2925,69 +2807,69 @@ class BraveSearchWebPageRichResultsItemPackagetracker(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemPackagetrackerMatchedItem(BaseModel):
-    courier: BraveSearchWebPageRichResultsItemPackagetrackerMatchedItemCourier
-    tracking_number: str
     tracking_url: str
+    tracking_number: str
+    courier: BraveSearchWebPageRichResultsItemPackagetrackerMatchedItemCourier
 
 
 class BraveSearchWebPageRichResultsItemPackagetrackerMatchedItemCourier(BaseModel):
-    code: str
-    domain: str
     name: str
     service: str
+    code: str
+    domain: str
 
 
 class BraveSearchWebPageRichResultsItemProvider(BaseModel):
     name: str
-    type: str
     url: str
+    type: str
 
 
 class BraveSearchWebPageRichResultsItemStock(BaseModel):
     asset_info: BraveSearchWebPageRichResultsItemStockAssetInfo
-    exchange_info: BraveSearchWebPageRichResultsItemStockExchangeInfo
-    quote: BraveSearchWebPageRichResultsItemStockQuote
     time_range: str
+    quote: BraveSearchWebPageRichResultsItemStockQuote
     timeseries: BraveSearchWebPageRichResultsItemStockTimeseries
+    exchange_info: BraveSearchWebPageRichResultsItemStockExchangeInfo
 
 
 class BraveSearchWebPageRichResultsItemStockAssetInfo(BaseModel):
+    name: str
+    symbol: str
     category: str
+    currency: str
     country: str
     country_code: str
-    currency: str
     exchange: str
     mic_code: str
-    name: str
     score: float
-    symbol: str
 
 
 class BraveSearchWebPageRichResultsItemStockExchangeInfo(BaseModel):
-    close_time: str
     open_time: str
+    close_time: str
     timezone: str
 
 
 class BraveSearchWebPageRichResultsItemStockQuote(BaseModel):
-    change: float
-    change_percent: float
-    close: float
-    company_name: str
-    currency: str
-    high: float
     latest_price: float
-    latest_update: str | None
-    latest_update_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    low: float
-    market_cap: float
-    open: float
-    pe_ratio: float
-    primary_exchange: str
     symbol: str
-    volume: float
+    company_name: str
+    primary_exchange: str
+    market_cap: float
+    pe_ratio: float
     week_52_high: float
     week_52_low: float
+    open: float
+    close: float
+    high: float
+    low: float
+    change: float
+    change_percent: float
+    volume: float
+    latest_update: str | None
+    latest_update_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    currency: str
 
 
 class BraveSearchWebPageRichResultsItemStockTimeseries(BaseModel):
@@ -2996,24 +2878,24 @@ class BraveSearchWebPageRichResultsItemStockTimeseries(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemStockTimeseriesTimeseriesItem(BaseModel):
-    close: float
     date: str | None
     date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    high: float
-    label: str
-    low: float
-    minute: str
-    previous_close: float
     timestamp: str | None
     timestamp_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    minute: str
+    label: str
+    high: float
+    low: float
+    close: float
+    previous_close: float
     volume: float
 
 
 class BraveSearchWebPageRichResultsItemTimer(BaseModel):
     duration_seconds: int | None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    start_on_edit: bool
     start_on_load: bool
+    start_on_edit: bool
 
 
 class BraveSearchWebPageRichResultsItemTimezones(BaseModel):
@@ -3021,90 +2903,90 @@ class BraveSearchWebPageRichResultsItemTimezones(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemTimezonesResult(BaseModel):
-    evaluation: str
     show_date_only: bool
-    template: str
     timezone: BraveSearchWebPageRichResultsItemTimezonesResultTimezone
     type: str
+    template: str
+    evaluation: str
 
 
 class BraveSearchWebPageRichResultsItemTimezonesResultTimezone(BaseModel):
-    abbreviation: str
-    converted_time: BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTime
-    generic_name: str
     iana_timezone_id: str
-    observing_dst: bool
+    windows_timezone_id: str
+    converted_time: BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTime
+    abbreviation: str
+    generic_name: str
     utc_offset: str
     utc_offset_minutes: int
-    windows_timezone_id: str
+    observing_dst: bool
 
 
 class BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTime(BaseModel):
-    city: BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTimeCity
-    generic_name_abbreviation: str
-    iso: str
     location: str
-    strfdate: str
-    strfday: str
-    strftime: str
-    sunrise: str
-    sunset: str
+    generic_name_abbreviation: str
     timezone_display_abbreviation: str
     timezone_display_name: str
-    ts: int
-    utc_diff: str
-    utc_iso: str
-    utc_offset: str
     utc_offset_minutes: int
+    utc_offset: str
+    strftime: str
+    strfdate: str
+    strfday: str
+    ts: int
+    utc_iso: str
+    iso: str
+    utc_diff: str
+    sunrise: str
+    sunset: str
+    city: BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTimeCity
 
 
 class BraveSearchWebPageRichResultsItemTimezonesResultTimezoneConvertedTimeCity(BaseModel):
-    country: str
     name: str
     state: str
+    country: str
 
 
 class BraveSearchWebPageRichResultsItemTranslator(BaseModel):
     from_language: BraveSearchWebPageRichResultsItemTranslatorFromLanguage
+    to_language: BraveSearchWebPageRichResultsItemTranslatorToLanguage
+    generic: bool
     from_language_detected: BraveSearchWebPageRichResultsItemTranslatorFromLanguageDetected
     from_placeholder: str
-    generic: bool
-    languages: list[BraveSearchWebPageRichResultsItemTranslatorLanguagesItem]
-    phrase: str
-    to_language: BraveSearchWebPageRichResultsItemTranslatorToLanguage
     to_placeholder: str
+    phrase: str
+    languages: list[BraveSearchWebPageRichResultsItemTranslatorLanguagesItem]
 
 
 class BraveSearchWebPageRichResultsItemTranslatorFromLanguage(BaseModel):
-    code: str
     name: str
+    code: str
     rtl: bool
 
 
 class BraveSearchWebPageRichResultsItemTranslatorFromLanguageDetected(BaseModel):
-    code: str
     name: str
+    code: str
     rtl: bool
 
 
 class BraveSearchWebPageRichResultsItemTranslatorLanguagesItem(BaseModel):
-    code: str
     name: str
+    code: str
     rtl: bool
 
 
 class BraveSearchWebPageRichResultsItemTranslatorToLanguage(BaseModel):
-    code: str
     name: str
+    code: str
     rtl: bool
 
 
 class BraveSearchWebPageRichResultsItemUnitConversion(BaseModel):
     amount: float | None
     amount_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    dimensionality: str
     from_unit: str
     to_unit: str
+    dimensionality: str
 
 
 class BraveSearchWebPageRichResultsItemUnixtimestamp(BaseModel):
@@ -3112,139 +2994,139 @@ class BraveSearchWebPageRichResultsItemUnixtimestamp(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemUnixtimestampConversion(BaseModel):
-    input_ts: int
     intent_type: str
+    input_ts: int
 
 
 class BraveSearchWebPageRichResultsItemWeather(BaseModel):
-    alerts: list[BraveSearchUnobservedObject]
+    location: BraveSearchWebPageRichResultsItemWeatherLocation
     current_time_iso: str
     current_weather: BraveSearchWebPageRichResultsItemWeatherCurrentWeather
     daily: list[BraveSearchWebPageRichResultsItemWeatherDailyItem]
     hours3: list[BraveSearchWebPageRichResultsItemWeatherHours3Item]
-    location: BraveSearchWebPageRichResultsItemWeatherLocation
+    alerts: list[BraveSearchUnobservedObject]
 
 
 class BraveSearchWebPageRichResultsItemWeatherCurrentWeather(BaseModel):
-    clouds: int
-    dew_point: float
-    feels_like: float
-    humidity: int
-    pressure: int
+    visibility: int
+    weather: BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWeather
+    ts: int
     sunrise: int
     sunset: int
     temp: float
-    ts: int
+    feels_like: float
+    pressure: int
+    humidity: int
+    dew_point: float
     uvi: float
-    visibility: int
-    weather: BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWeather
+    clouds: int
     wind: BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWind
 
 
 class BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWeather(BaseModel):
-    description: str
-    icon: str
     id: int
+    description: str
     main: str
+    icon: str
 
 
 class BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWind(BaseModel):
+    speed: float
     deg: int
     gust: float
-    speed: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItem(BaseModel):
-    clouds: int
     date_i18n: str
-    dew_point: float
-    feels_like: BraveSearchWebPageRichResultsItemWeatherDailyItemFeelsLike
-    humidity: int
-    moonrise: int
-    moonset: int
-    pop: float
-    pressure: int
+    weather: BraveSearchWebPageRichResultsItemWeatherDailyItemWeather
+    ts: int
     sunrise: int
     sunset: int
+    moonrise: int
+    moonset: int
     temperature: BraveSearchWebPageRichResultsItemWeatherDailyItemTemperature
-    ts: int
-    uvi: float
-    weather: BraveSearchWebPageRichResultsItemWeatherDailyItemWeather
+    feels_like: BraveSearchWebPageRichResultsItemWeatherDailyItemFeelsLike
+    pressure: int
+    humidity: int
+    dew_point: float
     wind: BraveSearchWebPageRichResultsItemWeatherDailyItemWind
+    clouds: int
+    pop: float
+    uvi: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItemFeelsLike(BaseModel):
     day: float
+    night: float
     evening: float
     morning: float
-    night: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItemTemperature(BaseModel):
     day: float
-    evening: float
-    max: float
     min: float
-    morning: float
+    max: float
     night: float
+    evening: float
+    morning: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItemWeather(BaseModel):
-    description: str
-    icon: str
     id: int
+    description: str
     main: str
+    icon: str
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItemWind(BaseModel):
+    speed: float
     deg: int
     gust: float
-    speed: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3Item(BaseModel):
-    clouds: int
-    humidity: int
-    pop: float
-    pressure: int
-    temperature: BraveSearchWebPageRichResultsItemWeatherHours3ItemTemperature
-    ts: int
     visibility: int
     weather: BraveSearchWebPageRichResultsItemWeatherHours3ItemWeather
+    ts: int
+    temperature: BraveSearchWebPageRichResultsItemWeatherHours3ItemTemperature
+    pressure: int
     wind: BraveSearchWebPageRichResultsItemWeatherHours3ItemWind
+    humidity: int
+    clouds: int
+    pop: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3ItemTemperature(BaseModel):
-    feels_like: float
-    max: float
-    min: float
     temp: float
+    feels_like: float
+    min: float
+    max: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3ItemWeather(BaseModel):
-    description: str
-    icon: str
     id: int
+    description: str
     main: str
+    icon: str
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3ItemWind(BaseModel):
+    speed: float
     deg: int
     gust: float
-    speed: float
 
 
 class BraveSearchWebPageRichResultsItemWeatherLocation(BaseModel):
-    coords: BraveSearchWebPageRichResultsItemWeatherLocationCoords
-    country: str
     id: int
-    implicit_location: bool
     name: str
-    population: int
+    country: str
     state: str
+    coords: BraveSearchWebPageRichResultsItemWeatherLocationCoords
+    population: int
     sunrise: int
     sunset: int
     tzoffset: int
+    implicit_location: bool
 
 
 class BraveSearchWebPageRichResultsItemWeatherLocationCoords(BaseModel):
@@ -3253,93 +3135,92 @@ class BraveSearchWebPageRichResultsItemWeatherLocationCoords(BaseModel):
 
 
 class BraveSearchWebPageRichResultsItemWeb3(BaseModel):
-    address: BraveSearchWalletAddress
     intent: str
+    address: BraveSearchWalletAddress
     transaction: BraveSearchUnobservedObject | None
 
 
 class BraveSearchWebPageVideos(BaseModel):
+    type: str
     reranked_by_goggle: bool
     results: list[BraveSearchVideoResult]
-    type: str
 
 
 class BraveSearchWebResult(BaseModel):
-    age_label: str | None
-    article: BraveSearchWebResultArticle | None
-    book: BraveSearchWebResultBook | None
-    boosted: bool | None = None
-    cluster_type: str | None
-    content_type: str | None
-    creative_work: BraveSearchWebResultCreativeWork | None
-    deep_links: BraveSearchWebResultDeepLinks | None
+    title: str
+    full_title: str | None
     description: str
     description_html: str | None = None
-    description_length: int
-    faq: BraveSearchWebResultFaq | None
-    full_title: str | None
-    is_live: bool
     language: str
+    url: str
+    deep_links: BraveSearchWebResultDeepLinks | None
+    rating: BraveSearchRating | None
+    is_live: bool
+    published_at: str | None
     location: BraveSearchPlace | None = None
+    source: BraveSearchSource
+    type: str
+    subtype: str
+    site: BraveSearchSite
+    age_label: str | None
     locations: list[BraveSearchUnobservedObject] | None
     movie: BraveSearchWebResultMovie | None
-    music_recording: BraveSearchWebResultMusicRecording | None
-    organization: BraveSearchWebResultOrganization | None = None
+    faq: BraveSearchWebResultFaq | None
+    recipe: BraveSearchWebResultRecipe | None
+    qa: BraveSearchWebResultQa | None
+    book: BraveSearchWebResultBook | None
+    article: BraveSearchWebResultArticle | None
     product: BraveSearchWebResultProduct | None
     product_cluster: list[BraveSearchWebResultProductClusterItem] | None
-    published_at: str | None
-    qa: BraveSearchWebResultQa | None
-    rating: BraveSearchRating | None
-    recipe: BraveSearchWebResultRecipe | None
-    review: BraveSearchWebResultReview | None
-    side: list[BraveSearchUnobservedObject] | None
-    similar_pages: BraveSearchUnobservedObject | None
-    site: BraveSearchSite
+    cluster_type: str | None
     sitelinks: list[BraveSearchWebResultSitelinksItem] | None
+    similar_pages: BraveSearchUnobservedObject | None
+    creative_work: BraveSearchWebResultCreativeWork | None
+    music_recording: BraveSearchWebResultMusicRecording | None
+    review: BraveSearchWebResultReview | None
     software: BraveSearchWebResultSoftware | None
-    source: BraveSearchSource
-    subtype: str
+    content_type: str | None
+    boosted: bool | None = None
+    organization: BraveSearchWebResultOrganization | None = None
+    position: int
     thumbnail: BraveSearchImage | None
-    title: str
-    type: str
-    url: str
     video: BraveSearchWebResultVideo | None
 
 
 class BraveSearchWebResultArticle(BaseModel):
-    author: list[BraveSearchWebResultArticleAuthorItem]
     date: str | None = None
     date_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    is_accessible_for_free: bool | None = None
+    author: list[BraveSearchWebResultArticleAuthorItem]
     publisher: BraveSearchWebResultArticlePublisher | None = None
+    is_accessible_for_free: bool | None = None
 
 
 class BraveSearchWebResultArticleAuthorItem(BaseModel):
-    email: str | None = None
     name: str
-    thumbnail: BraveSearchImage | None = None
-    type: str
     url: str | None = None
+    type: str
+    email: str | None = None
+    thumbnail: BraveSearchImage | None = None
 
 
 class BraveSearchWebResultArticlePublisher(BaseModel):
     name: str
-    thumbnail: BraveSearchImage | None = None
-    type: str
     url: str | None = None
+    type: str
+    thumbnail: BraveSearchImage | None = None
 
 
 class BraveSearchWebResultBook(BaseModel):
+    title: str
+    rating: BraveSearchRating
     author: list[BraveSearchWebResultBookAuthorItem]
     pages: int
-    rating: BraveSearchRating
-    title: str
 
 
 class BraveSearchWebResultBookAuthorItem(BaseModel):
     name: str
-    type: str
     url: str
+    type: str
 
 
 class BraveSearchWebResultCreativeWork(BaseModel):
@@ -3354,8 +3235,8 @@ class BraveSearchWebResultDeepLinks(BaseModel):
 
 class BraveSearchWebResultDeepLinksLinksItem(BaseModel):
     title: str
-    type: str
     url: str
+    type: str
 
 
 class BraveSearchWebResultFaq(BaseModel):
@@ -3363,40 +3244,40 @@ class BraveSearchWebResultFaq(BaseModel):
 
 
 class BraveSearchWebResultFaqItemsItem(BaseModel):
+    title: str
     answer: str
     answer_html: str | None = None
+    url: str
     question: str
     site: BraveSearchSite
-    title: str
-    url: str
 
 
 class BraveSearchWebResultMovie(BaseModel):
-    actors: list[BraveSearchWebResultMovieActorsItem] | None = None
+    name: str
     description: str
     description_html: str | None = None
+    url: str
+    rating: BraveSearchRating | None = None
+    release: str | None = None
     directors: list[BraveSearchWebResultMovieDirectorsItem] | None = None
+    actors: list[BraveSearchWebResultMovieActorsItem] | None = None
     duration_seconds: int | None = None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     genre: list[str]
-    name: str
-    rating: BraveSearchRating | None = None
-    release: str | None = None
     thumbnail: BraveSearchImage | None = None
-    url: str
 
 
 class BraveSearchWebResultMovieActorsItem(BaseModel):
     name: str
-    thumbnail: BraveSearchImage | None = None
-    type: str
     url: str | None = None
+    type: str
+    thumbnail: BraveSearchImage | None = None
 
 
 class BraveSearchWebResultMovieDirectorsItem(BaseModel):
     name: str
-    type: str
     url: str | None = None
+    type: str
 
 
 class BraveSearchWebResultMusicRecording(BaseModel):
@@ -3405,47 +3286,47 @@ class BraveSearchWebResultMusicRecording(BaseModel):
 
 
 class BraveSearchWebResultOrganization(BaseModel):
-    contact_points: list[BraveSearchWebResultOrganizationContactPointsItem]
     name: str
-    thumbnail: BraveSearchImage | None
-    type: str
     url: str | None
+    type: str
+    contact_points: list[BraveSearchWebResultOrganizationContactPointsItem]
+    thumbnail: BraveSearchImage | None
 
 
 class BraveSearchWebResultOrganizationContactPointsItem(BaseModel):
-    email: str | None
     name: str
-    telephone: str | None
     type: str
+    telephone: str | None
+    email: str | None
 
 
 class BraveSearchWebResultProduct(BaseModel):
+    name: str
     description: str
     description_html: str | None = None
-    gtin14: str | None = None
-    name: str
-    offers: list[BraveSearchWebResultProductOffersItem]
-    price: str
-    thumbnail: BraveSearchImage
-    type: str
     url: str | None = None
+    price: str
+    type: str
+    offers: list[BraveSearchWebResultProductOffersItem]
+    gtin14: str | None = None
+    thumbnail: BraveSearchImage
 
 
 class BraveSearchWebResultProductClusterItem(BaseModel):
+    name: str
     description: str | None = None
     description_html: str | None = None
-    name: str
-    offers: list[BraveSearchWebResultProductClusterItemOffersItem] | None = None
+    url: str
     price: str | None = None
     rating: BraveSearchRating | None = None
-    thumbnail: BraveSearchImage
     type: str
-    url: str
+    offers: list[BraveSearchWebResultProductClusterItemOffersItem] | None = None
+    thumbnail: BraveSearchImage
 
 
 class BraveSearchWebResultProductClusterItemOffersItem(BaseModel):
-    price: BraveSearchWebResultProductClusterItemOffersItemPrice
     url: str
+    price: BraveSearchWebResultProductClusterItemOffersItemPrice
 
 
 class BraveSearchWebResultProductClusterItemOffersItemPrice(BaseModel):
@@ -3455,8 +3336,8 @@ class BraveSearchWebResultProductClusterItemOffersItemPrice(BaseModel):
 
 
 class BraveSearchWebResultProductOffersItem(BaseModel):
-    price: BraveSearchWebResultProductOffersItemPrice
     url: str
+    price: BraveSearchWebResultProductOffersItemPrice
 
 
 class BraveSearchWebResultProductOffersItemPrice(BaseModel):
@@ -3466,53 +3347,53 @@ class BraveSearchWebResultProductOffersItemPrice(BaseModel):
 
 
 class BraveSearchWebResultQa(BaseModel):
+    question_html: str | None = None
     answer: BraveSearchWebResultQaAnswer
     question: str
-    question_html: str | None = None
     suggested_answers: list[BraveSearchWebResultQaSuggestedAnswersItem]
 
 
 class BraveSearchWebResultQaAnswer(BaseModel):
-    author: str | None = None
     text: str
     text_html: str | None = None
     upvote_count: int
+    author: str | None = None
 
 
 class BraveSearchWebResultQaSuggestedAnswersItem(BaseModel):
-    author: str | None = None
     text: str
     text_html: str
     upvote_count: int
+    author: str | None = None
 
 
 class BraveSearchWebResultRecipe(BaseModel):
-    calories: int | None = None
-    cook_time: str | None = None
+    title: str
     description: str
     description_html: str | None = None
+    url: str
+    rating: BraveSearchRating | None = None
+    time: str
+    prep_time: str | None = None
+    cook_time: str | None = None
     domain: str
-    favicon_url: str
     ingredients: str
     instructions: list[BraveSearchWebResultRecipeInstructionsItem]
-    prep_time: str | None = None
+    servings: int
+    calories: int | None = None
     publisher: str | None = None
-    rating: BraveSearchRating | None = None
     recipe_category: str
     recipe_cuisine: str | None = None
-    servings: int
     thumbnail: BraveSearchImage
-    time: str
-    title: str
-    url: str
+    favicon_url: str
     video: BraveSearchWebResultRecipeVideo | None = None
 
 
 class BraveSearchWebResultRecipeInstructionsItem(BaseModel):
-    image: list[str]
     name: str | None = None
     text: str
     url: str | None = None
+    image: list[str]
 
 
 class BraveSearchWebResultRecipeVideo(BaseModel):
@@ -3522,55 +3403,55 @@ class BraveSearchWebResultRecipeVideo(BaseModel):
 
 
 class BraveSearchWebResultReview(BaseModel):
+    name: str
     description: str
     description_html: str
-    name: str
     rating: BraveSearchRating
-    thumbnail: BraveSearchImage
     type: str
+    thumbnail: BraveSearchImage
 
 
 class BraveSearchWebResultSitelinksItem(BaseModel):
+    title: str
     description: str
     description_html: str | None = None
-    family_friendly: bool
-    is_source_both: bool
-    is_source_local: bool
-    title: str
     url: str
+    is_source_local: bool
+    is_source_both: bool
+    family_friendly: bool
 
 
 class BraveSearchWebResultSoftware(BaseModel):
-    author: str
-    forks: int | None = None
-    is_npm: bool
-    is_pypi: bool
     name: str
     programming_language: str
+    author: str
+    is_npm: bool
+    is_pypi: bool
     stars: int | None = None
+    forks: int | None = None
 
 
 class BraveSearchWebResultVideo(BaseModel):
     duration_seconds: int | None = None
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
-    thumbnail: BraveSearchImage
     views: str | None = None
+    thumbnail: BraveSearchImage
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -3585,15 +3466,33 @@ class GetAiAnswerParams(BaseModel):
 
 
 class GetDirectionsParams(BaseModel):
-    arrival_time: Annotated[
-        str | None,
+    origin: Annotated[
+        str,
         Field(
-            examples=["2026-11-03T09:00"],
-            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
+            examples=["41.8781,-87.6298"],
+            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
         ),
-    ] = None
+    ]
     """
-    Local arrival time, `YYYY-MM-DDTHH:MM`. Not with `departure_time`.
+    `latitude,longitude`.
+    """
+    destination: Annotated[
+        str,
+        Field(
+            examples=["41.8781,-87.6298"],
+            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
+        ),
+    ]
+    """
+    `latitude,longitude`.
+    """
+    via: Annotated[list[ViaItem] | None, Field(max_length=10, validate_default=True)] = []
+    """
+    A stop on the way, `latitude,longitude`; repeat the parameter for several.
+    """
+    profile: BraveSearchRouteProfile | None = BraveSearchRouteProfile.DRIVING
+    """
+    How you travel.
     """
     avoid: list[BraveSearchAvoidFeature] | None = []
     """
@@ -3609,33 +3508,15 @@ class GetDirectionsParams(BaseModel):
     """
     Local departure time, `YYYY-MM-DDTHH:MM`. Not with `arrival_time`.
     """
-    destination: Annotated[
-        str,
+    arrival_time: Annotated[
+        str | None,
         Field(
-            examples=["41.8781,-87.6298"],
-            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
+            examples=["2026-11-03T09:00"],
+            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
         ),
-    ]
+    ] = None
     """
-    `latitude,longitude`.
-    """
-    origin: Annotated[
-        str,
-        Field(
-            examples=["41.8781,-87.6298"],
-            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
-        ),
-    ]
-    """
-    `latitude,longitude`.
-    """
-    profile: BraveSearchRouteProfile | None = BraveSearchRouteProfile.DRIVING
-    """
-    How you travel.
-    """
-    via: Annotated[list[ViaItem] | None, Field(max_length=10, validate_default=True)] = []
-    """
-    A stop on the way, `latitude,longitude`; repeat the parameter for several.
+    Local arrival time, `YYYY-MM-DDTHH:MM`. Not with `departure_time`.
     """
 
 
@@ -3685,6 +3566,10 @@ class GetSportsFixtureParams(BaseModel):
     """
     A game `id` from a games answer.
     """
+    sport: BraveSearchFixtureSport
+    """
+    The game's sport.
+    """
     league_id: Annotated[str, Field(examples=["39"], pattern="^[a-z0-9]{1,12}$")]
     """
     League id: `39` Premier League or another football league, `nfl` NFL.
@@ -3693,13 +3578,13 @@ class GetSportsFixtureParams(BaseModel):
     """
     Season by its start year, `2026`.
     """
-    sport: BraveSearchFixtureSport
-    """
-    The game's sport.
-    """
 
 
 class GetSportsStandingsParams(BaseModel):
+    sport: BraveSearchSport
+    """
+    The league's sport.
+    """
     league_id: Annotated[str, Field(examples=["39"], pattern="^[a-z0-9]{1,12}$")]
     """
     League id: `39` Premier League, `12` NBA, `1` MLB, `57` NHL, `nfl` NFL.
@@ -3708,32 +3593,18 @@ class GetSportsStandingsParams(BaseModel):
     """
     Season by its start year, `2026`. NBA and other basketball leagues that span two years take `2026-2027`.
     """
-    sport: BraveSearchSport
-    """
-    The league's sport.
-    """
 
 
 class GetTransitDirectionsParams(BaseModel):
-    arrival_time: Annotated[
-        str | None,
+    origin: Annotated[
+        str,
         Field(
-            examples=["2026-11-03T09:00"],
-            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
+            examples=["41.8781,-87.6298"],
+            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
         ),
-    ] = None
+    ]
     """
-    Local arrival time, `YYYY-MM-DDTHH:MM`. Not with `departure_time`.
-    """
-    departure_time: Annotated[
-        str | None,
-        Field(
-            examples=["2026-11-03T08:30"],
-            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
-        ),
-    ] = None
-    """
-    Local departure time, `YYYY-MM-DDTHH:MM`. Not with `arrival_time`.
+    `latitude,longitude`.
     """
     destination: Annotated[
         str,
@@ -3757,23 +3628,37 @@ class GetTransitDirectionsParams(BaseModel):
     """
     Longest walk in meters.
     """
-    origin: Annotated[
-        str,
-        Field(
-            examples=["41.8781,-87.6298"],
-            pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$",
-        ),
-    ]
-    """
-    `latitude,longitude`.
-    """
     wheelchair_accessible: bool | None = False
     """
     Only wheelchair-accessible routes.
     """
+    departure_time: Annotated[
+        str | None,
+        Field(
+            examples=["2026-11-03T08:30"],
+            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
+        ),
+    ] = None
+    """
+    Local departure time, `YYYY-MM-DDTHH:MM`. Not with `arrival_time`.
+    """
+    arrival_time: Annotated[
+        str | None,
+        Field(
+            examples=["2026-11-03T09:00"],
+            pattern="^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
+        ),
+    ] = None
+    """
+    Local arrival time, `YYYY-MM-DDTHH:MM`. Not with `departure_time`.
+    """
 
 
 class ListPlaceSuggestionsParams(BaseModel):
+    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
+    """
+    Search text. Operators such as `site:`, quotes and `-term` work.
+    """
     latitude: Annotated[float, Field(examples=[41.8781], ge=-90.0, le=90.0)]
     """
     Latitude of the search center.
@@ -3781,10 +3666,6 @@ class ListPlaceSuggestionsParams(BaseModel):
     longitude: Annotated[float, Field(examples=[-87.6298], ge=-180.0, le=180.0)]
     """
     Longitude of the search center.
-    """
-    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
-    """
-    Search text. Operators such as `site:`, quotes and `-term` work.
     """
 
 
@@ -3796,9 +3677,9 @@ class ListSimilarImagesParams(BaseModel):
 
 
 class ListSportsGamesParams(BaseModel):
-    date: date_aliased | None = None
+    sport: BraveSearchSport
     """
-    A day in the matchday, `YYYY-MM-DD`; the current matchday when empty.
+    The league's sport.
     """
     league_id: Annotated[str, Field(examples=["39"], pattern="^[a-z0-9]{1,12}$")]
     """
@@ -3808,9 +3689,9 @@ class ListSportsGamesParams(BaseModel):
     """
     Season by its start year, `2026`. NBA and other basketball leagues that span two years take `2026-2027`.
     """
-    sport: BraveSearchSport
+    date: date_aliased | None = None
     """
-    The league's sport.
+    A day in the matchday, `YYYY-MM-DD`; the current matchday when empty.
     """
 
 
@@ -3822,17 +3703,17 @@ class ListSuggestionsParams(BaseModel):
 
 
 class ListTeamGamesParams(BaseModel):
-    season: Annotated[str, Field(examples=["2026"], pattern="^\\d{4}(-\\d{4})?$")]
+    team_id: Annotated[str, Field(examples=["50"], pattern="^\\d{1,12}$")]
     """
-    Season by its start year, `2026`. NBA and other basketball leagues that span two years take `2026-2027`.
+    A team `id` from a standings or games answer.
     """
     sport: BraveSearchTeamSport
     """
     The team's sport.
     """
-    team_id: Annotated[str, Field(examples=["50"], pattern="^\\d{1,12}$")]
+    season: Annotated[str, Field(examples=["2026"], pattern="^\\d{4}(-\\d{4})?$")]
     """
-    A team `id` from a standings or games answer.
+    Season by its start year, `2026`. NBA and other basketball leagues that span two years take `2026-2027`.
     """
 
 
@@ -3844,13 +3725,13 @@ class SearchGogglesParams(BaseModel):
 
 
 class SearchImagesParams(BaseModel):
-    country: BraveSearchCountry | None = BraveSearchCountry.US
-    """
-    Country to search from.
-    """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
     Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
+    """
+    country: BraveSearchCountry | None = BraveSearchCountry.US
+    """
+    Country to search from.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
@@ -3859,13 +3740,25 @@ class SearchImagesParams(BaseModel):
 
 
 class SearchNewsParams(BaseModel):
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first. Send it with the same filters. Brave serves 6 pages on `/search` and 2 on `/news` and `/videos`.
+    """
+    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
+    """
+    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
+    """
     country: BraveSearchCountry | None = BraveSearchCountry.US
     """
     Country to search from.
     """
-    cursor: str | None = ""
+    safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
-    `pagination.next_cursor` from the previous page; empty for the first. Send it with the same filters. Brave serves 6 pages on `/search` and 2 on `/news` and `/videos`.
+    Adult-content filter.
+    """
+    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
+    """
+    Only pages from the past day, week, month or year.
     """
     date_from: date_aliased | None = None
     """
@@ -3874,18 +3767,6 @@ class SearchNewsParams(BaseModel):
     date_to: date_aliased | None = None
     """
     End of a published-date range, `YYYY-MM-DD`; send with `date_from`.
-    """
-    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
-    """
-    Only pages from the past day, week, month or year.
-    """
-    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
-    """
-    Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
-    """
-    safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
-    """
-    Adult-content filter.
     """
     search_language: BraveSearchLanguage | None = BraveSearchLanguage.EN
     """
@@ -3894,25 +3775,9 @@ class SearchNewsParams(BaseModel):
 
 
 class SearchParams(BaseModel):
-    country: BraveSearchCountry | None = BraveSearchCountry.US
+    spellcheck: bool | None = True
     """
-    Country to search from.
-    """
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first. Send it with the same filters. Brave serves 6 pages on `/search` and 2 on `/news` and `/videos`.
-    """
-    date_from: date_aliased | None = None
-    """
-    Start of a published-date range, `YYYY-MM-DD`; send with `date_to`.
-    """
-    date_to: date_aliased | None = None
-    """
-    End of a published-date range, `YYYY-MM-DD`; send with `date_from`.
-    """
-    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
-    """
-    Only pages from the past day, week, month or year.
+    Correct misspelt queries.
     """
     goggle_url: Annotated[
         str | None,
@@ -3926,25 +3791,45 @@ class SearchParams(BaseModel):
     """
     A Goggle's `url` from `/goggles` to re-rank results. A Goggle the search has not indexed is ignored; check one with `/goggles/profile`.
     """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first. Send it with the same filters. Brave serves 6 pages on `/search` and 2 on `/news` and `/videos`.
+    """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
     Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
+    """
+    country: BraveSearchCountry | None = BraveSearchCountry.US
+    """
+    Country to search from.
     """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
     Adult-content filter.
     """
+    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
+    """
+    Only pages from the past day, week, month or year.
+    """
+    date_from: date_aliased | None = None
+    """
+    Start of a published-date range, `YYYY-MM-DD`; send with `date_to`.
+    """
+    date_to: date_aliased | None = None
+    """
+    End of a published-date range, `YYYY-MM-DD`; send with `date_from`.
+    """
     search_language: BraveSearchLanguage | None = BraveSearchLanguage.EN
     """
     Language to rank results toward; it moves results mostly outside `country=us`.
     """
-    spellcheck: bool | None = True
-    """
-    Correct misspelt queries.
-    """
 
 
 class SearchPlacesParams(BaseModel):
+    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
+    """
+    Search text. Operators such as `site:`, quotes and `-term` work.
+    """
     latitude: Annotated[float, Field(examples=[41.8781], ge=-90.0, le=90.0)]
     """
     Latitude of the search center.
@@ -3953,32 +3838,28 @@ class SearchPlacesParams(BaseModel):
     """
     Longitude of the search center.
     """
-    query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
-    """
-    Search text. Operators such as `site:`, quotes and `-term` work.
-    """
 
 
 class SearchVideosParams(BaseModel):
-    country: BraveSearchCountry | None = BraveSearchCountry.US
-    """
-    Country to search from.
-    """
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first. Send it with the same filters. Brave serves 6 pages on `/search` and 2 on `/news` and `/videos`.
-    """
-    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
-    """
-    Only videos from the past day, week, month or year.
     """
     query: Annotated[str, Field(examples=["openai"], max_length=400, min_length=1, pattern="\\S")]
     """
     Search text. Operators such as `site:`, quotes and `-term` work; `intitle:`, `inurl:`, `intext:` and `inanchor:` don't.
     """
+    country: BraveSearchCountry | None = BraveSearchCountry.US
+    """
+    Country to search from.
+    """
     safe_search: BraveSearchSafeSearch | None = BraveSearchSafeSearch.MODERATE
     """
     Adult-content filter.
+    """
+    freshness: BraveSearchFreshness | None = BraveSearchFreshness.ANY
+    """
+    Only videos from the past day, week, month or year.
     """
     search_language: BraveSearchLanguage | None = BraveSearchLanguage.EN
     """
@@ -3990,8 +3871,7 @@ class ViaItem(RootModel[str]):
     root: Annotated[str, Field(pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$")]
 
 
-BraveSearchSportsGamesGroupsItem.model_rebuild()
-BraveSearchSportsStandingsGroupsItemGroupsItem.model_rebuild()
+BraveSearchStandingsGroup.model_rebuild()
 
 
 BraveSearchAvoidFeatureParam: TypeAlias = (

@@ -98,19 +98,19 @@ class ReportSort(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -122,144 +122,143 @@ class FacebookAd(BaseModel):
 class FacebookAdCard(BaseModel):
     ad_archive_id: str | None
     ad_id: str | None
-    categories: list[FacebookCode]
-    collation: FacebookAdCollation
-    creative: FacebookAdCreative
-    delivery: FacebookAdDelivery
-    disclaimer: FacebookAdDisclaimer
-    moderation: FacebookAdModeration
-    page: FacebookPageRef
-    performance: FacebookAdPerformance
-    regulation: FacebookAdRegulation
     text: FacebookAdText
+    url: str | None
+    page: FacebookPage
+    regulation: FacebookAdRegulation
+    collation: FacebookAdCollation
+    categories: list[FacebookCode]
+    disclaimer: FacebookAdDisclaimer
+    creative: FacebookAdCreative
+    performance: FacebookAdPerformance
+    delivery: FacebookAdDelivery
+    moderation: FacebookAdModeration
 
 
 class FacebookAdCarouselCard(BaseModel):
+    title: str | None
     body: str | None
     caption: str | None
-    cta_type: FacebookCode
-    image: FacebookAdImage | None
     link_description: str | None
     link_url: str | None
-    title: str | None
+    cta_type: FacebookCode
+    image: FacebookAdImage | None
     video: FacebookAdVideo | None
 
 
 class FacebookAdCollation(BaseModel):
-    count: int | None
     id: str | None
+    count: int | None
 
 
 class FacebookAdCreative(BaseModel):
-    branded_content: FacebookPageRef | None
-    cards: list[FacebookAdCarouselCard]
-    cta_type: FacebookCode
-    display_format: FacebookCode
-    event: Any
-    extra_images: list[FacebookAdImage]
-    extra_links: list[str]
-    extra_videos: list[FacebookAdVideo]
-    images: list[FacebookAdImage]
-    is_reshared: bool | None
     link_url: str | None
+    extra_links: list[str]
+    branded_content: FacebookPage | None
+    display_format: FacebookCode
+    cta_type: FacebookCode
+    cards: list[FacebookAdCarouselCard]
+    is_reshared: bool | None
     root_reshared_post: Any
+    event: Any
+    images: list[FacebookAdImage]
+    extra_images: list[FacebookAdImage]
     videos: list[FacebookAdVideo]
+    extra_videos: list[FacebookAdVideo]
 
 
 class FacebookAdDelivery(BaseModel):
-    end_at: str | None
+    total_active_seconds: int | None
     is_active: bool | None
+    start_at: str | None
+    end_at: str | None
     last_seen_at: str | None
     publisher_platforms: list[FacebookCode]
-    start_at: str | None
     targeted_or_reached_countries: list[str]
-    total_active_seconds: int | None
 
 
 class FacebookAdDisclaimer(BaseModel):
-    paid_for_by: str | None
     type: FacebookCode
+    paid_for_by: str | None
     verification: FacebookAdDisclaimerVerification | None
 
 
 class FacebookAdDisclaimerVerification(BaseModel):
-    address: str | None
-    email: str | None
-    fec_info: str | None
-    free_form_info: str | None
     help_text: str | None
     help_url: str | None
-    method: str | None
-    page_admin_info: str | None
-    page_name_info: str | None
-    phone: str | None
-    submitted_on: str | None
     website: str | None
+    method: str | None
+    submitted_on: str | None
+    phone: str | None
+    email: str | None
+    address: str | None
+    page_admin_info: str | None
+    free_form_info: str | None
+    page_name_info: str | None
+    fec_info: str | None
 
 
 class FacebookAdImage(BaseModel):
-    crops: list[Any]
     original_url: str | None
     resized_url: str | None
     watermarked_resized_url: str | None
+    crops: list[Any]
 
 
 class FacebookAdModeration(BaseModel):
-    contains_digital_created_media: bool | None
-    contains_sensitive_content: bool | None
-    gated_type: FacebookCode
-    has_user_reported: bool | None
-    hide_data_status: FacebookCode
-    is_eligible_for_beneficiary_payer_disclosure: bool | None
-    menu_items: list[Any]
     report_count: int | None
+    hide_data_status: FacebookCode
+    gated_type: FacebookCode
+    is_eligible_for_beneficiary_payer_disclosure: bool | None
+    contains_sensitive_content: bool | None
     state_media_label: str | None
+    contains_digital_created_media: bool | None
 
 
 class FacebookAdParty(BaseModel):
-    license_info: str | None
-    license_info_list: list[str]
-    location: str | None
     name: str | None
     website: str | None
+    location: str | None
+    license_info: str | None
+    license_info_list: list[str]
 
 
 class FacebookAdPerformance(BaseModel):
-    impressions: FacebookCountRange | None
-    impressions_bucket: int | None
-    reach: FacebookCountRange | None
     spend: FacebookMoneyRange | None
+    impressions: FacebookCountRange | None
+    reach: FacebookCountRange | None
+    impressions_bucket: int | None
 
 
 class FacebookAdRegulation(BaseModel):
-    additional_info: Any
     brazil_tax_id: str | None
-    country_iso_code: str | None
-    eu_certificates: list[Any]
+    is_financial_services_ad: bool | None
     has_limited_financial_delivery: bool | None
     has_limited_taiwan_anti_scam_delivery: bool | None
-    is_financial_services_ad: bool | None
+    country_iso_code: str | None
+    eu_certificates: list[Any]
+    additional_info: Any
 
 
 class FacebookAdReport(BaseModel):
+    locations: list[FacebookReportLocation]
     advertisers: FacebookReportAdvertisers
-    country: str
-    date: str
     downloads: list[FacebookReportDownload]
     lifetime: FacebookReportLifetime
-    locations: list[FacebookReportLocation]
+    country: str
+    date: str
     period: str
-    service_status: FacebookServiceStatus
     supported_countries: list[str]
+    service_status: FacebookServiceStatus
 
 
 class FacebookAdReportAdvertisersPage(BaseModel):
     advertisers: list[FacebookReportAdvertiser]
+    total_count: int | None
     country: str
     date: str
-    pagination: FacebookCursorPagination
     period: str
-    total_count: int | None
+    pagination: FacebookCursorPagination
 
 
 class FacebookAdSearchPage(BaseModel):
@@ -268,120 +267,120 @@ class FacebookAdSearchPage(BaseModel):
 
 
 class FacebookAdText(BaseModel):
+    title: str | None
     body: str | None
     caption: str | None
-    extra_texts: list[str]
     link_description: str | None
-    title: str | None
+    extra_texts: list[str]
 
 
 class FacebookAdTransparency(BaseModel):
     ad_archive_id: str
-    brazil: Any
-    eu: FacebookRegionTransparency | None
-    financial_services: list[FacebookFinancialServicesDisclosure]
-    payer_beneficiary: list[FacebookPayerBeneficiary]
-    political_insights: FacebookPoliticalAdInsights
     status: FacebookAdTransparencyStatus
+    payer_beneficiary: list[FacebookPayerBeneficiary]
     targets_eu: bool | None
+    eu: FacebookRegionTransparency | None
     uk: FacebookRegionTransparency | None
+    brazil: Any
+    political_insights: FacebookPoliticalAdInsights
+    financial_services: list[FacebookFinancialServicesDisclosure]
     verified_voice_types: list[FacebookCode]
     violation_types: list[str]
 
 
 class FacebookAdTransparencyStatus(BaseModel):
-    has_violating_payer_beneficiary: bool | None
     is_ad_taken_down: bool | None
-    is_eligible_for_eu_political_ai_disclosure: bool | None
+    has_violating_payer_beneficiary: bool | None
     violates_eu_political_ad_rules: bool | None
+    is_eligible_for_eu_political_ai_disclosure: bool | None
 
 
 class FacebookAdVersionsPage(BaseModel):
-    ads: list[FacebookAdCard]
     collation_id: str
-    pagination: FacebookCursorPagination
     total_count: int | None
+    ads: list[FacebookAdCard]
+    pagination: FacebookCursorPagination
 
 
 class FacebookAdVideo(BaseModel):
     hd_url: str | None
-    preview_image_url: str | None
     sd_url: str | None
     watermarked_hd_url: str | None
     watermarked_sd_url: str | None
+    preview_image_url: str | None
 
 
 class FacebookAdminCountry(BaseModel):
+    country_page_id: str | None
     admin_count: int | None
     country: str | None
-    country_page_id: str | None
 
 
 class FacebookAdvertiser(BaseModel):
-    about: str | None
+    transparency_node_id: str | None
+    spend: FacebookAdvertiserSpend
+    status: FacebookAdvertiserStatus
+    service_status: FacebookServiceStatus
+    page: FacebookPage
+    owner: FacebookAdvertiserOwner
     admin_countries: list[FacebookAdminCountry]
     ads: FacebookAdvertiserAds
     alias: str | None
+    about: str | None
     history: list[FacebookPageHistoryEvent]
-    is_delegate_page_with_linked_primary_profile: bool | None
-    owner: FacebookAdvertiserOwner
-    page: FacebookPageRef
-    related_pages: list[Any]
-    service_status: FacebookServiceStatus
     shared_disclaimer_pages: list[Any]
-    spend: FacebookAdvertiserSpend
-    state_media_label: str | None
-    status: FacebookAdvertiserStatus
+    related_pages: list[Any]
+    is_delegate_page_with_linked_primary_profile: bool | None
     supported_countries: list[str]
-    transparency_node_id: str | None
+    state_media_label: str | None
 
 
 class FacebookAdvertiserAds(BaseModel):
+    total_count: int | None
+    hidden_ad_count: int | None
     first_page: list[FacebookAdCard]
     has_blank_ads: bool | None
-    hidden_ad_count: int | None
-    total_count: int | None
 
 
 class FacebookAdvertiserAudience(BaseModel):
-    age: list[FacebookAudienceSlice]
-    custom_audiences: list[FacebookAudienceSlice]
-    detailed_targeting: list[FacebookAudienceSlice]
-    gender: list[FacebookAudienceSlice]
-    has_political_ads_ever: bool | None
-    has_political_ads_in_period: bool | None
-    languages: list[FacebookAudienceSlice]
-    locations: list[FacebookAudienceSlice]
-    lookalike_audiences: list[FacebookAudienceSlice]
     page_id: str
-    page_name: str | None
-    period: str
     summary: FacebookAudienceSummary
+    locations: list[FacebookAudienceSlice]
+    page_name: str | None
+    gender: list[FacebookAudienceSlice]
+    age: list[FacebookAudienceSlice]
+    languages: list[FacebookAudienceSlice]
+    custom_audiences: list[FacebookAudienceSlice]
+    lookalike_audiences: list[FacebookAudienceSlice]
+    detailed_targeting: list[FacebookAudienceSlice]
+    period: str
+    has_political_ads_in_period: bool | None
+    has_political_ads_ever: bool | None
 
 
 class FacebookAdvertiserOwner(BaseModel):
-    address: str | None
     business_id: str | None
     name: str | None
+    address: str | None
     phone: str | None
 
 
 class FacebookAdvertiserSpend(BaseModel):
     current_week: Any
-    is_political_page: bool | None = None
     lifetime_by_disclaimer: list[FacebookDisclaimerSpend]
     weekly_by_disclaimer: list[FacebookDisclaimerSpend]
+    is_political_page: bool | None = None
 
 
 class FacebookAdvertiserStatus(BaseModel):
-    is_actioned: bool | None
     is_deleted: bool | None
+    is_actioned: bool | None
 
 
 class FacebookAdvertiserSuggestion(BaseModel):
+    page: FacebookPage
     alias: str | None
     country: str | None
-    page: FacebookPageRef
 
 
 class FacebookAdvertiserSuggestions(BaseModel):
@@ -400,35 +399,35 @@ class FacebookAgeGenderShare(BaseModel):
 
 
 class FacebookAgeRange(BaseModel):
-    max: int | None
     min: int | None
+    max: int | None
 
 
 class FacebookAudienceLocation(BaseModel):
-    hidden_location_count: int | None
-    is_excluded: bool | None
     name: str | None
+    hidden_location_count: int | None
     type: FacebookCode
+    is_excluded: bool | None
 
 
 class FacebookAudienceSlice(BaseModel):
     ad_count: int | None
-    country: str | None = None
     hidden_location_count: int | None = None
-    is_excluded: bool | None = None
-    place_name: str | None = None
+    value: str | None
     spend_fraction: float | None
     type: FacebookCode | None = None
-    value: str | None
+    place_name: str | None = None
+    country: str | None = None
+    is_excluded: bool | None = None
 
 
 class FacebookAudienceSummary(BaseModel):
-    date: str | None
-    detailed_spend: list[Any]
+    total_spend: FacebookMoney
+    total_ads: int | None
     is_30_day_available: bool | None
     is_90_day_available: bool | None
-    total_ads: int | None
-    total_spend: FacebookMoney
+    date: str | None
+    detailed_spend: list[Any]
 
 
 class FacebookCode(BaseModel):
@@ -437,32 +436,52 @@ class FacebookCode(BaseModel):
 
 
 class FacebookCountRange(BaseModel):
-    formatted: str | None
-    max: int | None
     min: int | None
+    max: int | None
+    formatted: str | None
+
+
+class FacebookCoverPhoto(BaseModel):
+    id: str | None
+    owner_id: str | None
+    accessibility_caption: str | None
+    url: str | None
+    focus: FacebookFocus | None
+    image: FacebookImage | None
 
 
 class FacebookCursorPagination(BaseModel):
-    has_more: bool | None
     next_cursor: str | None
+    has_more: bool | None
 
 
 class FacebookDisclaimerSpend(BaseModel):
-    paid_for_by: str | None
     spend: FacebookMoney
+    paid_for_by: str | None
 
 
 class FacebookFinancialServicesDisclosure(BaseModel):
-    beneficiary: FacebookAdParty
+    region: FacebookCode
     is_payer_beneficiary_same: bool | None
     payer: FacebookAdParty
-    region: FacebookCode
+    beneficiary: FacebookAdParty
+
+
+class FacebookFocus(BaseModel):
+    x: float | None
+    y: float | None
+
+
+class FacebookImage(BaseModel):
+    url: str | None
+    width: int | None
+    height: int | None
 
 
 class FacebookInstagramAccount(BaseModel):
+    username: str | None
     follower_count: int | None
     is_verified: bool | None
-    username: str | None
 
 
 class FacebookMoney(BaseModel):
@@ -472,10 +491,42 @@ class FacebookMoney(BaseModel):
 
 
 class FacebookMoneyRange(BaseModel):
+    min: float | None
+    max: float | None
     currency: str | None
     formatted: str | None
-    max: float | None
-    min: float | None
+
+
+class FacebookPage(BaseModel):
+    page_id: str | None
+    profile_id: str | None
+    username: str | None = None
+    story_bucket_ids: list[str] | None = None
+    name: str | None
+    url: str | None
+    metrics: FacebookPageMetrics
+    status: FacebookPageStatus
+    instagram: FacebookInstagramAccount | None = None
+    tabs: list[FacebookPageTab] | None = None
+    category: str | None = None
+    entity_type: FacebookCode | None = None
+    verification: FacebookCode | None = None
+    alternate_name: str | None = None
+    gender: FacebookCode | None = None
+    profile_type_transition: FacebookCode | None = None
+    social_context: list[FacebookSocialContextItem] | None = None
+    legal: FacebookPageLegal | None = None
+    profile_picture_url: str | None = None
+    profile_photo: FacebookPhoto | None = None
+    profile_pictures: list[FacebookImage] | None = None
+    cover_photo: FacebookCoverPhoto | None = None
+
+
+class FacebookPageCollectionLink(BaseModel):
+    collection_id: str | None
+    tab_key: str | None
+    name: str | None
+    url: str | None
 
 
 class FacebookPageHistoryEvent(BaseModel):
@@ -483,104 +534,139 @@ class FacebookPageHistoryEvent(BaseModel):
     type: FacebookCode
 
 
+class FacebookPageLegal(BaseModel):
+    dsa_reporting_url: str | None
+    dsa_report_entrypoint: str | None
+    is_dsa_legal_reporting_enabled: bool | None
+
+
 class FacebookPageMetrics(BaseModel):
-    follower_count: int | None
-    like_count: int | None
-    talking_about_count: int | None
+    like_count: int | None = None
+    follower_count: int | None = None
+    talking_about_count: int | None = None
+    follower_count_approx: int | None = None
+    following_count_approx: int | None = None
 
 
-class FacebookPageRef(BaseModel):
-    category: str | None
-    entity_type: FacebookCode
-    instagram: FacebookInstagramAccount | None
-    is_deleted: bool | None
-    metrics: FacebookPageMetrics
+class FacebookPageStatus(BaseModel):
+    is_deleted: bool | None = None
+    is_verified: bool | None = None
+    is_memorialized: bool | None = None
+    restriction_violation_status: str | None = None
+    is_currently_live: bool | None = None
+    is_business_page_active: bool | None = None
+    is_additional_profile_plus: bool | None = None
+    profile_picture_is_silhouette: bool | None = None
+
+
+class FacebookPageTab(BaseModel):
+    section_id: str | None
+    tab_key: str | None
     name: str | None
-    page_id: str | None
-    profile_id: str | None
-    profile_picture_url: str | None
     url: str | None
-    username: str | None
-    verification: FacebookCode
+    displayable_count: int | None
+    collections: list[FacebookPageCollectionLink]
+    section_type: FacebookCode
 
 
 class FacebookPayerBeneficiary(BaseModel):
-    beneficiary: str | None
     payer: str | None
+    beneficiary: str | None
+
+
+class FacebookPhoto(BaseModel):
+    collection_item_id: str | None = None
+    id: str | None
+    owner_id: str | None
+    feedback_id: str | None
+    creation_story_id: str | None
+    accessibility_caption: str | None
+    url: str | None
+    focus: FacebookFocus | None
+    type: str
+    is_playable: bool | None
+    image: FacebookImage | None
+    thumbnail_url: str | None
 
 
 class FacebookPoliticalAdInsights(BaseModel):
-    age_gender: list[FacebookAgeGenderShare]
     country: str | None
     is_currency_matched: bool | None
+    age_gender: list[FacebookAgeGenderShare]
     regions: list[FacebookRegionShare]
 
 
 class FacebookReachByAgeGender(BaseModel):
-    age_range: str | None
     country: str | None
-    female: int | None
+    age_range: str | None
     male: int | None
+    female: int | None
     unknown: int | None
 
 
 class FacebookRegionShare(BaseModel):
-    reach_share: float | None
     region: str | None
+    reach_share: float | None
 
 
 class FacebookRegionTransparency(BaseModel):
+    total_reach: int | None
+    locations: list[FacebookAudienceLocation]
     age: FacebookAgeRange
     gender: FacebookCode
-    locations: list[FacebookAudienceLocation]
     reach_by_country_age_gender: list[FacebookReachByAgeGender]
-    total_reach: int | None
 
 
 class FacebookReportAdvertiser(BaseModel):
-    detailed_spends: list[FacebookMoney]
-    page: FacebookPageRef
-    paid_for_by: str | None
     report_row_id: str | None
-    show_detailed_spends: bool | None
-    total_ads: int | None
     total_spend: FacebookMoney
+    total_ads: int | None
+    show_detailed_spends: bool | None
+    page: FacebookPage
+    paid_for_by: str | None
+    detailed_spends: list[FacebookMoney]
 
 
 class FacebookReportAdvertisers(BaseModel):
+    total_count: int | None
     items: list[FacebookReportAdvertiser]
     pagination: FacebookCursorPagination
-    total_count: int | None
 
 
 class FacebookReportDownload(BaseModel):
-    date: str | None
     is_available: bool | None
+    date: str | None
     period: FacebookCode
 
 
 class FacebookReportLifetime(BaseModel):
-    top_keywords: list[str]
     total_ads: int | None
     total_spend: FacebookMoney
+    top_keywords: list[str]
 
 
 class FacebookReportLocation(BaseModel):
-    detailed_spends: list[FacebookMoney]
     name: str | None
-    show_detailed_spends: bool | None
     total_spend: FacebookMoney
+    show_detailed_spends: bool | None
+    detailed_spends: list[FacebookMoney]
 
 
 class FacebookServiceIssue(BaseModel):
-    product: str | None
     status: str | None
+    product: str | None
 
 
 class FacebookServiceStatus(BaseModel):
-    is_captcha_required: bool | None
-    issues: list[FacebookServiceIssue]
     status: str | None
+    issues: list[FacebookServiceIssue]
+    is_captcha_required: bool | None
+
+
+class FacebookSocialContextItem(BaseModel):
+    text: str | None
+    url: str | None
+    count_approx: int | None
 
 
 class GetAdParams(BaseModel):
@@ -588,24 +674,24 @@ class GetAdParams(BaseModel):
     """
     The ad's `ad_archive_id`.
     """
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
     """
     ISO 3166-1 alpha-2 country, upper case, or `ALL`.
     """
 
 
 class GetAdReportParams(BaseModel):
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
+    country: Annotated[str | None, Field(examples=["US"], pattern="^[A-Z]{2}$")] = "US"
     """
-    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
-    """
-    date: date_aliased | None = None
-    """
-    Report day; defaults to the newest published day, two days ago.
+    ISO 3166-1 alpha-2 country, upper case.
     """
     period: ReportPeriod | None = ReportPeriod.LAST_7_DAYS
     """
     Time window; a report Facebook is still building answers 503 with `Retry-After`.
+    """
+    date: date_aliased | None = None
+    """
+    Report day; defaults to the newest published day, two days ago.
     """
 
 
@@ -614,13 +700,13 @@ class GetAdTransparencyParams(BaseModel):
     """
     The ad's `ad_archive_id`.
     """
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
-    """
-    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
-    """
     page_id: Annotated[str, Field(examples=["115939511520844"], pattern="^\\d{1,20}$")]
     """
     The ad's `page.page_id`; Facebook needs a page id but answers the same for any valid one.
+    """
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
+    """
+    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
     """
 
 
@@ -636,28 +722,20 @@ class GetAdvertiserAudienceParams(BaseModel):
 
 
 class GetAdvertiserParams(BaseModel):
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
-    """
-    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
-    """
     page_id: Annotated[str, Field(examples=["15087023444"], pattern="^\\d{1,20}$")]
     """
     The advertiser's `page_id`: `page.page_id` of an ad or `advertisers[].page.page_id` from `/ad-library/advertisers/search`.
     """
-
-
-class ListAdReportAdvertisersParams(BaseModel):
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
     """
     ISO 3166-1 alpha-2 country, upper case, or `ALL`.
     """
-    cursor: str | None = ""
+
+
+class ListAdReportAdvertisersParams(BaseModel):
+    country: Annotated[str | None, Field(examples=["US"], pattern="^[A-Z]{2}$")] = "US"
     """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
-    date: date_aliased | None = None
-    """
-    Report day; defaults to the newest published day, two days ago.
+    ISO 3166-1 alpha-2 country, upper case.
     """
     period: ReportPeriod | None = ReportPeriod.LAST_7_DAYS
     """
@@ -674,6 +752,14 @@ class ListAdReportAdvertisersParams(BaseModel):
     """
     Order by spend or by number of ads.
     """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
+    """
+    date: date_aliased | None = None
+    """
+    Report day; defaults to the newest published day, two days ago.
+    """
 
 
 class ListAdVersionsParams(BaseModel):
@@ -681,7 +767,7 @@ class ListAdVersionsParams(BaseModel):
     """
     `collation.id` of an ad.
     """
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
     """
     ISO 3166-1 alpha-2 country, upper case, or `ALL`.
     """
@@ -692,17 +778,48 @@ class ListAdVersionsParams(BaseModel):
 
 
 class SearchAdsParams(BaseModel):
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
+    """
+    query: Annotated[
+        str | None,
+        Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S"),
+    ] = None
+    """
+    Search text.
+    """
+    page_id: Annotated[str | None, Field(examples=["15087023444"], pattern="^\\d{1,20}$")] = None
+    """
+    Only this advertiser's ads: `advertisers[].page.page_id` from `/ad-library/advertisers/search`. Send this or `query`.
+    """
+    match: AdMatch | None = AdMatch.ANY_WORDS
+    """
+    Match any of the words or the exact phrase.
+    """
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
+    """
+    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+    """
+    status: AdStatus | None = AdStatus.ACTIVE
+    """
+    Running, stopped or both.
+    """
     ad_type: AdType | None = AdType.ALL
     """
     Ad category.
     """
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
+    media_type: AdMediaType | None = AdMediaType.ALL
     """
-    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+    Creative format.
     """
-    cursor: str | None = ""
+    platforms: list[AdPlatform] | None = []
     """
-    `pagination.next_cursor` from the previous page; empty for the first page.
+    Only ads shown on these platforms; repeat the parameter for several.
+    """
+    languages: list[str] | None = []
+    """
+    Only ads in these ISO 639-1 languages, such as `en`; repeat for several.
     """
     delivered_after: date_aliased | None = None
     """
@@ -712,55 +829,24 @@ class SearchAdsParams(BaseModel):
     """
     Only ads shown on this day or earlier.
     """
-    languages: list[str] | None = []
-    """
-    Only ads in these ISO 639-1 languages, such as `en`; repeat for several.
-    """
-    match: AdMatch | None = AdMatch.ANY_WORDS
-    """
-    Match any of the words or the exact phrase.
-    """
-    media_type: AdMediaType | None = AdMediaType.ALL
-    """
-    Creative format.
-    """
-    page_id: Annotated[str | None, Field(examples=["15087023444"], pattern="^\\d{1,20}$")] = None
-    """
-    Only this advertiser's ads: `advertisers[].page.page_id` from `/ad-library/advertisers/search`. Send this or `query`.
-    """
-    platforms: list[AdPlatform] | None = []
-    """
-    Only ads shown on these platforms; repeat the parameter for several.
-    """
-    query: Annotated[
-        str | None,
-        Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S"),
-    ] = None
-    """
-    Search text.
-    """
     sort: AdSort | None = AdSort.RELEVANCE
     """
     Result order.
     """
-    status: AdStatus | None = AdStatus.ACTIVE
-    """
-    Running, stopped or both.
-    """
 
 
 class SearchAdvertisersParams(BaseModel):
-    ad_type: AdType | None = AdType.ALL
-    """
-    Ad category.
-    """
-    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "US"
-    """
-    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
-    """
     query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
     """
     Search text.
+    """
+    country: Annotated[str | None, Field(examples=["US"], pattern="^(?:[A-Z]{2}|ALL)$")] = "ALL"
+    """
+    ISO 3166-1 alpha-2 country, upper case, or `ALL`.
+    """
+    ad_type: AdType | None = AdType.ALL
+    """
+    Ad category.
     """
 
 

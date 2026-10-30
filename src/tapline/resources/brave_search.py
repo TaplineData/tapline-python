@@ -295,7 +295,7 @@ class BraveSearch(AsyncAPIResource):
     """The BraveSearch endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.brave_search`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -647,7 +647,7 @@ class BraveSearch(AsyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. A query the source only answers after a captcha gets a 422 naming the form to send instead. Costs 5 credits.
+        """Search the web: 20 ranked web results per page with related news, videos, places, answers, cards and an ordered main sequence. A query the source only answers after a captcha gets a 422 naming the form to send instead. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
@@ -858,7 +858,7 @@ class SyncBraveSearch(SyncAPIResource):
     """The BraveSearch endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.brave_search`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -1210,7 +1210,7 @@ class SyncBraveSearch(SyncAPIResource):
         spellcheck: bool = True,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchWebPage:
-        """Search the web: 20 ranked results per page with the news, videos, places, answers and cards shown beside them. A query the source only answers after a captcha gets a 422 naming the form to send instead. Costs 5 credits.
+        """Search the web: 20 ranked web results per page with related news, videos, places, answers, cards and an ordered main sequence. A query the source only answers after a captcha gets a 422 naming the form to send instead. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;

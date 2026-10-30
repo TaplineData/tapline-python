@@ -14,7 +14,7 @@ from tapline._models import PREFER_ENUM, BaseModel
 
 class CacheMaxAge(str, Enum):
     """
-    Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
+    Ignored. Every request fetches a fresh response and is charged.
     """
 
     FIELD_1D = "1d"
@@ -46,19 +46,19 @@ class PublicError(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -69,7 +69,7 @@ class GetBoardParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: the answer is always the full body.
+    Ignored. The endpoint always returns the full response.
     """
     url: Annotated[str, Field(examples=["https://www.pinterest.com/lizmrodgers/moms-night/"])]
     """
@@ -78,57 +78,57 @@ class GetBoardParams(BaseModel):
 
 
 class GetPinParams(BaseModel):
-    cache_max_age: CacheMaxAge | None = None
-    """
-    Accepted for Scrape Creators compatibility. It has no effect: every request fetches a live answer and is charged.
-    """
     trim: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: the answer is always the full body.
+    Ignored. The endpoint always returns the full response.
+    """
+    cache_max_age: CacheMaxAge | None = None
+    """
+    Ignored. Every request fetches a fresh response and is charged.
     """
     url: Annotated[str, Field(examples=["https://www.pinterest.com/pin/1124351863225567517/"])]
     """
-    A Pinterest pin URL: `https://www.pinterest.com/pin/<id>/` on any Pinterest domain, the long form with a title (`/pin/<title>--<id>/`), or a `https://pin.it/<code>` share link.
+    A Pinterest pin URL: `https://www.pinterest.com/pin/<id>/` on any Pinterest domain, the long form with a title (`/pin/<title>--<id>/`), or a `https://pin.it/<code>` share link. The `e1_…` ids in search and board results answer 422: Pinterest does not resolve them for logged-out visitors.
     """
 
 
 class GetUserBoardsParams(BaseModel):
-    cursor: Annotated[str | None, Field(max_length=4096, pattern="^[A-Za-z0-9+/=_-]*$")] = None
-    """
-    The `cursor` from the previous page. Omit it, or send it empty, for the first page.
-    """
     handle: Annotated[str, Field(examples=["broadstbullycom"], pattern="^@?[A-Za-z0-9_]{1,30}$")]
     """
     The Pinterest username, with or without a leading @.
     """
+    cursor: Annotated[str | None, Field(max_length=4096, pattern="^[A-Za-z0-9+/=_-]*$")] = None
+    """
+    The `cursor` from the previous page. Omit it, or send it empty, for the first page.
+    """
     trim: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: the answer is always the full body.
+    Ignored. The endpoint always returns the full response.
     """
 
 
 class PinterestAggregatedStats(BaseModel):
-    done: int | None = None
     saves: int | None = None
+    done: int | None = None
 
 
 class PinterestAudio(BaseModel):
-    artist_name: str | None = None
-    audio_url: str | None = None
-    description: str | None = None
-    duration: int | None = None
-    id: str | None = None
     node_id: str | None = None
-    provider_recording_id: str | None = None
+    duration: int | None = None
+    description: str | None = None
     royalty_free: bool | None = None
     thumbnail_image_url: str | None = None
-    title: str | None = None
+    provider_recording_id: str | None = None
+    artist_name: str | None = None
+    id: str | None = None
     type: str | None = None
+    audio_url: str | None = None
+    title: str | None = None
 
 
 class PinterestBlockImage(BaseModel):
-    dominant_color: str | None = None
     images: dict[str, PinterestSearchStoryObjectImage] | None = None
+    dominant_color: str | None = None
 
 
 class PinterestBoardCoverImages(BaseModel):
@@ -141,237 +141,237 @@ class PinterestBoardCoverImages236x(BaseModel):
 
 
 class PinterestBoardFeedPin(BaseModel):
-    access: list[Any] | None = None
-    aggregated_pin_data: PinterestBoardFeedPinAggregatedPinData | None = None
-    alt_text: str | None = None
+    node_id: str | None = None
+    done_by_me: bool | None = None
+    utm_link: str | None = None
     attribution: Any = None
-    auto_alt_text: str | None = None
-    board: PinterestBoardFeedPinBoard | None = None
-    call_to_action_text: Any = None
-    campaign_id: Any = None
-    carousel_data: Any = None
+    pinner: PinterestBoardFeedPinPinner | None = None
+    grid_attribution: PinterestBoardFeedPinGridAttribution | None = None
+    digital_media_source_type: int | None = None
+    creator_analytics: Any = None
+    seo_url: str | None = None
+    is_stale_product: bool | None = None
+    aggregated_pin_data: PinterestBoardFeedPinAggregatedPinData | None = None
+    has_been_boost_promoted: bool | None = None
+    link: str | None = None
+    sponsorship: Any = None
+    is_eligible_for_related_products: bool | None = None
+    videos: Any = None
+    should_open_in_stream: bool | None = None
+    unified_user_note: str | None = None
+    image_crop: PinterestSearchStoryObjectImageCrop | None = None
+    seo_alt_text: str | None = None
+    favorite_user_count: int | None = None
     category: str | None = None
     collection_pin: Any = None
-    creator_analytics: Any = None
-    description: str | None = None
-    digital_media_source_type: int | None = None
-    domain: str | None = None
-    dominant_color: str | None = None
-    done_by_me: bool | None = None
-    embed: Any = None
-    favorite_user_count: int | None = None
-    favorited_by_me: bool | None = None
-    grid_affiliate_disclosure: Any = None
-    grid_attribution: PinterestBoardFeedPinGridAttribution | None = None
-    grid_title: str | None = None
-    has_been_boost_promoted: bool | None = None
-    id: str | None = None
-    image_crop: PinterestSearchStoryObjectImageCrop | None = None
-    image_signature: str | None = None
-    images: dict[str, PinterestBoardFeedPinImage] | None = None
-    insertion_id: Any = None
-    is_downstream_promotion: bool | None = None
-    is_eligible_for_pdp: bool | None = None
-    is_eligible_for_pre_loved_goods_label: bool | None = None
-    is_eligible_for_related_products: bool | None = None
-    is_go_linkless: bool | None = None
-    is_oos_product: bool | None = None
-    is_promoted: bool | None = None
-    is_quick_promotable: bool | None = None
-    is_quick_promotable_by_pinner: bool | None = None
-    is_repin: bool | None = None
-    is_stale_product: bool | None = None
-    is_video: bool | None = None
-    link: str | None = None
-    link_domain: PinterestLinkDomain | None = None
-    link_utm_applicable_and_replaced: int | None = None
-    native_creator: PinterestNativeCreator | None = None
-    node_id: str | None = None
-    pinner: PinterestBoardFeedPinPinner | None = None
-    product_metadata: PinterestProductMetadata | None = None
-    product_pin_data: Any = None
-    promoted_is_lead_ad: bool | None = None
-    promoted_is_removable: bool | None = None
-    promoted_lead_form: Any = None
-    promoter: Any = None
-    reaction_counts: dict[str, int] | None = None
-    repin_count: int | None = None
-    rich_summary: PinterestBoardFeedPinRichSummary | None = None
-    seo_alt_text: str | None = None
-    seo_url: str | None = None
-    shopping_flags: list[int] | None = None
-    should_open_in_stream: bool | None = None
-    sponsorship: Any = None
-    story_pin_data: PinterestBoardFeedPinStoryPinData | None = None
-    story_pin_data_id: str | None = None
-    title: str | None = None
     tracking_params: str | None = None
-    type: str | None = None
-    unauth_on_page_description: str | None = None
-    unified_user_note: str | None = None
-    utm_link: str | None = None
-    video_status: Any = None
+    is_eligible_for_pre_loved_goods_label: bool | None = None
+    reaction_counts: dict[str, int] | None = None
+    is_repin: bool | None = None
+    embed: Any = None
+    story_pin_data: PinterestBoardFeedPinStoryPinData | None = None
+    title: str | None = None
+    id: str | None = None
     video_status_message: Any = None
-    videos: Any = None
+    native_creator: PinterestNativeCreator | None = None
+    dominant_color: str | None = None
+    auto_alt_text: str | None = None
+    promoted_lead_form: Any = None
+    board: PinterestBoardFeedPinBoard | None = None
+    promoter: Any = None
+    repin_count: int | None = None
+    grid_affiliate_disclosure: Any = None
+    link_utm_applicable_and_replaced: int | None = None
+    story_pin_data_id: str | None = None
+    is_video: bool | None = None
+    campaign_id: Any = None
+    product_metadata: PinterestProductMetadata | None = None
+    rich_summary: PinterestBoardFeedPinRichSummary | None = None
+    access: list[Any] | None = None
+    promoted_is_lead_ad: bool | None = None
+    favorited_by_me: bool | None = None
+    video_status: Any = None
+    is_promoted: bool | None = None
+    is_go_linkless: bool | None = None
+    unauth_on_page_description: str | None = None
+    carousel_data: Any = None
+    insertion_id: Any = None
+    grid_title: str | None = None
+    description: str | None = None
+    is_downstream_promotion: bool | None = None
+    type: str | None = None
+    image_signature: str | None = None
+    product_pin_data: Any = None
+    images: dict[str, PinterestBoardFeedPinImage] | None = None
+    link_domain: PinterestLinkDomain | None = None
+    alt_text: str | None = None
+    is_eligible_for_pdp: bool | None = None
+    promoted_is_removable: bool | None = None
+    domain: str | None = None
+    is_oos_product: bool | None = None
+    shopping_flags: list[int] | None = None
+    is_quick_promotable_by_pinner: bool | None = None
+    is_quick_promotable: bool | None = None
+    call_to_action_text: Any = None
 
 
 class PinterestBoardFeedPinAggregatedPinData(BaseModel):
-    aggregated_stats: PinterestAggregatedStats | None = None
-    creator_analytics: Any = None
-    did_it_data: PinterestDidItData | None = None
-    id: str | None = None
-    is_shop_the_look: bool | None = None
     node_id: str | None = None
+    id: str | None = None
+    aggregated_stats: PinterestAggregatedStats | None = None
+    is_shop_the_look: bool | None = None
+    did_it_data: PinterestDidItData | None = None
+    creator_analytics: Any = None
 
 
 class PinterestBoardFeedPinBoard(BaseModel):
-    collaborated_by_me: bool | None = None
-    followed_by_me: bool | None = None
-    id: str | None = None
-    is_collaborative: bool | None = None
-    layout: str | None = None
-    name: str | None = None
     node_id: str | None = None
-    owner: PinterestBoardFeedPinPinner | None = None
-    privacy: str | None = None
-    type: str | None = None
+    id: str | None = None
+    name: str | None = None
+    collaborated_by_me: bool | None = None
     url: str | None = None
+    owner: PinterestBoardFeedPinPinner | None = None
+    followed_by_me: bool | None = None
+    is_collaborative: bool | None = None
+    privacy: str | None = None
+    layout: str | None = None
+    type: str | None = None
 
 
 class PinterestBoardFeedPinGridAttribution(BaseModel):
+    node_id: str | None = None
     full_name: str | None = None
-    id: str | None = None
+    verified_identity: PinterestVerifiedIdentity | None = None
     image_medium_url: str | None = None
     image_small_url: str | None = None
-    is_primary_website_verified: bool | None = None
-    is_verified_merchant: bool | None = None
-    node_id: str | None = None
     username: str | None = None
-    verified_identity: PinterestVerifiedIdentity | None = None
+    is_primary_website_verified: bool | None = None
+    id: str | None = None
+    is_verified_merchant: bool | None = None
 
 
 class PinterestBoardFeedPinImage(BaseModel):
+    width: float | None = None
     height: int | None = None
     url: str | None = None
-    width: float | None = None
 
 
 class PinterestBoardFeedPinPinner(BaseModel):
-    full_name: str | None = None
-    id: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_primary_website_verified: bool | None = None
-    is_verified_merchant: bool | None = None
     node_id: str | None = None
+    id: str | None = None
+    image_small_url: str | None = None
     username: str | None = None
+    full_name: str | None = None
     verified_identity: PinterestSearchStoryDynamicInsertionOption | None = None
+    is_verified_merchant: bool | None = None
+    image_medium_url: str | None = None
+    is_primary_website_verified: bool | None = None
 
 
 class PinterestBoardFeedPinRichSummary(BaseModel):
-    actions: list[Any] | None = None
-    aggregate_rating: PinterestBoardFeedPinRichSummaryAggregateRating | None = None
-    apple_touch_icon_images: Any = None
-    apple_touch_icon_link: Any = None
+    products: list[PinterestBoardFeedPinRichSummaryProduct] | None = None
     display_description: str | None = None
+    type: str | None = None
+    apple_touch_icon_images: Any = None
+    url: str | None = None
+    id: str | None = None
+    site_name: str | None = None
+    type_name: str | None = None
     display_name: str | None = None
     favicon_images: PinterestFaviconImages | None = None
+    actions: list[Any] | None = None
+    apple_touch_icon_link: Any = None
     favicon_link: str | None = None
-    id: str | None = None
     is_hard_404: bool | None = None
     is_soft_404: bool | None = None
-    products: list[PinterestBoardFeedPinRichSummaryProduct] | None = None
-    site_name: str | None = None
-    type: str | None = None
-    type_name: str | None = None
-    url: str | None = None
+    aggregate_rating: PinterestBoardFeedPinRichSummaryAggregateRating | None = None
 
 
 class PinterestBoardFeedPinRichSummaryAggregateRating(BaseModel):
-    id: str | None = None
-    name: Any = None
-    rating_count: int | None = None
-    rating_distribution: list[Any] | None = None
-    rating_value: str | None = None
-    review_count: int | None = None
     type: str | None = None
+    rating_count: int | None = None
+    name: Any = None
+    rating_distribution: list[Any] | None = None
+    review_count: int | None = None
+    rating_value: str | None = None
+    id: str | None = None
 
 
 class PinterestBoardFeedPinRichSummaryProduct(BaseModel):
+    type: str | None = None
+    price_history_summary: PinterestSearchStoryDynamicInsertionOption | None = None
+    name: str | None = None
     additional_images: Any = None
     additional_images_per_spec: Any = None
     has_multi_images: bool | None = None
-    id: str | None = None
-    item_id: str | None = None
-    item_set_id: str | None = None
-    label_info: PinterestSearchStoryDynamicInsertionOption | None = None
-    name: str | None = None
-    offer_summary: PinterestBoardFeedPinRichSummaryProductOfferSummary | None = None
     offers: list[PinterestBoardFeedPinRichSummaryProductOffer] | None = None
-    price_history_summary: PinterestSearchStoryDynamicInsertionOption | None = None
     purchase_url: Any = None
+    offer_summary: PinterestBoardFeedPinRichSummaryProductOfferSummary | None = None
+    label_info: PinterestSearchStoryDynamicInsertionOption | None = None
     shipping_info: PinterestShippingInfo | None = None
-    type: str | None = None
     variant_set: Any = None
+    id: str | None = None
+    item_set_id: str | None = None
     videos: list[Any] | None = None
+    item_id: str | None = None
 
 
 class PinterestBoardFeedPinRichSummaryProductOffer(BaseModel):
-    availability: int | None = None
-    condition: int | None = None
-    id: str | None = None
-    in_stock: bool | None = None
-    min_ad_price: Any = None
-    name: Any = None
-    price_currency: str | None = None
-    price_value: float | None = None
     type: str | None = None
+    name: Any = None
+    price_value: float | None = None
+    availability: int | None = None
+    min_ad_price: Any = None
+    in_stock: bool | None = None
+    price_currency: str | None = None
+    id: str | None = None
+    condition: int | None = None
 
 
 class PinterestBoardFeedPinRichSummaryProductOfferSummary(BaseModel):
+    price_val: float | None = None
+    currency: str | None = None
+    price: str | None = None
+    in_stock: bool | None = None
     availability: int | None = None
     condition: int | None = None
-    currency: str | None = None
-    in_stock: bool | None = None
-    price: str | None = None
-    price_val: float | None = None
 
 
 class PinterestBoardFeedPinStoryPinData(BaseModel):
-    has_affiliate_products: bool | None = None
-    has_product_pins: bool | None = None
-    id: str | None = None
-    is_deleted: bool | None = None
-    metadata: PinterestBoardFeedPinStoryPinDataMetadata | None = None
     node_id: str | None = None
-    page_count: int | None = None
+    id: str | None = None
     pages: list[PinterestBoardFeedPinStoryPinDataPage] | None = None
-    static_page_count: int | None = None
-    total_video_duration: int | None = None
     type: str | None = None
+    page_count: int | None = None
+    has_product_pins: bool | None = None
+    total_video_duration: int | None = None
+    has_affiliate_products: bool | None = None
+    metadata: PinterestBoardFeedPinStoryPinDataMetadata | None = None
+    is_deleted: bool | None = None
+    static_page_count: int | None = None
 
 
 class PinterestBoardFeedPinStoryPinDataMetadata(BaseModel):
-    basics: PinterestBoardFeedPinStoryPinDataMetadataBasic | None = None
-    canvas_aspect_ratio: float | None = None
-    compatible_version: str | None = None
-    diy_data: Any = None
-    is_compatible: bool | None = None
-    is_editable: bool | None = None
-    is_promotable: bool | None = None
-    pin_image_signature: str | None = None
     pin_title: str | None = None
-    recipe_data: Any = None
-    root_pin_id: str | None = None
-    root_user_id: str | None = None
-    showreel_data: Any = None
-    template_type: Any = None
     version: str | None = None
+    canvas_aspect_ratio: float | None = None
+    template_type: Any = None
+    is_promotable: bool | None = None
+    compatible_version: str | None = None
+    showreel_data: Any = None
+    diy_data: Any = None
+    recipe_data: Any = None
+    pin_image_signature: str | None = None
+    root_pin_id: str | None = None
+    is_editable: bool | None = None
+    root_user_id: str | None = None
+    is_compatible: bool | None = None
+    basics: PinterestBoardFeedPinStoryPinDataMetadataBasic | None = None
 
 
 class PinterestBoardFeedPinStoryPinDataMetadataBasic(BaseModel):
-    key_value_blocks: list[Any] | None = None
     list_blocks: list[Any] | None = None
+    key_value_blocks: list[Any] | None = None
 
 
 class PinterestBoardFeedPinStoryPinDataPage(BaseModel):
@@ -379,34 +379,34 @@ class PinterestBoardFeedPinStoryPinDataPage(BaseModel):
 
 
 class PinterestBoardFeedPinStoryPinDataPageBlock(BaseModel):
+    image: PinterestBlockImage | None = None
     block_style: PinterestBoardFeedPinStoryPinDataPageBlockBlockStyle | None = None
     block_type: int | None = None
-    image: PinterestBlockImage | None = None
     image_signature: str | None = None
     type: str | None = None
 
 
 class PinterestBoardFeedPinStoryPinDataPageBlockBlockStyle(BaseModel):
-    corner_radius: float | None = None
-    height: float | None = None
+    x_coord: float | None = None
     rotation: float | None = None
     width: float | None = None
-    x_coord: float | None = None
+    corner_radius: float | None = None
+    height: float | None = None
     y_coord: float | None = None
 
 
 class PinterestBoardFeedStorySubtitle(BaseModel):
     args: list[Any] | None = None
     args_reformatted: list[Any] | None = None
-    format: str | None = None
     text: Any = None
+    format: str | None = None
 
 
 class PinterestBoardImage474x(BaseModel):
-    dominant_color: str | None = None
-    height: int | None = None
     url: str | None = None
     width: float | None = None
+    height: int | None = None
+    dominant_color: str | None = None
 
 
 class PinterestBoardImages(BaseModel):
@@ -414,28 +414,28 @@ class PinterestBoardImages(BaseModel):
 
 
 class PinterestBoardResponse(BaseModel):
-    cursor: str | None
     pins: list[PinterestBoardFeedPin]
+    cursor: str | None
 
 
 class PinterestBoardVase(BaseModel):
-    link: str | None = None
-    text: str | None = None
     type: str | None = None
+    text: str | None = None
+    link: str | None = None
 
 
 class PinterestCollaboratingUser(BaseModel):
-    follower_count: int | None = None
-    full_name: str | None = None
-    id: str | None = None
-    image_large_url: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_ads_only_profile: bool | None = None
-    is_verified_merchant: bool | None = None
     node_id: str | None = None
-    username: str | None = None
+    image_large_url: str | None = None
+    is_ads_only_profile: bool | None = None
     verified_identity: PinterestSearchStoryDynamicInsertionOption | None = None
+    image_small_url: str | None = None
+    full_name: str | None = None
+    image_medium_url: str | None = None
+    is_verified_merchant: bool | None = None
+    id: str | None = None
+    follower_count: int | None = None
+    username: str | None = None
 
 
 class PinterestCollectionPin(BaseModel):
@@ -443,16 +443,16 @@ class PinterestCollectionPin(BaseModel):
 
 
 class PinterestDidItData(BaseModel):
-    details_count: int | None = None
-    images_count: int | None = None
-    rating: int | None = None
-    recommend_scores: list[PinterestRecommendScore] | None = None
-    recommended_count: int | None = None
-    responses_count: int | None = None
-    tags: list[Any] | None = None
-    type: str | None = None
-    user_count: int | None = None
     videos_count: int | None = None
+    tags: list[Any] | None = None
+    recommended_count: int | None = None
+    user_count: int | None = None
+    rating: int | None = None
+    details_count: int | None = None
+    responses_count: int | None = None
+    type: str | None = None
+    images_count: int | None = None
+    recommend_scores: list[PinterestRecommendScore] | None = None
 
 
 class PinterestFaviconImages(BaseModel):
@@ -460,50 +460,50 @@ class PinterestFaviconImages(BaseModel):
 
 
 class PinterestGenAITopic(BaseModel):
-    interest_id: int | None = None
     interest_id_str: str | None = None
     name: str | None = None
+    interest_id: int | None = None
 
 
 class PinterestItemData(BaseModel):
-    active: bool | None = None
-    dominant_color: str | None = None
-    image_signature: str | None = None
-    images: dict[str, PinterestSearchStoryObjectImage] | None = None
+    title: str | None = None
     is_editable: bool | None = None
-    item_id: str | None = None
+    images: dict[str, PinterestSearchStoryObjectImage] | None = None
     link: str | None = None
     pin_id: str | None = None
-    price_currency: str | None = None
-    price_value: float | None = None
+    dominant_color: str | None = None
+    showcase_features_count: int | None = None
+    active: bool | None = None
+    type: str | None = None
+    source: int | None = None
+    item_id: str | None = None
+    image_signature: str | None = None
     rich_metadata: PinterestRichMetadata | None = None
     rich_summary: PinterestItemDataRichSummary | None = None
-    showcase_features_count: int | None = None
-    source: int | None = None
-    title: str | None = None
-    type: str | None = None
+    price_value: float | None = None
+    price_currency: str | None = None
 
 
 class PinterestItemDataRichSummary(BaseModel):
-    actions: list[Any] | None = None
-    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
-    display_name: str | None = None
     id: str | None = None
-    products: list[PinterestItemDataRichSummaryProduct] | None = None
-    site_name: str | None = None
-    type: str | None = None
     type_name: str | None = None
+    type: str | None = None
+    display_name: str | None = None
+    actions: list[Any] | None = None
+    products: list[PinterestItemDataRichSummaryProduct] | None = None
+    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
+    site_name: str | None = None
 
 
 class PinterestItemDataRichSummaryProduct(BaseModel):
-    id: str | None = None
-    item_id: str | None = None
-    item_set_id: str | None = None
     name: str | None = None
+    id: str | None = None
+    item_set_id: str | None = None
     offer_summary: PinterestRichMetadataProductOfferSummary | None = None
-    offers: list[PinterestObjectRichSummaryProductOffer] | None = None
     type: str | None = None
+    offers: list[PinterestObjectRichSummaryProductOffer] | None = None
     videos: list[Any] | None = None
+    item_id: str | None = None
 
 
 class PinterestLinkDomain(BaseModel):
@@ -518,62 +518,62 @@ class PinterestLinkUserWebsite(BaseModel):
 class PinterestMusicAttribution(BaseModel):
     artist: str | None = None
     is_embedded: bool | None = None
-    provider_recording_id: str | None = None
     thumbnail_image_url: str | None = None
+    provider_recording_id: str | None = None
     title: str | None = None
 
 
 class PinterestNativeCreator(BaseModel):
-    full_name: str | None = None
-    id: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_primary_website_verified: bool | None = None
-    is_verified_merchant: bool | None = None
     node_id: str | None = None
+    id: str | None = None
+    image_small_url: str | None = None
     username: str | None = None
+    full_name: str | None = None
     verified_identity: PinterestVerifiedIdentity | None = None
+    is_verified_merchant: bool | None = None
+    image_medium_url: str | None = None
+    is_primary_website_verified: bool | None = None
 
 
 class PinterestObjectRichSummaryProduct(BaseModel):
-    id: str | None = None
-    item_id: str | None = None
-    item_set_id: str | None = None
-    name: str | None = None
     offer_summary: PinterestObjectRichSummaryProductOfferSummary | None = None
+    videos: list[Any] | None = None
+    name: str | None = None
+    id: str | None = None
     offers: list[PinterestObjectRichSummaryProductOffer] | None = None
     type: str | None = None
-    videos: list[Any] | None = None
+    item_set_id: str | None = None
+    item_id: str | None = None
 
 
 class PinterestObjectRichSummaryProductOffer(BaseModel):
     availability: int | None = None
-    condition: int | None = None
-    id: str | None = None
     in_stock: bool | None = None
+    id: str | None = None
     price_currency: str | None = None
+    condition: int | None = None
     price_value: float | None = None
     type: str | None = None
 
 
 class PinterestObjectRichSummaryProductOfferSummary(BaseModel):
+    price_val: float | None = None
+    currency: str | None = None
+    price: str | None = None
+    in_stock: bool | None = None
     availability: int | None = None
     condition: int | None = None
-    currency: str | None = None
-    in_stock: bool | None = None
+    standard_price: str | None = None
     percentage_off: str | None = None
     percentage_off_raw: float | None = None
-    price: str | None = None
-    price_val: float | None = None
-    standard_price: str | None = None
 
 
 class PinterestPinAggregatedPinData(BaseModel):
+    entityId: str | None = None
+    id: str | None = None
     aggregatedStats: PinterestPinAggregatedStats | None = None
     commentCount: int | None = None
     didItData: PinterestPinDidItData | None = None
-    entityId: str | None = None
-    id: str | None = None
     isShopTheLook: bool | None = None
 
 
@@ -594,26 +594,26 @@ class PinterestPinBlockStyle(BaseModel):
 
 
 class PinterestPinBoard(BaseModel):
-    boardOrderModifiedAt: str | None = None
     collaboratedByMe: bool | None = None
     collaboratorPermissions: Any = None
-    coverImageSpec_216x146: PinterestPinImageSpec | None = None
+    entityId: str | None = None
+    isCollaborative: bool | None = None
+    owner: PinterestPinOwner | None = None
+    url: str | None = None
+    id: str | None = None
+    followedByMe: bool | None = None
+    name: str | None = None
+    imageThumbnailUrl: str | None = None
+    imageCoverUrl: str | None = None
+    pinCount: int | None = None
+    sectionCount: int | None = None
+    boardOrderModifiedAt: str | None = None
     coverImageSpec_236x: PinterestPinImageSpec | None = None
     coverImageSpec_400x300: PinterestPinImageSpec | None = None
-    entityId: str | None = None
-    followedByMe: bool | None = None
-    id: str | None = None
+    coverImageSpec_216x146: PinterestPinImageSpec | None = None
     imageCoverHdUrl: str | None = None
-    imageCoverUrl: str | None = None
-    imageThumbnailUrl: str | None = None
-    isCollaborative: bool | None = None
-    layout: str | None = None
-    name: str | None = None
-    owner: PinterestPinOwner | None = None
-    pinCount: int | None = None
     privacy: str | None = None
-    sectionCount: int | None = None
-    url: str | None = None
+    layout: str | None = None
 
 
 class PinterestPinCategorizedIngredient(BaseModel):
@@ -623,10 +623,10 @@ class PinterestPinCategorizedIngredient(BaseModel):
 
 
 class PinterestPinCloseupAttribution(BaseModel):
-    entityId: str | None = None
-    firstName: str | None = None
     fullName: str | None = None
     id: str | None = None
+    firstName: str | None = None
+    entityId: str | None = None
     username: str | None = None
 
 
@@ -635,17 +635,17 @@ class PinterestPinCloseupDataStoryPinDataPageStyle(BaseModel):
 
 
 class PinterestPinCloseupUnifiedAttribution(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    adsOnlyProfileSite: Any = None
     entityId: str | None = None
-    followedByMe: bool | None = None
-    followerCount: int | None = None
-    fullName: str | None = None
     id: str | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
     imageMediumUrl: str | None = None
-    isAdsOnlyProfile: bool | None = None
-    isVerifiedMerchant: bool | None = None
+    followerCount: int | None = None
+    followedByMe: bool | None = None
     username: str | None = None
+    isAdsOnlyProfile: bool | None = None
+    adsOnlyProfileSite: Any = None
+    isVerifiedMerchant: bool | None = None
+    fullName: str | None = None
     verifiedIdentity: PinterestPinCloseupUnifiedAttributionVerifiedIdentity | None = None
 
 
@@ -659,21 +659,21 @@ class PinterestPinCook(BaseModel):
 
 
 class PinterestPinCookTimes(BaseModel):
+    total: Any = None
     cook: PinterestPinCook | None = None
     prep: PinterestPinCook | None = None
-    total: Any = None
 
 
 class PinterestPinDetailsDataRichMetadataRecipe(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    aggregateRating: PinterestPinRecipeAggregateRating | None = None
-    categorizedIngredients: list[PinterestPinCategorizedIngredient] | None = None
-    cookTimes: PinterestPinCookTimes | None = None
-    diets: list[Any] | None = None
-    displayCookTime: int | None = None
-    fromAggregatedData: bool | None = None
     name: str | None = None
+    fromAggregatedData: bool | None = None
+    categorizedIngredients: list[PinterestPinCategorizedIngredient] | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    displayCookTime: int | None = None
     servingsSummary: PinterestPinServingsSummary | None = None
+    aggregateRating: PinterestPinRecipeAggregateRating | None = None
+    diets: list[Any] | None = None
+    cookTimes: PinterestPinCookTimes | None = None
 
 
 class PinterestPinDetailsDataStoryPinDataPageBlockVideoDataV2VideoList720P(BaseModel):
@@ -692,12 +692,12 @@ class PinterestPinGenAITopic(BaseModel):
 class PinterestPinGridAttribution(BaseModel):
     entityId: str | None = None
     fullName: str | None = None
-    id: str | None = None
     imageMediumUrl: str | None = None
     imageSmallUrl: str | None = None
-    isVerifiedMerchant: bool | None = None
     username: str | None = None
+    isVerifiedMerchant: bool | None = None
     verifiedIdentity: PinterestPinCloseupUnifiedAttributionVerifiedIdentity | None = None
+    id: str | None = None
 
 
 class PinterestPinImageSpec(BaseModel):
@@ -723,10 +723,10 @@ class PinterestPinImages236X(BaseModel):
 
 
 class PinterestPinImagesOrig(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    height: float | None = None
     url: str | None = None
+    height: float | None = None
     width: float | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
 
 
 class PinterestPinIngredient(BaseModel):
@@ -739,67 +739,67 @@ class PinterestPinJoin(BaseModel):
 
 
 class PinterestPinLinkDomain(BaseModel):
-    id: str | None = None
     name: str | None = None
     officialUser: PinterestPinLinkDomainOfficialUser | None = None
+    id: str | None = None
 
 
 class PinterestPinLinkDomainOfficialUser(BaseModel):
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    blockedByMe: bool | None = None
-    entityId: str | None = None
-    explicitlyFollowedByMe: bool | None = None
-    firstName: str | None = None
-    followerCount: int | None = None
-    fullName: str | None = None
     id: str | None = None
-    imageLargeUrl: str | None = None
+    firstName: str | None = None
     imageMediumUrl: str | None = None
-    imageSmallUrl: str | None = None
     isVerifiedMerchant: bool | None = None
     username: str | None = None
+    blockedByMe: bool | None = None
+    explicitlyFollowedByMe: bool | None = None
+    followerCount: int | None = None
+    fullName: str | None = None
+    entityId: str | None = None
+    imageLargeUrl: str | None = None
+    imageSmallUrl: str | None = None
     verifiedIdentity: PinterestPinCloseupUnifiedAttributionVerifiedIdentity | None = None
 
 
 class PinterestPinMetadata(BaseModel):
-    basics: Any = None
     pinTitle: str | None = None
+    basics: Any = None
     templateType: Any = None
 
 
 class PinterestPinNativeCreator(BaseModel):
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    blockedByMe: bool | None = None
-    entityId: str | None = None
-    explicitlyFollowedByMe: bool | None = None
-    firstName: str | None = None
-    followerCount: int | None = None
-    fullName: str | None = None
+    websiteUrl: str | None = None
+    isPrimaryWebsiteVerified: bool | None = None
+    isDirectToSiteAllowed: bool | None = None
     id: str | None = None
-    imageLargeUrl: str | None = None
+    isVerifiedMerchant: bool | None = None
+    firstName: str | None = None
+    fullName: str | None = None
+    username: str | None = None
+    entityId: str | None = None
     imageMediumUrl: str | None = None
     imageSmallUrl: str | None = None
-    isDirectToSiteAllowed: bool | None = None
-    isPrimaryWebsiteVerified: bool | None = None
-    isVerifiedMerchant: bool | None = None
-    profileUrl: str | None = None
-    username: str | None = None
     verifiedIdentity: PinterestPinCloseupUnifiedAttributionVerifiedIdentity | None = None
-    websiteUrl: str | None = None
+    blockedByMe: bool | None = None
+    explicitlyFollowedByMe: bool | None = None
+    followerCount: int | None = None
+    imageLargeUrl: str | None = None
+    profileUrl: str | None = None
 
 
 class PinterestPinOriginPinner(BaseModel):
-    blockedByMe: bool | None = None
+    isVerifiedMerchant: bool | None = None
+    id: str | None = None
     entityId: str | None = None
+    username: str | None = None
+    imageMediumUrl: str | None = None
+    blockedByMe: bool | None = None
     explicitlyFollowedByMe: bool | None = None
     followerCount: int | None = None
     fullName: str | None = None
-    id: str | None = None
     imageLargeUrl: str | None = None
-    imageMediumUrl: str | None = None
     imageSmallUrl: str | None = None
-    isVerifiedMerchant: bool | None = None
-    username: str | None = None
     verifiedIdentity: PinterestPinCloseupUnifiedAttributionVerifiedIdentity | None = None
 
 
@@ -809,44 +809,44 @@ class PinterestPinOwner(BaseModel):
 
 
 class PinterestPinPinJoin(BaseModel):
-    annotationsWithLinksArray: list[PinterestPinAnnotationsWithLinksArray] | None = None
-    canonicalPin: PinterestPinOwner | None = None
-    interlinkEntries: Any = None
+    seoRelatedInterests: list[PinterestPinAnnotationsWithLinksArray] | None = None
     seoBreadcrumbs: list[PinterestPinSeoBreadcrumb] | None = None
+    canonicalPin: PinterestPinOwner | None = None
     seoCanonicalDomain: str | None = None
     seoCanonicalUrl: str | None = None
-    seoRelatedInterests: list[PinterestPinAnnotationsWithLinksArray] | None = None
-    shoppingKlpUrls: Any = None
     visualAnnotation: list[str] | None = None
+    shoppingKlpUrls: Any = None
+    interlinkEntries: Any = None
+    annotationsWithLinksArray: list[PinterestPinAnnotationsWithLinksArray] | None = None
 
 
 class PinterestPinPinner(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    blockedByMe: bool | None = None
-    connectionType: str | None = None
     domainUrl: str | None = None
     domainVerified: bool | None = None
     entityId: str | None = None
-    explicitlyFollowedByMe: bool | None = None
-    followerCount: int | None = None
-    fullName: str | None = None
+    blockedByMe: bool | None = None
     id: str | None = None
-    imageLargeUrl: str | None = None
-    imageMediumUrl: str | None = None
-    imageSmallUrl: str | None = None
+    connectionType: str | None = None
     isVerifiedMerchant: bool | None = None
+    explicitlyFollowedByMe: bool | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    fullName: str | None = None
     username: str | None = None
+    imageSmallUrl: str | None = None
+    imageMediumUrl: str | None = None
+    followerCount: int | None = None
+    imageLargeUrl: str | None = None
     verifiedIdentity: PinterestPinnerVerifiedIdentity | None = None
 
 
 class PinterestPinPromoter(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    entityId: str | None = None
     fullName: str | None = None
+    username: str | None = None
     id: str | None = None
+    entityId: str | None = None
     imageMediumUrl: str | None = None
     imageSmallUrl: str | None = None
-    username: str | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
 
 
 class PinterestPinReactionCountsData(BaseModel):
@@ -857,196 +857,196 @@ class PinterestPinReactionCountsData(BaseModel):
 class PinterestPinRecipeAggregateRating(BaseModel):
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
     bestRating: Any = None
-    ratingCount: int | None = None
     ratingValue: str | None = None
     reviewCount: int | None = None
+    ratingCount: int | None = None
 
 
 class PinterestPinResponse(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
     adData: Any = None
-    adMatchReason: int | None = None
-    adTargetingAttribution: Any = None
-    adTargetingAttributionReasons: Any = None
-    advertiserId: str | None = None
-    affiliateDisclosure: str | None = None
-    affiliateLink: Any = None
-    aggregatedPinData: PinterestPinAggregatedPinData | None = None
-    attribution: Any = None
-    board: PinterestPinBoard | None = None
-    boostAdsData: Any = None
-    campaignId: str | None = None
-    canDeleteDidItAndComments: bool | None = None
-    carouselData: Any = None
-    category: str | None = None
-    closeupAttribution: PinterestPinCloseupAttribution | None = None
-    closeupUnifiedAttribution: PinterestPinCloseupUnifiedAttribution | None = None
-    closeupUnifiedDescription: str | None = None
-    closeupUnifiedTitle: str | None = None
-    collectionPin: Any = None
-    commentsDisabled: bool | None = None
-    createdAt: str | None = None
-    creativeOverlayImages: Any = None
-    creatorClass: Any = None
     description: str | None = None
-    descriptionHtml: str | None = None
-    descriptionLinks: list[Any] | None = None
-    digitalMediaSourceType: int | None = None
-    domain: str | None = None
     dominantColor: str | None = None
-    doneByMe: bool | None = None
     embed: Any = None
-    entityId: str | None = None
-    genAiTopics: list[PinterestPinGenAITopic] | None = None
-    gridAttribution: PinterestPinGridAttribution | None = None
     gridDescription: str | None = None
     gridTitle: str | None = None
-    hasActiveBoostAds: bool | None = None
-    hasBeenBoostPromoted: bool | None = None
-    hasHiddenInnerPin: bool | None = None
-    id: str | None = None
-    imageLargeUrl: str | None = None
-    imageSignature: str | None = None
-    imageSpec_136x136: PinterestPinImageSpec | None = None
-    imageSpec_170x: PinterestPinImageSpec | None = None
-    imageSpec_236x: PinterestPinImageSpec | None = None
-    imageSpec_474x: PinterestPinImageSpec | None = None
-    imageSpec_564x: PinterestPinImageSpec | None = None
-    imageSpec_600x315: PinterestPinImageSpec | None = None
-    imageSpec_60x60: PinterestPinImageSpec | None = None
-    imageSpec_736x: PinterestPinImageSpec | None = None
-    imageSpec_orig: PinterestPinImageSpecOrig | None = None
-    images_136x136: PinterestPinImages | None = None
-    images_170x: PinterestPinImages | None = None
     images_236x: PinterestPinImages236X | None = None
-    images_474x: PinterestPinImages | None = None
-    images_564x: PinterestPinImages | None = None
-    images_600x315: PinterestPinImageSpec | None = None
-    images_60x60: PinterestPinImageSpec | None = None
-    images_736x: PinterestPinImages | None = None
-    images_orig: PinterestPinImagesOrig | None = None
-    interestItemIdStr: Any = None
-    isActiveAd: bool | None = None
-    isDownstreamPromotion: bool | None = None
-    isEligibleForAggregatedComments: bool | None = None
-    isEligibleForImageDownload: bool | None = None
+    imageSignature: str | None = None
     isEligibleForPdp: bool | None = None
-    isEligibleForPromotedPartnership: bool | None = None
-    isGoLinkless: bool | None = None
-    isHidden: bool | None = None
-    isInstagramApi: bool | None = None
-    isOosProduct: bool | None = None
-    isPromoted: bool | None = None
-    isQuickPromotableByPinner: bool | None = None
-    isRepin: bool | None = None
-    isStaleProduct: bool | None = None
-    isThirdPartyAd: bool | None = None
-    isUnsafe: bool | None = None
-    isUnsafeForAd: bool | None = None
-    isUnsafeForComments: bool | None = None
-    isV1IdeaPin: bool | None = None
-    isVideo: bool | None = None
-    isViewedByOwnerOrEmployeeOrPartnerOfBusiness: Any = None
-    isViewerRestricted: bool | None = None
-    link: str | None = None
-    linkDomain: PinterestPinLinkDomain | None = None
-    linkId: str | None = None
-    linkUserWebsite: Any = None
-    linkUtmApplicableAndReplaced: int | None = None
-    mediaAttribution: Any = None
-    method: str | None = None
-    mobileLink: Any = None
-    musicAttributions: list[Any] | None = None
-    nativeCreator: PinterestPinNativeCreator | None = None
-    originPinner: PinterestPinOriginPinner | None = None
-    pinAdditionalNote: Any = None
-    pinJoin: PinterestPinPinJoin | None = None
-    pinPromotionId: str | None = None
-    pinnabilityMultiScoresStringified: Any = None
-    pinnedToBoard: Any = None
-    pinner: PinterestPinPinner | None = None
-    priceCurrency: str | None = None
-    productPinData: Any = None
-    promotedIsLeadAd: bool | None = None
-    promotedIsPersonalized: Any = None
-    promotedIsRemovable: bool | None = None
-    promotedLeadForm: Any = None
-    promotedPartnershipAdvertiserName: Any = None
-    promotedPartnershipAttributionName: Any = None
-    promoter: PinterestPinPromoter | None = None
-    reactionByMe: int | None = None
-    reactionCountsData: list[PinterestPinReactionCountsData] | None = None
-    recommendationReason: Any = None
-    repinCount: int | None = None
-    richMetadata: PinterestPinRichMetadata | None = None
     richSummary: PinterestPinRichSummary | None = None
-    section: PinterestPinOwner | None = None
-    seeMoreUserFeedback: Any = None
-    seoAltText: str | None = None
-    seoDescription: str | None = None
-    seoNoindexReason: str | None = None
-    seoTitle: str | None = None
-    seoUrl: str | None = None
-    shareCount: int | None = None
-    shipsToUserCountry: bool | None = None
-    shoppingFlags: list[int] | None = None
-    shouldMute: bool | None = None
-    shouldOpenInStream: bool | None = None
-    shuffle: PinterestPinShuffle | None = None
-    shuffleAsset: Any = None
-    sourceInterest: Any = None
-    sponsorship: Any = None
-    storyPinData: PinterestPinStoryPinData | None = None
+    richMetadata: PinterestPinRichMetadata | None = None
     storyPinDataId: str | None = None
-    thirdPartyPinOwner: Any = None
-    title: str | None = None
-    topInterest: int | None = None
-    totalReactionCount: int | None = None
-    trackedLink: str | None = None
-    trackingParams: str | None = None
-    translations: Any = None
-    unauthOnGridTitle: str | None = None
-    unauthOnPageDescription: str | None = None
-    unauthOnPageTitle: str | None = None
-    userInterestCluster: Any = None
-    userMentionTags: Any = None
-    utmLink: str | None = None
+    seoTitle: str | None = None
     videoStatus: Any = None
     videos: PinterestPinVideos | None = None
+    entityId: str | None = None
+    isUnsafeForAd: bool | None = None
+    pinJoin: PinterestPinPinJoin | None = None
+    board: PinterestPinBoard | None = None
+    closeupAttribution: PinterestPinCloseupAttribution | None = None
+    commentsDisabled: bool | None = None
+    createdAt: str | None = None
+    domain: str | None = None
+    isDownstreamPromotion: bool | None = None
+    isEligibleForAggregatedComments: bool | None = None
+    isGoLinkless: bool | None = None
+    isInstagramApi: bool | None = None
+    isPromoted: bool | None = None
+    isV1IdeaPin: bool | None = None
+    isViewerRestricted: bool | None = None
+    hasHiddenInnerPin: bool | None = None
+    link: str | None = None
+    linkDomain: PinterestPinLinkDomain | None = None
+    linkUserWebsite: Any = None
+    mobileLink: Any = None
+    nativeCreator: PinterestPinNativeCreator | None = None
+    pinnedToBoard: Any = None
+    pinner: PinterestPinPinner | None = None
+    promotedIsRemovable: bool | None = None
+    isThirdPartyAd: bool | None = None
+    recommendationReason: Any = None
+    section: PinterestPinOwner | None = None
+    shouldOpenInStream: bool | None = None
+    storyPinData: PinterestPinStoryPinData | None = None
+    thirdPartyPinOwner: Any = None
+    trackedLink: str | None = None
+    utmLink: str | None = None
+    trackingParams: str | None = None
+    originPinner: PinterestPinOriginPinner | None = None
+    topInterest: int | None = None
+    imageSpec_236x: PinterestPinImageSpec | None = None
+    images_orig: PinterestPinImagesOrig | None = None
+    isHidden: bool | None = None
+    isUnsafe: bool | None = None
+    promoter: PinterestPinPromoter | None = None
+    seoAltText: str | None = None
+    images_136x136: PinterestPinImages | None = None
+    shuffle: PinterestPinShuffle | None = None
+    images_60x60: PinterestPinImageSpec | None = None
+    images_170x: PinterestPinImages | None = None
+    images_474x: PinterestPinImages | None = None
+    images_564x: PinterestPinImages | None = None
+    images_736x: PinterestPinImages | None = None
+    images_600x315: PinterestPinImageSpec | None = None
+    carouselData: Any = None
+    digitalMediaSourceType: int | None = None
+    isViewedByOwnerOrEmployeeOrPartnerOfBusiness: Any = None
     visualObjects: list[PinterestPinVisualObject] | None = None
+    creativeOverlayImages: Any = None
+    shouldMute: bool | None = None
+    title: str | None = None
+    musicAttributions: list[Any] | None = None
+    closeupUnifiedTitle: str | None = None
+    linkUtmApplicableAndReplaced: int | None = None
+    category: str | None = None
+    isOosProduct: bool | None = None
+    isStaleProduct: bool | None = None
+    shoppingFlags: list[int] | None = None
+    repinCount: int | None = None
+    seoNoindexReason: str | None = None
+    seoDescription: str | None = None
+    seoUrl: str | None = None
+    imageLargeUrl: str | None = None
+    isVideo: bool | None = None
+    shuffleAsset: Any = None
+    linkId: str | None = None
+    isEligibleForImageDownload: bool | None = None
+    collectionPin: Any = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    id: str | None = None
+    aggregatedPinData: PinterestPinAggregatedPinData | None = None
+    totalReactionCount: int | None = None
+    seeMoreUserFeedback: Any = None
+    unauthOnPageDescription: str | None = None
+    genAiTopics: list[PinterestPinGenAITopic] | None = None
+    isUnsafeForComments: bool | None = None
+    adMatchReason: int | None = None
+    adTargetingAttribution: Any = None
+    isEligibleForPromotedPartnership: bool | None = None
+    promotedPartnershipAdvertiserName: Any = None
+    promotedPartnershipAttributionName: Any = None
+    promotedIsPersonalized: Any = None
+    sourceInterest: Any = None
+    advertiserId: str | None = None
+    campaignId: str | None = None
+    pinPromotionId: str | None = None
+    pinnabilityMultiScoresStringified: Any = None
+    interestItemIdStr: Any = None
+    userInterestCluster: Any = None
+    adTargetingAttributionReasons: Any = None
+    gridAttribution: PinterestPinGridAttribution | None = None
+    sponsorship: Any = None
+    shareCount: int | None = None
+    reactionCountsData: list[PinterestPinReactionCountsData] | None = None
+    unauthOnGridTitle: str | None = None
+    method: str | None = None
+    promotedIsLeadAd: bool | None = None
+    reactionByMe: int | None = None
+    isActiveAd: bool | None = None
+    closeupUnifiedDescription: str | None = None
+    canDeleteDidItAndComments: bool | None = None
+    isRepin: bool | None = None
+    productPinData: Any = None
+    closeupUnifiedAttribution: PinterestPinCloseupUnifiedAttribution | None = None
+    creatorClass: Any = None
+    promotedLeadForm: Any = None
+    doneByMe: bool | None = None
+    boostAdsData: Any = None
+    hasActiveBoostAds: bool | None = None
+    affiliateDisclosure: str | None = None
+    affiliateLink: Any = None
+    shipsToUserCountry: bool | None = None
+    isQuickPromotableByPinner: bool | None = None
+    hasBeenBoostPromoted: bool | None = None
+    attribution: Any = None
+    mediaAttribution: Any = None
+    pinAdditionalNote: Any = None
+    translations: Any = None
+    descriptionLinks: list[Any] | None = None
+    userMentionTags: Any = None
+    unauthOnPageTitle: str | None = None
+    descriptionHtml: str | None = None
+    priceCurrency: str | None = None
+    imageSpec_orig: PinterestPinImageSpecOrig | None = None
+    imageSpec_136x136: PinterestPinImageSpec | None = None
+    imageSpec_60x60: PinterestPinImageSpec | None = None
+    imageSpec_170x: PinterestPinImageSpec | None = None
+    imageSpec_474x: PinterestPinImageSpec | None = None
+    imageSpec_564x: PinterestPinImageSpec | None = None
+    imageSpec_736x: PinterestPinImageSpec | None = None
+    imageSpec_600x315: PinterestPinImageSpec | None = None
 
 
 class PinterestPinRichMetadata(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    aggregateRating: PinterestPinRichMetadataAggregateRating | None = None
+    title: str | None = None
     article: PinterestPinRichMetadataArticle | None = None
-    description: str | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
     products: Any = None
     recipe: PinterestPinDetailsDataRichMetadataRecipe | None = None
-    siteName: str | None = None
-    title: str | None = None
     tutorial: Any = None
+    description: str | None = None
+    aggregateRating: PinterestPinRichMetadataAggregateRating | None = None
+    siteName: str | None = None
     url: str | None = None
 
 
 class PinterestPinRichMetadataAggregateRating(BaseModel):
-    bestRating: Any = None
     ratingCount: int | None = None
     ratingValue: str | None = None
+    bestRating: Any = None
     reviewCount: int | None = None
 
 
 class PinterestPinRichMetadataArticle(BaseModel):
+    name: str | None = None
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
     datePublished: str | None = None
-    name: str | None = None
 
 
 class PinterestPinRichSummary(BaseModel):
-    aggregateRating: PinterestPinRichMetadataAggregateRating | None = None
+    typeName: str | None = None
     displayName: str | None = None
     products: list[Any] | None = None
-    typeName: str | None = None
+    aggregateRating: PinterestPinRichMetadataAggregateRating | None = None
 
 
 class PinterestPinSeoBreadcrumb(BaseModel):
@@ -1062,61 +1062,61 @@ class PinterestPinServingsSummary(BaseModel):
 
 
 class PinterestPinShuffle(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
     entityId: str | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
     id: str | None = None
     isRemixable: bool | None = None
 
 
 class PinterestPinStoryPinData(BaseModel):
+    isDeleted: bool | None = None
+    id: str | None = None
+    pages: list[PinterestPinStoryPinDataPage] | None = None
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    metadata: PinterestPinMetadata | None = None
     entityId: str | None = None
     hasAffiliateProducts: bool | None = None
-    id: str | None = None
-    isDeleted: bool | None = None
-    metadata: PinterestPinMetadata | None = None
-    pages: list[PinterestPinStoryPinDataPage] | None = None
     totalVideoDuration: float | None = None
 
 
 class PinterestPinStoryPinDataPage(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    layout: int | None = None
     ad: Any = None
     blocks: list[PinterestPinStoryPinDataPageBlock] | None = None
-    imageAdjustedSpec_orig: Any = None
-    images_originals: Any = None
-    layout: int | None = None
-    musicAttributions: list[Any] | None = None
-    pageId: str | None = None
     shouldMute: bool | None = None
-    storyPageId: str | None = None
+    musicAttributions: list[Any] | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    pageId: str | None = None
     style: PinterestPinCloseupDataStoryPinDataPageStyle | None = None
+    storyPageId: str | None = None
+    images_originals: Any = None
+    imageAdjustedSpec_orig: Any = None
 
 
 class PinterestPinStoryPinDataPageBlock(BaseModel):
     field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    blockStyle: PinterestPinBlockStyle | None = None
     blockType: int | None = None
+    blockStyle: PinterestPinBlockStyle | None = None
     images_750x: PinterestPinImages | None = None
     images_orig: Any = None
-    text: str | None = None
     videoDataV2: PinterestPinStoryPinDataPageBlockVideoDataV2 | None = None
+    text: str | None = None
 
 
 class PinterestPinStoryPinDataPageBlockVideoDataV2(BaseModel):
-    seoViewCount: str | None = None
-    v_hlsv4_video_list: PinterestPinVHlsv4VideoList | None = None
-    videoList: PinterestPinStoryPinDataPageBlockVideoDataV2VideoList | None = None
+    videoListMobile: PinterestPinVideoList | None = None
     videoList720P: PinterestPinDetailsDataStoryPinDataPageBlockVideoDataV2VideoList720P | None = (
         None
     )
+    videoList: PinterestPinStoryPinDataPageBlockVideoDataV2VideoList | None = None
+    v_hlsv4_video_list: PinterestPinVHlsv4VideoList | None = None
     videoListEXP3: Any = None
     videoListEXP4: Any = None
     videoListEXP5: Any = None
     videoListEXP6: Any = None
     videoListEXP7: Any = None
     videoListForCaptions: PinterestPinVideoListForCaptions | None = None
-    videoListMobile: PinterestPinVideoList | None = None
+    seoViewCount: str | None = None
 
 
 class PinterestPinStoryPinDataPageBlockVideoDataV2VideoList(BaseModel):
@@ -1124,21 +1124,21 @@ class PinterestPinStoryPinDataPageBlockVideoDataV2VideoList(BaseModel):
 
 
 class PinterestPinTagsChip(BaseModel):
-    dominant_color: str | None = None
     id: str | None = None
-    image_signature: str | None = None
     images: dict[str, PinterestPinTagsChipImage] | None = None
-    item_id: str | None = None
+    image_signature: str | None = None
     link: str | None = None
+    title: str | None = None
+    dominant_color: str | None = None
+    item_id: str | None = None
     price_currency: str | None = None
     price_value: float | None = None
-    title: str | None = None
 
 
 class PinterestPinTagsChipImage(BaseModel):
+    width: float | None = None
     height: int | None = None
     url: str | None = None
-    width: float | None = None
 
 
 class PinterestPinVHlsv4VideoList(BaseModel):
@@ -1158,36 +1158,36 @@ class PinterestPinVideoListForCaptions(BaseModel):
 
 
 class PinterestPinVideoVariant(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    captionsUrls: dict[str, Any] | None = None
     duration: float | None = None
     height: float | None = None
     thumbnail: str | None = None
     url: str | None = None
     width: float | None = None
+    captionsUrls: dict[str, Any] | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
 
 
 class PinterestPinVideos(BaseModel):
-    duration: float | None = None
-    entityId: str | None = None
-    id: str | None = None
-    seoViewCount: str | None = None
-    signature: str | None = None
-    videoList: PinterestPinVideosVideoList | None = None
-    videoListForCaptions: dict[str, PinterestPinVideoListForCaption] | None = None
     videoUrls: list[str] | None = None
+    id: str | None = None
+    entityId: str | None = None
+    videoList: PinterestPinVideosVideoList | None = None
+    signature: str | None = None
+    duration: float | None = None
+    videoListForCaptions: dict[str, PinterestPinVideoListForCaption] | None = None
+    seoViewCount: str | None = None
 
 
 class PinterestPinVideosVideoList(BaseModel):
-    field__typename: Annotated[str | None, Field(alias="__typename")] = None
-    v720P: PinterestPinVideoVariant | None = None
-    vHLSV3MOBILE: PinterestPinVideoVariant | None = None
     vHLSV4: PinterestPinVideoVariant | None = None
+    v720P: PinterestPinVideoVariant | None = None
+    field__typename: Annotated[str | None, Field(alias="__typename")] = None
+    vHLSV3MOBILE: PinterestPinVideoVariant | None = None
 
 
 class PinterestPinVisualObject(BaseModel):
-    h: float | None = None
     isStela: Any = None
+    h: float | None = None
     w: float | None = None
     x: float | None = None
     y: float | None = None
@@ -1203,137 +1203,137 @@ class PinterestProductMetadata(BaseModel):
 
 
 class PinterestPromoter(BaseModel):
-    follower_count: int | None = None
-    full_name: str | None = None
-    id: str | None = None
-    image_large_url: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_ads_only_profile: bool | None = None
-    is_verified_merchant: bool | None = None
     node_id: str | None = None
     username: str | None = None
+    full_name: str | None = None
+    follower_count: int | None = None
+    image_small_url: str | None = None
+    id: str | None = None
     verified_identity: PinterestSearchStoryDynamicInsertionOption | None = None
+    is_ads_only_profile: bool | None = None
+    image_large_url: str | None = None
+    image_medium_url: str | None = None
+    is_verified_merchant: bool | None = None
 
 
 class PinterestRecommendScore(BaseModel):
-    count: int | None = None
     score: float | None = None
+    count: int | None = None
 
 
 class PinterestRichMetadata(BaseModel):
-    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
-    amp_url: str | None = None
-    amp_valid: bool | None = None
-    canonical_url: str | None = None
-    description: str | None = None
-    has_price_drop: bool | None = None
     id: str | None = None
-    link_status: int | None = None
-    locale: str | None = None
+    has_price_drop: bool | None = None
+    amp_valid: bool | None = None
     products: list[PinterestRichMetadataProduct] | None = None
-    site_name: str | None = None
     title: str | None = None
     type: str | None = None
+    description: str | None = None
+    link_status: int | None = None
+    canonical_url: str | None = None
+    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
+    site_name: str | None = None
+    amp_url: str | None = None
+    locale: str | None = None
 
 
 class PinterestRichMetadataAggregateRating(BaseModel):
-    best_rating: str | None = None
-    id: str | None = None
-    rating_count: int | None = None
     rating_distribution: list[Any] | None = None
-    rating_value: str | None = None
-    review_count: int | None = None
+    best_rating: str | None = None
     type: str | None = None
+    rating_value: str | None = None
+    rating_count: int | None = None
+    review_count: int | None = None
+    id: str | None = None
 
 
 class PinterestRichMetadataProduct(BaseModel):
-    additional_images: list[Any] | None = None
-    id: str | None = None
-    item_id: str | None = None
-    item_set_id: str | None = None
     name: str | None = None
+    id: str | None = None
+    item_set_id: str | None = None
     offer_summary: PinterestRichMetadataProductOfferSummary | None = None
-    offers: list[PinterestObjectRichSummaryProductOffer] | None = None
     type: str | None = None
+    offers: list[PinterestObjectRichSummaryProductOffer] | None = None
     videos: list[Any] | None = None
+    item_id: str | None = None
+    additional_images: list[Any] | None = None
 
 
 class PinterestRichMetadataProductOfferSummary(BaseModel):
+    price_val: float | None = None
+    currency: str | None = None
+    price: str | None = None
+    in_stock: bool | None = None
     availability: int | None = None
     condition: int | None = None
-    currency: str | None = None
-    in_stock: bool | None = None
-    price: str | None = None
-    price_val: float | None = None
     standard_price: str | None = None
 
 
 class PinterestSearchPin(BaseModel):
-    access: list[Any] | None = None
-    ad_match_reason: int | None = None
-    advertiser_id: str | None = None
-    aggregated_pin_data: PinterestSearchResultAggregatedPinData | None = None
-    alt_text: str | None = None
+    node_id: str | None = None
+    seo_alt_text: str | None = None
+    promoted_is_lead_ad: bool | None = None
+    utm_link: str | None = None
+    image_signature: str | None = None
+    title: str | None = None
+    images: dict[str, PinterestSearchResultImage] | None = None
+    dominant_color: str | None = None
+    is_go_linkless: bool | None = None
+    domain: str | None = None
+    is_eligible_for_web_closeup: bool | None = None
+    pin_join: PinterestPinJoin | None = None
+    reaction_counts: dict[str, int] | None = None
+    is_downstream_promotion: bool | None = None
+    is_eligible_for_pdp: bool | None = None
+    rich_summary: PinterestSearchResultRichSummary | None = None
+    pinner: PinterestSearchResultPinner | None = None
+    is_eligible_for_filters: bool | None = None
+    id: str | None = None
+    description: str | None = None
     auto_alt_text: str | None = None
+    ad_match_reason: int | None = None
+    grid_title: str | None = None
+    is_promoted: bool | None = None
+    link_utm_applicable_and_replaced: int | None = None
+    shopping_flags: list[int] | None = None
     board: PinterestSearchResultBoard | None = None
+    promoted_is_removable: bool | None = None
+    did_its: list[Any] | None = None
+    is_oos_product: bool | None = None
+    tracking_params: str | None = None
+    is_stale_product: bool | None = None
+    is_eligible_for_related_products: bool | None = None
+    aggregated_pin_data: PinterestSearchResultAggregatedPinData | None = None
+    type: str | None = None
+    access: list[Any] | None = None
+    is_prefetch_enabled: bool | None = None
+    story_pin_data_id: str | None = None
+    is_eligible_for_pre_loved_goods_label: bool | None = None
+    should_open_in_stream: bool | None = None
+    image_crop: PinterestSearchResultImageCrop | None = None
+    story_pin_data: PinterestSearchResultStoryPinData | None = None
+    link: str | None = None
+    created_at: str | None = None
+    alt_text: str | None = None
+    link_domain: PinterestLinkDomain | None = None
+    gen_ai_topics: list[PinterestGenAITopic] | None = None
+    digital_media_source_type: int | None = None
+    grid_attribution: PinterestSearchStoryObjectGridAttribution | None = None
+    product_metadata: PinterestProductMetadata | None = None
+    link_user_website: PinterestLinkUserWebsite | None = None
+    videos: PinterestVideos | None = None
+    promoter: PinterestPromoter | None = None
+    insertion_id: str | None = None
+    advertiser_id: str | None = None
+    pin_promotion_id: int | None = None
     campaign_id: int | None = None
     collection_pin: PinterestCollectionPin | None = None
-    created_at: str | None = None
-    description: str | None = None
-    did_its: list[Any] | None = None
-    digital_media_source_type: int | None = None
-    domain: str | None = None
-    dominant_color: str | None = None
-    gen_ai_topics: list[PinterestGenAITopic] | None = None
-    grid_attribution: PinterestSearchStoryObjectGridAttribution | None = None
-    grid_title: str | None = None
-    id: str | None = None
-    image_crop: PinterestSearchResultImageCrop | None = None
-    image_signature: str | None = None
-    images: dict[str, PinterestSearchResultImage] | None = None
-    insertion_id: str | None = None
-    is_downstream_promotion: bool | None = None
-    is_eligible_for_filters: bool | None = None
-    is_eligible_for_pdp: bool | None = None
-    is_eligible_for_pre_loved_goods_label: bool | None = None
-    is_eligible_for_related_products: bool | None = None
-    is_eligible_for_web_closeup: bool | None = None
-    is_go_linkless: bool | None = None
-    is_oos_product: bool | None = None
-    is_prefetch_enabled: bool | None = None
-    is_promoted: bool | None = None
-    is_stale_product: bool | None = None
-    link: str | None = None
-    link_domain: PinterestLinkDomain | None = None
-    link_user_website: PinterestLinkUserWebsite | None = None
-    link_utm_applicable_and_replaced: int | None = None
-    node_id: str | None = None
-    pin_join: PinterestPinJoin | None = None
-    pin_promotion_id: int | None = None
-    pinner: PinterestSearchResultPinner | None = None
-    product_metadata: PinterestProductMetadata | None = None
-    promoted_is_lead_ad: bool | None = None
-    promoted_is_removable: bool | None = None
-    promoter: PinterestPromoter | None = None
-    reaction_counts: dict[str, int] | None = None
-    rich_summary: PinterestSearchResultRichSummary | None = None
-    seo_alt_text: str | None = None
-    shopping_flags: list[int] | None = None
-    should_open_in_stream: bool | None = None
-    story_pin_data: PinterestSearchResultStoryPinData | None = None
-    story_pin_data_id: str | None = None
-    title: str | None = None
-    tracking_params: str | None = None
-    type: str | None = None
     url: str
-    utm_link: str | None = None
-    videos: PinterestVideos | None = None
 
 
 class PinterestSearchResponse(BaseModel):
-    cursor: str | None
     pins: list[PinterestSearchPin]
+    cursor: str | None
 
 
 class PinterestSearchResultAggregatedPinData(BaseModel):
@@ -1342,123 +1342,123 @@ class PinterestSearchResultAggregatedPinData(BaseModel):
 
 
 class PinterestSearchResultBoard(BaseModel):
-    board_order_modified_at: str | None = None
-    collaborating_users: list[PinterestCollaboratingUser] | None = None
-    collaborator_count: int | None = None
-    cover_images: PinterestBoardCoverImages | None = None
-    id: str | None = None
-    image_cover_hd_url: str | None = None
-    image_cover_url: str | None = None
-    images: PinterestBoardImages | None = None
-    is_collaborative: bool | None = None
-    name: str | None = None
     node_id: str | None = None
-    owner: PinterestSearchResultPinner | None = None
-    pin_count: int | None = None
-    pin_thumbnail_urls: list[str] | None = None
-    section_count: int | None = None
+    id: str | None = None
+    collaborating_users: list[PinterestCollaboratingUser] | None = None
     type: str | None = None
+    image_cover_hd_url: str | None = None
+    board_order_modified_at: str | None = None
+    pin_count: int | None = None
+    image_cover_url: str | None = None
+    is_collaborative: bool | None = None
     url: str | None = None
+    images: PinterestBoardImages | None = None
+    pin_thumbnail_urls: list[str] | None = None
+    owner: PinterestSearchResultPinner | None = None
+    name: str | None = None
+    collaborator_count: int | None = None
+    section_count: int | None = None
+    cover_images: PinterestBoardCoverImages | None = None
 
 
 class PinterestSearchResultImage(BaseModel):
+    width: float | None = None
     height: int | None = None
     url: str | None = None
-    width: float | None = None
 
 
 class PinterestSearchResultImageCrop(BaseModel):
-    max_y: float | None = None
     min_y: float | None = None
+    max_y: float | None = None
 
 
 class PinterestSearchResultPinner(BaseModel):
-    ads_only_profile_site: str | None = None
+    node_id: str | None = None
+    id: str | None = None
+    image_small_url: str | None = None
+    image_medium_url: str | None = None
     follower_count: int | None = None
     full_name: str | None = None
-    id: str | None = None
-    image_large_url: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_ads_only_profile: bool | None = None
-    is_verified_merchant: bool | None = None
-    node_id: str | None = None
     username: str | None = None
+    image_large_url: str | None = None
+    is_ads_only_profile: bool | None = None
     verified_identity: PinterestVerifiedIdentity | None = None
+    is_verified_merchant: bool | None = None
+    ads_only_profile_site: str | None = None
 
 
 class PinterestSearchResultRichSummary(BaseModel):
-    actions: list[Any] | None = None
-    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
-    display_cook_time: int | None = None
-    display_name: str | None = None
     id: str | None = None
-    is_hard_404: bool | None = None
-    products: list[PinterestObjectRichSummaryProduct] | None = None
-    site_name: str | None = None
-    type: str | None = None
     type_name: str | None = None
+    products: list[PinterestObjectRichSummaryProduct] | None = None
     url: str | None = None
+    display_cook_time: int | None = None
+    type: str | None = None
+    actions: list[Any] | None = None
+    site_name: str | None = None
+    display_name: str | None = None
+    aggregate_rating: PinterestRichMetadataAggregateRating | None = None
+    is_hard_404: bool | None = None
 
 
 class PinterestSearchResultStoryPinData(BaseModel):
+    node_id: str | None = None
+    id: str | None = None
+    static_page_count: int | None = None
     has_affiliate_products: bool | None = None
     has_product_pins: bool | None = None
-    id: str | None = None
     metadata: PinterestSearchResultStoryPinDataMetadata | None = None
-    node_id: str | None = None
     page_count: int | None = None
     pages: list[PinterestSearchResultStoryPinDataPage] | None = None
-    static_page_count: int | None = None
     total_video_duration: int | None = None
     type: str | None = None
 
 
 class PinterestSearchResultStoryPinDataMetadata(BaseModel):
-    canvas_aspect_ratio: float | None = None
     compatible_version: str | None = None
-    is_compatible: bool | None = None
-    is_editable: bool | None = None
-    is_promotable: bool | None = None
-    pin_image_signature: str | None = None
-    pin_title: str | None = None
     root_pin_id: str | None = None
+    pin_title: str | None = None
     root_user_id: str | None = None
     version: str | None = None
+    is_promotable: bool | None = None
+    is_editable: bool | None = None
+    canvas_aspect_ratio: float | None = None
+    is_compatible: bool | None = None
+    pin_image_signature: str | None = None
 
 
 class PinterestSearchResultStoryPinDataPage(BaseModel):
-    blocks: list[PinterestSearchResultStoryPinDataPageBlock] | None = None
     id: str | None = None
-    image_signature: str | None = None
-    image_signature_adjusted: str | None = None
-    layout: int | None = None
+    type: str | None = None
+    blocks: list[PinterestSearchResultStoryPinDataPageBlock] | None = None
     music_attributions: list[PinterestMusicAttribution] | None = None
+    image_signature: str | None = None
+    layout: int | None = None
+    image_signature_adjusted: str | None = None
     should_mute: bool | None = None
     style: PinterestSearchResultStoryPinDataPageStyle | None = None
-    type: str | None = None
     video_signature: str | None = None
 
 
 class PinterestSearchResultStoryPinDataPageBlock(BaseModel):
-    audio: PinterestAudio | None = None
-    block_style: PinterestSearchResultStoryPinDataPageBlockBlockStyle | None = None
-    block_type: int | None = None
     image_signature: str | None = None
-    is_removed: bool | None = None
-    pin: PinterestLinkDomain | None = None
-    pin_id: str | None = None
-    provider_recording_id: str | None = None
-    style_type: int | None = None
     text: str | None = None
     tracking_id: str | None = None
+    block_style: PinterestSearchResultStoryPinDataPageBlockBlockStyle | None = None
+    block_type: int | None = None
     type: str | None = None
     video: PinterestSearchResultStoryPinDataPageBlockVideo | None = None
+    provider_recording_id: str | None = None
+    audio: PinterestAudio | None = None
+    style_type: int | None = None
+    pin: PinterestLinkDomain | None = None
+    pin_id: str | None = None
+    is_removed: bool | None = None
 
 
 class PinterestSearchResultStoryPinDataPageBlockBlockStyle(BaseModel):
-    corner_radius: float | None = None
     height: float | None = None
+    corner_radius: float | None = None
     rotation: float | None = None
     width: float | None = None
     x_coord: float | None = None
@@ -1466,8 +1466,8 @@ class PinterestSearchResultStoryPinDataPageBlockBlockStyle(BaseModel):
 
 
 class PinterestSearchResultStoryPinDataPageBlockVideo(BaseModel):
-    id: str | None = None
     video_list: dict[str, PinterestVideoVariant] | None = None
+    id: str | None = None
 
 
 class PinterestSearchResultStoryPinDataPageStyle(BaseModel):
@@ -1479,102 +1479,102 @@ class PinterestSearchStoryDynamicInsertionOption(BaseModel):
 
 
 class PinterestSearchStoryObjectGridAttribution(BaseModel):
+    node_id: str | None = None
+    id: str | None = None
+    image_small_url: str | None = None
+    image_medium_url: str | None = None
     follower_count: int | None = None
     full_name: str | None = None
-    id: str | None = None
-    image_large_url: str | None = None
-    image_medium_url: str | None = None
-    image_small_url: str | None = None
-    is_ads_only_profile: bool | None = None
-    is_verified_merchant: bool | None = None
-    node_id: str | None = None
     username: str | None = None
+    image_large_url: str | None = None
+    is_ads_only_profile: bool | None = None
     verified_identity: PinterestVerifiedIdentity | None = None
+    is_verified_merchant: bool | None = None
 
 
 class PinterestSearchStoryObjectImage(BaseModel):
+    width: float | None = None
     height: int | None = None
     url: str | None = None
-    width: float | None = None
 
 
 class PinterestSearchStoryObjectImageCrop(BaseModel):
-    max_y: float | None = None
     min_y: float | None = None
+    max_y: float | None = None
 
 
 class PinterestShippingInfo(BaseModel):
-    free_shipping_price: str | None = None
     free_shipping_value: int | None = None
+    free_shipping_price: str | None = None
 
 
 class PinterestUserBoard(BaseModel):
-    access: list[Any] | None = None
-    action: PinterestUserBoardAction | None = None
-    allow_homefeed_recommendations: bool | None = None
-    archived_by_me_at: Any = None
-    aux_fields: PinterestSearchStoryDynamicInsertionOption | None = None
-    background_colour: Any = None
-    board_order_modified_at: str | None = None
-    board_vase: list[PinterestBoardVase] | None = None
-    bookmarks_for_objects: Any = None
-    button_text: Any = None
-    closeup_id: Any = None
-    collaborated_by_me: bool | None = None
-    collaborating_users: list[PinterestCollaboratingUser] | None = None
-    collaborator_count: int | None = None
+    node_id: str | None = None
     collaborator_requests_enabled: bool | None = None
+    board_order_modified_at: str | None = None
+    description: str | None = None
+    cover_images: PinterestUserBoardCoverImage | None = None
+    followed_by_me: bool | None = None
+    created_at: str | None = None
+    section_count: int | None = None
+    collaborator_count: int | None = None
+    collaborated_by_me: bool | None = None
+    should_show_board_collaborators: bool | None = None
+    board_vase: list[PinterestBoardVase] | None = None
+    has_custom_cover: bool | None = None
+    place_saves_count: int | None = None
+    url: str | None = None
+    name: str | None = None
+    allow_homefeed_recommendations: bool | None = None
+    image_cover_hd_url: str | None = None
+    follower_count: int | None = None
+    collaborating_users: list[PinterestCollaboratingUser] | None = None
+    access: list[Any] | None = None
+    image_cover_url: str | None = None
+    is_ads_only: bool | None = None
+    archived_by_me_at: Any = None
+    images: PinterestBoardImages | None = None
+    pin_count: int | None = None
+    id: str | None = None
+    should_show_more_ideas: bool | None = None
+    event_date: Any = None
+    cover_pin: PinterestUserBoardCoverPin | None = None
+    viewer_collaborator_join_requested: bool | None = None
+    should_show_shop_feed: bool | None = None
+    owner: PinterestUserBoardOwner | None = None
+    type: str | None = None
+    event_start_date: Any = None
+    is_collaborative: bool | None = None
+    privacy: str | None = None
+    tracking_params: str | None = None
+    shop_source: Any = None
+    item_actions: list[Any] | None = None
+    referring_source: Any = None
+    objects: list[PinterestUserBoardObject] | None = None
+    expanded_viewport_objects: list[Any] | None = None
+    aux_fields: PinterestSearchStoryDynamicInsertionOption | None = None
+    mapped_display_options: PinterestSearchStoryDynamicInsertionOption | None = None
+    experience_extra_context: PinterestSearchStoryDynamicInsertionOption | None = None
+    copy_: Annotated[PinterestSearchStoryDynamicInsertionOption | None, Field(alias="copy")] = None
+    dynamic_insertion_options: PinterestSearchStoryDynamicInsertionOption | None = None
+    thematic_deal_module: Any = None
+    story_type: str | None = None
+    custom_properties: PinterestSearchStoryDynamicInsertionOption | None = None
+    subtitle: Any = None
+    relationships: PinterestSearchStoryDynamicInsertionOption | None = None
+    background_colour: Any = None
+    action: PinterestUserBoardAction | None = None
+    bookmarks_for_objects: Any = None
+    closeup_id: Any = None
+    user: Any = None
+    seo_board_module: Any = None
+    display_options: PinterestUserBoardDisplayOption | None = None
     container_type: int | None = None
     content_ids: list[str] | None = None
-    copy_: Annotated[PinterestSearchStoryDynamicInsertionOption | None, Field(alias="copy")] = None
-    cover_images: PinterestUserBoardCoverImage | None = None
-    cover_pin: PinterestUserBoardCoverPin | None = None
-    created_at: str | None = None
-    custom_properties: PinterestSearchStoryDynamicInsertionOption | None = None
-    description: str | None = None
-    display_options: PinterestUserBoardDisplayOption | None = None
-    dynamic_insertion_options: PinterestSearchStoryDynamicInsertionOption | None = None
-    event_date: Any = None
-    event_start_date: Any = None
-    expanded_viewport_objects: list[Any] | None = None
     experience: Any = None
-    experience_extra_context: PinterestSearchStoryDynamicInsertionOption | None = None
-    followed_by_me: bool | None = None
-    follower_count: int | None = None
-    has_custom_cover: bool | None = None
-    id: str | None = None
-    image_cover_hd_url: str | None = None
-    image_cover_url: str | None = None
-    images: PinterestBoardImages | None = None
-    is_ads_only: bool | None = None
-    is_collaborative: bool | None = None
-    item_actions: list[Any] | None = None
-    mapped_display_options: PinterestSearchStoryDynamicInsertionOption | None = None
-    name: str | None = None
-    node_id: str | None = None
-    objects: list[PinterestUserBoardObject] | None = None
-    owner: PinterestUserBoardOwner | None = None
-    pin_count: int | None = None
-    place_saves_count: int | None = None
-    privacy: str | None = None
-    referring_source: Any = None
-    relationships: PinterestSearchStoryDynamicInsertionOption | None = None
-    section_count: int | None = None
-    seo_board_module: Any = None
-    shop_source: Any = None
-    should_show_board_collaborators: bool | None = None
-    should_show_more_ideas: bool | None = None
-    should_show_shop_feed: bool | None = None
-    slot: int | None = None
-    story_type: str | None = None
-    subtitle: Any = None
-    thematic_deal_module: Any = None
     title: PinterestBoardFeedStorySubtitle | None = None
-    tracking_params: str | None = None
-    type: str | None = None
-    url: str | None = None
-    user: Any = None
-    viewer_collaborator_join_requested: bool | None = None
+    button_text: Any = None
+    slot: int | None = None
 
 
 class PinterestUserBoardAction(BaseModel):
@@ -1587,101 +1587,101 @@ class PinterestUserBoardCoverImage(BaseModel):
 
 
 class PinterestUserBoardCoverImage236x(BaseModel):
-    height: Any = None
     url: str | None = None
     width: float | None = None
+    height: Any = None
 
 
 class PinterestUserBoardCoverPin(BaseModel):
-    crop: list[int] | None = None
-    custom_cover: bool | None = None
-    image_signature: str | None = None
-    image_size: list[int | None] | None = None
-    image_url: str | None = None
     pin_id: str | None = None
-    scale: int | None = None
-    size: list[int] | None = None
+    image_signature: str | None = None
     timestamp: int | None = None
+    crop: list[int] | None = None
+    size: list[int] | None = None
+    scale: int | None = None
+    image_url: str | None = None
+    custom_cover: bool | None = None
+    image_size: list[int | None] | None = None
 
 
 class PinterestUserBoardDisplayOption(BaseModel):
-    action_button_location: Any = None
-    ai_fwd_presentation_options: PinterestSearchStoryDynamicInsertionOption | None = None
-    align_image_bottom: bool | None = None
-    allow_pin_height_trimming: Any = None
-    background_colors: Any = None
-    background_image_url: Any = None
-    board_display_options: Any = None
-    board_view_type: Any = None
-    carousel_fade_ends: Any = None
-    carousel_item_spacing: Any = None
-    container_grid_span: Any = None
-    content_display: Any = None
-    corner_radius: Any = None
-    cover_image_url: Any = None
-    display_view_state: Any = None
-    explore_article_display_options: Any = None
-    extra_spacing_after: int | None = None
-    extra_spacing_before: int | None = None
-    footer_display: Any = None
-    has_condensed_header: bool | None = None
-    header_display: Any = None
-    header_font: Any = None
-    header_hidden: bool | None = None
-    hide_education_in_stream: Any = None
+    pin_display_options: Any = None
     hide_search_guides_when_visible: bool | None = None
-    hide_ui_in_stream: Any = None
+    ai_fwd_presentation_options: PinterestSearchStoryDynamicInsertionOption | None = None
+    board_view_type: Any = None
+    pin_image_ratio: Any = None
+    item_view_rep_style: Any = None
     horizontal_full_bleed: bool | None = None
     ideas_card_hide_when_offscreen: bool | None = None
-    identifier_icon_name: Any = None
-    image_only: Any = None
-    item_column_span: int | None = None
-    item_view_rep_style: Any = None
-    module_header_alignment: Any = None
-    num_columns_requested: int | None = None
-    pin_display_options: Any = None
-    pin_image_ratio: Any = None
-    scale_up: Any = None
-    shopping_grid_display: Any = None
-    show_bottom_divider: bool | None = None
-    show_content_follow_buttons: Any = None
-    show_dismiss_button: Any = None
-    show_follow_buttons: Any = None
-    show_product_indicator_overlay: Any = None
-    show_separator: bool | None = None
     show_simplified_pin: bool | None = None
-    show_top_divider: bool | None = None
+    container_grid_span: Any = None
+    show_bottom_divider: bool | None = None
+    module_header_alignment: Any = None
+    show_follow_buttons: Any = None
+    carousel_item_spacing: Any = None
+    cover_image_url: Any = None
+    hide_education_in_stream: Any = None
+    show_product_indicator_overlay: Any = None
+    header_hidden: bool | None = None
+    align_image_bottom: bool | None = None
+    background_image_url: Any = None
     spacer_size: Any = None
-    stacked_card_cover_shade_colors: Any = None
-    subtitle_text_color: Any = None
-    tiles_grid_layout: Any = None
     title_text_color: Any = None
+    carousel_fade_ends: Any = None
+    image_only: Any = None
+    allow_pin_height_trimming: Any = None
+    header_display: Any = None
+    shopping_grid_display: Any = None
+    extra_spacing_after: int | None = None
+    footer_display: Any = None
+    display_view_state: Any = None
+    tiles_grid_layout: Any = None
+    extra_spacing_before: int | None = None
+    action_button_location: Any = None
+    board_display_options: Any = None
+    item_column_span: int | None = None
+    show_top_divider: bool | None = None
+    header_font: Any = None
+    show_content_follow_buttons: Any = None
+    hide_ui_in_stream: Any = None
+    show_separator: bool | None = None
+    has_condensed_header: bool | None = None
+    scale_up: Any = None
+    show_dismiss_button: Any = None
+    identifier_icon_name: Any = None
+    content_display: Any = None
+    num_columns_requested: int | None = None
+    explore_article_display_options: Any = None
+    background_colors: Any = None
     use_plain_text_display_mode: bool | None = None
+    stacked_card_cover_shade_colors: Any = None
+    corner_radius: Any = None
+    subtitle_text_color: Any = None
 
 
 class PinterestUserBoardObject(BaseModel):
+    node_id: str | None = None
     closeup_unified_description: str | None = None
     image_medium_url: str | None = None
-    node_id: str | None = None
 
 
 class PinterestUserBoardOwner(BaseModel):
-    ads_only_profile_site: Any = None
-    domain_verified: bool | None = None
-    explicitly_followed_by_me: bool | None = None
-    follower_count: int | None = None
-    full_name: str | None = None
-    id: str | None = None
-    image_medium_url: str | None = None
-    is_ads_only_profile: bool | None = None
-    is_default_image: bool | None = None
-    is_partner: bool | None = None
-    is_private_profile: bool | None = None
-    is_verified_merchant: bool | None = None
     node_id: str | None = None
-    type: str | None = None
-    username: str | None = None
+    is_default_image: bool | None = None
+    full_name: str | None = None
+    ads_only_profile_site: Any = None
+    image_medium_url: str | None = None
     verified_identity: PinterestSearchStoryDynamicInsertionOption | None = None
+    is_verified_merchant: bool | None = None
+    username: str | None = None
+    type: str | None = None
+    follower_count: int | None = None
+    explicitly_followed_by_me: bool | None = None
+    domain_verified: bool | None = None
+    is_ads_only_profile: bool | None = None
+    is_partner: bool | None = None
+    id: str | None = None
+    is_private_profile: bool | None = None
 
 
 class PinterestUserBoardsResponse(BaseModel):
@@ -1695,34 +1695,34 @@ class PinterestVerifiedIdentity(BaseModel):
 
 
 class PinterestVideoVariant(BaseModel):
-    best_captions_url: str | None = None
-    block_id: str | None = None
-    captions_urls: dict[str, str] | None = None
-    duration: int | None = None
-    height: int | None = None
-    thumbnail: str | None = None
-    url: str | None = None
     width: float | None = None
+    height: int | None = None
+    duration: int | None = None
+    url: str | None = None
+    thumbnail: str | None = None
+    captions_urls: dict[str, str] | None = None
+    block_id: str | None = None
+    best_captions_url: str | None = None
 
 
 class PinterestVideos(BaseModel):
-    id: str | None = None
     node_id: str | None = None
+    id: str | None = None
     video_list: dict[str, PinterestVideoVariant] | None = None
 
 
 class SearchPinsParams(BaseModel):
-    cursor: Annotated[str | None, Field(max_length=4096, pattern="^[A-Za-z0-9+/=_-]*$")] = None
-    """
-    The `cursor` from the previous page. Omit it, or send it empty, for the first page.
-    """
     query: Annotated[str, Field(examples=["Italian Pot Roast"], max_length=500, min_length=1)]
     """
     What to search Pinterest pins for.
     """
+    cursor: Annotated[str | None, Field(max_length=4096, pattern="^[A-Za-z0-9+/=_-]*$")] = None
+    """
+    The `cursor` from the previous page. Omit it, or send it empty, for the first page.
+    """
     trim: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: the answer is always the full body.
+    Ignored. The endpoint always returns the full response.
     """
 
 

@@ -17,6 +17,7 @@ from .indeed import Indeed, SyncIndeed
 from .instagram import Instagram, SyncInstagram
 from .linkedin import Linkedin, SyncLinkedin
 from .pinterest import Pinterest, SyncPinterest
+from .pinterest_v2 import PinterestV2, SyncPinterestV2
 from .ponsfamily import Ponsfamily, SyncPonsfamily
 from .pumpfun import Pumpfun, SyncPumpfun
 from .tiktok import SyncTiktok, Tiktok
@@ -40,6 +41,7 @@ __all__ = [
     "Instagram",
     "Linkedin",
     "Pinterest",
+    "PinterestV2",
     "Ponsfamily",
     "Pumpfun",
     "SyncAirbnb",
@@ -57,6 +59,7 @@ __all__ = [
     "SyncInstagram",
     "SyncLinkedin",
     "SyncPinterest",
+    "SyncPinterestV2",
     "SyncPonsfamily",
     "SyncPumpfun",
     "SyncTiktok",

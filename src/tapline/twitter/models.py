@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Annotated, Any, TypeAlias
+from typing import Annotated, Any, Literal, TypeAlias
 
 from pydantic import Field
 
@@ -14,7 +14,7 @@ from tapline._models import PREFER_ENUM, BaseModel
 
 class CacheMaxAge(str, Enum):
     """
-    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
+    Ignored. Profile data may use a two-minute cache, and every request is charged.
     """
 
     FIELD_1D = "1d"
@@ -46,19 +46,19 @@ class PublicError(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -79,7 +79,7 @@ class GetCommunityTweetsParams(BaseModel):
 class GetProfileParams(BaseModel):
     cache_max_age: CacheMaxAge | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
+    Ignored. Profile data may use a two-minute cache, and every request is charged.
     """
     handle: Annotated[
         str | None, Field(examples=["shivanipod"], pattern="^@?[A-Za-z0-9_]{1,15}$")
@@ -91,22 +91,22 @@ class GetProfileParams(BaseModel):
         str | None, Field(examples=["1952858158382428160"], pattern="^[0-9]{1,19}$")
     ] = None
     """
-    Numeric X user id (the account's `rest_id`). It still finds the account after the handle changes. Send `handle` or `user_id`, not both.
+    Numeric X user id. It still finds the account after the handle changes. Send `handle` or `user_id`, not both.
     """
 
 
 class GetTweetParams(BaseModel):
-    cache_max_age: CacheMaxAge | None = None
-    """
-    Accepted for Scrape Creators compatibility. It has no effect. Nothing Tapline answers is older than its 2-minute profile page cache, and every request is charged.
-    """
-    trim: bool | None = None
-    """
-    Accepted for Scrape Creators compatibility. It has no effect: the body is the same either way.
-    """
     url: Annotated[str, Field(examples=["https://x.com/Seahawks/status/2106870968048386134"])]
     """
     Post URL on x.com, twitter.com, mobile.twitter.com or a www. host: /<handle>/status/<id>, /i/status/<id> or /i/web/status/<id>. Trailing segments such as /photo/1 and query strings such as ?s=20 are allowed.
+    """
+    trim: bool | None = None
+    """
+    Ignored. The response is the same either way.
+    """
+    cache_max_age: CacheMaxAge | None = None
+    """
+    Ignored. Profile data may use a two-minute cache, and every request is charged.
     """
 
 
@@ -117,559 +117,416 @@ class GetUserTweetsParams(BaseModel):
     """
     trim: bool | None = None
     """
-    Accepted for Scrape Creators compatibility. It has no effect: the body is the same either way.
+    Ignored. The response is the same either way.
     """
 
 
-class TwitterAdditionalMediaInfo(BaseModel):
-    monetizable: bool
-
-
-class TwitterAdvertisingDisclosure(BaseModel):
-    is_paid_promotion: bool
-
-
-class TwitterAffiliatesHighlightedLabel(BaseModel):
-    label: TwitterUserLabel | None = None
-
-
-class TwitterAiGeneratedDisclosure(BaseModel):
-    has_ai_generated_media: bool
-
-
-class TwitterAllowDownloadStatus(BaseModel):
-    allow_download: bool
-
-
-class TwitterApiImage(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    original_img_height: int
-    original_img_url: str
-    original_img_width: int
-
-
 class TwitterArticle(BaseModel):
-    article_results: TwitterArticleResults
-
-
-class TwitterArticleCoverMedia(BaseModel):
     id: str
-    media_id: str | None = None
-    media_info: TwitterApiImage
-    media_key: str | None = None
-
-
-class TwitterArticleLifecycleState(BaseModel):
-    modified_at_secs: int
-
-
-class TwitterArticleMetadata(BaseModel):
-    first_published_at_secs: int
-
-
-class TwitterArticleResult(BaseModel):
-    cover_media: TwitterArticleCoverMedia
-    id: str
-    lifecycle_state: TwitterArticleLifecycleState | None = None
-    metadata: TwitterArticleMetadata | None = None
-    plain_text: str | None = None
-    preview_text: str
-    rest_id: str
     title: str
+    preview_text: str
+    text: str | None = None
+    created_at: str | None = None
+    first_published_at: str | None = None
+    modified_at: str | None = None
+    entities: list[TwitterArticleEntity] | None = None
+    blocks: list[TwitterArticleBlock] | None = None
+    cover_media: TwitterArticleImage | None = None
+    media: list[TwitterArticleImage] | None = None
 
 
-class TwitterArticleResults(BaseModel):
-    result: TwitterArticleResult
+class TwitterArticleBlock(BaseModel):
+    text: str
+    urls: list[TwitterArticleUrl] | None = None
+    entity_ranges: list[TwitterArticleEntityRange] | None = None
+    type: str
+    style_ranges: list[TwitterArticleStyleRange] | None = None
+
+
+class TwitterArticleEntity(BaseModel):
+    media_ids: list[str] | None = None
+    key: str
+    url: str | None = None
+    type: str
+
+
+class TwitterArticleEntityRange(BaseModel):
+    key: int
+    length: int
+    offset: int
+
+
+class TwitterArticleImage(BaseModel):
+    id: str | None = None
+    url: str
+    width: int
+    height: int
+
+
+class TwitterArticleStyleRange(BaseModel):
+    length: int
+    offset: int
+    style: str
+
+
+class TwitterArticleUrl(BaseModel):
+    text: str
+    from_index: int
+    to_index: int
+
+
+class TwitterAssetAmount(BaseModel):
+    currency_code: str
+    units: str
+    nanos: int
+
+
+class TwitterAssetPricePoint(BaseModel):
+    price: TwitterAssetAmount
+    priced_at: str
+
+
+class TwitterBioEntities(BaseModel):
+    urls: list[TwitterUrlEntity] | None = None
+    user_mentions: list[TwitterBioMention] | None = None
+
+
+class TwitterBioMention(BaseModel):
+    handle: str
+    indices: list[int]
+    is_unmentioned: bool
+
+
+class TwitterBirthDate(BaseModel):
+    visibility: str
+    year_visibility: str
+    day: int | None
+    month: int | None
+    year: int | None
 
 
 class TwitterCard(BaseModel):
-    legacy: TwitterCardLegacy | None = None
-    rest_id: str
-
-
-class TwitterCardBindingValue(BaseModel):
-    key: str
-    value: TwitterCardBindingValueData
-
-
-class TwitterCardBindingValueData(BaseModel):
-    boolean_value: bool | None = None
-    image_value: TwitterCardImageValue | None = None
-    string_value: str | None = None
+    site_user_id: str | None = None
+    creator_user_id: str | None = None
+    title: str | None = None
+    description: str | None = None
+    url: str
+    vanity_url: str | None = None
     type: str
-    user_value: TwitterCardUserValue | None = None
+    domain: str | None = None
+    images: list[TwitterCardImage] | None = None
 
 
-class TwitterCardImageValue(BaseModel):
-    alt: str | None = None
-    height: int
+class TwitterCardImage(BaseModel):
+    name: str
+    alt_text: str | None = None
     url: str
     width: int
+    height: int
 
 
-class TwitterCardLegacy(BaseModel):
-    binding_values: list[TwitterCardBindingValue]
+class TwitterCashtagAttachment(BaseModel):
+    id: str
+    name: str | None = None
+    price: TwitterAssetAmount | None = None
+    market_cap: TwitterAssetAmount | None = None
+    change_24h_percent: float | None = None
+    price_history: list[TwitterAssetPricePoint] | None = None
+    chain: str | None = None
+    contract_address: str | None = None
+    ticker: str | None = None
+    logo_url: str | None = None
+    chain_logo_url: str | None = None
+
+
+class TwitterCashtagEntity(BaseModel):
+    text: str
+    indices: list[int]
+    ticker: str | None = None
+
+
+class TwitterCommunityImage(BaseModel):
+    url: str
+    width: int
+    height: int
+
+
+class TwitterCommunityReference(BaseModel):
+    id: str
     name: str
     url: str
-
-
-class TwitterCardUserValue(BaseModel):
-    id_str: str
-
-
-class TwitterCommunityActions(BaseModel):
-    id: str
-    join_action_result: TwitterUnavailableResult
-
-
-class TwitterCommunityBannerMedia(BaseModel):
-    id: str
-    media_info: TwitterApiImage
 
 
 class TwitterCommunityResponse(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    actions: TwitterCommunityActions
-    created_at: int
-    creator_results: TwitterCommunityUserResults | None = None
-    custom_banner_media: TwitterCommunityBannerMedia | None = None
-    default_banner_media: TwitterCommunityBannerMedia
-    description: str | None = None
     id: str
-    invites_result: TwitterUnavailableResult
-    is_member: bool
-    is_nsfw: bool
-    join_policy: str
-    join_requests_result: TwitterUnavailableResult
-    member_count: int
-    members_facepile_results: list[TwitterCommunityUserResults]
     name: str
-    primary_community_topic: TwitterPrimaryCommunityTopic | None = None
-    rest_id: str
-    role: str
+    description: str | None = None
+    member_count: int
+    is_nsfw: bool
+    created_at: str
+    creator: TwitterUnavailableUser | TwitterUser | None = None
+    members: list[TwitterUnavailableUser | TwitterUser]
     rules: list[TwitterCommunityRule]
+    topic: str | None = None
+    join_policy: str
+    default_banner: TwitterCommunityImage
+    custom_banner: TwitterCommunityImage | None = None
 
 
 class TwitterCommunityRule(BaseModel):
-    description: str | None = None
     id: str
     name: str
-    rest_id: str
-
-
-class TwitterCommunityTweetsItem(BaseModel):
-    bookmark_count: int | None = None
-    bookmarked: bool
-    conversation_id_str: str | None = None
-    created_at: str
-    display_text_range: list[int]
-    entities: TwitterTweetEntities
-    extended_entities: TwitterExtendedEntities | None = None
-    favorite_count: int
-    favorited: bool
-    full_text: str
-    id: str
-    id_str: str
-    in_reply_to_screen_name: str | None = None
-    in_reply_to_status_id_str: str | None = None
-    in_reply_to_user_id_str: str | None = None
-    is_quote_status: bool
-    lang: str
-    possibly_sensitive: bool | None = None
-    quote_count: int
-    quoted_status_id_str: str | None = None
-    quoted_status_permalink: TwitterQuotedStatusPermalink | None = None
-    reply_count: int
-    retweet_count: int
-    retweeted: bool
-    user: TwitterUser
-    user_id_str: str
-    view_count: str | None = None
+    description: str | None = None
 
 
 class TwitterCommunityTweetsResponse(BaseModel):
-    tweets: list[TwitterCommunityTweetsItem]
+    tweets: list[TwitterPost]
 
 
-class TwitterCommunityUser(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    avatar: TwitterUserAvatar | None = None
-    core: TwitterUserCore | None = None
-    id: str
-    is_blue_verified: bool | None = None
-    profile_image_shape: str | None = None
-    rest_id: str | None = None
-
-
-class TwitterCommunityUserResults(BaseModel):
-    id: str
-    result: TwitterCommunityUser | TwitterUnavailableResult
-
-
-class TwitterContentDisclosure(BaseModel):
-    advertising_disclosure: TwitterAdvertisingDisclosure | None = None
-    ai_generated_disclosure: TwitterAiGeneratedDisclosure | None = None
-
-
-class TwitterDmPermissions(BaseModel):
-    can_dm: bool
-
-
-class TwitterEditControl(BaseModel):
-    edit_control_initial: TwitterEditControlInitial | None = None
-    edit_tweet_ids: list[str] | None = None
-    initial_tweet_id: str | None = None
-
-
-class TwitterEditControlInitial(BaseModel):
-    edit_tweet_ids: list[str]
-
-
-class TwitterExtendedEntities(BaseModel):
-    media: list[TwitterMedia]
-
-
-class TwitterHighlightsInfo(BaseModel):
-    can_highlight_tweets: bool
-    highlighted_tweets: str
+class TwitterEntities(BaseModel):
+    urls: list[TwitterUrlEntity] | None = None
+    hashtags: list[TwitterTextEntity] | None = None
+    user_mentions: list[TwitterUserMention] | None = None
+    cashtags: list[TwitterCashtagEntity] | None = None
+    smart_tags: list[TwitterSmartTag] | None = None
 
 
 class TwitterMedia(BaseModel):
-    additional_media_info: TwitterAdditionalMediaInfo | None = None
-    allow_download_status: TwitterAllowDownloadStatus | None = None
-    display_url: str | None = None
-    expanded_url: str | None = None
-    ext_media_availability: TwitterMediaAvailability | None = None
-    id_str: str
-    indices: list[int]
-    media_key: str | None = None
-    media_results: TwitterMediaResults | None = None
-    media_url_https: str
-    original_info: TwitterMediaOriginalInfo | None = None
-    type: str
-    url: str | None = None
-    video_info: TwitterVideoInfo | None = None
-
-
-class TwitterMediaAvailability(BaseModel):
-    status: str
-
-
-class TwitterMediaOriginalInfo(BaseModel):
-    height: int
-    width: int
-
-
-class TwitterMediaPermissions(BaseModel):
-    can_media_tag: bool
-
-
-class TwitterMediaResult(BaseModel):
-    media_key: str
-
-
-class TwitterMediaResults(BaseModel):
-    result: TwitterMediaResult
-
-
-class TwitterNoteTweet(BaseModel):
-    is_expandable: bool
-    note_tweet_results: TwitterNoteTweetResults
-
-
-class TwitterNoteTweetResult(BaseModel):
-    entity_set: TwitterTweetEntities
     id: str
+    source_post_id: str | None = None
+    alt_text: str | None = None
+    expanded_url: str | None = None
+    tco_url: str | None = None
+    availability: str | None = None
+    allow_download: bool | None = None
+    tags: list[TwitterMediaTag] | None = None
+    source_user: TwitterUser | None = None
+    type: str
+    indices: list[int]
+    width: int | None = None
+    height: int | None = None
+    monetizable: bool | None = None
+    duration_millis: int | None = None
+    media_url: str
+    variants: list[TwitterVideoVariant] | None = None
+
+
+class TwitterMediaTag(BaseModel):
+    user_id: str | None = None
+    name: str
+    type: str
+
+
+class TwitterPost(BaseModel):
+    id: str
+    conversation_id: str | None = None
+    note_id: str | None = None
+    edit_history_ids: list[str] | None = None
     text: str
+    preview_text: str | None = None
+    language: str
+    url: str | None = None
+    favorite_count: int
+    quote_count: int
+    reply_count: int
+    retweet_count: int
+    bookmark_count: int | None = None
+    view_count: int | None = None
+    possibly_sensitive: bool | None = None
+    created_at: str
+    author: TwitterUser
+    entities: TwitterEntities
+    quoted_post: TwitterPostReference | None = None
+    reply_to: TwitterReplyReference | None = None
+    card: TwitterCard | None = None
+    article: TwitterArticle | None = None
+    cashtag_attachments: list[TwitterCashtagAttachment] | None = None
+    community: TwitterCommunityReference | None = None
+    preview_entities: TwitterEntities | None = None
+    display_text_range: list[int]
+    is_pinned: bool | None = None
+    is_reply: bool
+    is_quote: bool
+    is_paid_promotion: bool | None = None
+    has_ai_generated_media: bool | None = None
+    media: list[TwitterMedia] | None = None
 
 
-class TwitterNoteTweetResults(BaseModel):
-    result: TwitterNoteTweetResult
-
-
-class TwitterPrimaryCommunityTopic(BaseModel):
-    topic_name: str
-
-
-class TwitterProfileBio(BaseModel):
-    description: str
+class TwitterPostReference(BaseModel):
+    id: str
+    post: TwitterPost | None = None
 
 
 class TwitterProfileResponse(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    affiliates_highlighted_label: TwitterAffiliatesHighlightedLabel | None = None
-    avatar: TwitterUserAvatar | None = None
-    core: TwitterUserCore
-    creator_subscriptions_count: int | None = None
-    dm_permissions: TwitterDmPermissions
-    follow_request_sent: bool
-    has_hidden_subscriptions_on_profile: bool | None = None
-    highlights_info: TwitterHighlightsInfo | None = None
     id: str
+    handle: str | None = None
+    pinned_post_ids: list[str] | None = None
+    name: str | None = None
+    bio: str | None = None
+    url: str | None = None
+    website_urls: list[TwitterProfileUrl] | None = None
+    follower_count: int | None = None
+    following_count: int | None = None
+    post_count: int | None = None
+    subscriber_count: int | None = None
+    creator_subscription_count: int | None = None
+    highlighted_post_count: int | None = None
+    user_seed_post_count: int | None = None
+    business_affiliate_count: int | None = None
+    is_protected: bool | None = None
+    possibly_sensitive: bool | None = None
     is_blue_verified: bool | None = None
-    legacy: TwitterUserLegacy
-    location: TwitterUserLocation | None = None
-    media_permissions: TwitterMediaPermissions
-    privacy: TwitterUserPrivacy | None = None
-    profile_bio: TwitterProfileBio | None = None
+    is_verified: bool | None = None
+    has_hidden_subscriptions: bool | None = None
+    created_at: str | None = None
+    birth_date: TwitterBirthDate | None = None
+    location: str | None = None
+    bio_entities: TwitterBioEntities | None = None
+    identity_label: TwitterUserLabel | None = None
+    verified_type: str | None = None
+    translator_type: str | None = None
     profile_image_shape: str | None = None
-    relationship_perspectives: TwitterRelationshipPerspectives
-    rest_id: str
-    super_follow_eligible: bool | None = None
-    super_followed_by: bool
-    super_following: bool
-    user_seed_tweet_count: int | None = None
-    verification: TwitterUserVerification | None = None
+    profile_image_url: str | None = None
+    banner_url: str | None = None
 
 
-class TwitterQuotedStatusPermalink(BaseModel):
-    display: str
-    expanded: str
+class TwitterProfileUrl(BaseModel):
+    display_url: str
+    expanded_url: str
     url: str
 
 
-class TwitterQuotedStatusResult(BaseModel):
-    result: TwitterTweet
+class TwitterReplyReference(BaseModel):
+    post_id: str
+    user_id: str | None = None
+    handle: str | None = None
+    created_at: str
+    author: TwitterUser | None = None
 
 
-class TwitterRelationshipPerspectives(BaseModel):
-    blocked_by: bool
-    blocking: bool
-    followed_by: bool
-    following: bool
-    muting: bool
+class TwitterSmartTag(BaseModel):
+    text: str
+    indices: list[int]
+    ticker: str | None = None
 
 
 class TwitterTextEntity(BaseModel):
-    indices: list[int]
     text: str
-
-
-class TwitterTweet(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    article: TwitterArticle | None = None
-    card: TwitterCard | None = None
-    content_disclosure: TwitterContentDisclosure | None = None
-    core: TwitterTweetCore
-    edit_control: TwitterEditControl | None = None
-    is_translatable: bool | None = None
-    legacy: TwitterTweetLegacy
-    note_tweet: TwitterNoteTweet | None = None
-    quoted_status_result: TwitterQuotedStatusResult | None = None
-    rest_id: str
-    views: TwitterTweetViews
-
-
-class TwitterTweetCore(BaseModel):
-    user_results: TwitterTweetUserResults
-
-
-class TwitterTweetEntities(BaseModel):
-    hashtags: list[TwitterTextEntity] | None = None
-    media: list[TwitterMedia] | None = None
-    symbols: list[TwitterTextEntity] | None = None
-    urls: list[TwitterUrlEntity] | None = None
-    user_mentions: list[TwitterUserMention] | None = None
-
-
-class TwitterTweetLegacy(BaseModel):
-    bookmark_count: int | None = None
-    bookmarked: bool
-    conversation_id_str: str | None = None
-    created_at: str
-    display_text_range: list[int]
-    entities: TwitterTweetEntities
-    extended_entities: TwitterExtendedEntities | None = None
-    favorite_count: int
-    favorited: bool
-    full_text: str
-    id_str: str
-    in_reply_to_screen_name: str | None = None
-    in_reply_to_status_id_str: str | None = None
-    in_reply_to_user_id_str: str | None = None
-    is_quote_status: bool
-    lang: str
-    possibly_sensitive: bool | None = None
-    quote_count: int
-    quoted_status_id_str: str | None = None
-    quoted_status_permalink: TwitterQuotedStatusPermalink | None = None
-    reply_count: int
-    retweet_count: int
-    retweeted: bool
-    user_id_str: str
+    indices: list[int]
 
 
 class TwitterTweetResponse(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    article: TwitterArticle | None = None
+    id: str
+    conversation_id: str | None = None
+    note_id: str | None = None
+    edit_history_ids: list[str] | None = None
+    text: str
+    preview_text: str | None = None
+    language: str
+    url: str | None = None
+    favorite_count: int
+    quote_count: int
+    reply_count: int
+    retweet_count: int
+    bookmark_count: int | None = None
+    view_count: int | None = None
+    possibly_sensitive: bool | None = None
+    created_at: str
+    author: TwitterUser
+    entities: TwitterEntities
+    quoted_post: TwitterPostReference | None = None
+    reply_to: TwitterReplyReference | None = None
     card: TwitterCard | None = None
-    content_disclosure: TwitterContentDisclosure | None = None
-    core: TwitterTweetCore
-    edit_control: TwitterEditControl | None = None
-    is_translatable: bool | None = None
-    legacy: TwitterTweetLegacy
-    note_tweet: TwitterNoteTweet | None = None
-    quoted_status_result: TwitterQuotedStatusResult | None = None
-    rest_id: str
-    views: TwitterTweetViews
+    article: TwitterArticle | None = None
+    cashtag_attachments: list[TwitterCashtagAttachment] | None = None
+    community: TwitterCommunityReference | None = None
+    preview_entities: TwitterEntities | None = None
+    display_text_range: list[int]
+    is_pinned: bool | None = None
+    is_reply: bool
+    is_quote: bool
+    is_paid_promotion: bool | None = None
+    has_ai_generated_media: bool | None = None
+    media: list[TwitterMedia] | None = None
 
 
-class TwitterTweetUserResults(BaseModel):
-    result: TwitterUser
-
-
-class TwitterTweetViews(BaseModel):
-    count: str | None = None
-    state: str
-
-
-class TwitterUnavailableResult(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
+class TwitterUnavailableUser(BaseModel):
+    id: str
+    is_unavailable: Literal[True]
 
 
 class TwitterUrlEntity(BaseModel):
     display_url: str
     expanded_url: str
-    indices: list[int]
     url: str
+    indices: list[int]
 
 
 class TwitterUser(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    affiliates_highlighted_label: TwitterAffiliatesHighlightedLabel | None = None
-    avatar: TwitterUserAvatar | None = None
-    core: TwitterUserCore
-    dm_permissions: TwitterDmPermissions
-    follow_request_sent: bool
     id: str
-    is_blue_verified: bool | None = None
-    legacy: TwitterUserLegacy
-    location: TwitterUserLocation | None = None
-    media_permissions: TwitterMediaPermissions
-    privacy: TwitterUserPrivacy | None = None
-    profile_bio: TwitterProfileBio | None = None
-    profile_image_shape: str | None = None
-    relationship_perspectives: TwitterRelationshipPerspectives
-    rest_id: str
-    super_follow_eligible: bool | None = None
-    super_followed_by: bool
-    super_following: bool
-    verification: TwitterUserVerification | None = None
-
-
-class TwitterUserAvatar(BaseModel):
-    image_url: str
-
-
-class TwitterUserCore(BaseModel):
-    created_at: str | None = None
+    handle: str | None = None
+    pinned_post_ids: list[str] | None = None
     name: str | None = None
-    screen_name: str
-
-
-class TwitterUserDescriptionEntities(BaseModel):
-    urls: list[TwitterUrlEntity] | None = None
-
-
-class TwitterUserEntities(BaseModel):
-    description: TwitterUserDescriptionEntities
-    url: TwitterUserUrlEntities | None = None
+    bio: str | None = None
+    url: str | None = None
+    website_urls: list[TwitterProfileUrl] | None = None
+    follower_count: int | None = None
+    following_count: int | None = None
+    post_count: int | None = None
+    subscriber_count: int | None = None
+    creator_subscription_count: int | None = None
+    highlighted_post_count: int | None = None
+    user_seed_post_count: int | None = None
+    business_affiliate_count: int | None = None
+    is_protected: bool | None = None
+    possibly_sensitive: bool | None = None
+    is_blue_verified: bool | None = None
+    is_verified: bool | None = None
+    has_hidden_subscriptions: bool | None = None
+    created_at: str | None = None
+    birth_date: TwitterBirthDate | None = None
+    location: str | None = None
+    bio_entities: TwitterBioEntities | None = None
+    identity_label: TwitterUserLabel | None = None
+    verified_type: str | None = None
+    translator_type: str | None = None
+    profile_image_shape: str | None = None
+    profile_image_url: str | None = None
+    banner_url: str | None = None
 
 
 class TwitterUserLabel(BaseModel):
-    badge: TwitterUserLabelBadge
     description: str
-    url: TwitterUserLabelUrl
-    userLabelDisplayType: str
-    userLabelType: str
-
-
-class TwitterUserLabelBadge(BaseModel):
-    url: str
-
-
-class TwitterUserLabelUrl(BaseModel):
-    url: str
-
-
-class TwitterUserLegacy(BaseModel):
-    created_at: str | None = None
-    default_profile_image: bool | None = None
-    description: str | None = None
-    entities: TwitterUserEntities | None = None
-    follow_request_sent: bool
-    followers_count: int | None = None
-    friends_count: int | None = None
-    location: str | None = None
-    name: str | None = None
-    needs_phone_verification: bool
-    notifications: bool
-    pinned_tweet_ids_str: list[str] | None = None
-    possibly_sensitive: bool | None = None
-    profile_banner_url: str | None = None
-    profile_image_url_https: str | None = None
-    screen_name: str | None = None
-    statuses_count: int | None = None
-    translator_type: str | None = None
+    long_description: str | None = None
     url: str | None = None
+    long_description_mentions: list[TwitterUserLabelMention] | None = None
+    label_type: str | None = None
+    badge_url: str | None = None
 
 
-class TwitterUserLocation(BaseModel):
-    location: str
+class TwitterUserLabelMention(BaseModel):
+    handle: str
+    indices: list[int]
 
 
 class TwitterUserMention(BaseModel):
-    id_str: str
+    id: str | None = None
+    handle: str
     indices: list[int]
-    screen_name: str
-
-
-class TwitterUserPrivacy(BaseModel):
-    protected: bool
-
-
-class TwitterUserTweetsItem(BaseModel):
-    field__typename: Annotated[str, Field(alias="__typename")]
-    article: TwitterArticle | None = None
-    card: TwitterCard | None = None
-    content_disclosure: TwitterContentDisclosure | None = None
-    core: TwitterTweetCore
-    edit_control: TwitterEditControl | None = None
-    is_translatable: bool | None = None
-    legacy: TwitterTweetLegacy
-    note_tweet: TwitterNoteTweet | None = None
-    quoted_status_result: TwitterQuotedStatusResult | None = None
-    rest_id: str
-    url: str
-    views: TwitterTweetViews
 
 
 class TwitterUserTweetsResponse(BaseModel):
-    tweets: list[TwitterUserTweetsItem]
-
-
-class TwitterUserUrlEntities(BaseModel):
-    urls: list[TwitterUrlEntity]
-
-
-class TwitterUserVerification(BaseModel):
-    verified: bool | None = None
-    verified_type: str | None = None
-
-
-class TwitterVideoInfo(BaseModel):
-    aspect_ratio: list[int] | None = None
-    duration_millis: int | None = None
-    variants: list[TwitterVideoVariant]
+    tweets: list[TwitterPost]
 
 
 class TwitterVideoVariant(BaseModel):
-    bitrate: int | None = None
-    content_type: str
     url: str
+    content_type: str
+    bitrate: int | None = None
 
 
-TwitterQuotedStatusResult.model_rebuild()
+TwitterCommunityTweetsResponse.model_rebuild()
+TwitterPost.model_rebuild()
 
 
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

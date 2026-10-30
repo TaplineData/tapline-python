@@ -8,11 +8,10 @@ resources call the same builder, so the twins differ only in ``await``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import Literal
 
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
-from .._types import Body, NotGiven, Timeout, not_given
+from .._types import NotGiven, Timeout, not_given
 from ..instagram import (
     InstagramAudioReelsResponse,
     InstagramBasicProfileResponse,
@@ -30,19 +29,14 @@ from ..instagram import (
 
 __all__ = ["Instagram", "SyncInstagram"]
 
-_PREFIX = "/v"
-
-
-def _body(fields: Mapping[str, object]) -> Body:
-    """A JSON body with every omitted argument left out, so the server applies its default."""
-    return {name: value for name, value in fields.items() if value is not None}
+_PREFIX = "/v1/instagram"
 
 
 def _get_audio_reels(
     *, audio_id: str, cursor: str | None = None
 ) -> Request[InstagramAudioReelsResponse]:
     return Request(
-        _PREFIX + "1/instagram/audio/reels",
+        _PREFIX + "/audio/reels",
         InstagramAudioReelsResponse,
         {"audio_id": audio_id, "cursor": cursor},
     )
@@ -52,7 +46,7 @@ def _get_basic_profile(
     *, user_id: str, cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None
 ) -> Request[InstagramBasicProfileResponse]:
     return Request(
-        _PREFIX + "1/instagram/basic-profile",
+        _PREFIX + "/basic-profile",
         InstagramBasicProfileResponse,
         {"userId": user_id, "cache_max_age": cache_max_age},
     )
@@ -68,7 +62,7 @@ def _get_post(
     trim: bool = False,
 ) -> Request[InstagramPostResponse]:
     return Request(
-        _PREFIX + "1/instagram/post",
+        _PREFIX + "/post",
         InstagramPostResponse,
         {
             "url": url,
@@ -85,7 +79,7 @@ def _get_post_comments(
     *, url: str, cursor: str | None = None, include_replies: Literal[False] | None = None
 ) -> Request[InstagramCommentsResponse]:
     return Request(
-        _PREFIX + "1/instagram/post/comments",
+        _PREFIX + "/post/comments",
         InstagramCommentsResponse,
         {"url": url, "cursor": cursor, "include_replies": include_replies},
     )
@@ -98,7 +92,7 @@ def _get_profile(
     trim: bool = False,
 ) -> Request[InstagramProfileResponse]:
     return Request(
-        _PREFIX + "1/instagram/profile",
+        _PREFIX + "/profile",
         InstagramProfileResponse,
         {"handle": handle, "cache_max_age": cache_max_age, "trim": trim},
     )
@@ -108,7 +102,7 @@ def _get_post_count(
     *, handle: str, allow_estimated: bool | None = None
 ) -> Request[InstagramPostCountResponse]:
     return Request(
-        _PREFIX + "1/instagram/profile/post-count",
+        _PREFIX + "/profile/post-count",
         InstagramPostCountResponse,
         {"handle": handle, "allow_estimated": allow_estimated},
     )
@@ -118,20 +112,18 @@ def _search_popular(
     *, query: str, cursor: str | None = None
 ) -> Request[InstagramPopularSearchResponse]:
     return Request(
-        _PREFIX + "1/instagram/search/popular",
+        _PREFIX + "/search/popular",
         InstagramPopularSearchResponse,
         {"query": query, "cursor": cursor},
     )
 
 
 def _get_embed(*, handle: str) -> Request[InstagramEmbedResponse]:
-    return Request(_PREFIX + "1/instagram/user/embed", InstagramEmbedResponse, {"handle": handle})
+    return Request(_PREFIX + "/user/embed", InstagramEmbedResponse, {"handle": handle})
 
 
 def _get_highlight_detail(*, id: str) -> Request[InstagramHighlightDetailResponse]:
-    return Request(
-        _PREFIX + "1/instagram/user/highlight/detail", InstagramHighlightDetailResponse, {"id": id}
-    )
+    return Request(_PREFIX + "/user/highlight/detail", InstagramHighlightDetailResponse, {"id": id})
 
 
 def _get_highlights(
@@ -140,7 +132,7 @@ def _get_highlights(
     if handle is None and user_id is None:
         raise ValueError("one of handle, user_id is required")
     return Request(
-        _PREFIX + "1/instagram/user/highlights",
+        _PREFIX + "/user/highlights",
         InstagramHighlightsResponse,
         {"handle": handle, "user_id": user_id},
     )
@@ -150,7 +142,7 @@ def _get_user_posts(
     *, handle: str, next_max_id: str | None = None, trim: bool = False
 ) -> Request[InstagramUserPostsResponse]:
     return Request(
-        _PREFIX + "1/instagram/user/posts",
+        _PREFIX + "/user/posts",
         InstagramUserPostsResponse,
         {"handle": handle, "next_max_id": next_max_id, "trim": trim},
     )
@@ -166,7 +158,7 @@ def _get_user_reels(
     if handle is None and user_id is None:
         raise ValueError("one of handle, user_id is required")
     return Request(
-        _PREFIX + "1/instagram/user/reels",
+        _PREFIX + "/user/reels",
         InstagramUserReelsResponse,
         {"handle": handle, "max_id": max_id, "trim": trim, "user_id": user_id},
     )
@@ -176,7 +168,7 @@ class Instagram(AsyncAPIResource):
     """The Instagram endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.instagram`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -191,7 +183,7 @@ class Instagram(AsyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramAudioReelsResponse:
-        """Reels that use an audio track, from instagram.com/reels/audio/<audio_id>/: Instagram's media objects with play counts, video versions and creators. Pass `cursor` back while `has_more` is true. Costs 1 credit.
+        """Returns normalized audio attribution and posts using the track. Pass `pagination.next_cursor` as `cursor` while `pagination.has_more` is true. Costs 1 credit.
 
         Args:
             audio_id: The audio id from an audio page URL,
@@ -211,12 +203,12 @@ class Instagram(AsyncAPIResource):
         cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramBasicProfileResponse:
-        """A profile summary by numeric user id: username, full name, biography, bio links, profile picture (standard and HD), verification, privacy, follower and following counts and account type. The body is Instagram's profile object at the top level. Costs 1 credit.
+        """Returns normalized profile data by numeric user ID. Costs 1 credit.
 
         Args:
             user_id: Numeric Instagram user id.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -237,24 +229,22 @@ class Instagram(AsyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostResponse:
-        """One post or reel in Scrape Creators' `xdt_shortcode_media` shape: caption, like and comment counts, image and video URLs, owner, tagged users, carousel children, the first page of comments and, for videos, `video_play_count` (Instagram-only plays) and `video_duration`. `created_at` is ISO 8601 and `taken_at_timestamp` the Unix time. `include_play_count=false` skips the play-count lookup. `trim=true` answers `xdt_shortcode_media` at the top level with Scrape Creators' trimmed fields. Costs 2 credits.
+        """Returns a normalized post and its partial comment preview. Set `include_play_count=false` to skip the extra play-count lookup. `trim` is accepted for compatibility and does not remove fields. Costs 1 credit.
 
         Args:
             url: Instagram post or reel URL:
                 https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
                 /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
                 instagr.am. Query strings are allowed.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            download_media: Accepted for Scrape Creators compatibility only as
-                false: Tapline does not re-host media.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            download_media: Must be false. Tapline does not re-host media.
             include_play_count: Set to false to omit `video_play_count` and skip the
                 extra lookup it needs. Defaults to true. Only videos carry a play
                 count.
             region: Two-letter country code for the exit the request leaves from.
                 Defaults to US, where Instagram shows licensed music.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -280,7 +270,7 @@ class Instagram(AsyncAPIResource):
         include_replies: Literal[False] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramCommentsResponse:
-        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
+        """Returns normalized comments. Pass `pagination.next_cursor` as `cursor` while `pagination.has_more` is true. Costs 1 credit.
 
         Args:
             url: Instagram post or reel URL:
@@ -288,8 +278,7 @@ class Instagram(AsyncAPIResource):
                 /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
                 instagr.am. Query strings are allowed.
             cursor: The `cursor` from the previous page. Omit it for the first page.
-            include_replies: Accepted for Scrape Creators compatibility only as
-                false: Instagram does not show replies to logged-out visitors.
+            include_replies: Must be false. Comment replies are not returned.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -308,14 +297,13 @@ class Instagram(AsyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramProfileResponse:
-        """A public Instagram profile in Scrape Creators' `/v1/instagram/profile` shape: biography, bio links, follower and following counts, verification, profile pictures and the 12 newest posts under `data.user.edge_owner_to_timeline_media` (pinned first). `edge_owner_to_timeline_media.count` is the size of that batch, not the account's post total; use `/v1/instagram/profile/post-count` for the total. Fields the logged-out web does not show (business contact details, category, highlight count) carry Scrape Creators' defaults. A private account answers its profile with an empty timeline. With `trim=true` the user object keeps Scrape Creators' trimmed field set. Costs 1 credit.
+        """Returns normalized profile data and recent posts. `recent_posts_status` distinguishes available, private, and unavailable timelines. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -332,12 +320,11 @@ class Instagram(AsyncAPIResource):
         allow_estimated: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostCountResponse:
-        """The exact number of posts on a public profile. `is_estimated` is always false: Tapline reads the exact count, so `allow_estimated` has no effect. Costs 1 credit.
+        """Returns the exact post count for a profile. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            allow_estimated: Accepted for Scrape Creators compatibility. It has no
-                effect: Tapline always answers the exact count.
+            allow_estimated: Ignored. Tapline always returns the exact count.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -354,7 +341,7 @@ class Instagram(AsyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPopularSearchResponse:
-        """Instagram's public popular page for a topic. The first page carries the topic title, Instagram's generated description, suggested related searches and 12 posts; pass `cursor` back for 12 more. Instagram no longer publishes a post total or the description's sources there, so `total_media_count` is null and `source_uris` empty. Costs 2 credits.
+        """Returns popular posts and page context. Context fields are null on later pages because only the first page carries them. Costs 3 credits.
 
         Args:
             query: The topic to look up, such as basketball.
@@ -372,7 +359,7 @@ class Instagram(AsyncAPIResource):
         handle: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramEmbedResponse:
-        """The HTML of Instagram's embeddable profile widget, instagram.com/<handle>/embed/, as one string. Costs 1 credit.
+        """Returns an embeddable profile widget as HTML. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
@@ -389,7 +376,7 @@ class Instagram(AsyncAPIResource):
         id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramHighlightDetailResponse:
-        """Everything in one story highlight: cover, title, owner and every story item with its media type, image and video versions, dimensions, timestamps and stickers. The body is Instagram's reel object at the top level. Costs 1 credit.
+        """Returns a normalized highlight and its ordered stories, media, attribution, links, mentions, locations, and meaningful sticker content when supplied. Costs 1 credit.
 
         Args:
             id: The highlight id from `/v1/instagram/user/highlights`, with or
@@ -408,7 +395,7 @@ class Instagram(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramHighlightsResponse:
-        """The story highlight albums a logged-out visitor sees on a profile: id, title, cover image and owner. Send `handle` or `user_id`; `handle` answers faster here, `user_id` costs one extra lookup. Instagram shows logged-out visitors only some albums and no way to page through the rest. Costs 1 credit.
+        """Returns normalized story highlight summaries for a profile. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
@@ -430,15 +417,15 @@ class Instagram(AsyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserPostsResponse:
-        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
+        """Returns normalized profile and post data. Pass `pagination.next_cursor` as `next_max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page, or the
-                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
-                first page.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            next_max_id: The `next_max_id` from the previous page
+                (`timeline:AQHT…`), or the `end_cursor` of `/v1/instagram/profile`'s
+                timeline (`mobile:AQHT…`). The bare `AQHT…` cursor works too. Omit
+                it for the first page.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -457,7 +444,7 @@ class Instagram(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserReelsResponse:
-        """A page of a user's reels: each `items[].media` is Instagram's media object with play, like and comment counts, video versions, thumbnails, `url` and an ISO 8601 `created_at`. Instagram leaves the caption out of this list. Pass `paging_info.max_id` back as `max_id` for the next page. Send `user_id` for a faster answer: `handle` costs one extra lookup. `trim=true` answers flat items and a top-level `max_id`. Costs 1 credit.
+        """Returns normalized reels. Pass `pagination.next_cursor` as `max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 2 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
@@ -465,8 +452,7 @@ class Instagram(AsyncAPIResource):
             max_id: The `paging_info.max_id` (or trimmed `max_id`) from the previous
                 page. Omit it for the first page. It is base64, so percent-encode
                 `+` and `/` in a hand-built URL.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            trim: Set to true to return fewer fields per item.
             user_id: Numeric Instagram user id. Send this or `handle`; when both are
                 sent, `user_id` wins.
             timeout: Overrides the client's timeout for this request.
@@ -484,7 +470,7 @@ class SyncInstagram(SyncAPIResource):
     """The Instagram endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.instagram`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -499,7 +485,7 @@ class SyncInstagram(SyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramAudioReelsResponse:
-        """Reels that use an audio track, from instagram.com/reels/audio/<audio_id>/: Instagram's media objects with play counts, video versions and creators. Pass `cursor` back while `has_more` is true. Costs 1 credit.
+        """Returns normalized audio attribution and posts using the track. Pass `pagination.next_cursor` as `cursor` while `pagination.has_more` is true. Costs 1 credit.
 
         Args:
             audio_id: The audio id from an audio page URL,
@@ -519,12 +505,12 @@ class SyncInstagram(SyncAPIResource):
         cache_max_age: Literal["1d", "3d", "7d", "14d", "30d"] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramBasicProfileResponse:
-        """A profile summary by numeric user id: username, full name, biography, bio links, profile picture (standard and HD), verification, privacy, follower and following counts and account type. The body is Instagram's profile object at the top level. Costs 1 credit.
+        """Returns normalized profile data by numeric user ID. Costs 1 credit.
 
         Args:
             user_id: Numeric Instagram user id.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -545,24 +531,22 @@ class SyncInstagram(SyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostResponse:
-        """One post or reel in Scrape Creators' `xdt_shortcode_media` shape: caption, like and comment counts, image and video URLs, owner, tagged users, carousel children, the first page of comments and, for videos, `video_play_count` (Instagram-only plays) and `video_duration`. `created_at` is ISO 8601 and `taken_at_timestamp` the Unix time. `include_play_count=false` skips the play-count lookup. `trim=true` answers `xdt_shortcode_media` at the top level with Scrape Creators' trimmed fields. Costs 2 credits.
+        """Returns a normalized post and its partial comment preview. Set `include_play_count=false` to skip the extra play-count lookup. `trim` is accepted for compatibility and does not remove fields. Costs 1 credit.
 
         Args:
             url: Instagram post or reel URL:
                 https://www.instagram.com/p/<shortcode>/, /reel/<shortcode>/,
                 /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
                 instagr.am. Query strings are allowed.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            download_media: Accepted for Scrape Creators compatibility only as
-                false: Tapline does not re-host media.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            download_media: Must be false. Tapline does not re-host media.
             include_play_count: Set to false to omit `video_play_count` and skip the
                 extra lookup it needs. Defaults to true. Only videos carry a play
                 count.
             region: Two-letter country code for the exit the request leaves from.
                 Defaults to US, where Instagram shows licensed music.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -588,7 +572,7 @@ class SyncInstagram(SyncAPIResource):
         include_replies: Literal[False] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramCommentsResponse:
-        """A page of up to 15 comments on a public post or reel: text, ISO 8601 `created_at`, like count and the commenter's id, username, verification and profile picture. Instagram does not show reply counts to logged-out visitors, so `child_comment_count` is null. Pass `cursor` back for the next page; it is null on the last one. Costs 1 credit.
+        """Returns normalized comments. Pass `pagination.next_cursor` as `cursor` while `pagination.has_more` is true. Costs 1 credit.
 
         Args:
             url: Instagram post or reel URL:
@@ -596,8 +580,7 @@ class SyncInstagram(SyncAPIResource):
                 /reels/<shortcode>/ or /tv/<shortcode>/, on instagram.com or
                 instagr.am. Query strings are allowed.
             cursor: The `cursor` from the previous page. Omit it for the first page.
-            include_replies: Accepted for Scrape Creators compatibility only as
-                false: Instagram does not show replies to logged-out visitors.
+            include_replies: Must be false. Comment replies are not returned.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -616,14 +599,13 @@ class SyncInstagram(SyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramProfileResponse:
-        """A public Instagram profile in Scrape Creators' `/v1/instagram/profile` shape: biography, bio links, follower and following counts, verification, profile pictures and the 12 newest posts under `data.user.edge_owner_to_timeline_media` (pinned first). `edge_owner_to_timeline_media.count` is the size of that batch, not the account's post total; use `/v1/instagram/profile/post-count` for the total. Fields the logged-out web does not show (business contact details, category, highlight count) carry Scrape Creators' defaults. A private account answers its profile with an empty timeline. With `trim=true` the user object keeps Scrape Creators' trimmed field set. Costs 1 credit.
+        """Returns normalized profile data and recent posts. `recent_posts_status` distinguishes available, private, and unavailable timelines. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            cache_max_age: Accepted for Scrape Creators compatibility. It has no
-                effect: every request fetches a live answer and is charged.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            cache_max_age: Ignored. Every request fetches a fresh response and is
+                charged.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -640,12 +622,11 @@ class SyncInstagram(SyncAPIResource):
         allow_estimated: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostCountResponse:
-        """The exact number of posts on a public profile. `is_estimated` is always false: Tapline reads the exact count, so `allow_estimated` has no effect. Costs 1 credit.
+        """Returns the exact post count for a profile. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            allow_estimated: Accepted for Scrape Creators compatibility. It has no
-                effect: Tapline always answers the exact count.
+            allow_estimated: Ignored. Tapline always returns the exact count.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -662,7 +643,7 @@ class SyncInstagram(SyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPopularSearchResponse:
-        """Instagram's public popular page for a topic. The first page carries the topic title, Instagram's generated description, suggested related searches and 12 posts; pass `cursor` back for 12 more. Instagram no longer publishes a post total or the description's sources there, so `total_media_count` is null and `source_uris` empty. Costs 2 credits.
+        """Returns popular posts and page context. Context fields are null on later pages because only the first page carries them. Costs 3 credits.
 
         Args:
             query: The topic to look up, such as basketball.
@@ -680,7 +661,7 @@ class SyncInstagram(SyncAPIResource):
         handle: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramEmbedResponse:
-        """The HTML of Instagram's embeddable profile widget, instagram.com/<handle>/embed/, as one string. Costs 1 credit.
+        """Returns an embeddable profile widget as HTML. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
@@ -697,7 +678,7 @@ class SyncInstagram(SyncAPIResource):
         id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramHighlightDetailResponse:
-        """Everything in one story highlight: cover, title, owner and every story item with its media type, image and video versions, dimensions, timestamps and stickers. The body is Instagram's reel object at the top level. Costs 1 credit.
+        """Returns a normalized highlight and its ordered stories, media, attribution, links, mentions, locations, and meaningful sticker content when supplied. Costs 1 credit.
 
         Args:
             id: The highlight id from `/v1/instagram/user/highlights`, with or
@@ -716,7 +697,7 @@ class SyncInstagram(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramHighlightsResponse:
-        """The story highlight albums a logged-out visitor sees on a profile: id, title, cover image and owner. Send `handle` or `user_id`; `handle` answers faster here, `user_id` costs one extra lookup. Instagram shows logged-out visitors only some albums and no way to page through the rest. Costs 1 credit.
+        """Returns normalized story highlight summaries for a profile. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
@@ -738,15 +719,15 @@ class SyncInstagram(SyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserPostsResponse:
-        """A page of 12 of a user's posts, newest first, as Instagram's feed returns them: media type, shortcode, caption, like, comment and play counts, image and video versions, tagged users, `url` and an ISO 8601 `created_at` (`taken_at` stays the Unix time). Pass `next_max_id` back for the next page while `more_available` is true. An unknown handle answers an empty page; a private account answers 404. `trim=true` keeps Scrape Creators' trimmed item fields. Costs 1 credit.
+        """Returns normalized profile and post data. Pass `pagination.next_cursor` as `next_max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page, or the
-                `end_cursor` of `/v1/instagram/profile`'s timeline. Omit it for the
-                first page.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            next_max_id: The `next_max_id` from the previous page
+                (`timeline:AQHT…`), or the `end_cursor` of `/v1/instagram/profile`'s
+                timeline (`mobile:AQHT…`). The bare `AQHT…` cursor works too. Omit
+                it for the first page.
+            trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -765,7 +746,7 @@ class SyncInstagram(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserReelsResponse:
-        """A page of a user's reels: each `items[].media` is Instagram's media object with play, like and comment counts, video versions, thumbnails, `url` and an ISO 8601 `created_at`. Instagram leaves the caption out of this list. Pass `paging_info.max_id` back as `max_id` for the next page. Send `user_id` for a faster answer: `handle` costs one extra lookup. `trim=true` answers flat items and a top-level `max_id`. Costs 1 credit.
+        """Returns normalized reels. Pass `pagination.next_cursor` as `max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 2 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
@@ -773,8 +754,7 @@ class SyncInstagram(SyncAPIResource):
             max_id: The `paging_info.max_id` (or trimmed `max_id`) from the previous
                 page. Omit it for the first page. It is base64, so percent-encode
                 `+` and `/` in a hand-built URL.
-            trim: Set to true for Scrape Creators' trimmed answer: fewer fields per
-                item, same values.
+            trim: Set to true to return fewer fields per item.
             user_id: Numeric Instagram user id. Send this or `handle`; when both are
                 sent, `user_id` wins.
             timeout: Overrides the client's timeout for this request.

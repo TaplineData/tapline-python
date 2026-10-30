@@ -67,26 +67,26 @@ class PublicError(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class FacebookCaption(BaseModel):
     language: str | None
-    locale: str | None
     url: str | None
+    locale: str | None
 
 
 class FacebookCode(BaseModel):
@@ -95,21 +95,21 @@ class FacebookCode(BaseModel):
 
 
 class FacebookCursorPagination(BaseModel):
-    has_more: bool | None
     next_cursor: str | None
+    has_more: bool | None
 
 
 class FacebookDashStream(BaseModel):
-    bandwidth: int | None
-    codecs: str | None
-    content_type: str | None
-    frame_rate: float | None
-    height: int | None
     id: str | None
-    mime_type: str | None
-    quality_label: str | None
     url: str | None
+    content_type: str | None
+    mime_type: str | None
+    codecs: str | None
+    bandwidth: int | None
     width: int | None
+    height: int | None
+    frame_rate: float | None
+    quality_label: str | None
 
 
 class FacebookFocus(BaseModel):
@@ -118,152 +118,150 @@ class FacebookFocus(BaseModel):
 
 
 class FacebookImage(BaseModel):
-    height: int | None
     url: str | None
     width: int | None
+    height: int | None
 
 
 class FacebookListing(BaseModel):
-    attributes: list[FacebookListingAttribute]
-    badges: list[str]
-    base_title: str | None
-    can_share: bool | None
-    category: FacebookListingCategory
-    created_at: str | None
-    cross_post_marketplace_flags: list[bool]
-    delivery_types: list[FacebookCode]
-    description: str | None
-    details_type: FacebookCode
-    friends_visibility: FacebookCode
-    hashtags: list[str]
     id: str
-    inventory_count: int | None
-    inventory_type: FacebookCode
-    is_multi_variant_listing: bool | None
-    location: FacebookListingLocation
-    price: FacebookMoney | None
-    price_in_cents: int | None
     product_item_id: str | None
-    search_pivots: list[str]
-    seller: FacebookListingSellerProfile
-    seller_type: str | None
+    title: str | None
+    base_title: str | None
+    description: str | None
     share_url: str | None
-    shipping: FacebookListingShipping
-    status: FacebookListingStatus
+    price: FacebookMoney | None
+    inventory_count: int | None
+    price_in_cents: int | None
     strikethrough_price: FacebookMoney | None
     sweepstake_status: str | None
+    friends_visibility: FacebookCode
+    can_share: bool | None
+    status: FacebookListingStatus
+    created_at: str | None
+    category: FacebookListingCategory
     taxonomy: list[FacebookListingCategory]
-    title: str | None
+    location: FacebookListingLocation
+    seller: FacebookListingSellerProfile
+    hashtags: list[str]
+    attributes: list[FacebookListingAttribute]
+    delivery_types: list[FacebookCode]
+    shipping: FacebookListingShipping
+    inventory_type: FacebookCode
+    search_pivots: list[str]
+    details_type: FacebookCode
+    seller_type: str | None
     vehicle_seller_type: str | None
+    is_multi_variant_listing: bool | None
+    cross_post_marketplace_flags: list[bool]
+    badges: list[str]
 
 
 class FacebookListingAttribute(BaseModel):
+    name: str | None
     code: str | None
     label: str | None
-    name: str | None
 
 
 class FacebookListingCard(BaseModel):
-    category: FacebookListingCategory
-    created_at: str | None
-    custom_title: str | None
-    delivery_types: list[FacebookCode]
-    feed_story_id: str | None
-    feed_story_type: FacebookCode
     id: str | None
-    inventory_count: int | None
-    listing_tags: list[str]
-    location: FacebookListingLocation
-    max_price: FacebookMoney | None
-    min_price: FacebookMoney | None
+    video_id: str | None
+    product_item_id: str | None
     origin_group_id: str | None
     parent_listing_id: str | None
-    photos: list[FacebookPhoto]
-    price: FacebookMoney | None
-    price_in_cents: int | None
-    primary_photo: FacebookPhoto | None
-    product_item_id: str | None
-    seller: FacebookProfileRef | None
-    share_url: str | None
-    status: FacebookListingStatus
-    strikethrough_price: FacebookMoney | None
-    subtitles: list[str]
+    feed_story_id: str | None
     title: str | None
-    video_id: str | None
+    custom_title: str | None
+    subtitles: list[str]
+    share_url: str | None
+    price: FacebookMoney | None
+    inventory_count: int | None
+    price_in_cents: int | None
+    strikethrough_price: FacebookMoney | None
+    min_price: FacebookMoney | None
+    max_price: FacebookMoney | None
+    status: FacebookListingStatus
+    created_at: str | None
+    category: FacebookListingCategory
+    location: FacebookListingLocation
+    seller: FacebookProfileRef | None
+    delivery_types: list[FacebookCode]
+    listing_tags: list[str]
+    feed_story_type: FacebookCode
+    primary_photo: FacebookPhoto | None
+    photos: list[FacebookPhoto]
 
 
 class FacebookListingCategory(BaseModel):
     id: str | None
-    name: str | None
-    seo_id: str | None
     slug: str | None
+    seo_id: str | None
+    name: str | None
 
 
 class FacebookListingLocation(BaseModel):
-    city: str | None
     city_id: str | None
+    location_vanity_or_id: str | None
+    text: str | None
+    city: str | None
+    state: str | None
     city_name: str | None
     latitude: float | None
-    location_vanity_or_id: str | None
     longitude: float | None
-    state: str | None
-    text: str | None
 
 
 class FacebookListingPhotos(BaseModel):
-    is_listing_hidden: bool | None
     listing_id: str
+    is_listing_hidden: bool | None
     photos: list[FacebookPhoto]
     videos: list[FacebookVideo]
 
 
 class FacebookListingSearch(BaseModel):
-    is_jobs_full_page_takeover: bool | None
-    session_id: str | None
     vertical: FacebookCode
 
 
 class FacebookListingSellerProfile(BaseModel):
+    marketplace_profile_id: str | None
+    seller_rating: FacebookRating
     buyer_and_seller_rating: FacebookRating
     joined_at: str | None
-    marketplace_profile_id: str | None
-    orders_shipped: int | None
     seller: FacebookProfileRef
-    seller_rating: FacebookRating
+    orders_shipped: int | None
     shows_verified_badge: bool | None
 
 
 class FacebookListingShipping(BaseModel):
-    estimated_delivery_window: str | None
-    has_free_shipping_discounts: bool | None
-    is_buy_now_enabled: bool | None
-    is_checkout_enabled: bool | None
+    shipping_price_text: str | None
     is_purchase_protected: bool | None
     is_shipping_offered: bool | None
-    shipping_price_text: str | None
+    is_buy_now_enabled: bool | None
+    is_checkout_enabled: bool | None
+    has_free_shipping_discounts: bool | None
+    estimated_delivery_window: str | None
 
 
 class FacebookListingStatus(BaseModel):
     availability: FacebookCode
-    created_with_seller_app: bool | None
-    is_draft: bool | None
     is_hidden: bool | None
     is_live: bool | None
     is_pending: bool | None
-    is_rejected: bool | None
     is_sold: bool | None
+    is_draft: bool | None
+    is_rejected: bool | None
+    created_with_seller_app: bool | None
     messaging_enabled: bool | None
 
 
 class FacebookListingsPage(BaseModel):
     listings: list[FacebookListingCard]
+    search: FacebookListingSearch
+    seo_title: str | None
+    seo_description: str | None
+    related_categories: list[FacebookMarketplaceRelatedCategory]
+    popular_searches: list[FacebookMarketplacePopularSearch]
     marketplace: FacebookMarketplaceContext
     pagination: FacebookCursorPagination
-    popular_searches: list[FacebookMarketplacePopularSearch]
-    related_categories: list[FacebookMarketplaceRelatedCategory]
-    search: FacebookListingSearch
-    seo_description: str | None
-    seo_title: str | None
 
 
 class FacebookMarketplaceCategories(BaseModel):
@@ -271,33 +269,32 @@ class FacebookMarketplaceCategories(BaseModel):
 
 
 class FacebookMarketplaceCategory(BaseModel):
-    children: list[FacebookListingCategory]
-    icon_name: str | None
     id: str | None
-    name: str | None
-    other_children: list[FacebookListingCategory]
-    seo_id: str | None
     slug: str | None
+    seo_id: str | None
+    name: str | None
+    children: list[FacebookListingCategory]
+    other_children: list[FacebookListingCategory]
 
 
 class FacebookMarketplaceContext(BaseModel):
-    buy_location_city: str | None
-    buy_location_city_id: str | None
     marketplace_id: str | None
+    buy_location_city_id: str | None
+    buy_location_city: str | None
     uses_metric_units: bool | None
 
 
 class FacebookMarketplaceLocation(BaseModel):
-    address_lines: list[str]
-    checkin_count: int | None
     city_id: str | None
+    name: str | None
+    subtitle: str | None
+    checkin_count: int | None
+    address_lines: list[str]
+    state: str | None
     latitude: float | None
     longitude: float | None
-    name: str | None
     nearest_city: str | None
     postal_code: str | None
-    state: str | None
-    subtitle: str | None
 
 
 class FacebookMarketplaceLocations(BaseModel):
@@ -306,17 +303,17 @@ class FacebookMarketplaceLocations(BaseModel):
 
 
 class FacebookMarketplacePopularSearch(BaseModel):
-    is_published: bool | None
-    seo_id: str | None
     slug: str | None
+    seo_id: str | None
     title: str | None
+    is_published: bool | None
 
 
 class FacebookMarketplaceRelatedCategory(BaseModel):
+    title: str | None
     category: FacebookListingCategory
     is_geo_agnostic: bool | None
     is_published: bool | None
-    title: str | None
 
 
 class FacebookMoney(BaseModel):
@@ -326,44 +323,44 @@ class FacebookMoney(BaseModel):
 
 
 class FacebookPhoto(BaseModel):
-    accent_color_argb: str | None
-    accessibility_caption: str | None
     collection_item_id: str | None = None
-    creation_story_id: str | None
-    feedback_id: str | None
-    focus: FacebookFocus | None
     id: str | None
-    image: FacebookImage | None
-    is_playable: bool | None
     owner_id: str | None
-    thumbnail_url: str | None
-    type: str
+    feedback_id: str | None
+    creation_story_id: str | None
+    accessibility_caption: str | None
     url: str | None
+    focus: FacebookFocus | None
+    type: str
+    is_playable: bool | None
+    image: FacebookImage | None
+    thumbnail_url: str | None
 
 
 class FacebookProfileRef(BaseModel):
+    id: str | None
+    pfbid: str | None
+    username: str | None
+    name: str | None
+    url: str | None
+    is_verified: bool | None
+    short_name: str | None
     account_type: FacebookCode
     gender: str | None
-    id: str | None
-    is_verified: bool | None
-    name: str | None
-    pfbid: str | None
     profile_picture_url: str | None
-    short_name: str | None
-    url: str | None
 
 
 class FacebookRating(BaseModel):
-    average: float | None
     count: int | None
+    average: float | None
     is_private: bool | None
 
 
 class FacebookRentalCluster(BaseModel):
     cluster_id: str | None
-    latitude: float | None
-    listing: FacebookListingCard | None
     listing_count: int | None
+    listing: FacebookListingCard | None
+    latitude: float | None
     longitude: float | None
     pin_type: FacebookCode
 
@@ -373,60 +370,55 @@ class FacebookRentalsMap(BaseModel):
 
 
 class FacebookScrubberPreview(BaseModel):
-    max_number_of_images_per_sprite: int | None
     sprite_uris: list[str]
-    thumbnail_height: int | None
     thumbnail_width: int | None
+    thumbnail_height: int | None
+    max_number_of_images_per_sprite: int | None
     time_interval_between_image: int | None
 
 
 class FacebookVideo(BaseModel):
-    accent_color_argb: str | None
-    broadcast_status: str | None
-    captions: list[FacebookCaption]
-    description: str | None
-    duration_seconds: float | None
-    first_frame_url: str | None
-    height: int | None
     id: str | None
-    is_live: bool | None
-    live_status: FacebookCode
-    owner: FacebookProfileRef | None
+    title: str | None
+    description: str | None
+    url: str | None
     playable_url: str | None
     playable_url_hd: str | None
-    player: FacebookVideoPlayer
+    live_status: FacebookCode
+    broadcast_status: str | None
+    is_live: bool | None
     published_at: str | None
-    thumbnail_url: str | None
-    title: str | None
-    type: str
-    url: str | None
+    owner: FacebookProfileRef | None
+    duration_seconds: float | None
     width: int | None
+    height: int | None
+    player: FacebookVideoPlayer
+    type: str
+    thumbnail_url: str | None
+    first_frame_url: str | None
+    captions: list[FacebookCaption]
 
 
 class FacebookVideoPlayer(BaseModel):
-    aspect_ratio: float | None
-    audio_availability: FacebookCode
-    browser_native_hd_url: str | None
     browser_native_sd_url: str | None
+    browser_native_hd_url: str | None
     dash_manifest_url: str | None
-    dash_streams: list[FacebookDashStream]
-    image_preview_payload: str | None
-    is_clip: bool | None
-    is_gaming_video: bool | None
-    is_huddle: bool | None
-    is_looping: bool | None
-    is_music_clip: bool | None
-    is_podcast_video: bool | None
-    is_premiere: bool | None
-    is_soundbites_video: bool | None
-    is_spherical: bool | None
     live_viewer_count: int | None
-    loop_count: int | None
-    original_rotation: str | None
-    preferred_thumbnail_source: str | None
     scrubber_preview: FacebookScrubberPreview | None
-    video_container_type: str | None
+    aspect_ratio: float | None
+    original_rotation: str | None
     video_status_type: FacebookCode
+    video_container_type: str | None
+    is_spherical: bool | None
+    is_podcast_video: bool | None
+    is_gaming_video: bool | None
+    is_clip: bool | None
+    is_music_clip: bool | None
+    is_soundbites_video: bool | None
+    is_huddle: bool | None
+    is_premiere: bool | None
+    dash_streams: list[FacebookDashStream]
+    audio_availability: FacebookCode
 
 
 class GetMarketplaceListingParams(BaseModel):
@@ -453,17 +445,17 @@ class ListMarketplaceCategoryListingsParams(BaseModel):
     """
     Longitude of the search centre.
     """
-    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
+    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
     """
-    Highest price, in whole units of the local currency.
+    Search radius in kilometres.
     """
     min_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
     Lowest price, in whole units of the local currency.
     """
-    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
+    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
-    Search radius in kilometres.
+    Highest price, in whole units of the local currency.
     """
 
 
@@ -502,17 +494,17 @@ class ListMarketplaceRentalsParams(BaseModel):
     """
     Longitude of the search centre.
     """
-    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
+    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
     """
-    Highest price, in whole units of the local currency.
+    Search radius in kilometres.
     """
     min_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
     Lowest price, in whole units of the local currency.
     """
-    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
+    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
-    Search radius in kilometres.
+    Highest price, in whole units of the local currency.
     """
 
 
@@ -524,21 +516,13 @@ class SearchMarketplaceLocationsParams(BaseModel):
 
 
 class SearchMarketplaceParams(BaseModel):
-    condition: list[ListingCondition] | None = []
+    query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
     """
-    Only listings in these conditions; repeat the parameter for several.
+    Search text.
     """
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first page.
-    """
-    days_since_listed: ListedWithin | None = None
-    """
-    Only listings posted in the last 1, 7 or 30 days.
-    """
-    delivery: ListingDelivery | None = ListingDelivery.ALL
-    """
-    Local pickup, shipping or both.
     """
     latitude: Annotated[float, Field(examples=[30.2672], ge=-90.0, le=90.0)]
     """
@@ -548,21 +532,29 @@ class SearchMarketplaceParams(BaseModel):
     """
     Longitude of the search centre.
     """
-    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
+    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
     """
-    Highest price, in whole units of the local currency.
+    Search radius in kilometres.
     """
     min_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
     Lowest price, in whole units of the local currency.
     """
-    query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
+    max_price: Annotated[int | None, Field(ge=0, le=2147483647)] = None
     """
-    Search text.
+    Highest price, in whole units of the local currency.
     """
-    radius_km: Annotated[int | None, Field(ge=1, le=500)] = 65
+    condition: list[ListingCondition] | None = []
     """
-    Search radius in kilometres.
+    Only listings in these conditions; repeat the parameter for several.
+    """
+    days_since_listed: ListedWithin | None = None
+    """
+    Only listings posted in the last 1, 7 or 30 days.
+    """
+    delivery: ListingDelivery | None = ListingDelivery.ALL
+    """
+    Local pickup, shipping or both.
     """
     sort: ListingSort | None = ListingSort.BEST_MATCH
     """

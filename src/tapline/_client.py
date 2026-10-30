@@ -7,7 +7,7 @@ always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``facebook``,
 ``facebook_ad_library``, ``facebook_marketplace``, ``geckoterminal``, ``gmgn``,
 ``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``, ``pinterest``,
-``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
+``pinterest_v2``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
 
@@ -36,6 +36,7 @@ from .resources import (
     Instagram,
     Linkedin,
     Pinterest,
+    PinterestV2,
     Ponsfamily,
     Pumpfun,
     SyncAirbnb,
@@ -53,6 +54,7 @@ from .resources import (
     SyncInstagram,
     SyncLinkedin,
     SyncPinterest,
+    SyncPinterestV2,
     SyncPonsfamily,
     SyncPumpfun,
     SyncTiktok,
@@ -137,6 +139,9 @@ class TaplineClient(AsyncAPIClient):
     pinterest: Pinterest
     """The Pinterest endpoints."""
 
+    pinterest_v2: PinterestV2
+    """The Pinterest v2 endpoints."""
+
     ponsfamily: Ponsfamily
     """The Pons Family endpoints."""
 
@@ -215,6 +220,7 @@ class TaplineClient(AsyncAPIClient):
         self.instagram = Instagram(self)
         self.linkedin = Linkedin(self)
         self.pinterest = Pinterest(self)
+        self.pinterest_v2 = PinterestV2(self)
         self.ponsfamily = Ponsfamily(self)
         self.pumpfun = Pumpfun(self)
         self.tiktok = Tiktok(self)
@@ -284,6 +290,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     pinterest: SyncPinterest
     """The Pinterest endpoints."""
+
+    pinterest_v2: SyncPinterestV2
+    """The Pinterest v2 endpoints."""
 
     ponsfamily: SyncPonsfamily
     """The Pons Family endpoints."""
@@ -363,6 +372,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.instagram = SyncInstagram(self)
         self.linkedin = SyncLinkedin(self)
         self.pinterest = SyncPinterest(self)
+        self.pinterest_v2 = SyncPinterestV2(self)
         self.ponsfamily = SyncPonsfamily(self)
         self.pumpfun = SyncPumpfun(self)
         self.tiktok = SyncTiktok(self)

@@ -56,57 +56,56 @@ class PublicError(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class FacebookAboutField(BaseModel):
-    date: str | None
-    decoded_url: str | None
-    icon_url: str | None
-    labels: list[str]
     text: str | None
-    type: str | None
     url: str | None
+    decoded_url: str | None
+    date: str | None
+    type: str | None
+    labels: list[str]
 
 
 class FacebookAboutFieldSection(BaseModel):
-    fields: list[FacebookAboutField]
     id: str | None
-    subtitle: str | None
     title: str | None
+    subtitle: str | None
     type: str | None
+    fields: list[FacebookAboutField]
 
 
 class FacebookAiDisclosure(BaseModel):
-    transparency_type: FacebookCode
     was_detected_as_ai_generated: bool | None
     was_self_disclosed_as_ai_generated: bool | None
+    transparency_type: FacebookCode
 
 
 class FacebookAttachment(BaseModel):
-    article_author: str | None
+    title: str | None
+    subtitle: str | None
+    url: str | None
     external_url: str | None
+    target: FacebookAttachmentTarget
     items: list[FacebookPhoto | FacebookVideo | FacebookOtherMedia]
+    source: str | None
+    article_author: str | None
     kind: FacebookCode
     media: FacebookPhoto | FacebookVideo | FacebookOtherMedia | None
-    source: str | None
-    subtitle: str | None
-    target: FacebookAttachmentTarget
-    title: str | None
-    url: str | None
 
 
 class FacebookAttachmentTarget(BaseModel):
@@ -116,19 +115,19 @@ class FacebookAttachmentTarget(BaseModel):
 
 class FacebookCaption(BaseModel):
     language: str | None
-    locale: str | None
     url: str | None
+    locale: str | None
 
 
 class FacebookCity(BaseModel):
     city_id: str | None
-    description: str | None
     name: str | None
+    description: str | None
 
 
 class FacebookCityEventsPage(BaseModel):
-    city: FacebookCity | None
     events: list[FacebookEventCard]
+    city: FacebookCity | None
     pagination: FacebookCursorPagination
 
 
@@ -140,110 +139,102 @@ class FacebookCode(BaseModel):
 class FacebookCollectionAlbum(BaseModel):
     collection_item_id: str | None
     id: str | None
-    image_url: str | None
-    item_count: int | None
-    item_count_text: str | None
     title: str | None
     url: str | None
+    item_count: int | None
+    item_count_text: str | None
+    image_url: str | None
 
 
 class FacebookCollectionPerson(BaseModel):
     collection_item_id: str | None
-    person: FacebookProfileRef
     subtitle: str | None
+    person: FacebookProfileRef
 
 
 class FacebookCollectionSummary(BaseModel):
-    empty_message: str | None
     id: str | None
-    listed_count: int | None
     name: str | None
+    listed_count: int | None
+    empty_message: str | None
 
 
 class FacebookComment(BaseModel):
-    attachments: list[FacebookAttachment]
-    author: FacebookProfileRef | None
-    created_at: str | None
-    depth: int | None
-    engagement: FacebookCommentEngagement
-    feedback_id: str | None
     id: str | None
-    legacy_token: str | None
-    node_id: str | None
     parent_comment_id: str | None
-    post: FacebookCommentPost
-    replies_cursor: str | None
-    status: FacebookCommentStatus
+    feedback_id: str | None
+    node_id: str | None
     text: str | None
-    timestamp_in_video_seconds: int | None
-    translation: FacebookTranslation
     url: str | None
-    viewer: FacebookCommentViewer
+    status: FacebookCommentStatus
+    created_at: str | None
+    timestamp_in_video_seconds: int | None
+    author: FacebookProfileRef | None
+    post: FacebookCommentPost
+    translation: FacebookTranslation
+    attachments: list[FacebookAttachment]
+    engagement: FacebookCommentEngagement
+    replies_cursor: str | None
+    depth: int | None
+    legacy_token: str | None
 
 
 class FacebookCommentEngagement(BaseModel):
     reaction_count: int | None
     reaction_count_text: str | None
-    reactions: list[FacebookReaction]
     reply_count: int | None
     reply_total_count: int | None
+    reactions: list[FacebookReaction]
 
 
 class FacebookCommentPost(BaseModel):
-    feedback_id: str | None
-    owner: FacebookProfileRef | None
     post_id: str | None
     story_id: str | None
+    feedback_id: str | None
+    owner: FacebookProfileRef | None
 
 
 class FacebookCommentSort(BaseModel):
-    description: str | None
-    intent_token: str | None
-    sort: str | None
     title: str | None
+    description: str | None
+    sort: str | None
+    intent_token: str | None
 
 
 class FacebookCommentStatus(BaseModel):
-    has_only_low_quality_replies: bool | None
-    is_author_weak_reference: bool | None
     is_disabled: bool | None
     is_live_video_comment: bool | None
-    is_markdown_enabled: bool | None
-    is_self_disclosed_as_ai_generated: bool | None
     is_subreply_parent_deleted: bool | None
+    is_self_disclosed_as_ai_generated: bool | None
+    has_only_low_quality_replies: bool | None
     replies_hidden_notice: str | None
-    spam_display_mode: str | None
     written_while_video_was_live: bool | None
 
 
 class FacebookCommentThread(BaseModel):
+    summary: FacebookCommentsSummary
     comments: list[FacebookComment]
     pagination: FacebookCursorPagination
-    summary: FacebookCommentsSummary
-
-
-class FacebookCommentViewer(BaseModel):
-    is_hidden_by_viewer: bool | None
 
 
 class FacebookCommentsPage(BaseModel):
-    comments: list[FacebookComment]
     feedback_id: str
-    pagination: FacebookCursorPagination
-    summary: FacebookCommentsSummary
     url: str | None
+    summary: FacebookCommentsSummary
+    comments: list[FacebookComment]
+    pagination: FacebookCursorPagination
 
 
 class FacebookCommentsSummary(BaseModel):
-    comments_disabled_notice: str | None
-    filtering_note: str | None
+    total_count: int | None
+    visible_count: int | None
     has_comments_disabled: bool | None
     page_size: int | None
     sort: FacebookCommentSort | None
-    sort_note: str | None
     sort_options: list[FacebookCommentSort]
-    total_count: int | None
-    visible_count: int | None
+    sort_note: str | None
+    filtering_note: str | None
+    comments_disabled_notice: str | None
 
 
 class FacebookContentTag(BaseModel):
@@ -252,126 +243,124 @@ class FacebookContentTag(BaseModel):
 
 
 class FacebookCoverPhoto(BaseModel):
-    accessibility_caption: str | None
-    blurred_image: FacebookImage | None
-    focus: FacebookFocus | None
     id: str | None
-    image: FacebookImage | None
     owner_id: str | None
+    accessibility_caption: str | None
     url: str | None
+    focus: FacebookFocus | None
+    image: FacebookImage | None
 
 
 class FacebookCursorPagination(BaseModel):
-    has_more: bool | None
     next_cursor: str | None
+    has_more: bool | None
 
 
 class FacebookDashStream(BaseModel):
-    bandwidth: int | None
-    codecs: str | None
-    content_type: str | None
-    frame_rate: float | None
-    height: int | None
     id: str | None
-    mime_type: str | None
-    quality_label: str | None
     url: str | None
+    content_type: str | None
+    mime_type: str | None
+    codecs: str | None
+    bandwidth: int | None
     width: int | None
+    height: int | None
+    frame_rate: float | None
+    quality_label: str | None
 
 
 class FacebookEngagement(BaseModel):
-    comment_count: int | None
-    play_count: int | None
-    post_play_count: int | None
     reaction_count: int | None
     reaction_count_text: str | None
-    reactions: list[FacebookReaction]
+    comment_count: int | None
     share_count: int | None
     share_count_text: str | None
     view_count: int | None
     view_count_text: str | None
+    play_count: int | None
+    post_play_count: int | None
+    reactions: list[FacebookReaction]
 
 
 class FacebookEvent(BaseModel):
-    cover_photo: FacebookCoverPhoto | None
-    day_time_text: str | None
-    frequency: FacebookCode
     id: str
+    owner_page_id: str | None
+    recurring_parent_event_id: str | None
+    name: str | None
+    day_time_text: str | None
+    start_time_text: str | None
+    url: str | None
+    occurrence_count: int | None
+    price_info: str | None
     is_canceled: bool | None
     is_draft: bool | None
+    start_at: str | None
+    next_occurrence_at: str | None
+    place: FacebookPlace | None
+    frequency: FacebookCode
     is_online: bool | None
     is_past: bool | None
     is_sale_event: bool | None
-    name: str | None
-    next_occurrence_at: str | None
-    occurrence_count: int | None
-    owner_page_id: str | None
-    place: FacebookPlace | None
-    price_info: str | None
-    recurring_parent_event_id: str | None
-    start_at: str | None
-    start_time_text: str | None
-    url: str | None
-    viewer: FacebookEventViewerState
+    cover_photo: FacebookCoverPhoto | None
 
 
 class FacebookEventAbout(BaseModel):
-    attendance_text: str | None
-    categories: list[str]
+    id: str
+    ticketing_title: str | None
     description: str | None
-    duration_label: str | None
     duration_text: str | None
+    host_text: str | None
+    attendance_text: str | None
+    ticket_url: str | None
+    notable_source_count: int | None
+    start_at: str | None
     end_at: str | None
+    scheduled_publish_at: str | None
+    place: FacebookPlace | None
+    hosts: list[FacebookProfileRef]
+    suggested_events: list[FacebookEventCard]
+    categories: list[str]
+    kind: FacebookCode
+    duration_label: str | None
+    timezone_abbreviation: str | None
+    ticketing_subtitle: str | None
+    ticket_provider: str | None
+    lineups: list[str]
     flags: list[str]
+    keywords: list[str]
     has_date_changed: bool | None
     has_name_changed: bool | None
-    host_text: str | None
-    hosts: list[FacebookProfileRef]
-    id: str
+    rsvp_style: FacebookCode
     is_online: bool | None
     is_past: bool | None
-    keywords: list[str]
-    kind: FacebookCode
-    lineups: list[str]
-    notable_source_count: int | None
-    place: FacebookPlace | None
-    rsvp_style: FacebookCode
-    scheduled_publish_at: str | None
-    start_at: str | None
-    suggested_events: list[FacebookEventCard]
-    ticket_url: str | None
-    ticketing_subtitle: str | None
-    ticketing_title: str | None
-    timezone_abbreviation: str | None
 
 
 class FacebookEventCard(BaseModel):
-    cover_photo: FacebookCoverPhoto | None
-    creator: FacebookProfileRef | None
-    day_time_text: str | None
-    end_at: str | None
     id: str | None
+    recurring_parent_event_id: str | None
+    live_video_ids: list[str]
+    name: str | None
+    day_time_text: str | None
+    url: str | None
+    price_range_text: str | None
+    metrics: FacebookEventMetrics
     is_canceled: bool | None
-    is_happening_now: bool | None
+    start_at: str | None
+    end_at: str | None
+    place: FacebookPlace | None
+    creator: FacebookProfileRef | None
+    kind: FacebookCode
+    social_context: str | None
+    online_type: str | None
     is_online: bool | None
     is_past: bool | None
-    kind: FacebookCode
-    live_video_ids: list[str]
-    metrics: FacebookEventMetrics
-    name: str | None
-    online_type: str | None
-    place: FacebookPlace | None
-    price_range_text: str | None
-    recurring_parent_event_id: str | None
-    social_context: str | None
-    start_at: str | None
-    url: str | None
-    viewer: FacebookEventViewer
+    is_happening_now: bool | None
+    cover_photo: FacebookCoverPhoto | None
 
 
 class FacebookEventMetrics(BaseModel):
-    going_count: int | None
     interested_count: int | None
+    going_count: int | None
 
 
 class FacebookEventSearchPage(BaseModel):
@@ -380,86 +369,69 @@ class FacebookEventSearchPage(BaseModel):
     pagination: FacebookCursorPagination
 
 
-class FacebookEventViewer(BaseModel):
-    watch_status: str | None
-
-
-class FacebookEventViewerState(BaseModel):
-    acting_account_id: str | None
-    acting_account_name: str | None
-
-
 class FacebookFocus(BaseModel):
     x: float | None
     y: float | None
 
 
 class FacebookGroup(BaseModel):
+    id: str
+    name: str | None
+    url: str | None
+    metrics: FacebookGroupMetrics
+    join_restriction_reason: str | None
+    work_official_status: str | None
+    privacy: FacebookGroupPrivacy
+    tabs: list[FacebookGroupTab]
+    has_membership_questions: bool | None
+    is_multi_company_group: bool | None
+    type_name: str | None
     address: str | None
     cover_photo: FacebookCoverPhoto | None
-    has_membership_questions: bool | None
-    id: str
-    is_multi_company_group: bool | None
-    join_restriction_reason: str | None
-    metrics: FacebookGroupMetrics
-    name: str | None
-    privacy: FacebookGroupPrivacy
     profile_picture_url: str | None
-    secondary_theme_color_argb: str | None
-    tabs: list[FacebookGroupTab]
-    theme_color_argb: str | None
-    type_name: str | None
-    url: str | None
-    work_official_status: str | None
 
 
 class FacebookGroupAbout(BaseModel):
-    admin_sentence: str | None
-    admins: list[FacebookGroupMember]
-    created_at: str | None
+    id: str
     description: str | None
     history_text: str | None
-    id: str
-    info_items: list[str]
-    member_count_text: str | None
-    metrics: FacebookGroupAboutMetrics
-    moderators: list[FacebookGroupMember]
     new_members_text: str | None
-    privacy: FacebookGroupPrivacy
-    rules: list[FacebookGroupRule]
+    metrics: FacebookGroupAboutMetrics
+    member_count_text: str | None
     total_members_text: str | None
-    viewer: FacebookGroupAboutViewer
     visibility: FacebookGroupPrivacy
+    privacy: FacebookGroupPrivacy
+    created_at: str | None
+    admins: list[FacebookGroupMember]
+    moderators: list[FacebookGroupMember]
+    rules: list[FacebookGroupRule]
+    admin_sentence: str | None
+    info_items: list[str]
 
 
 class FacebookGroupAboutMetrics(BaseModel):
-    admin_count: int | None
     member_count: int | None
     member_count_approx: int | None
-    moderator_count: int | None
     new_member_count: int | None
+    admin_count: int | None
+    moderator_count: int | None
     posts_last_day: int | None
     posts_last_month: int | None
 
 
-class FacebookGroupAboutViewer(BaseModel):
-    friend_member_count: int | None
-    friends_sentence: str | None
-
-
 class FacebookGroupEvents(BaseModel):
-    group_cover_photo_id: str | None
     group_id: str
+    group_cover_photo_id: str | None
     past: list[FacebookEventCard]
-    past_pagination: FacebookCursorPagination
     upcoming: list[FacebookEventCard]
     upcoming_pagination: FacebookCursorPagination
+    past_pagination: FacebookCursorPagination
 
 
 class FacebookGroupMember(BaseModel):
-    has_member_feed: bool | None
     membership_id: str | None
     person: FacebookProfileRef
+    has_member_feed: bool | None
 
 
 class FacebookGroupMetrics(BaseModel):
@@ -472,62 +444,59 @@ class FacebookGroupPhotosPage(BaseModel):
     group_id: str
     mediaset_id: str | None
     mediaset_token: str | None
-    pagination: FacebookCursorPagination
     photos: list[FacebookPhoto]
+    pagination: FacebookCursorPagination
 
 
 class FacebookGroupPrivacy(BaseModel):
-    code: str | None
     description: str | None
-    icon_name: str | None
+    code: str | None
     label: str | None
 
 
 class FacebookGroupRule(BaseModel):
-    description: str | None
     id: str | None
     title: str | None
+    description: str | None
 
 
 class FacebookGroupTab(BaseModel):
-    is_default: bool | None
-    name: str | None
     tab_key: str | None
+    name: str | None
     url: str | None
 
 
 class FacebookHashtagPosts(BaseModel):
+    posts: list[FacebookPost]
     hashtag: str
     pagination: FacebookCursorPagination
-    posts: list[FacebookPost]
 
 
 class FacebookImage(BaseModel):
-    height: int | None
     url: str | None
     width: int | None
+    height: int | None
 
 
 class FacebookInstagramAccount(BaseModel):
+    username: str | None
     follower_count: int | None
     is_verified: bool | None
-    username: str | None
 
 
 class FacebookIntroItem(BaseModel):
-    decoded_url: str | None
-    icon_url: str | None
     page_id: str | None
-    subtitle: str | None
-    target_type: str | None
     text: str | None
-    type: FacebookCode
+    subtitle: str | None
     url: str | None
+    decoded_url: str | None
+    type: FacebookCode
+    target_type: str | None
 
 
 class FacebookLiveSection(BaseModel):
-    posts: list[FacebookPost]
     title: str | None
+    posts: list[FacebookPost]
     type: FacebookCode
 
 
@@ -535,321 +504,335 @@ class FacebookLiveVideos(BaseModel):
     sections: list[FacebookLiveSection]
 
 
+class FacebookMessageEntity(BaseModel):
+    id: str | None
+    url: str | None
+    external_url: str | None
+    offset: int | None
+    length: int | None
+    type: str | None
+
+
 class FacebookOtherMedia(BaseModel):
     id: str | None
-    type: str | None
     url: str | None
+    type: str | None
 
 
 class FacebookPage(BaseModel):
-    alternate_name: str | None
-    cover_photo: FacebookCoverPhoto | None
-    gender: FacebookCode
-    legal: FacebookPageLegal
-    metrics: FacebookPageHeaderMetrics
-    name: str | None
     page_id: str | None
-    profile_id: str
-    profile_photo: FacebookPhoto
-    profile_pictures: list[FacebookImage]
-    profile_type_transition: FacebookCode
-    social_context: list[FacebookSocialContextItem]
-    status: FacebookPageStatus
-    story_bucket_ids: list[str]
-    tabs: list[FacebookPageTab]
+    profile_id: str | None
+    username: str | None = None
+    story_bucket_ids: list[str] | None = None
+    name: str | None
     url: str | None
+    metrics: FacebookPageMetrics
+    status: FacebookPageStatus
+    instagram: FacebookInstagramAccount | None = None
+    tabs: list[FacebookPageTab] | None = None
+    category: str | None = None
+    entity_type: FacebookCode | None = None
+    verification: FacebookCode | None = None
+    alternate_name: str | None = None
+    gender: FacebookCode | None = None
+    profile_type_transition: FacebookCode | None = None
+    social_context: list[FacebookSocialContextItem] | None = None
+    legal: FacebookPageLegal | None = None
+    profile_picture_url: str | None = None
+    profile_photo: FacebookPhoto | None = None
+    profile_pictures: list[FacebookImage] | None = None
+    cover_photo: FacebookCoverPhoto | None = None
 
 
 class FacebookPageAboutSection(BaseModel):
+    profile_id: str
+    page_id: str | None
+    section_id: str | None
+    sections: list[FacebookAboutFieldSection]
     collection: FacebookPageCollectionLink
     collections: list[FacebookPageCollectionLink]
-    page_id: str | None
-    profile_id: str
-    section_id: str | None
     section_name: str | None
-    sections: list[FacebookAboutFieldSection]
+    transparency: FacebookPageTransparency | None
 
 
 class FacebookPageCollectionLink(BaseModel):
     collection_id: str | None
-    name: str | None
     tab_key: str | None
+    name: str | None
     url: str | None
 
 
 class FacebookPageEventsPage(BaseModel):
-    collection: FacebookCollectionSummary
-    events: list[FacebookEventCard]
-    pagination: FacebookCursorPagination
     profile_id: str
+    events: list[FacebookEventCard]
     section: FacebookPageSectionSummary | None
-
-
-class FacebookPageHeaderMetrics(BaseModel):
-    follower_count_approx: int | None
-    following_count_approx: int | None
+    collection: FacebookCollectionSummary
+    pagination: FacebookCursorPagination
 
 
 class FacebookPageIntro(BaseModel):
-    addresses: list[str]
-    bio: str | None
-    bio_status_id: str | None
-    category: str | None
-    emails: list[str]
-    featured_photos: list[FacebookPhoto]
-    items: list[FacebookIntroItem]
-    page_id: str | None
-    phones: list[str]
-    photos_mediaset_token: str | None
     profile_id: str
-    profile_type: str | None
-    see_more_text: str | None
+    page_id: str | None
+    bio_status_id: str | None
+    bio: str | None
+    hours_text: str | None
     websites: list[str]
+    social_links: list[FacebookSocialLink]
+    rating: FacebookPageRating | None
+    price_range: str | None
+    items: list[FacebookIntroItem]
+    category: str | None
+    confirmed_owner: str | None
+    services: list[str]
+    emails: list[str]
+    phones: list[str]
+    addresses: list[str]
+    profile_type: str | None
+    photos_mediaset_token: str | None
+    featured_photos: list[FacebookPhoto]
 
 
 class FacebookPageLegal(BaseModel):
-    dsa_report_entrypoint: str | None
     dsa_reporting_url: str | None
+    dsa_report_entrypoint: str | None
     is_dsa_legal_reporting_enabled: bool | None
 
 
 class FacebookPageMetrics(BaseModel):
-    follower_count: int | None
-    like_count: int | None
-    talking_about_count: int | None
+    like_count: int | None = None
+    follower_count: int | None = None
+    talking_about_count: int | None = None
+    follower_count_approx: int | None = None
+    following_count_approx: int | None = None
 
 
 class FacebookPagePeople(BaseModel):
+    profile_id: str
+    people: list[FacebookCollectionPerson]
+    section: FacebookPageSectionSummary | None
     collection: FacebookCollectionSummary
     pagination: FacebookCursorPagination
-    people: list[FacebookCollectionPerson]
-    profile_id: str
-    section: FacebookPageSectionSummary | None
 
 
 class FacebookPagePhotosPage(BaseModel):
-    albums: list[FacebookCollectionAlbum]
-    collection: FacebookCollectionSummary
-    pagination: FacebookCursorPagination
-    photos: list[FacebookPhoto]
     profile_id: str
+    albums: list[FacebookCollectionAlbum]
     section: FacebookPageSectionSummary | None
+    collection: FacebookCollectionSummary
+    photos: list[FacebookPhoto]
+    pagination: FacebookCursorPagination
 
 
-class FacebookPageRef(BaseModel):
-    category: str | None
-    entity_type: FacebookCode
-    instagram: FacebookInstagramAccount | None
-    is_deleted: bool | None
-    metrics: FacebookPageMetrics
-    name: str | None
-    page_id: str | None
-    profile_id: str | None
-    profile_picture_url: str | None
-    url: str | None
-    username: str | None
-    verification: FacebookCode
+class FacebookPageRating(BaseModel):
+    text: str
+    review_count: int | None
+    recommend_percent: int | None
 
 
 class FacebookPageSectionSummary(BaseModel):
-    collections: list[FacebookPageCollectionLink]
-    empty_message: str | None
     id: str | None
     name: str | None
-    notice: str | None
-    type: FacebookCode
     url: str | None
+    collections: list[FacebookPageCollectionLink]
+    type: FacebookCode
+    notice: str | None
+    empty_message: str | None
 
 
 class FacebookPageStatus(BaseModel):
-    is_additional_profile_plus: bool | None
-    is_business_page_active: bool | None
-    is_currently_live: bool | None
-    is_memorialized: bool | None
-    is_verified: bool | None
-    profile_picture_is_silhouette: bool | None
-    restriction_violation_status: str | None
+    is_deleted: bool | None = None
+    is_verified: bool | None = None
+    is_memorialized: bool | None = None
+    restriction_violation_status: str | None = None
+    is_currently_live: bool | None = None
+    is_business_page_active: bool | None = None
+    is_additional_profile_plus: bool | None = None
+    profile_picture_is_silhouette: bool | None = None
 
 
 class FacebookPageSummary(BaseModel):
+    page: FacebookPage
     description: str | None
-    locale: str | None
     open_graph_type: str | None
-    page: FacebookPageRef
+    locale: str | None
 
 
 class FacebookPageTab(BaseModel):
-    collections: list[FacebookPageCollectionLink]
-    displayable_count: int | None
-    has_new_content: bool | None
-    name: str | None
     section_id: str | None
-    section_type: FacebookCode
     tab_key: str | None
+    name: str | None
     url: str | None
+    displayable_count: int | None
+    collections: list[FacebookPageCollectionLink]
+    section_type: FacebookCode
+
+
+class FacebookPageTransparency(BaseModel):
+    created_on_text: str | None
+    ad_status: str | None
+    created_on: str | None
+    is_running_ads: bool | None
+    confirmed_owner: str | None
 
 
 class FacebookPageVideoShow(BaseModel):
-    description: str | None
     id: str | None
-    seasons: list[FacebookContentTag]
     title: str | None
+    description: str | None
     video_count: int | None
+    seasons: list[FacebookContentTag]
     videos: list[FacebookVideoCard]
 
 
 class FacebookPageVideosPage(BaseModel):
-    is_currently_live: bool | None
-    latest: list[FacebookVideoCard]
     page_id: str
-    pagination: FacebookCursorPagination
-    playlist_count: int | None
-    popular: FacebookVideoCard | None
     show_count: int | None
+    playlist_count: int | None
+    is_currently_live: bool | None
+    popular: FacebookVideoCard | None
     shows: list[FacebookPageVideoShow]
+    latest: list[FacebookVideoCard]
     videos: list[FacebookVideoCard]
+    pagination: FacebookCursorPagination
 
 
 class FacebookPhoto(BaseModel):
-    accent_color_argb: str | None
-    accessibility_caption: str | None
     collection_item_id: str | None = None
-    creation_story_id: str | None
-    feedback_id: str | None
-    focus: FacebookFocus | None
     id: str | None
-    image: FacebookImage | None
-    is_playable: bool | None
     owner_id: str | None
-    thumbnail_url: str | None
-    type: str
+    feedback_id: str | None
+    creation_story_id: str | None
+    accessibility_caption: str | None
     url: str | None
+    focus: FacebookFocus | None
+    type: str
+    is_playable: bool | None
+    image: FacebookImage | None
+    thumbnail_url: str | None
 
 
 class FacebookPhotoDetail(BaseModel):
     album_id: str | None
-    business_content_type: FacebookCode
-    comments: FacebookCommentThread
-    created_at: str | None
-    engagement: FacebookEngagement
-    next_photo_ids: list[str]
-    owner: FacebookProfileRef | None
     page_id: str | None
-    photo: FacebookPhoto
+    next_photo_ids: list[str]
     previous_photo_ids: list[str]
-    privacy: FacebookCode
     text: str | None
+    privacy: FacebookCode
+    created_at: str | None
+    owner: FacebookProfileRef | None
+    comments: FacebookCommentThread
+    engagement: FacebookEngagement
+    business_content_type: FacebookCode
+    photo: FacebookPhoto
 
 
 class FacebookPlace(BaseModel):
-    address: str | None
-    city_id: str | None
-    city_name: str | None
-    contextual_name: str | None
     id: str | None
-    is_user_specified: bool | None
+    city_id: str | None
+    name: str | None
+    url: str | None
+    contextual_name: str | None
+    type: FacebookCode
+    address: str | None
     latitude: float | None
     longitude: float | None
-    name: str | None
-    type: FacebookCode
-    url: str | None
+    city_name: str | None
+    is_user_specified: bool | None
 
 
 class FacebookPost(BaseModel):
-    actors: list[FacebookProfileRef]
-    ai_disclosure: FacebookAiDisclosure
-    attached_post: FacebookPost | None
-    attachments: list[FacebookAttachment]
-    author: FacebookProfileRef | None
-    cache_id: str | None
-    created_at: str | None
-    engagement: FacebookEngagement
+    id: str | None
+    story_id: str | None
     feedback_id: str | None
     group_id: str | None
-    id: str | None
-    music: FacebookPostMusic | None
-    owner: FacebookProfileRef | None
-    place_name: str | None
-    rich_text: list[FacebookRichTextBlock]
-    status: FacebookPostStatus
-    story_id: str | None
-    text: str | None
     title: str | None
-    top_comments: list[FacebookComment]
+    text: str | None
+    rich_text: list[FacebookRichTextBlock]
     url: str | None
-    viewer: FacebookPostViewer
+    status: FacebookPostStatus
+    created_at: str | None
+    message_entities: list[FacebookMessageEntity] | None = None
+    author: FacebookProfileRef | None
+    actors: list[FacebookProfileRef]
+    collaborators: list[FacebookProfileRef]
+    owner: FacebookProfileRef | None
+    top_comments: list[FacebookComment]
+    music: FacebookPostMusic | None
+    attached_post: FacebookPost | None
+    engagement: FacebookEngagement
+    attachments: list[FacebookAttachment]
+    place_name: str | None
+    ai_disclosure: FacebookAiDisclosure
 
 
 class FacebookPostDetail(BaseModel):
-    comments: FacebookCommentThread
     post: FacebookPost
+    comments: FacebookCommentThread
 
 
 class FacebookPostMusic(BaseModel):
-    artist_name: str | None
     song_title: str | None
+    artist_name: str | None
 
 
 class FacebookPostStatus(BaseModel):
-    default_comment_order: str | None
     has_comments_disabled: bool | None
-    is_text_only: bool | None
     publish_state: FacebookCode
-
-
-class FacebookPostViewer(BaseModel):
-    save_state: str | None
+    default_comment_order: str | None
+    is_text_only: bool | None
 
 
 class FacebookPostsPage(BaseModel):
-    pagination: FacebookCursorPagination
     posts: list[FacebookPost]
+    pagination: FacebookCursorPagination
 
 
 class FacebookProfileRef(BaseModel):
+    id: str | None
+    pfbid: str | None
+    username: str | None
+    name: str | None
+    url: str | None
+    is_verified: bool | None
+    short_name: str | None
     account_type: FacebookCode
     gender: str | None
-    id: str | None
-    is_verified: bool | None
-    name: str | None
-    pfbid: str | None
     profile_picture_url: str | None
-    short_name: str | None
-    url: str | None
 
 
 class FacebookReaction(BaseModel):
+    reaction_id: str | None
     count: int | None
     count_text: str | None
     label: str | None
-    reaction_id: str | None
 
 
 class FacebookReel(BaseModel):
-    audio: FacebookReelAudio
-    created_at: str | None
+    post_id: str | None
     creation_story_id: str | None
-    engagement: FacebookEngagement
-    is_embeddable: bool | None
-    is_made_with_meta_ai_app: bool | None
-    is_reshare: bool | None
+    seo_title: str | None
+    text: str | None
+    seo_summary: str | None
+    shareable_url: str | None
+    remix_status: FacebookCode
+    privacy: FacebookCode
+    created_at: str | None
+    scheduled_publish_at: str | None
+    message_entities: list[FacebookMessageEntity] | None = None
     owner: FacebookProfileRef | None
     owner_type: FacebookCode
-    post_id: str | None
-    privacy: FacebookCode
-    remix_status: FacebookCode
-    scheduled_publish_at: str | None
-    seo_summary: str | None
-    seo_title: str | None
-    shareable_url: str | None
-    text: str | None
+    engagement: FacebookEngagement
+    is_reshare: bool | None
+    is_embeddable: bool | None
+    is_made_with_meta_ai_app: bool | None
     video: FacebookVideo
+    audio: FacebookReelAudio
 
 
 class FacebookReelAudio(BaseModel):
-    album_art_url: str | None
-    is_original_audio: bool | None
     track_title: str | None
+    is_original_audio: bool | None
+    album_art_url: str | None
 
 
 class FacebookReelDetail(BaseModel):
@@ -859,25 +842,25 @@ class FacebookReelDetail(BaseModel):
 class FacebookRepliesPage(BaseModel):
     comment_id: str
     feedback_id: str | None
-    pagination: FacebookCursorPagination
     replies: list[FacebookComment]
+    pagination: FacebookCursorPagination
 
 
 class FacebookResolvedIds(BaseModel):
-    author_profile_id: str | None
-    collection_id: str | None
-    event_id: str | None
-    group_id: str | None
-    hashtag: str | None
-    listing_id: str | None
-    photo_id: str | None
     profile_id: str | None
-    raw_section_token: str | None
-    reel_id: str | None
-    section_id: str | None
-    story_id: str | None
     username: str | None
+    story_id: str | None
+    author_profile_id: str | None
+    group_id: str | None
+    listing_id: str | None
+    event_id: str | None
     video_id: str | None
+    reel_id: str | None
+    photo_id: str | None
+    collection_id: str | None
+    section_id: str | None
+    hashtag: str | None
+    raw_section_token: str | None
 
 
 class FacebookResolvedLocation(BaseModel):
@@ -888,51 +871,57 @@ class FacebookResolvedLocation(BaseModel):
 
 
 class FacebookResolvedUrl(BaseModel):
-    group_sort: str | None
-    header_title: str | None
     ids: FacebookResolvedIds
-    kind: FacebookCode
-    location: FacebookResolvedLocation | None
-    route_name: str | None
-    seo_url: str | None
     title: str | None
+    header_title: str | None
     url: str
+    seo_url: str | None
+    location: FacebookResolvedLocation | None
+    kind: FacebookCode
+    route_name: str | None
+    group_sort: str | None
 
 
 class FacebookRichTextBlock(BaseModel):
+    text: str | None
     block_type: str | None
     depth: int | None
     media_alignment: str | None
     media_caption: str | None
-    text: str | None
 
 
 class FacebookScrubberPreview(BaseModel):
-    max_number_of_images_per_sprite: int | None
     sprite_uris: list[str]
-    thumbnail_height: int | None
     thumbnail_width: int | None
+    thumbnail_height: int | None
+    max_number_of_images_per_sprite: int | None
     time_interval_between_image: int | None
 
 
 class FacebookSearchFilter(BaseModel):
-    label: str | None
     name: str | None
+    label: str | None
     options: list[FacebookSearchFilterOption]
 
 
 class FacebookSearchFilterOption(BaseModel):
-    filter_name: str | None
     label: str | None
+    filter_name: str | None
+    value: str | None
     param: str | None
     param_value: str | None
-    value: str | None
 
 
 class FacebookSocialContextItem(BaseModel):
-    count_approx: int | None
     text: str | None
     url: str | None
+    count_approx: int | None
+
+
+class FacebookSocialLink(BaseModel):
+    username: str | None
+    url: str
+    network: str
 
 
 class FacebookTranslation(BaseModel):
@@ -942,92 +931,87 @@ class FacebookTranslation(BaseModel):
 
 
 class FacebookVideo(BaseModel):
-    accent_color_argb: str | None
-    broadcast_status: str | None
-    captions: list[FacebookCaption]
-    description: str | None
-    duration_seconds: float | None
-    first_frame_url: str | None
-    height: int | None
     id: str | None
-    is_live: bool | None
-    live_status: FacebookCode
-    owner: FacebookProfileRef | None
+    title: str | None
+    description: str | None
+    url: str | None
     playable_url: str | None
     playable_url_hd: str | None
-    player: FacebookVideoPlayer
+    live_status: FacebookCode
+    broadcast_status: str | None
+    is_live: bool | None
     published_at: str | None
-    thumbnail_url: str | None
-    title: str | None
-    type: str
-    url: str | None
+    owner: FacebookProfileRef | None
+    duration_seconds: float | None
     width: int | None
+    height: int | None
+    player: FacebookVideoPlayer
+    type: str
+    thumbnail_url: str | None
+    first_frame_url: str | None
+    captions: list[FacebookCaption]
 
 
 class FacebookVideoCard(BaseModel):
-    content_tags: list[FacebookContentTag]
-    engagement: FacebookEngagement
-    feedback_id: str | None
     post_id: str | None
     story_id: str | None
-    top_comments: list[FacebookComment]
+    feedback_id: str | None
     total_post_count: int | None
+    content_tags: list[FacebookContentTag]
+    top_comments: list[FacebookComment]
+    engagement: FacebookEngagement
     video: FacebookVideo
 
 
 class FacebookVideoDetail(BaseModel):
-    comments: FacebookCommentThread
-    post: FacebookPost | None
     video: FacebookVideo
+    post: FacebookPost | None
+    comments: FacebookCommentThread
 
 
 class FacebookVideoPlayer(BaseModel):
-    aspect_ratio: float | None
-    audio_availability: FacebookCode
-    browser_native_hd_url: str | None
     browser_native_sd_url: str | None
+    browser_native_hd_url: str | None
     dash_manifest_url: str | None
-    dash_streams: list[FacebookDashStream]
-    image_preview_payload: str | None
-    is_clip: bool | None
-    is_gaming_video: bool | None
-    is_huddle: bool | None
-    is_looping: bool | None
-    is_music_clip: bool | None
-    is_podcast_video: bool | None
-    is_premiere: bool | None
-    is_soundbites_video: bool | None
-    is_spherical: bool | None
     live_viewer_count: int | None
-    loop_count: int | None
-    original_rotation: str | None
-    preferred_thumbnail_source: str | None
     scrubber_preview: FacebookScrubberPreview | None
-    video_container_type: str | None
+    aspect_ratio: float | None
+    original_rotation: str | None
     video_status_type: FacebookCode
+    video_container_type: str | None
+    is_spherical: bool | None
+    is_podcast_video: bool | None
+    is_gaming_video: bool | None
+    is_clip: bool | None
+    is_music_clip: bool | None
+    is_soundbites_video: bool | None
+    is_huddle: bool | None
+    is_premiere: bool | None
+    dash_streams: list[FacebookDashStream]
+    audio_availability: FacebookCode
 
 
 class FacebookVideoSearchPage(BaseModel):
-    filters: list[FacebookSearchFilter]
-    pagination: FacebookCursorPagination
-    query: str
     results: list[FacebookVideoSearchResult]
+    filters: list[FacebookSearchFilter]
+    query: str
+    pagination: FacebookCursorPagination
 
 
 class FacebookVideoSearchReel(BaseModel):
-    broadcast_status: str | None
     description: str | None
     duration_text: str | None
     subtitle: str | None
-    thumbnail_url: str | None
     url: str | None
     view_count: int | None
+    broadcast_status: str | None
+    thumbnail_url: str | None
 
 
 class FacebookVideoSearchResult(BaseModel):
+    video_id: str | None
     post: FacebookPost | None
     reel: FacebookVideoSearchReel | None
-    video_id: str | None
 
 
 class GetEventAboutParams(BaseModel):
@@ -1059,6 +1043,10 @@ class GetGroupParams(BaseModel):
 
 
 class GetPageAboutParams(BaseModel):
+    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
+    """
+    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
+    """
     collection_id: Annotated[
         str,
         Field(
@@ -1070,10 +1058,6 @@ class GetPageAboutParams(BaseModel):
     ]
     """
     `collection_id` of the tab, from `/resolve` on the tab's URL or the page's `tabs[].collections`.
-    """
-    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
-    """
-    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
     """
 
 
@@ -1148,10 +1132,6 @@ class ListCommentRepliesParams(BaseModel):
 
 
 class ListCommentsParams(BaseModel):
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
     feedback_id: Annotated[
         str,
         Field(
@@ -1166,6 +1146,10 @@ class ListCommentsParams(BaseModel):
     """
     Most relevant, newest first, or all comments.
     """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
+    """
 
 
 class ListGroupEventsParams(BaseModel):
@@ -1176,21 +1160,17 @@ class ListGroupEventsParams(BaseModel):
 
 
 class ListGroupPhotosParams(BaseModel):
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
     group_id: Annotated[str, Field(examples=["352314512800364"], pattern="^\\d{1,20}$")]
     """
     Numeric group id; `/resolve` turns a group URL into one.
     """
-
-
-class ListGroupPostsParams(BaseModel):
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first page.
     """
+
+
+class ListGroupPostsParams(BaseModel):
     group_id: Annotated[str, Field(examples=["352314512800364"], pattern="^\\d{1,20}$")]
     """
     Numeric group id; `/resolve` turns a group URL into one.
@@ -1198,6 +1178,10 @@ class ListGroupPostsParams(BaseModel):
     sort: GroupSort | None = GroupSort.TOP
     """
     Top posts or newest first.
+    """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
     """
 
 
@@ -1209,6 +1193,10 @@ class ListHashtagPostsParams(BaseModel):
 
 
 class ListPageEventsParams(BaseModel):
+    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
+    """
+    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
+    """
     collection_id: Annotated[str | None, Field(pattern="^[A-Za-z0-9+/=_-]{8,400}$")] = None
     """
     Another collection of the tab, from `/resolve` on its URL or the page's `tabs[].collections`; the tab's default when empty.
@@ -1216,10 +1204,6 @@ class ListPageEventsParams(BaseModel):
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first page.
-    """
-    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
-    """
-    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
     """
 
 
@@ -1231,6 +1215,10 @@ class ListPageFollowersParams(BaseModel):
 
 
 class ListPageFollowingParams(BaseModel):
+    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
+    """
+    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
+    """
     collection_id: Annotated[
         str,
         Field(
@@ -1243,13 +1231,13 @@ class ListPageFollowingParams(BaseModel):
     """
     `collection_id` of the tab, from `/resolve` on the tab's URL or the page's `tabs[].collections`.
     """
+
+
+class ListPagePhotosParams(BaseModel):
     profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
     """
     The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
     """
-
-
-class ListPagePhotosParams(BaseModel):
     collection_id: Annotated[str | None, Field(pattern="^[A-Za-z0-9+/=_-]{8,400}$")] = None
     """
     Another collection of the tab, from `/resolve` on its URL or the page's `tabs[].collections`; the tab's default when empty.
@@ -1258,31 +1246,27 @@ class ListPagePhotosParams(BaseModel):
     """
     `pagination.next_cursor` from the previous page; empty for the first page.
     """
-    profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
-    """
-    The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
-    """
 
 
 class ListPagePostsParams(BaseModel):
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
     profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
     """
     The page or profile's `profile_id`, such as `100044561550831`, from `/resolve` on its URL or `page.profile_id` in any answer.
+    """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
     """
 
 
 class ListPageVideosParams(BaseModel):
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
     page_id: Annotated[str, Field(examples=["54971236771"], pattern="^\\d{1,20}$")]
     """
     The page's `page_id`, such as `54971236771`, from `page_id` on `/pages/{profile_id}` or `page.page_id` in an Ad Library answer.
+    """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
     """
 
 
@@ -1304,6 +1288,26 @@ class ResolveUrlParams(BaseModel):
 
 
 class SearchEventsParams(BaseModel):
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
+    """
+    query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
+    """
+    Search text.
+    """
+    date: EventDateRange | None = None
+    """
+    A day range counted from today, as in the `date` options of the answer's `filters[]`. Send this or `start_date` and `end_date`.
+    """
+    start_date: date_aliased | None = None
+    """
+    First day of a custom range.
+    """
+    end_date: date_aliased | None = None
+    """
+    Last day of a custom range.
+    """
     category_id: Annotated[str | None, Field(pattern="^\\d{1,20}$")] = None
     """
     An event category: `param_value` of a `category_id` option in the answer's `filters[]`.
@@ -1312,36 +1316,16 @@ class SearchEventsParams(BaseModel):
     """
     Only events in this city: `locations[].city_id` from `/marketplace/locations`.
     """
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
-    date: EventDateRange | None = None
-    """
-    A day range counted from today, as in the `date` options of the answer's `filters[]`. Send this or `start_date` and `end_date`.
-    """
-    end_date: date_aliased | None = None
-    """
-    Last day of a custom range.
-    """
-    query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
-    """
-    Search text.
-    """
-    start_date: date_aliased | None = None
-    """
-    First day of a custom range.
-    """
 
 
 class SearchVideosParams(BaseModel):
-    cursor: str | None = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page.
-    """
     query: Annotated[str, Field(examples=["nike"], max_length=100, min_length=1, pattern="\\S")]
     """
     Search text.
+    """
+    cursor: str | None = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page.
     """
 
 

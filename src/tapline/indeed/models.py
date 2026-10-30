@@ -192,19 +192,19 @@ class AttributeItem(RootModel[str]):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -232,20 +232,22 @@ class GetCompanyParams(BaseModel):
 
 
 class GetJobParams(BaseModel):
-    country: IndeedCountry | None = IndeedCountry.US
-    """
-    Indeed country site the job was posted on (`gb` is the UK); Indeed sends its pay only there.
-    """
     job_key: Annotated[str, Field(examples=["9538bb0e5a935e4d"], pattern="^[0-9a-f]{16}$")]
     """
     Indeed job key: `key` of a search result, or `jk` in a viewjob URL.
     """
+    country: IndeedCountry | None = IndeedCountry.US
+    """
+    Indeed country site the job was posted on (`gb` is the UK); Indeed sends its pay only there.
+    """
 
 
 class GetSalariesParams(BaseModel):
-    company_key: Annotated[str | None, Field(pattern="^[0-9a-f]{16}$")] = None
+    location: Annotated[
+        str, Field(examples=["US/TX/Houston"], pattern="^[A-Z]{2}(/[^/]{1,60}){0,2}$")
+    ]
     """
-    Indeed company key, to keep to one employer's pay reports.
+    Country, state or city as Indeed's path (`US`, `US/TX`, `US/TX/Austin`); location suggestions carry it as `salary_location` for US cities.
     """
     job_title: Annotated[
         str | None,
@@ -254,28 +256,29 @@ class GetSalariesParams(BaseModel):
     """
     Job title; leave out for every title.
     """
-    location: Annotated[
-        str, Field(examples=["US/TX/Houston"], pattern="^[A-Z]{2}(/[^/]{1,60}){0,2}$")
-    ]
+    company_key: Annotated[str | None, Field(pattern="^[0-9a-f]{16}$")] = None
     """
-    Country, state or city as Indeed's path (`US`, `US/TX`, `US/TX/Austin`); location suggestions carry it as `salary_location` for US cities.
+    Indeed company key, to keep to one employer's pay reports.
     """
 
 
 class IndeedApply(BaseModel):
     """
-    Indeed Apply, decoded from the token Indeed sends with the job; every field is null when the token does not decode.
+    Indeed Apply metadata. Token-derived fields are null when the token does not decode.
 
     `ats_job_id` is the job's id in the employer's applicant system. `required_resume_fields` and
     `optional_resume_fields` list the résumé sections the application requires or offers, comma-separated
-    (`phone,education,skills`).
+    (`phone,education,skills`). `scopes` appears only when Indeed sends it and names supported clients such as
+    `desktop` and `mobile`. `locale` is the language or locale tag a few tokens carry (`en`, `fr`, `en_US`).
     """
 
-    advertiser_number: str | None
-    asks_for: IndeedApplyAsks | None
     ats_job_id: str | None
-    optional_resume_fields: str | None
+    advertiser_number: str | None
+    scopes: list[str] | None = None
+    asks_for: IndeedApplyAsks | None
     required_resume_fields: str | None
+    optional_resume_fields: str | None
+    locale: str | None
 
 
 class IndeedApplyAsks(BaseModel):
@@ -283,10 +286,10 @@ class IndeedApplyAsks(BaseModel):
     `required`, `optional` or `hidden` per item; `name` is the name format asked: `first_and_last` or `full`.
     """
 
-    cover_letter: str | None
     name: str | None
-    phone: str | None
     resume: str | None
+    cover_letter: str | None
+    phone: str | None
 
 
 class IndeedAttribute(BaseModel):
@@ -296,19 +299,24 @@ class IndeedAttribute(BaseModel):
 
 class IndeedAttributeCount(BaseModel):
     code: str
-    count: int
     label: str | None
+    count: int
 
 
 class IndeedCeo(BaseModel):
-    approval: IndeedCeoApproval | None
     name: str | None
+    approval: IndeedCeoApproval | None
     photo_url: str | None
 
 
 class IndeedCeoApproval(BaseModel):
-    no_count: int | None
+    """
+    `percent` is the share of yes answers, rounded to a whole number.
+    """
+
     yes_count: int | None
+    no_count: int | None
+    percent: int | None
 
 
 class IndeedCityFacet(BaseModel):
@@ -316,13 +324,13 @@ class IndeedCityFacet(BaseModel):
     `key` is Indeed's `<state>|<county>|<admin3>||<city>` facet key, split into the other fields; Indeed sends no labels for the codes.
     """
 
-    admin3_code: str | None
-    city: str | None
-    count: int
-    county_code: str | None
-    is_remote: bool
     key: str
+    count: int
+    city: str | None
     state_code: str | None
+    county_code: str | None
+    admin3_code: str | None
+    is_remote: bool
 
 
 class IndeedCodeLabel(BaseModel):
@@ -335,28 +343,30 @@ class IndeedCompany(BaseModel):
     `description` is the short blurb and `about` the long text of the company page. `industry` is Indeed's single industry label and `sectors` its sector list; either may be empty alone. `headquarters` lists the places Indeed gives as head office. `reported_pay` is for the requested country.
     """
 
-    about: str | None
-    brand_color: str | None
-    ceo: IndeedCeo
-    description: str | None
-    happiness: IndeedCompanyHappiness
-    headquarters: list[str]
-    images: IndeedCompanyImages
-    industry: str | None
-    is_claimed: bool | None
     key: str
-    links: IndeedCompanyLinks
     name: str | None
-    page_path: str | None
+    description: str | None
+    about: str | None
     page_url: str | None
-    profile_sections: list[IndeedProfileSection]
-    ratings: IndeedCompanyRatings
+    page_path: str | None
+    reviews_url: str | None
+    salaries_url: str | None
+    links: IndeedCompanyLinks
     reported_pay: IndeedReportedPay
-    revenue: IndeedCodeLabel
-    sectors: list[str]
+    ratings: IndeedCompanyRatings
+    happiness: IndeedCompanyHappiness
     similar_companies: list[IndeedCompanySummary]
+    industry: str | None
+    sectors: list[str]
     size: IndeedCodeLabel
+    revenue: IndeedCodeLabel
+    headquarters: list[str]
+    profile_sections: list[IndeedProfileSection]
+    ceo: IndeedCeo
+    is_claimed: bool | None
+    brand_color: str | None
     stock_symbol: str | None
+    images: IndeedCompanyImages
 
 
 class IndeedCompanyDirectory(BaseModel):
@@ -382,45 +392,45 @@ class IndeedCompanyFacet(BaseModel):
     Indeed's facet sends company keys only; `/v1/indeed/companies/{company_key}` names one.
     """
 
-    count: int
     key: str
+    count: int
 
 
 class IndeedCompanyHappiness(BaseModel):
-    achievement: IndeedHappinessScore | None
+    overall: IndeedHappinessScore | None
+    management: IndeedHappinessScore | None
+    learning: IndeedHappinessScore | None
     appreciation: IndeedHappinessScore | None
     belonging: IndeedHappinessScore | None
+    purpose: IndeedHappinessScore | None
+    achievement: IndeedHappinessScore | None
     energy: IndeedHappinessScore | None
     flexibility: IndeedHappinessScore | None
     inclusion: IndeedHappinessScore | None
-    learning: IndeedHappinessScore | None
-    management: IndeedHappinessScore | None
-    overall: IndeedHappinessScore | None
-    purpose: IndeedHappinessScore | None
     support: IndeedHappinessScore | None
     trust: IndeedHappinessScore | None
 
 
 class IndeedCompanyImages(BaseModel):
-    header_url: str | None
     logo_url: str | None
+    header_url: str | None
     rectangular_logo_url: str | None
 
 
 class IndeedCompanyLinks(BaseModel):
-    facebook: str | None
-    instagram: str | None
-    twitter: str | None
     website: str | None
+    facebook: str | None
+    twitter: str | None
+    instagram: str | None
 
 
 class IndeedCompanyRatings(BaseModel):
-    compensation_and_benefits: IndeedRating | None
-    culture_and_values: IndeedRating | None
-    job_security_and_advancement: IndeedRating | None
-    management: IndeedRating | None
     overall: IndeedRating | None
     work_life_balance: IndeedRating | None
+    compensation_and_benefits: IndeedRating | None
+    job_security_and_advancement: IndeedRating | None
+    management: IndeedRating | None
+    culture_and_values: IndeedRating | None
 
 
 class IndeedCompanySuggestion(BaseModel):
@@ -428,15 +438,15 @@ class IndeedCompanySuggestion(BaseModel):
     `score` is Indeed's relative autocomplete ranking. `logo_url` is the 64 px logo; `square_logo_64`, `intent_confidence` and `sub_query` are further autocomplete fields Indeed left empty in every sample.
     """
 
-    intent_confidence: str | None
     key: str
-    logo_url: str | None
     name: str | None
-    page_path: str | None
     page_url: str | None
+    page_path: str | None
     score: int
-    square_logo_64: str | None
+    intent_confidence: str | None
     sub_query: str | None
+    logo_url: str | None
+    square_logo_64: str | None
 
 
 class IndeedCompanySuggestions(BaseModel):
@@ -448,13 +458,13 @@ class IndeedCompanySummary(BaseModel):
     `page_path` is the company's path on every Indeed country site; `page_url` puts it on the site of the request or the job.
     """
 
-    is_claimed: bool | None
     key: str
-    logo_url: str | None
     name: str | None
-    page_path: str | None
     page_url: str | None
+    page_path: str | None
     rating: IndeedRating | None
+    is_claimed: bool | None
+    logo_url: str | None
 
 
 class IndeedCoordinates(BaseModel):
@@ -467,9 +477,9 @@ class IndeedCursorPagination(BaseModel):
     `completion` is `exhausted` on the last page and null while more pages follow; Indeed stops near 1,000 results whatever the total.
     """
 
-    completion: IndeedCursorCompletionValue | None
     next_cursor: str | None
     previous_cursor: str | None
+    completion: IndeedCursorCompletionValue | None
 
 
 class IndeedEmployerActivity(BaseModel):
@@ -478,11 +488,11 @@ class IndeedEmployerActivity(BaseModel):
     """
 
     hires_last_30_days: int | None
-    is_actively_reviewing: bool | None
-    is_top_rated: bool | None
-    last_active_days_ago: int | None
-    response_rate: float | None
     response_time_days: int | None
+    response_rate: float | None
+    is_actively_reviewing: bool | None
+    last_active_days_ago: int | None
+    is_top_rated: bool | None
 
 
 class IndeedHappinessScore(BaseModel):
@@ -490,14 +500,15 @@ class IndeedHappinessScore(BaseModel):
     Work happiness from 0 to 100 over `count` survey answers.
     """
 
-    count: int | None
     score: float | None
+    count: int | None
 
 
 class IndeedJob(BaseModel):
     """
     `title` is as posted, `standard_title` Indeed's standard title and `normalized_title` the lower-case form the search facets use (it drops suffixes such as `(m/w/d)`).
 
+    `normalized_category` appears only when Indeed sends its job-category code.
     `employer_reference` is the employer's requisition id; `company_name_as_posted` stays set when the job has no
     Indeed company page (`company` null). `published_at` is the employer's posting time, often a date at midnight US
     Central; `posted_on_indeed_at` is when Indeed received it, which `posted_within_days` filters on.
@@ -505,32 +516,36 @@ class IndeedJob(BaseModel):
     `/v1/indeed/jobs/{job_key}`; search results send it null.
     """
 
-    applicants: IndeedJobApplicants | None
-    apply: IndeedJobApply
-    attributes: IndeedJobAttributes
-    company: IndeedCompanySummary | None
-    company_name_as_posted: str | None
+    key: str
+    title: str | None
+    standard_title: str | None
+    normalized_title: str | None
     description: str | None
+    description_html: str | None
+    language: str | None
+    indeed_url: str
+    description_urls: list[str]
+    pay: IndeedPay | None
+    applicants: IndeedJobApplicants | None
+    status: IndeedJobStatus
+    published_at: str | None
+    posted_on_indeed_at: str | None
+    expires_at: str | None
+    company: IndeedJobCompany | None
+    location: IndeedJobLocation | None
+    origin: IndeedJobOrigin
+    company_name_as_posted: str | None
+    work_schedule: str | None
     detailed_salary: str | None
+    description_emails: list[str]
+    attributes: IndeedJobAttributes
+    requirements: list[IndeedRequirement]
+    occupations: list[IndeedAttribute]
+    apply: IndeedJobApply
     employer_activity: IndeedEmployerActivity | None
     employer_reference: str | None
-    expires_at: str | None
-    indeed_url: str
-    key: str
-    language: str | None
-    location: IndeedJobLocation | None
-    normalized_title: str | None
-    occupations: list[IndeedAttribute]
-    origin: IndeedJobOrigin
-    pay: IndeedPay | None
+    normalized_category: str | None = None
     photos: list[IndeedJobPhoto]
-    posted_on_indeed_at: str | None
-    published_at: str | None
-    requirements: list[IndeedRequirement]
-    standard_title: str | None
-    status: IndeedJobStatus
-    title: str | None
-    work_schedule: str | None
 
 
 class IndeedJobApplicants(BaseModel):
@@ -548,8 +563,8 @@ class IndeedJobApply(BaseModel):
     `url` is the employer's or applicant system's page; `indeed_apply` is null when the job takes no Indeed Apply.
     """
 
-    indeed_apply: IndeedApply | None
     url: str | None
+    indeed_apply: IndeedApply | None
 
 
 class IndeedJobAttributes(BaseModel):
@@ -557,20 +572,57 @@ class IndeedJobAttributes(BaseModel):
     Every code of the job's attributes, each in exactly one group.
     """
 
-    benefits: list[IndeedAttribute]
-    compensation_package: list[IndeedAttribute]
-    credentials: list[IndeedAttribute]
-    education: list[IndeedAttribute]
-    encouraged_to_apply: list[IndeedAttribute]
-    experience_levels: list[IndeedAttribute]
     job_types: list[IndeedAttribute]
-    other_job_details: list[IndeedAttribute]
-    qualifications: list[IndeedAttribute]
-    schedules: list[IndeedAttribute]
-    security_clearances: list[IndeedAttribute]
-    shifts: list[IndeedAttribute]
     work_arrangement: list[IndeedAttribute]
     work_settings: list[IndeedAttribute]
+    shifts: list[IndeedAttribute]
+    schedules: list[IndeedAttribute]
+    benefits: list[IndeedAttribute]
+    compensation_package: list[IndeedAttribute]
+    encouraged_to_apply: list[IndeedAttribute]
+    other_job_details: list[IndeedAttribute]
+    experience_levels: list[IndeedAttribute]
+    education: list[IndeedAttribute]
+    security_clearances: list[IndeedAttribute]
+    credentials: list[IndeedAttribute]
+    qualifications: list[IndeedAttribute]
+
+
+class IndeedJobCompany(BaseModel):
+    """
+    The hiring company with the profile facts the job answer carries; `/v1/indeed/companies/{company_key}` has the full profile.
+    """
+
+    key: str
+    name: str | None
+    description: str | None
+    page_url: str | None
+    page_path: str | None
+    website: str | None
+    rating: IndeedRating | None
+    parent_company: IndeedParentCompany | None
+    is_claimed: bool | None
+    industry: str | None
+    size: IndeedCodeLabel
+    revenue: IndeedCodeLabel
+    headquarters: list[str]
+    ceo: IndeedJobCompanyCeo | None
+    logo_url: str | None
+    header_url: str | None
+
+
+class IndeedJobCompanyCeo(BaseModel):
+    name: str | None
+    photo_url: str | None
+
+
+class IndeedJobGroup(BaseModel):
+    """
+    The stable group identity and number of related listings represented by one search result. A result without source grouping omits `group`.
+    """
+
+    key: str
+    count: int
 
 
 class IndeedJobLocation(BaseModel):
@@ -578,33 +630,34 @@ class IndeedJobLocation(BaseModel):
     `county_*` is the second admin level and `admin3_*` the third (`GTL` Greater London). A remote job has `is_remote` true, its label `Remote`, and no city, address or coordinates.
     """
 
-    admin3_code: str | None
-    admin3_name: str | None
-    city: str | None
-    coordinates: IndeedCoordinates | None
-    country_code: str | None
-    country_name: str | None
-    county_code: str | None
-    county_name: str | None
-    full_address: str | None
-    is_remote: bool
     label: str | None
     label_long: str | None
+    full_address: str | None
+    street_address: str | None
     neighborhood: str | None
     postal_code: str | None
-    state_code: str | None
+    city: str | None
+    county_name: str | None
+    county_code: str | None
+    admin3_code: str | None
+    admin3_name: str | None
     state_name: str | None
-    street_address: str | None
+    state_code: str | None
+    country_name: str | None
+    country_code: str | None
+    coordinates: IndeedCoordinates | None
+    is_remote: bool
 
 
 class IndeedJobOrigin(BaseModel):
     """
-    Who supplied the posting to Indeed: `source_key` and `feed_key` are opaque Indeed ids, `source_name` the supplying account.
+    Who supplied the posting to Indeed. `source_key` and `feed_key` are opaque Indeed ids; `source_name` is the supplying account. `source_type` appears only when Indeed sends its feed classification.
     """
 
-    feed_key: str | None
     source_key: str | None
+    feed_key: str | None
     source_name: str | None
+    source_type: str | None = None
 
 
 class IndeedJobPhoto(BaseModel):
@@ -621,28 +674,24 @@ class IndeedJobSearchFacets(BaseModel):
     Indeed's top five per facet. `attributes` ranks codes of every group, so it overlaps `job_types`; on a company's job list `companies` holds just that company.
     """
 
-    attributes: list[IndeedAttributeCount]
     cities: list[IndeedCityFacet]
     companies: list[IndeedCompanyFacet]
+    attributes: list[IndeedAttributeCount]
     job_types: list[IndeedAttributeCount]
     normalized_titles: list[IndeedTitleFacet]
 
 
 class IndeedJobSearchPage(BaseModel):
-    """
-    `tracking_key` is Indeed's id for this search; each result's own is `<tracking_key>-<job key>`.
-    """
-
-    facets: IndeedJobSearchFacets
-    pagination: IndeedCursorPagination
     results: list[IndeedJobSearchResult]
     total: IndeedResultTotal | None
-    tracking_key: str | None
+    facets: IndeedJobSearchFacets
+    pagination: IndeedCursorPagination
 
 
 class IndeedJobSearchResult(BaseModel):
-    job: IndeedJob
     snippet: str | None
+    job: IndeedJob
+    group: IndeedJobGroup | None = None
 
 
 class IndeedJobStatus(BaseModel):
@@ -651,9 +700,9 @@ class IndeedJobStatus(BaseModel):
     """
 
     is_expired: bool | None
-    is_high_volume_hiring: bool | None
     is_repost: bool | None
     is_urgent_hire: bool | None
+    is_high_volume_hiring: bool | None
 
 
 class IndeedLocationSuggestion(BaseModel):
@@ -674,16 +723,23 @@ class IndeedMoney(BaseModel):
     currency: str | None
 
 
+class IndeedParentCompany(BaseModel):
+    key: str
+    name: str | None
+    page_url: str | None
+    page_path: str | None
+
+
 class IndeedPay(BaseModel):
     """
     `posted` is the employer's pay; `estimated` is Indeed's estimate, sent when the posting has none. `source` says how Indeed got the posted pay (`extraction`: read from the description).
     """
 
-    currency: str | None
-    estimated: IndeedPayRange | None
-    posted: IndeedPayRange | None
-    source: str | None
     text: str | None
+    source: str | None
+    currency: str | None
+    posted: IndeedPayRange | None
+    estimated: IndeedPayRange | None
 
 
 class IndeedPayMean(BaseModel):
@@ -691,8 +747,8 @@ class IndeedPayMean(BaseModel):
     Mean of the `count` reports quoted in this pay period only, so periods do not convert into each other.
     """
 
-    count: int
     mean: IndeedMoney
+    count: int
 
 
 class IndeedPayRange(BaseModel):
@@ -701,8 +757,8 @@ class IndeedPayRange(BaseModel):
     """
 
     kind: str | None
-    max: IndeedMoney | None
     min: IndeedMoney | None
+    max: IndeedMoney | None
     period: str | None
 
 
@@ -715,8 +771,8 @@ class IndeedProfileSection(BaseModel):
     A section the company wrote for its Indeed page, its body as HTML.
     """
 
-    html: str | None
     title: str | None
+    html: str | None
 
 
 class IndeedRating(BaseModel):
@@ -724,8 +780,8 @@ class IndeedRating(BaseModel):
     Mean employee rating from 1 to 5 over `count` reviews; null where nobody has rated.
     """
 
-    count: int | None
     value: float | None
+    count: int | None
 
 
 class IndeedReportedPay(BaseModel):
@@ -735,14 +791,14 @@ class IndeedReportedPay(BaseModel):
     `currency` is that country's: Indeed sends none with salary reports.
     """
 
+    report_count: int
     country_code: str
     currency: str
+    year: IndeedPayMean | None
+    month: IndeedPayMean | None
+    week: IndeedPayMean | None
     day: IndeedPayMean | None
     hour: IndeedPayMean | None
-    month: IndeedPayMean | None
-    report_count: int
-    week: IndeedPayMean | None
-    year: IndeedPayMean | None
 
 
 class IndeedRequirement(BaseModel):
@@ -767,8 +823,8 @@ class IndeedResultTotal(BaseModel):
 class IndeedSalaries(BaseModel):
     company_key: str | None
     job_title: str | None
-    location: str
     reported_pay: IndeedReportedPay
+    location: str
 
 
 class IndeedSuggestions(BaseModel):
@@ -776,18 +832,14 @@ class IndeedSuggestions(BaseModel):
 
 
 class IndeedTitleFacet(BaseModel):
-    count: int
     title: str
+    count: int
 
 
 class ListCompanyDirectoryParams(BaseModel):
-    country: IndeedCountry | None = IndeedCountry.US
+    query: Annotated[str, Field(examples=["hospital"], max_length=200, min_length=1, pattern="\\S")]
     """
-    Indeed country site, as an ISO code (`gb` is the UK).
-    """
-    limit: Annotated[int | None, Field(ge=1, le=50)] = 10
-    """
-    Companies to return.
+    Company name, industry word or job title.
     """
     location: Annotated[
         str | None,
@@ -796,54 +848,24 @@ class ListCompanyDirectoryParams(BaseModel):
     """
     City, state or country to keep to (`Houston, TX`); leave out for the whole country site.
     """
-    query: Annotated[str, Field(examples=["hospital"], max_length=200, min_length=1, pattern="\\S")]
-    """
-    Company name, industry word or job title.
-    """
-
-
-class ListCompanyJobsParams(BaseModel):
-    attribute: Annotated[
-        list[AttributeItem] | None,
-        Field(examples=[["7ZM5D"]], max_length=10, validate_default=True),
-    ] = []
-    """
-    Attribute `code` from a job (skill, benefit, licence); repeat for jobs carrying every code.
-    """
-    company_key: Annotated[str, Field(examples=["d5cd619626c9f6f7"], pattern="^[0-9a-f]{16}$")]
-    """
-    Indeed company key, from `/v1/indeed/companies/search` or a job's `company.key`.
-    """
     country: IndeedCountry | None = IndeedCountry.US
     """
     Indeed country site, as an ISO code (`gb` is the UK).
     """
-    cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 10
     """
-    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
+    Companies to return.
     """
-    exclude_attribute: Annotated[
-        list[ExcludeAttributeItem] | None,
-        Field(examples=[["AYY4J"]], max_length=10, validate_default=True),
-    ] = []
+
+
+class ListCompanyJobsParams(BaseModel):
+    company_key: Annotated[str, Field(examples=["d5cd619626c9f6f7"], pattern="^[0-9a-f]{16}$")]
     """
-    Attribute `code` to leave out; jobs carrying any of them drop.
+    Indeed company key, from `/v1/indeed/companies/search` or a job's `company.key`.
     """
-    exclude_job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
+    query: Annotated[str | None, Field(max_length=200)] = ""
     """
-    Job types to leave out, from the `job_type` values.
-    """
-    experience_level: Annotated[list[IndeedExperienceLevel] | None, Field(max_length=3)] = []
-    """
-    `entry`, `mid` or `senior`; repeat for jobs at any of them.
-    """
-    job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
-    """
-    `full_time`, `part_time`, `contract`, `permanent`, `temporary`, `temp_to_hire`, `internship`, `prn` or `travel_nursing`; repeat for jobs of any of them.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=25)] = 25
-    """
-    Jobs to return, up to 25 per call.
+    Keywords to narrow the company's jobs; empty lists them all.
     """
     location: Annotated[
         str | None,
@@ -851,25 +873,6 @@ class ListCompanyJobsParams(BaseModel):
     ] = None
     """
     City, state or postcode (`Austin, TX`); leave out to search the whole country.
-    """
-    min_salary: Annotated[int | None, Field(ge=1, le=2147483647)] = None
-    """
-    Minimum yearly pay in the country's currency; Indeed annualises hourly pay.
-    """
-    occupation: Annotated[
-        list[OccupationItem] | None,
-        Field(examples=[["KWWHK"]], max_length=5, validate_default=True),
-    ] = []
-    """
-    Occupation `code` from a job's `occupations`; repeat for jobs in every one.
-    """
-    posted_within_days: IndeedPostedWithin | None = None
-    """
-    Only jobs that reached Indeed this many days ago or less.
-    """
-    query: Annotated[str | None, Field(max_length=200)] = ""
-    """
-    Keywords to narrow the company's jobs; empty lists them all.
     """
     radius: Annotated[int | None, Field(ge=0, le=100)] = 25
     """
@@ -879,36 +882,74 @@ class ListCompanyJobsParams(BaseModel):
     """
     Unit of `radius`: `miles` or `kilometers`.
     """
+    country: IndeedCountry | None = IndeedCountry.US
+    """
+    Indeed country site, as an ISO code (`gb` is the UK).
+    """
     sort: IndeedJobSort | None = IndeedJobSort.RELEVANCE
     """
     `relevance`, or `date` to favour recent postings; Indeed does not order the page strictly by date.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=25)] = 25
+    """
+    Jobs to return, up to 25 per call.
+    """
+    cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
+    """
+    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
+    """
+    job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
+    """
+    `full_time`, `part_time`, `contract`, `permanent`, `temporary`, `temp_to_hire`, `internship`, `prn` or `travel_nursing`; repeat for jobs of any of them.
     """
     work_setting: Annotated[list[IndeedWorkSetting] | None, Field(max_length=4)] = []
     """
     `remote`, `hybrid`, `in_person` or `office`; repeat for jobs with any of them.
     """
+    experience_level: Annotated[list[IndeedExperienceLevel] | None, Field(max_length=3)] = []
+    """
+    `entry`, `mid` or `senior`; repeat for jobs at any of them.
+    """
+    attribute: Annotated[
+        list[AttributeItem] | None,
+        Field(examples=[["7ZM5D"]], max_length=10, validate_default=True),
+    ] = []
+    """
+    Attribute `code` from a job (skill, benefit, licence); repeat for jobs carrying every code.
+    """
+    occupation: Annotated[
+        list[OccupationItem] | None,
+        Field(examples=[["KWWHK"]], max_length=5, validate_default=True),
+    ] = []
+    """
+    Occupation `code` from a job's `occupations`; repeat for jobs in every one.
+    """
+    exclude_job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
+    """
+    Job types to leave out, from the `job_type` values.
+    """
+    exclude_attribute: Annotated[
+        list[ExcludeAttributeItem] | None,
+        Field(examples=[["AYY4J"]], max_length=10, validate_default=True),
+    ] = []
+    """
+    Attribute `code` to leave out; jobs carrying any of them drop.
+    """
+    posted_within_days: IndeedPostedWithin | None = None
+    """
+    Only jobs that reached Indeed this many days ago or less.
+    """
+    min_salary: Annotated[int | None, Field(ge=1, le=2147483647)] = None
+    """
+    Minimum yearly pay in the country's currency; Indeed annualises hourly pay.
+    """
 
 
 class ListJobTitleSuggestionsParams(BaseModel):
-    country: IndeedCountry | None = IndeedCountry.US
-    """
-    Indeed country site, as an ISO code (`gb` is the UK).
-    """
-    language: IndeedLanguage | None = None
-    """
-    Label language; one the country site offers, defaulting to its main language.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=50)] = 10
-    """
-    Suggestions to return.
-    """
     query: Annotated[str, Field(examples=["softw"], max_length=200, min_length=1, pattern="\\S")]
     """
     The text typed so far.
     """
-
-
-class ListLocationSuggestionsParams(BaseModel):
     country: IndeedCountry | None = IndeedCountry.US
     """
     Indeed country site, as an ISO code (`gb` is the UK).
@@ -921,9 +962,24 @@ class ListLocationSuggestionsParams(BaseModel):
     """
     Suggestions to return.
     """
+
+
+class ListLocationSuggestionsParams(BaseModel):
     query: Annotated[str, Field(examples=["Aust"], max_length=200, min_length=1, pattern="\\S")]
     """
     City, state or postcode typed so far.
+    """
+    country: IndeedCountry | None = IndeedCountry.US
+    """
+    Indeed country site, as an ISO code (`gb` is the UK).
+    """
+    language: IndeedLanguage | None = None
+    """
+    Label language; one the country site offers, defaulting to its main language.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 10
+    """
+    Suggestions to return.
     """
 
 
@@ -947,6 +1003,10 @@ class OccupationItem(RootModel[str]):
 
 
 class SearchCompaniesParams(BaseModel):
+    query: Annotated[str, Field(examples=["goo"], max_length=200, min_length=1, pattern="\\S")]
+    """
+    Company name, or its start.
+    """
     country: IndeedCountry | None = IndeedCountry.US
     """
     Indeed country site, as an ISO code (`gb` is the UK).
@@ -959,13 +1019,59 @@ class SearchCompaniesParams(BaseModel):
     """
     Suggestions to return.
     """
-    query: Annotated[str, Field(examples=["goo"], max_length=200, min_length=1, pattern="\\S")]
-    """
-    Company name, or its start.
-    """
 
 
 class SearchJobsParams(BaseModel):
+    query: Annotated[
+        str,
+        Field(examples=["registered nurse"], max_length=200, min_length=1, pattern="\\S"),
+    ]
+    """
+    Job title, skill or company, as typed into Indeed.
+    """
+    location: Annotated[
+        str | None,
+        Field(examples=["Houston, TX"], max_length=200, min_length=1, pattern="\\S"),
+    ] = None
+    """
+    City, state or postcode (`Austin, TX`); leave out to search the whole country.
+    """
+    radius: Annotated[int | None, Field(ge=0, le=100)] = 25
+    """
+    Distance around `location`; 0 keeps to that place. Ignored without `location`.
+    """
+    radius_unit: IndeedDistanceUnit | None = IndeedDistanceUnit.MILES
+    """
+    Unit of `radius`: `miles` or `kilometers`.
+    """
+    country: IndeedCountry | None = IndeedCountry.US
+    """
+    Indeed country site, as an ISO code (`gb` is the UK).
+    """
+    sort: IndeedJobSort | None = IndeedJobSort.RELEVANCE
+    """
+    `relevance`, or `date` to favour recent postings; Indeed does not order the page strictly by date.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=25)] = 25
+    """
+    Jobs to return, up to 25 per call.
+    """
+    cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
+    """
+    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
+    """
+    job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
+    """
+    `full_time`, `part_time`, `contract`, `permanent`, `temporary`, `temp_to_hire`, `internship`, `prn` or `travel_nursing`; repeat for jobs of any of them.
+    """
+    work_setting: Annotated[list[IndeedWorkSetting] | None, Field(max_length=4)] = []
+    """
+    `remote`, `hybrid`, `in_person` or `office`; repeat for jobs with any of them.
+    """
+    experience_level: Annotated[list[IndeedExperienceLevel] | None, Field(max_length=3)] = []
+    """
+    `entry`, `mid` or `senior`; repeat for jobs at any of them.
+    """
     attribute: Annotated[
         list[AttributeItem] | None,
         Field(examples=[["7ZM5D"]], max_length=10, validate_default=True),
@@ -973,13 +1079,16 @@ class SearchJobsParams(BaseModel):
     """
     Attribute `code` from a job (skill, benefit, licence); repeat for jobs carrying every code.
     """
-    country: IndeedCountry | None = IndeedCountry.US
+    occupation: Annotated[
+        list[OccupationItem] | None,
+        Field(examples=[["KWWHK"]], max_length=5, validate_default=True),
+    ] = []
     """
-    Indeed country site, as an ISO code (`gb` is the UK).
+    Occupation `code` from a job's `occupations`; repeat for jobs in every one.
     """
-    cursor: Annotated[str | None, Field(max_length=1000, pattern="^[A-Za-z0-9+/=_-]*$")] = ""
+    exclude_job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
     """
-    `pagination.next_cursor` or `previous_cursor` of the last page; send the same search and `limit` with it.
+    Job types to leave out, from the `job_type` values.
     """
     exclude_attribute: Annotated[
         list[ExcludeAttributeItem] | None,
@@ -994,66 +1103,13 @@ class SearchJobsParams(BaseModel):
     """
     Company `key` whose jobs to leave out.
     """
-    exclude_job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
-    """
-    Job types to leave out, from the `job_type` values.
-    """
-    experience_level: Annotated[list[IndeedExperienceLevel] | None, Field(max_length=3)] = []
-    """
-    `entry`, `mid` or `senior`; repeat for jobs at any of them.
-    """
-    job_type: Annotated[list[IndeedJobType] | None, Field(max_length=9)] = []
-    """
-    `full_time`, `part_time`, `contract`, `permanent`, `temporary`, `temp_to_hire`, `internship`, `prn` or `travel_nursing`; repeat for jobs of any of them.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=25)] = 25
-    """
-    Jobs to return, up to 25 per call.
-    """
-    location: Annotated[
-        str | None,
-        Field(examples=["Houston, TX"], max_length=200, min_length=1, pattern="\\S"),
-    ] = None
-    """
-    City, state or postcode (`Austin, TX`); leave out to search the whole country.
-    """
-    min_salary: Annotated[int | None, Field(ge=1, le=2147483647)] = None
-    """
-    Minimum yearly pay in the country's currency; Indeed annualises hourly pay.
-    """
-    occupation: Annotated[
-        list[OccupationItem] | None,
-        Field(examples=[["KWWHK"]], max_length=5, validate_default=True),
-    ] = []
-    """
-    Occupation `code` from a job's `occupations`; repeat for jobs in every one.
-    """
     posted_within_days: IndeedPostedWithin | None = None
     """
     Only jobs that reached Indeed this many days ago or less.
     """
-    query: Annotated[
-        str,
-        Field(examples=["registered nurse"], max_length=200, min_length=1, pattern="\\S"),
-    ]
+    min_salary: Annotated[int | None, Field(ge=1, le=2147483647)] = None
     """
-    Job title, skill or company, as typed into Indeed.
-    """
-    radius: Annotated[int | None, Field(ge=0, le=100)] = 25
-    """
-    Distance around `location`; 0 keeps to that place. Ignored without `location`.
-    """
-    radius_unit: IndeedDistanceUnit | None = IndeedDistanceUnit.MILES
-    """
-    Unit of `radius`: `miles` or `kilometers`.
-    """
-    sort: IndeedJobSort | None = IndeedJobSort.RELEVANCE
-    """
-    `relevance`, or `date` to favour recent postings; Indeed does not order the page strictly by date.
-    """
-    work_setting: Annotated[list[IndeedWorkSetting] | None, Field(max_length=4)] = []
-    """
-    `remote`, `hybrid`, `in_person` or `office`; repeat for jobs with any of them.
+    Minimum yearly pay in the country's currency; Indeed annualises hourly pay.
     """
 
 
