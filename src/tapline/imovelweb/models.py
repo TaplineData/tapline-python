@@ -435,19 +435,19 @@ class PublicError(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -1403,21 +1403,17 @@ class ListListingPublishersParams(BaseModel):
 
 
 class ListListingsParams(BaseModel):
+    sort: ImovelwebListingSort | None = ImovelwebListingSort.RELEVANCE
+    """
+    `relevance`, `lowest_price`, `highest_price`, `newest`, `most_viewed` or `price_dropped`. imovelweb keeps its premier listings in their own ordered run, so prices on one page can step back where the two runs meet, and it sorts a development by its highest unit price while showing its lowest. `relevance` reshuffles over minutes, so a long crawl should sort by `newest`.
+    """
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a page number, so send it with the same filters and sort as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` at page 1,000 (30,000 listings), the deepest page imovelweb serves; narrow the filters to reach the rest. imovelweb's `relevance` order changes over minutes, so a long crawl that pages by relevance can skip or repeat listings.
     """
-    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    operation: ImovelwebOperation | None = ImovelwebOperation.SALE
     """
-    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
-    """
-    features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
-    """
-    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
-    """
-    keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
-    """
-    Free-text keyword matched against listing text, such as `piscina`.
+    `sale`, `rent`, `season` (short stays), `auction`, or `development` (new developments and launches, sold by their developer).
     """
     location_id: Annotated[
         list[LocationIdItem] | None, Field(max_length=10, validate_default=True)
@@ -1425,119 +1421,123 @@ class ListListingsParams(BaseModel):
     """
     Location `id` from `/v1/imovelweb/locations` (`V1-C-109668` is the city of São Paulo). Repeat the parameter for several locations; listings in any of them match. An id imovelweb does not know answers 400 `invalid_request` naming it (not charged).
     """
-    max_age: ImovelwebMaxAge | None = None
+    property_type: Annotated[list[ImovelwebPropertyType] | None, Field(max_length=5)] = []
     """
-    Building age: `under_construction`, `launching_soon`, at most `5_years` to `50_years`, or `over_50_years`.
-    """
-    max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
-    """
-    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
-    """
-    max_condo_fee: Annotated[int | None, Field(ge=0)] = None
-    """
-    Maximum monthly condominium fee in R$.
-    """
-    max_price: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum price in R$.
-    """
-    max_total_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum total area in m². Not with the usable-area range.
-    """
-    max_usable_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum usable (private) area in m².
-    """
-    min_bathrooms: Annotated[int | None, Field(ge=1, le=5)] = None
-    """
-    Minimum bathrooms.
-    """
-    min_bedrooms: Annotated[int | None, Field(ge=1, le=5)] = None
-    """
-    Minimum bedrooms.
-    """
-    min_condo_fee: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum monthly condominium fee in R$.
-    """
-    min_price: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum price in R$.
-    """
-    min_total_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Minimum total area in m². Not with the usable-area range.
-    """
-    min_usable_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Minimum usable (private) area in m².
-    """
-    multimedia: Annotated[list[ImovelwebMultimedia] | None, Field(max_length=3)] = []
-    """
-    Only listings with these media; repeat for several. A listing must have all of them.
-    """
-    operation: ImovelwebOperation | None = ImovelwebOperation.SALE
-    """
-    `sale`, `rent`, `season` (short stays), `auction`, or `development` (new developments and launches, sold by their developer).
-    """
-    parking_spaces: ImovelwebParkingSpaces | None = None
-    """
-    `none` for listings without parking, or `1` to `4` for at least that many spaces.
-    """
-    price_includes_condo_fee: bool | None = False
-    """
-    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
+    Property type; repeat for several. Not with `operation=development`.
     """
     property_subtype: Annotated[list[ImovelwebPropertySubtype] | None, Field(max_length=21)] = []
     """
     Property subtype, such as `penthouse` or `townhouse`; repeat for several. Send its type in `property_type` too (`penthouse` needs `apartment`). Not with `operation=development`.
     """
-    property_type: Annotated[list[ImovelwebPropertyType] | None, Field(max_length=5)] = []
+    min_price: Annotated[int | None, Field(ge=0)] = None
     """
-    Property type; repeat for several. Not with `operation=development`.
+    Minimum price in R$.
+    """
+    max_price: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum price in R$.
+    """
+    min_bedrooms: Annotated[int | None, Field(ge=1, le=5)] = None
+    """
+    Minimum bedrooms.
+    """
+    max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
+    """
+    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
+    """
+    min_bathrooms: Annotated[int | None, Field(ge=1, le=5)] = None
+    """
+    Minimum bathrooms.
+    """
+    parking_spaces: ImovelwebParkingSpaces | None = None
+    """
+    `none` for listings without parking, or `1` to `4` for at least that many spaces.
+    """
+    min_total_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Minimum total area in m². Not with the usable-area range.
+    """
+    max_total_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum total area in m². Not with the usable-area range.
+    """
+    min_usable_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Minimum usable (private) area in m².
+    """
+    max_usable_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum usable (private) area in m².
+    """
+    max_age: ImovelwebMaxAge | None = None
+    """
+    Building age: `under_construction`, `launching_soon`, at most `5_years` to `50_years`, or `over_50_years`.
     """
     published_within: ImovelwebPublishedWithin | None = None
     """
     Only listings published within this window.
     """
-    publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
-    """
-    Only this publisher's listings (`publisher.id` on a listing).
-    """
     publisher_type: ImovelwebPublisherType | None = ImovelwebPublisherType.ALL
     """
     `company` for every publisher that is not an owner: agencies, developers, brokers and builders (imovelweb's Imobiliária option). `owner` for owners selling directly. `all` for both.
     """
-    sort: ImovelwebListingSort | None = ImovelwebListingSort.RELEVANCE
+    publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
     """
-    `relevance`, `lowest_price`, `highest_price`, `newest`, `most_viewed` or `price_dropped`. imovelweb keeps its premier listings in their own ordered run, so prices on one page can step back where the two runs meet, and it sorts a development by its highest unit price while showing its lowest. `relevance` reshuffles over minutes, so a long crawl should sort by `newest`.
+    Only this publisher's listings (`publisher.id` on a listing).
+    """
+    features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
+    """
+    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
+    """
+    multimedia: Annotated[list[ImovelwebMultimedia] | None, Field(max_length=3)] = []
+    """
+    Only listings with these media; repeat for several. A listing must have all of them.
+    """
+    keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
+    """
+    Free-text keyword matched against listing text, such as `piscina`.
+    """
+    min_condo_fee: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum monthly condominium fee in R$.
+    """
+    max_condo_fee: Annotated[int | None, Field(ge=0)] = None
+    """
+    Maximum monthly condominium fee in R$.
+    """
+    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    """
+    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
     """
     without_guarantor: bool | None = False
     """
     Only rentals that need no guarantor (imovelweb's Aluguel sem fiador). Only with `operation=rent`.
     """
+    price_includes_condo_fee: bool | None = False
+    """
+    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
+    """
 
 
 class ListLocationsParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=10)] = 10
-    """
-    Suggestions to return.
-    """
     query: Annotated[str, Field(max_length=100, min_length=2)]
     """
     Place name, such as `pinheiros` or `rio de janeiro`.
     """
+    limit: Annotated[int | None, Field(ge=1, le=10)] = 10
+    """
+    Suggestions to return.
+    """
 
 
 class ListSimilarListingsParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=20)] = 20
-    """
-    Listings to return.
-    """
     posting_id: Annotated[str, Field(examples=["3047460005"], pattern="^\\d{6,12}$")]
     """
     imovelweb listing id: the number at the end of a listing URL (`...-3047460005.html`).
+    """
+    limit: Annotated[int | None, Field(ge=1, le=20)] = 20
+    """
+    Listings to return.
     """
 
 
@@ -1546,17 +1546,9 @@ class LocationIdItem(RootModel[str]):
 
 
 class MapListingsParams(BaseModel):
-    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    operation: ImovelwebOperation | None = ImovelwebOperation.SALE
     """
-    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
-    """
-    features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
-    """
-    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
-    """
-    keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
-    """
-    Free-text keyword matched against listing text, such as `piscina`.
+    `sale`, `rent`, `season` (short stays), `auction`, or `development` (new developments and launches, sold by their developer).
     """
     location_id: Annotated[
         list[LocationIdItem] | None, Field(max_length=10, validate_default=True)
@@ -1564,93 +1556,101 @@ class MapListingsParams(BaseModel):
     """
     Location `id` from `/v1/imovelweb/locations` (`V1-C-109668` is the city of São Paulo). Repeat the parameter for several locations; listings in any of them match. An id imovelweb does not know answers 400 `invalid_request` naming it (not charged).
     """
-    max_age: ImovelwebMaxAge | None = None
+    property_type: Annotated[list[ImovelwebPropertyType] | None, Field(max_length=5)] = []
     """
-    Building age: `under_construction`, `launching_soon`, at most `5_years` to `50_years`, or `over_50_years`.
-    """
-    max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
-    """
-    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
-    """
-    max_condo_fee: Annotated[int | None, Field(ge=0)] = None
-    """
-    Maximum monthly condominium fee in R$.
-    """
-    max_price: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum price in R$.
-    """
-    max_total_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum total area in m². Not with the usable-area range.
-    """
-    max_usable_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Maximum usable (private) area in m².
-    """
-    min_bathrooms: Annotated[int | None, Field(ge=1, le=5)] = None
-    """
-    Minimum bathrooms.
-    """
-    min_bedrooms: Annotated[int | None, Field(ge=1, le=5)] = None
-    """
-    Minimum bedrooms.
-    """
-    min_condo_fee: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum monthly condominium fee in R$.
-    """
-    min_price: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum price in R$.
-    """
-    min_total_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Minimum total area in m². Not with the usable-area range.
-    """
-    min_usable_area: Annotated[int | None, Field(ge=1)] = None
-    """
-    Minimum usable (private) area in m².
-    """
-    multimedia: Annotated[list[ImovelwebMultimedia] | None, Field(max_length=3)] = []
-    """
-    Only listings with these media; repeat for several. A listing must have all of them.
-    """
-    operation: ImovelwebOperation | None = ImovelwebOperation.SALE
-    """
-    `sale`, `rent`, `season` (short stays), `auction`, or `development` (new developments and launches, sold by their developer).
-    """
-    parking_spaces: ImovelwebParkingSpaces | None = None
-    """
-    `none` for listings without parking, or `1` to `4` for at least that many spaces.
-    """
-    price_includes_condo_fee: bool | None = False
-    """
-    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
+    Property type; repeat for several. Not with `operation=development`.
     """
     property_subtype: Annotated[list[ImovelwebPropertySubtype] | None, Field(max_length=21)] = []
     """
     Property subtype, such as `penthouse` or `townhouse`; repeat for several. Send its type in `property_type` too (`penthouse` needs `apartment`). Not with `operation=development`.
     """
-    property_type: Annotated[list[ImovelwebPropertyType] | None, Field(max_length=5)] = []
+    min_price: Annotated[int | None, Field(ge=0)] = None
     """
-    Property type; repeat for several. Not with `operation=development`.
+    Minimum price in R$.
+    """
+    max_price: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum price in R$.
+    """
+    min_bedrooms: Annotated[int | None, Field(ge=1, le=5)] = None
+    """
+    Minimum bedrooms.
+    """
+    max_bedrooms: Annotated[int | None, Field(ge=1, le=4)] = None
+    """
+    Maximum bedrooms. imovelweb's top bucket is 5 or more, so 4 is the highest cap. Send the same number as `min_bedrooms` for an exact count.
+    """
+    min_bathrooms: Annotated[int | None, Field(ge=1, le=5)] = None
+    """
+    Minimum bathrooms.
+    """
+    parking_spaces: ImovelwebParkingSpaces | None = None
+    """
+    `none` for listings without parking, or `1` to `4` for at least that many spaces.
+    """
+    min_total_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Minimum total area in m². Not with the usable-area range.
+    """
+    max_total_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum total area in m². Not with the usable-area range.
+    """
+    min_usable_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Minimum usable (private) area in m².
+    """
+    max_usable_area: Annotated[int | None, Field(ge=1)] = None
+    """
+    Maximum usable (private) area in m².
+    """
+    max_age: ImovelwebMaxAge | None = None
+    """
+    Building age: `under_construction`, `launching_soon`, at most `5_years` to `50_years`, or `over_50_years`.
     """
     published_within: ImovelwebPublishedWithin | None = None
     """
     Only listings published within this window.
     """
-    publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
-    """
-    Only this publisher's listings (`publisher.id` on a listing).
-    """
     publisher_type: ImovelwebPublisherType | None = ImovelwebPublisherType.ALL
     """
     `company` for every publisher that is not an owner: agencies, developers, brokers and builders (imovelweb's Imobiliária option). `owner` for owners selling directly. `all` for both.
     """
+    publisher_id: Annotated[str | None, Field(pattern="^\\d{1,12}$")] = None
+    """
+    Only this publisher's listings (`publisher.id` on a listing).
+    """
+    features: Annotated[list[ImovelwebListingFeature] | None, Field(max_length=35)] = []
+    """
+    Required amenities, such as `pool` or `pets_allowed`; repeat for several. A listing must have all of them. imovelweb's development search cannot filter by `garden`.
+    """
+    multimedia: Annotated[list[ImovelwebMultimedia] | None, Field(max_length=3)] = []
+    """
+    Only listings with these media; repeat for several. A listing must have all of them.
+    """
+    keyword: Annotated[str | None, Field(max_length=100, min_length=2)] = None
+    """
+    Free-text keyword matched against listing text, such as `piscina`.
+    """
+    min_condo_fee: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum monthly condominium fee in R$.
+    """
+    max_condo_fee: Annotated[int | None, Field(ge=0)] = None
+    """
+    Maximum monthly condominium fee in R$.
+    """
+    development_stage: Annotated[list[ImovelwebDevelopmentStage] | None, Field(max_length=4)] = []
+    """
+    Development stage; repeat for several, a development at any of them matches. Only with `operation=development`.
+    """
     without_guarantor: bool | None = False
     """
     Only rentals that need no guarantor (imovelweb's Aluguel sem fiador). Only with `operation=rent`.
+    """
+    price_includes_condo_fee: bool | None = False
+    """
+    Compare `min_price` and `max_price` with the rent plus the monthly condo fee. Only with `operation=rent` and a price bound.
     """
 
 
