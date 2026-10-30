@@ -39,6 +39,7 @@ ErrorCode = Literal[
     "forbidden",
     "resource_forbidden",
     "not_found",
+    "endpoint_retired",
     "rate_limited",
     "invalid_request",
     "invalid_cursor",
