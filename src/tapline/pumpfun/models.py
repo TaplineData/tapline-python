@@ -1326,37 +1326,37 @@ class CoinParams(BaseModel):
 
 
 class CoinPosition(BaseModel):
-    userId: str
-    userName: str
-    profileImage: str
-    walletAddress: str
-    isVerified: bool
-    verifiedBadgeVisible: bool | None = None
-    xUsername: str | None
-    xProfileImage: str | None
     accountKind: str | None = None
-    totalCallouts: int
-    amountHeld: float
-    valueUsd: float | None
-    pnlUsd: float
-    pnlPercentage: float | str | None
-    realizedPnlUsd: float
-    tokenPriceUsd: float | None
-    costBasisAmount: float
-    costBasisUsd: float | str | None
-    amountBoughtUsd: float | None
     amountBought: float | None
+    amountBoughtUsd: float | None
+    amountHeld: float
     callout: PositionCallout
     contentKind: str
-    quote: PositionQuote | None
+    costBasisAmount: float
+    costBasisUsd: float | str | None
     followerCount: int | None = None
-    resolvedAvatarDecoration: str | None = None
+    isVerified: bool
+    pnlPercentage: float | str | None
+    pnlUsd: float
+    profileImage: str
+    quote: PositionQuote | None
+    realizedPnlUsd: float
     receiptBasisUsd: float | None = None
+    resolvedAvatarDecoration: str | None = None
+    tokenPriceUsd: float | None
+    totalCallouts: int
+    userId: str
+    userName: str
+    valueUsd: float | None
+    verifiedBadgeVisible: bool | None = None
+    walletAddress: str
+    xProfileImage: str | None
+    xUsername: str | None
 
 
 class CoinSocial(BaseModel):
-    twitter: str | None
     telegram: str | None
+    twitter: str | None
     website: str | None
 
 
@@ -3220,7 +3220,6 @@ class GetTokenHolderCountResponse(BaseModel):
     mint: str
     chain: str
     networkId: int
-    holderCount: int
 
 
 class GetTopTokenMintChainsResponse(BaseModel):
@@ -3259,14 +3258,6 @@ class GetTopTraderTradesResponseTrade(BaseModel):
 class GetTopTraderTradesResponseTrader(BaseModel):
     userId: str
     walletAddress: str
-    username: str
-    profileImage: str
-    isVerified: bool
-    verifiedBadgeVisible: bool
-    bestRank: int
-    periods: list[str]
-    tradingWallets: list[str]
-    tradeCount: int
 
 
 class GetTrendingBoardResponse(BaseModel):
@@ -4084,7 +4075,12 @@ class Liker(BaseModel):
     generatedMedia: Generatedmedia | None
     isPumpUser: bool | None = None
     resolvedAvatarDecoration: str | None = None
-    activeCompetitionEntry: Annotated[None, Field(None)] = None
+    socials: list[Social]
+    updatedAt: str
+    userId: str
+    username: str
+    verifiedBadgeVisible: bool
+    walletAddress: str
 
 
 class ListCompetitionsResponse(BaseModel):
@@ -4664,6 +4660,30 @@ class MintPositionsParams(BaseModel):
     with_thesis: bool | None = None
     """
     Only positions carrying a written thesis. `RANKED` and `CLOSED_PNL` need `true`.
+    """
+    page: Annotated[int | None, Field(ge=0)] = None
+    """
+    Page number, from 0. Not with `RANKED`.
+    """
+    updates_limit: Annotated[int | None, Field(ge=0, le=20)] = None
+    """
+    Author updates per callout (pump.fun's default 5).
+    """
+    include_profile: bool | None = None
+    """
+    Embed each holder's full profile.
+    """
+    dust_floor_usd: Annotated[float | None, Field(ge=0.0, le=100000.0)] = None
+    """
+    Ignore positions below this USD value. Refused with `RANKED` and `CLOSED_PNL`.
+    """
+    page_token: Annotated[str | None, Field(max_length=256)] = None
+    """
+    `RANKED` only: `nextPageToken` from the previous page. pump.fun answered `RANKED` in one page (`hasMore` false) with no `nextPageToken` in every probe since 2026-10-08.
+    """
+    chain: TokenChain | None = None
+    """
+    `RANKED` only: chain of an EVM coin.
     """
     page: Annotated[int | None, Field(ge=0)] = None
     """
@@ -6358,10 +6378,6 @@ class TradesBatchRequest(BaseModel):
     ]
     """
     Wallet addresses (Solana or EVM) to fetch trades for, 1 to 30.
-    """
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds.
     """
 
 
