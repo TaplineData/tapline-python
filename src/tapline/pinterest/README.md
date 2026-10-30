@@ -36,6 +36,8 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 Each body is Pinterest's own data in the provider-data layout Scrape Creators returns. Tapline omits Scrape Creators' top-level status and credit metadata. `trim` and `cache_max_age` are accepted for Scrape Creators compatibility and change nothing: every call returns the full body and is charged.
 
+The [Pinterest v2 client](../pinterest_v2/README.md) (`tapline.pinterest_v2`) reads the same four pages at the same prices and returns one pin, board and user shape across all of them.
+
 ## Search pins and page through the results
 
 ```python

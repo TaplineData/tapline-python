@@ -39,7 +39,7 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 | `get_ad_report` | `country`, `period`, `date` | the political and issue ads report for a country; a 503 with `Retry-After` means retry after that many seconds | 3 |
 | `list_ad_report_advertisers` | `country`, `period`, `query`, `sort`, `cursor`, `date` | 20 report advertisers per page | 3 |
 
-Paged methods cost their credits per page.
+Paged methods cost their credits per page. `country` defaults to `ALL`, every country, except on `get_ad_report` and `list_ad_report_advertisers`, which take a two-letter code only and default to `US`.
 
 ## Search ads and follow their versions
 
@@ -70,10 +70,10 @@ advertiser = tapline.facebook_ad_library.get_advertiser("15087023444", country="
 print(advertiser.page.name, advertiser.ads.total_count)
 
 report = tapline.facebook_ad_library.get_ad_report(country="US", period="last_30_days")
-print(report.lifetime.total_ads, report.lifetime.total_spend.formatted)
+print(report.lifetime.total_ads, report.lifetime.total_spend.amount)
 top = tapline.facebook_ad_library.list_ad_report_advertisers(country="US", period="last_30_days")
 for row in top.advertisers:
-    print(row.page.name, row.paid_for_by, row.total_spend.formatted)
+    print(row.page.name, row.paid_for_by, row.total_spend.amount)
 ```
 
 ## Read the response

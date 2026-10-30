@@ -68,7 +68,7 @@ resolved = tapline.facebook.resolve_url(url="https://www.facebook.com/NASA")
 if resolved.ids.profile_id:
     page = tapline.facebook.get_page(resolved.ids.profile_id)
     print(page.name, page.metrics.follower_count_approx)
-    for tab in page.tabs:
+    for tab in page.tabs or []:
         print(tab.tab_key, [c.collection_id for c in tab.collections])
 ```
 
@@ -103,6 +103,7 @@ A cursor works only with the method and inputs that issued it.
 ## Read the response
 
 - Facebook's enum values arrive as `{code, label}`: `code` is Facebook's value and `label` says what it means.
+- Pages from `get_page`, `look_up_page` and the Ad Library share one type. Fields only some of them fill, such as `tabs`, are optional.
 - `list_page_followers`, `list_page_following` and `list_hashtag_posts` return only the first page Facebook shows; there is no cursor.
 
 ## Handle errors and check costs

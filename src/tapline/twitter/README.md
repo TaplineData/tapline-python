@@ -29,13 +29,13 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 | Method | Key inputs | Credits | Returns |
 | --- | --- | --- | --- |
-| `get_profile` | `handle` (with or without `@`) or `user_id` | 1 | `TwitterProfileResponse`: X's User object (`rest_id`, `core`, `legacy`, `location`, `privacy`, `verification`) |
+| `get_profile` | `handle` (with or without `@`) or `user_id` | 1 | `TwitterProfileResponse`: the account, with the same fields as a post's `author` |
 | `get_user_tweets` | `handle` | 1 | `TwitterUserTweetsResponse`: `tweets`, the pinned post then the newest original posts, 5 in all in samples |
-| `get_tweet` | `url` (a post URL) | 1 | `TwitterTweetResponse`: X's Tweet object (`rest_id`, `core`, `legacy`, `views`, `note_tweet`, `quoted_status_result`) |
-| `get_community` | `url` (a community URL) | 1 | `TwitterCommunityResponse`: X's Community object (`rest_id`, `name`, `member_count`, `rules`, `creator_results`) |
+| `get_tweet` | `url` (a post URL) | 1 | `TwitterTweetResponse`: one post with its `author`, `media` and `quoted_post` |
+| `get_community` | `url` (a community URL) | 1 | `TwitterCommunityResponse`: the community with its `rules`, `creator` and a preview of `members` |
 | `get_community_tweets` | `url` (a community URL) | 1 | `TwitterCommunityTweetsResponse`: `tweets`, the 20 posts x.com ranks by likes |
 
-Each body is X's own object in the provider-data layout Scrape Creators returns. Tapline omits Scrape Creators' top-level status and credit metadata. The methods mirror Scrape Creators' Twitter paths and parameters; the API reference lists where each one differs. `user_id` on `get_profile` is Tapline's addition. Each call returns a fixed window. x.com offers no further pages to logged-out visitors, so there is no cursor.
+Every post has the same fields on all three post methods. `id` is X's numeric id, and every timestamp is ISO 8601 UTC, such as `2026-10-04T22:15:57Z`. Each call returns a fixed window. x.com offers no further pages to logged-out visitors, so there is no cursor.
 
 ## Read a profile
 
@@ -45,16 +45,15 @@ from tapline import SyncTaplineClient
 with SyncTaplineClient() as tapline:
     profile = tapline.twitter.get_profile(handle="nasa")
 
-print(profile.rest_id, profile.core.name, profile.core.created_at, profile.is_blue_verified)
-location = profile.location.location if profile.location else None
-print(profile.legacy.followers_count, profile.legacy.statuses_count, location)
+print(profile.id, profile.name, profile.created_at, profile.is_blue_verified)
+print(profile.follower_count, profile.post_count, profile.location)
 ```
 
-Send `handle` or `user_id`, not both. `user_id` is the account's numeric `rest_id`, and it still finds the account after a handle change:
+Send `handle` or `user_id`, not both. `user_id` is the account's numeric `id`, and it still finds the account after a handle change:
 
 ```python
 with SyncTaplineClient() as tapline:
-    same_account = tapline.twitter.get_profile(user_id=profile.rest_id)
+    same_account = tapline.twitter.get_profile(user_id=profile.id)
 ```
 
 ## Read an account's posts
@@ -66,10 +65,10 @@ with SyncTaplineClient() as tapline:
     posts = tapline.twitter.get_user_tweets(handle="nasa")
 
 for tweet in posts.tweets:
-    print(tweet.url, tweet.legacy.created_at, tweet.legacy.favorite_count, tweet.views.count)
+    print(tweet.url, tweet.created_at, tweet.favorite_count, tweet.view_count)
 ```
 
-`tweets` starts with the pinned post, if there is one. A protected account returns no posts.
+`tweets` starts with the pinned post, if there is one, and marks it with `is_pinned`. A protected account returns no posts.
 
 ## Read a post
 
@@ -79,39 +78,38 @@ from tapline import SyncTaplineClient
 with SyncTaplineClient() as tapline:
     post = tapline.twitter.get_tweet(url="https://x.com/Seahawks/status/2106870968048386134")
 
-text = post.note_tweet.note_tweet_results.result.text if post.note_tweet else post.legacy.full_text
-links = {url.url: url.expanded_url for url in post.legacy.entities.urls or []}
-media_items = post.legacy.extended_entities.media if post.legacy.extended_entities else []
-for media in media_items:
-    variants = media.video_info.variants if media.video_info else []
-    best = max((v for v in variants if v.bitrate), key=lambda v: v.bitrate or 0, default=None)
-    print(media.type, media.media_url_https, best.url if best else None)
-if post.quoted_status_result:
-    quoted = post.quoted_status_result.result
-    print("quotes", quoted.rest_id, quoted.core.user_results.result.core.screen_name)
+print(post.author.handle, post.created_at, post.text)
+links = {url.url: url.expanded_url for url in post.entities.urls or []}
+for media in post.media or []:
+    best = max(
+        (v for v in media.variants or [] if v.bitrate), key=lambda v: v.bitrate or 0, default=None
+    )
+    print(media.type, media.media_url, best.url if best else None)
+if post.quoted_post:
+    quoted = post.quoted_post.post
+    print("quotes", post.quoted_post.id, quoted.author.handle if quoted else None)
 ```
 
-`url` takes a post URL on x.com or twitter.com, including `/i/status/<id>` and URLs with trailing segments such as `/photo/1`. `legacy.full_text` keeps X's `t.co` links and HTML escapes, and holds X's shortened text for a long post; `note_tweet` carries the full text. `legacy.entities.urls` maps each `t.co` link to its expanded URL. Follow `legacy.in_reply_to_status_id_str` to the post a reply answers. The author under `core.user_results.result` also carries what x.com shows only on profile pages, such as `location`, the join date, the bio, the bio link and the banner. Tapline reads these from the author's profile page at no extra charge, so they can be up to 2 minutes old. It is best-effort, and an author whose profile page fails or is slow keeps only what x.com embeds with posts.
+`url` takes a post URL on x.com or twitter.com, including `/i/status/<id>` and URLs with trailing segments such as `/photo/1`. `text` decodes X's HTML escapes, keeps its `t.co` links, and holds the full text of a long post. A long post also carries `preview_text`, the shortened version x.com shows first. `entities.urls` maps each `t.co` link to its expanded URL. Follow `reply_to.post_id` to the post a reply answers. The `author` also carries what x.com shows only on profile pages, such as `location`, the join date, the bio, the bio link and the banner. Tapline reads these from the author's profile page at no extra charge, so they can be up to 2 minutes old. It is best-effort, and an author whose profile page fails or is slow keeps only what x.com embeds with posts.
 
 ## Read a community
 
 ```python
 from tapline import SyncTaplineClient
-from tapline.twitter import TwitterCommunityUser
+from tapline.twitter import TwitterUser
 
 url = "https://x.com/i/communities/1493446837214187523"
 with SyncTaplineClient() as tapline:
     community = tapline.twitter.get_community(url=url)
     posts = tapline.twitter.get_community_tweets(url=url)
 
-creator = community.creator_results.result if community.creator_results else None
-creator_core = creator.core if isinstance(creator, TwitterCommunityUser) else None
-print(community.name, community.member_count, creator_core.screen_name if creator_core else None)
+creator = community.creator if isinstance(community.creator, TwitterUser) else None
+print(community.name, community.member_count, creator.handle if creator else None)
 for tweet in posts.tweets:
-    print(tweet.user.core.screen_name, tweet.favorite_count, tweet.view_count, tweet.full_text[:80])
+    print(tweet.author.handle, tweet.favorite_count, tweet.view_count, tweet.text[:80])
 ```
 
-Community posts come flattened the way Scrape Creators flattens them: a post's `legacy` fields sit at the top level next to `id`, `view_count` and the author as `user`. The community's `created_at` is in Unix milliseconds. x.com sends a suspended or deactivated member as a bare `UserUnavailable`, so `creator_results.result` and each `members_facepile_results[].result` is either a `TwitterCommunityUser` or a `TwitterUnavailableResult`. Check with `isinstance` before reading profile fields.
+Tapline returns a suspended or deactivated member as only its `id` and `is_unavailable: true`, so `creator` and each entry in `members` is either a `TwitterUser` or a `TwitterUnavailableUser`. Check with `isinstance` before reading profile fields.
 
 ## Handle errors and check costs
 

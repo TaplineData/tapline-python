@@ -32,9 +32,9 @@ Every method except `get_salaries` takes `country`, the Indeed site to read (`us
 | Method | Key inputs | Returns | Credits |
 | --- | --- | --- | --- |
 | `search_jobs` | `query`, `location`, the filters, `cursor` | up to 25 jobs per page, each with its full record, plus the total and facets | 10 |
-| `get_job` | `job_key` | one job: plain-text description, pay, company, location, attributes, apply details and applicant count | 2 |
+| `get_job` | `job_key` | one job: description as text and HTML, pay, the hiring company's profile, location, attributes, apply details and applicant count | 2 |
 | `list_company_jobs` | `company_key`, the filters, `cursor` | up to 25 of a company's jobs per page | 10 |
-| `get_company` | `company_key` | profile, employee ratings, happiness scores, CEO approval, average pay and similar companies | 2 |
+| `get_company` | `company_key` | profile, employee ratings, happiness scores, CEO approval, average pay, similar companies and links to its reviews and salaries pages | 2 |
 | `search_companies` | `query` | companies matching a name, with their keys | 2 |
 | `list_company_directory` | `query`, `location` | companies by name, industry or the titles they hire for, with ratings | 2 |
 | `get_salaries` | `location`, `job_title`, `company_key` | average reported pay per year, month, week, day and hour | 2 |
@@ -71,7 +71,12 @@ Send the same search and `limit` with every cursor. `job_type`, `work_setting` a
 ```python
 companies = tapline.indeed.search_companies(query="google")
 company = tapline.indeed.get_company(companies.companies[0].key)
-print(company.name, company.ratings.overall, company.ceo.approval)
+print(
+    company.name,
+    company.ratings.overall,
+    company.ceo.approval and company.ceo.approval.percent,
+    company.reviews_url,
+)
 
 jobs = tapline.indeed.list_company_jobs(company.key, query="engineer", limit=10)
 for result in jobs.results:
@@ -93,12 +98,13 @@ print(pay.reported_pay.report_count, pay.reported_pay.year and pay.reported_pay.
 
 - `job.key` is what `get_job` takes, the same as `jk` in an Indeed viewjob URL. Pass `get_job` the `country` you searched with: Indeed sends a job's pay only on the site that listed it.
 - `pay.text` is the pay as the posting shows it and `pay.posted` the parsed range, exact amount or bound. `pay.estimated` is Indeed's own estimate when the posting has no pay.
-- `company` is `None` when Indeed links no company page to the job; `company_name_as_posted` is the name the posting shows.
+- A job's `company` is the hiring company's profile, with its website, size and CEO. It is `None` when Indeed links no company page to the job; `company_name_as_posted` is the name the posting shows.
+- `description` is plain text and `description_html` the posting's markup. `description_urls` and `description_emails` list the links and email addresses in it.
 - `attributes` groups Indeed's codes by kind (job types, work settings, schedules, benefits, education and more). Each `code` works in the `attribute` and `exclude_attribute` filters.
 - `applicants` is filled by `get_job`. In search results it is `None`.
 - `total.is_estimate` says whether `total.count` is Indeed's estimate. `facets.companies` carries company keys and counts only; Indeed sends no names there.
 - `sort="date"` favours recent postings, but Indeed does not order a page strictly by date. Use `posted_within_days` for a cut-off.
-- A rating with no reviews is `None`, not zero, and so are happiness scores and CEO approval with no votes.
+- On `get_company`, `ceo.approval.percent` is the share of yes votes, from 0 to 100. A rating with no reviews is `None`, not zero, and so are happiness scores and CEO approval with no votes.
 
 ## Handle errors and check costs
 

@@ -31,7 +31,7 @@ The web, news and video searches take `country`, `safe_search`, `freshness` and 
 
 | Method | Key inputs | Returns | Credits |
 | --- | --- | --- | --- |
-| `search` | `query`, the filters, `spellcheck`, `goggle_url`, `cursor` | 20 web results per page with the news, videos, places, discussions, cards and AI answer shown beside them | 5 |
+| `search` | `query`, the filters, `spellcheck`, `goggle_url`, `cursor` | up to 20 web results per page with the news, videos, places, discussions, cards and AI answer shown beside them | 5 |
 | `get_ai_answer` | `conversation_id` | Brave's AI-written answer in markdown, with its sources and follow-up questions | 5 |
 | `search_news` | `query`, the filters, `cursor` | news articles with their outlet and relative age | 5 |
 | `search_videos` | `query`, the filters, `cursor` | videos with their creator, duration and thumbnail | 5 |
@@ -111,13 +111,16 @@ League ids include `39` (Premier League), `12` (NBA), `1` (MLB), `57` (NHL) and 
 - Distances are in meters (`distance_meters`) and durations in seconds (`duration_seconds`). When Brave sends a value this API cannot read, the field is `None` and Brave's text is in a `<field>_as_sent` sibling.
 - Snippets are plain text. The markup Brave puts in them is in a `<field>_html` sibling, such as `description_html`.
 - `site.domain` is the registrable domain, `site.hostname` the full host, and `site.breadcrumbs` the path Brave shows under the title.
+- `result_order` lists the blocks in the order Brave shows them. Each entry names a `result_set`, such as `results`, `news` or `infobox.results`, and an `index` when it points at one item; `includes_all_results` is `True` when it stands for the whole set. On `search`, `region` places each block at the `top`, in the `main` column or on the `side`.
+- An ad's `url` is the advertiser's landing page.
 - On `search`, `ai_answer.is_possible` says Brave can write an answer for the query and `is_triggered` that Brave opened one on its own. `ai_answer.answer` has the same shape as `get_ai_answer`, with the parts Brave left out set to `None` or empty.
-- `get_ai_answer` returns the whole answer in `markdown` and the same text split into `blocks`, one per paragraph Brave streamed, with citations. `usage` is Brave's LLM token count and does not change the credit cost.
+- `get_ai_answer` returns the whole answer in `markdown` and the same text split into `blocks`, one per paragraph Brave streamed, with citations. A citation's `source_index` is its position in `sources`. `usage` is Brave's LLM token count and does not change the credit cost.
 - News results carry only a relative age (`age_label`, such as `1 day ago`). Brave's news search sends no timestamp.
 - On images, `thumbnail` is the copy Brave displays and `image` the original file. `proxied_url` is Brave's proxy of the original and `resized_url` a larger resized copy. Pass `similar_images_token` to `list_similar_images`; it lasts at least two hours.
 - `places[].id` is the id `get_place` and `get_place_description` take; `/search` returns the same ids in `locations.results[].id`.
 - A route's `typical_duration_seconds` is its duration without current traffic. Polylines are HERE flexible polylines (`polyline_format`). Times keep the local offset of the place. When there is no route, `routes` is empty and `notices` says why.
 - In games answers, `game_times` is the season's matchday calendar and `focus_time` the matchday Brave picked. `status.code` is Brave's code (`FT`, `1H`, `HT`, ...) and `status.label` its wording. `form_results` spells out `form` as `win`, `draw` and `loss`.
+- Games have one shape in every sport, with `None` where a sport has no value. `league_id` is text and `round` is Brave's round name, such as `Regular Season - 9`. `status.elapsed_minutes` and `status.added_minutes` give the clock, and `score` is `None` until kickoff.
 - A Goggle's `url` is what `search` takes as `goggle_url`. A Goggle Brave has not indexed is ignored without an error; check one with `get_goggle`.
 - Objects typed `BraveSearchUnobservedObject` were empty in every answer Brave gave us. Every key Brave sends in them is kept.
 
