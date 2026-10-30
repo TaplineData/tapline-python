@@ -495,8 +495,8 @@ class ImovelwebAreaOutline(BaseModel):
     A GeoJSON geometry.
     """
 
-    coordinates: list[list[list[list[float]]]]
     type: str
+    coordinates: list[list[list[list[float]]]]
 
 
 class ImovelwebAreaRange(BaseModel):
@@ -504,23 +504,23 @@ class ImovelwebAreaRange(BaseModel):
     Square metres.
     """
 
-    max: float | None
     min: float | None
+    max: float | None
 
 
 class ImovelwebCountRange(BaseModel):
-    max: int | None
     min: int | None
+    max: int | None
 
 
 class ImovelwebCoverPicture(BaseModel):
-    size: str
     url: str
+    size: str
 
 
 class ImovelwebCursorPagination(BaseModel):
-    completion: ImovelwebCursorCompletionValue | None
     next_cursor: str | None
+    completion: ImovelwebCursorCompletionValue | None
 
 
 class ImovelwebDevelopment(BaseModel):
@@ -529,19 +529,19 @@ class ImovelwebDevelopment(BaseModel):
     carries only the stage, delivery and unit count.
     """
 
-    bathrooms: ImovelwebCountRange | None
-    bedrooms: ImovelwebCountRange | None
-    delivery: ImovelwebDevelopmentDelivery | None
-    parking_spaces: ImovelwebCountRange | None
-    price: ImovelwebMoneyRange | None
-    prices_by_operation: list[ImovelwebDevelopmentPrice]
-    raw: ImovelwebDevelopmentRaw
     stage: ImovelwebDevelopmentStage | None
-    steps: list[ImovelwebDevelopmentStep]
-    total_area_m2: ImovelwebAreaRange | None
+    delivery: ImovelwebDevelopmentDelivery | None
     unit_count: int | None
-    unit_groups: list[ImovelwebUnitGroup]
+    price: ImovelwebMoneyRange | None
+    bedrooms: ImovelwebCountRange | None
+    bathrooms: ImovelwebCountRange | None
+    parking_spaces: ImovelwebCountRange | None
     usable_area_m2: ImovelwebAreaRange | None
+    total_area_m2: ImovelwebAreaRange | None
+    steps: list[ImovelwebDevelopmentStep]
+    prices_by_operation: list[ImovelwebDevelopmentPrice]
+    unit_groups: list[ImovelwebUnitGroup]
+    raw: ImovelwebDevelopmentRaw
 
 
 class ImovelwebDevelopmentDelivery(BaseModel):
@@ -550,8 +550,8 @@ class ImovelwebDevelopmentDelivery(BaseModel):
     """
 
     is_immediate: bool
-    month: int | None
     year: int | None
+    month: int | None
 
 
 class ImovelwebDevelopmentPrice(BaseModel):
@@ -575,37 +575,37 @@ class ImovelwebDevelopmentUnit(BaseModel):
     `raw.status`), live or not, so `/listings/{posting_id}` on the unit's id has its status.
     """
 
-    ad_tier: ImovelwebAdTierValue | None
-    amenities: list[ImovelwebAmenityEntry]
-    bathrooms: int | None
     bedrooms: int | None
+    bathrooms: int | None
+    suites: int | None
+    parking_spaces: int | None
     building_age_years: int | None
-    code: str | None
-    created_at: str | None
-    description: str | None
-    development: ImovelwebDevelopment | None
-    generated_title: str | None
-    highlighted_amenities: list[ImovelwebAmenityValue]
+    total_area_m2: float | None
+    usable_area_m2: float | None
     id: str
+    code: str | None
+    url: str
+    posting_type: ImovelwebPostingTypeValue | None
+    status: ImovelwebPostingStatusValue | None
+    title: str | None
+    generated_title: str | None
+    property_type: ImovelwebPropertyKindValue | None
+    operations: list[ImovelwebOperationPrice]
+    location: ImovelwebListingLocation
+    ad_tier: ImovelwebAdTierValue | None
     is_premier: bool
     is_reserved: bool
-    location: ImovelwebListingLocation
-    operations: list[ImovelwebOperationPrice]
-    parking_spaces: int | None
-    photos: list[ImovelwebPicture]
-    posting_type: ImovelwebPostingTypeValue | None
-    property_subtype: ImovelwebPropertySubtype | None
-    property_type: ImovelwebPropertyKindValue | None
     quintoandar_network: ImovelwebNetworkRoleValue | None
-    raw: ImovelwebDevelopmentUnitRaw
-    status: ImovelwebPostingStatusValue | None
-    suites: int | None
-    title: str | None
-    total_area_m2: float | None
-    url: str
-    usable_area_m2: float | None
     visit_booking_url: str | None
+    description: str | None
+    photos: list[ImovelwebPicture]
     whatsapp: str | None
+    development: ImovelwebDevelopment | None
+    property_subtype: ImovelwebPropertySubtype | None
+    amenities: list[ImovelwebAmenityEntry]
+    highlighted_amenities: list[ImovelwebAmenityValue]
+    created_at: str | None
+    raw: ImovelwebDevelopmentUnitRaw
 
 
 class ImovelwebDevelopmentUnitRaw(BaseModel):
@@ -615,26 +615,26 @@ class ImovelwebDevelopmentUnitRaw(BaseModel):
     development page lists.
     """
 
-    alt: bool
-    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
-    enableBannerFicha: bool
-    expenses: ImovelwebRawPrice | None = None
-    highlightedFeatures: list[str]
-    mainFeatures: dict[str, ImovelwebRawFeature]
-    ownershipRede: str | None = None
-    pixelPlus: bool
-    plans: list[ImovelwebRawDetailPicture] | None = None
-    postingType: str | None = None
-    publicationAreaId: str
-    realEstateSubTypeId: str | None = None
-    realEstateTypeId: str | None = None
-    requestVisit5A: ImovelwebRequestVisitRaw
-    showFirst360: bool
     status: str
-    tour: ImovelwebRawMedia | None = None
+    publicationAreaId: str
+    alt: bool
+    pixelPlus: bool
+    showFirst360: bool
+    enableBannerFicha: bool
     unsafe: bool
+    expenses: ImovelwebRawPrice | None = None
+    plans: list[ImovelwebRawDetailPicture] | None = None
     videos: list[ImovelwebRawMedia] | None = None
+    tour: ImovelwebRawMedia | None = None
     whatsApp: str | None = None
+    postingType: str | None = None
+    realEstateTypeId: str | None = None
+    ownershipRede: str | None = None
+    realEstateSubTypeId: str | None = None
+    requestVisit5A: ImovelwebRequestVisitRaw
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
+    highlightedFeatures: list[str]
 
 
 class ImovelwebDuplicatePublisher(BaseModel):
@@ -642,12 +642,12 @@ class ImovelwebDuplicatePublisher(BaseModel):
     A publisher advertising the same property, with its own listing of it.
     """
 
-    ad_tier: ImovelwebAdTierValue | None
-    is_premier: bool
     listing_id: str
     listing_url: str
-    logo_url: str | None
     name: str
+    logo_url: str | None
+    is_premier: bool
+    ad_tier: ImovelwebAdTierValue | None
     raw: ImovelwebDuplicatePublisherRaw
 
 
@@ -667,49 +667,49 @@ class ImovelwebListing(BaseModel):
     no IPTU: imovelweb sends it as null; `/listings/{posting_id}` has it.
     """
 
-    ad_tier: ImovelwebAdTierValue | None
-    ai_description: str | None
-    bathrooms: int | None
     bedrooms: int | None
+    bathrooms: int | None
+    suites: int | None
+    parking_spaces: int | None
     building_age_years: int | None
-    code: str | None
-    condo_fee: ImovelwebMoney | None
-    description: str | None
-    development: ImovelwebDevelopment | None
-    duplicate: ImovelwebListingDuplicate | None
-    duplicate_group_id: str | None
-    generated_title: str | None
-    has_floor_plans: bool
-    has_tour: bool
-    has_video: bool
-    highlighted_amenities: list[ImovelwebAmenityValue]
+    total_area_m2: float | None
+    usable_area_m2: float | None
     id: str
-    is_foreclosure_auction: bool
+    code: str | None
+    url: str
+    posting_type: ImovelwebPostingTypeValue | None
+    status: ImovelwebPostingStatusValue | None
+    title: str | None
+    generated_title: str | None
+    property_type: ImovelwebPropertyKindValue | None
+    operations: list[ImovelwebOperationPrice]
+    location: ImovelwebListingLocation
+    ad_tier: ImovelwebAdTierValue | None
     is_premier: bool
     is_reserved: bool
-    location: ImovelwebListingLocation
-    logo_url: str | None
-    modified_at: str | None
-    operations: list[ImovelwebOperationPrice]
-    parking_spaces: int | None
-    photo_count: int
-    photos: list[ImovelwebPicture]
-    posting_type: ImovelwebPostingTypeValue | None
-    promotion_title: str | None
-    property_type: ImovelwebPropertyKindValue | None
-    published_days_ago: int | None
-    publisher: ImovelwebListingPublisher
     quintoandar_network: ImovelwebNetworkRoleValue | None
-    raw: ImovelwebListingRaw
-    status: ImovelwebPostingStatusValue | None
-    suites: int | None
-    title: str | None
-    total_area_m2: float | None
-    units: list[ImovelwebDevelopmentUnit]
-    url: str
-    usable_area_m2: float | None
     visit_booking_url: str | None
+    description: str | None
+    photos: list[ImovelwebPicture]
     whatsapp: str | None
+    development: ImovelwebDevelopment | None
+    ai_description: str | None
+    condo_fee: ImovelwebMoney | None
+    highlighted_amenities: list[ImovelwebAmenityValue]
+    photo_count: int
+    has_video: bool
+    has_tour: bool
+    has_floor_plans: bool
+    publisher: ImovelwebListingPublisher
+    logo_url: str | None
+    duplicate: ImovelwebListingDuplicate | None
+    duplicate_group_id: str | None
+    is_foreclosure_auction: bool
+    promotion_title: str | None
+    published_days_ago: int | None
+    modified_at: str | None
+    units: list[ImovelwebDevelopmentUnit]
+    raw: ImovelwebListingRaw
 
 
 class ImovelwebListingDetail(BaseModel):
@@ -722,45 +722,45 @@ class ImovelwebListingDetail(BaseModel):
     description.
     """
 
-    ad_tier: ImovelwebAdTierValue | None
-    amenities: list[ImovelwebAmenityEntry]
-    bathrooms: int | None
     bedrooms: int | None
+    bathrooms: int | None
+    suites: int | None
+    parking_spaces: int | None
     building_age_years: int | None
-    code: str | None
-    condo_fee: ImovelwebMoney | None
-    description: str | None
-    development: ImovelwebDevelopment | None
-    floor_plans: list[ImovelwebPicture]
-    generated_title: str | None
+    total_area_m2: float | None
+    usable_area_m2: float | None
     id: str
-    iptu: ImovelwebMoney | None
-    is_development_unit: bool
-    is_foreclosure_auction: bool
+    code: str | None
+    url: str
+    posting_type: ImovelwebPostingTypeValue | None
+    status: ImovelwebPostingStatusValue | None
+    title: str | None
+    generated_title: str | None
+    property_type: ImovelwebPropertyKindValue | None
+    operations: list[ImovelwebOperationPrice]
+    location: ImovelwebListingLocation
+    ad_tier: ImovelwebAdTierValue | None
     is_premier: bool
     is_reserved: bool
-    location: ImovelwebListingLocation
-    operations: list[ImovelwebOperationPrice]
-    parking_spaces: int | None
+    quintoandar_network: ImovelwebNetworkRoleValue | None
+    visit_booking_url: str | None
+    description: str | None
     photos: list[ImovelwebPicture]
-    popularity_message: str | None
-    posting_type: ImovelwebPostingTypeValue | None
-    property_type: ImovelwebPropertyKindValue | None
+    whatsapp: str | None
+    development: ImovelwebDevelopment | None
+    condo_fee: ImovelwebMoney | None
+    iptu: ImovelwebMoney | None
+    amenities: list[ImovelwebAmenityEntry]
+    floor_plans: list[ImovelwebPicture]
+    publisher: ImovelwebListingDetailPublisher | None
+    is_development_unit: bool
+    is_foreclosure_auction: bool
     published_at: str | None
     published_days_ago: int | None
-    publisher: ImovelwebListingDetailPublisher | None
-    quintoandar_network: ImovelwebNetworkRoleValue | None
-    raw: ImovelwebListingDetailRaw
-    status: ImovelwebPostingStatusValue | None
-    suites: int | None
-    title: str | None
-    total_area_m2: float | None
-    units: list[ImovelwebDevelopmentUnit]
-    url: str
-    usable_area_m2: float | None
     view_count: int | None
-    visit_booking_url: str | None
-    whatsapp: str | None
+    popularity_message: str | None
+    units: list[ImovelwebDevelopmentUnit]
+    raw: ImovelwebListingDetailRaw
 
 
 class ImovelwebListingDetailPublisher(BaseModel):
@@ -770,14 +770,14 @@ class ImovelwebListingDetailPublisher(BaseModel):
     publisher's `is_premier`, which a listing page does not carry.
     """
 
-    chat_url: str | None
-    creci: str | None
     id: str | None
-    logo_url: str | None
     name: str | None
-    partial_phone: str | None
     type: ImovelwebPublisherKindValue | None
     url: str | None
+    logo_url: str | None
+    creci: str | None
+    partial_phone: str | None
+    chat_url: str | None
 
 
 class ImovelwebListingDetailRaw(BaseModel):
@@ -787,24 +787,24 @@ class ImovelwebListingDetailRaw(BaseModel):
     visit booking URL that `visit_booking_url` also carries.
     """
 
-    cronut5A: ImovelwebRequestVisitRaw
-    developmentUrl: str | None = None
-    enableBannerFicha: bool
-    featuresWithIcon: list[int]
-    flagsFeatures: list[ImovelwebRawFeature]
-    haveVideo: bool | None = None
-    mainFeatures: dict[str, ImovelwebRawFeature]
-    ownershipRede: str | None = None
-    pixelPlus: bool
-    postingType: str | None = None
-    promotion: ImovelwebRawPromotion | None = None
     publicationAreaId: str | None
-    realEstateTypeId: str | None = None
+    featuresWithIcon: list[int]
+    pixelPlus: bool
     requestVisit5A: bool | str
-    status: str | None = None
-    tour: ImovelwebRawMedia | None = None
+    enableBannerFicha: bool
+    developmentUrl: str | None = None
+    promotion: ImovelwebRawPromotion | None = None
+    haveVideo: bool | None = None
     videos: list[ImovelwebRawMedia] | None = None
+    tour: ImovelwebRawMedia | None = None
     whatsApp: str | None = None
+    postingType: str | None = None
+    realEstateTypeId: str | None = None
+    ownershipRede: str | None = None
+    status: str | None = None
+    cronut5A: ImovelwebRequestVisitRaw
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    flagsFeatures: list[ImovelwebRawFeature]
 
 
 class ImovelwebListingDuplicate(BaseModel):
@@ -814,8 +814,8 @@ class ImovelwebListingDuplicate(BaseModel):
     offers a WhatsApp contact. `/listings/{posting_id}/publishers` lists the copies.
     """
 
-    has_whatsapp: bool
     url: str
+    has_whatsapp: bool
 
 
 class ImovelwebListingLocation(BaseModel):
@@ -826,16 +826,16 @@ class ImovelwebListingLocation(BaseModel):
 
     address: str | None
     address_visibility: ImovelwebVisibilityValue | None
-    city: ImovelwebPlace | None
     coordinates_visibility: ImovelwebVisibilityValue | None
     country: ImovelwebPlace | None
+    state: ImovelwebPlace | None
+    city: ImovelwebPlace | None
     district: ImovelwebPlace | None
+    sub_district: ImovelwebPlace | None
+    neighbourhood: ImovelwebPlace | None
     latitude: float | None
     longitude: float | None
-    neighbourhood: ImovelwebPlace | None
-    state: ImovelwebPlace | None
     static_map_url: str | None
-    sub_district: ImovelwebPlace | None
 
 
 class ImovelwebListingPublisher(BaseModel):
@@ -846,21 +846,21 @@ class ImovelwebListingPublisher(BaseModel):
     where imovelweb shows its placeholder image.
     """
 
-    active_listing_count: int | None
-    chat_url: str | None
-    creci: str | None
     id: str
-    is_premier: bool
-    joined_at: str | None
-    joined_year: int | None
-    logo_url: str | None
-    main_phone: str | None
     name: str
-    partial_phone: str | None
-    raw: ImovelwebListingPublisherRaw
-    slug: str | None
     type: ImovelwebPublisherKindValue | None
     url: str | None
+    logo_url: str | None
+    creci: str | None
+    main_phone: str | None
+    partial_phone: str | None
+    chat_url: str | None
+    is_premier: bool
+    slug: str | None
+    joined_at: str | None
+    joined_year: int | None
+    active_listing_count: int | None
+    raw: ImovelwebListingPublisherRaw
 
 
 class ImovelwebListingPublisherRaw(BaseModel):
@@ -870,13 +870,13 @@ class ImovelwebListingPublisherRaw(BaseModel):
 
     approved: bool
     id_portal: str | None
-    mainPhone: str | None = None
+    publisherTags: list[int]
     parentPublisher: Any
     publisherStatistics: Any
-    publisherTags: list[int]
-    publisherTypeId: str | None = None
     quantity_posting_by_operation_type: Any
     slotFilterUrl: Any
+    publisherTypeId: str | None = None
+    mainPhone: str | None = None
 
 
 class ImovelwebListingPublishers(BaseModel):
@@ -890,44 +890,44 @@ class ImovelwebListingRaw(BaseModel):
     it.
     """
 
-    action: Any
+    publicationAreaId: str
     alphanumeric_key: str
     alt: bool
-    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
-    earlyDemandCronut: bool
-    features: Any
-    flagsFeatures: list[ImovelwebRawFeature]
-    highlightedFeatures: list[str]
-    house: Any
-    iptu: Any
-    leadWhatsappDevelopmentRequestData: bool
-    leadWhatsappPostingRequestData: bool
-    mainFeatures: dict[str, ImovelwebRawFeature]
-    ownerDomain: Any
-    ownershipRede: str | None = None
     pixelPlus: bool
-    postingType: str | None = None
-    publicationAreaId: str
     publisherSlot: str
-    realEstateTypeId: str | None = None
-    requestVisit5A: ImovelwebRequestVisitRaw
     slot: int | None
     slotColor: Any
     sponsor: Any
-    status: str | None = None
-    triggerPill: str | None = None
-    trigger_pills: list[str]
+    house: Any
+    action: Any
+    features: Any
+    iptu: Any
+    ownerDomain: Any
     viewPhoneAnonymousLead: bool
+    earlyDemandCronut: bool
+    leadWhatsappPostingRequestData: bool
+    leadWhatsappDevelopmentRequestData: bool
+    trigger_pills: list[str]
     whatsApp: str | None = None
+    postingType: str | None = None
+    realEstateTypeId: str | None = None
+    ownershipRede: str | None = None
+    status: str | None = None
+    requestVisit5A: ImovelwebRequestVisitRaw
+    mainFeatures: dict[str, ImovelwebRawFeature]
+    developmentFeatures: dict[str, dict[str, ImovelwebRawFeature]]
+    flagsFeatures: list[ImovelwebRawFeature]
+    highlightedFeatures: list[str]
+    triggerPill: str | None = None
 
 
 class ImovelwebListingsMap(BaseModel):
-    applied_filters: list[ImovelwebAppliedFilter]
-    area: ImovelwebMapArea | None
-    markers: list[ImovelwebMapMarker]
-    raw: ImovelwebListingsMapRaw
     total: int
     viewport: ImovelwebViewport | None
+    area: ImovelwebMapArea | None
+    markers: list[ImovelwebMapMarker]
+    applied_filters: list[ImovelwebAppliedFilter]
+    raw: ImovelwebListingsMapRaw
 
 
 class ImovelwebListingsMapRaw(BaseModel):
@@ -939,12 +939,12 @@ class ImovelwebListingsMapRaw(BaseModel):
 
 
 class ImovelwebListingsPage(BaseModel):
-    applied_filters: list[ImovelwebAppliedFilter]
+    total: int
+    title: str
     listings: list[ImovelwebListing]
+    applied_filters: list[ImovelwebAppliedFilter]
     pagination: ImovelwebCursorPagination
     raw: ImovelwebListingsPageRaw
-    title: str
-    total: int
 
 
 class ImovelwebListingsPageRaw(BaseModel):
@@ -953,9 +953,9 @@ class ImovelwebListingsPageRaw(BaseModel):
     data for listings not on this page.
     """
 
+    total5A: int | None
     appliedFilters: list[ImovelwebRawAppliedFilter]
     developmentData: dict[str, ImovelwebRawDevelopmentData]
-    total5A: int | None
 
 
 class ImovelwebLocation(BaseModel):
@@ -964,9 +964,9 @@ class ImovelwebLocation(BaseModel):
     """
 
     id: str
+    name: str
     label: str
     level: ImovelwebLocationLevelValue | None
-    name: str
     raw: ImovelwebLocationRaw
 
 
@@ -980,22 +980,22 @@ class ImovelwebLocations(BaseModel):
 
 
 class ImovelwebMapArea(BaseModel):
-    center: ImovelwebPoint
     id: str
-    level: ImovelwebLocationLevelValue | None
     name: str
+    level: ImovelwebLocationLevelValue | None
+    center: ImovelwebPoint
     outline: ImovelwebAreaOutline
     raw: ImovelwebMapAreaRaw
 
 
 class ImovelwebMapAreaRaw(BaseModel):
-    idciudad: int
     idpais: int
     idprovincia: int
-    idsubzonaciudad: int
+    idciudad: int
     idzonaciudad: int
-    solr_geometry: Any
+    idsubzonaciudad: int
     tipoN: str
+    solr_geometry: Any
 
 
 class ImovelwebMapMarker(BaseModel):
@@ -1004,16 +1004,16 @@ class ImovelwebMapMarker(BaseModel):
     a unit belongs to.
     """
 
-    coordinates_visibility: ImovelwebVisibilityValue | None
-    development_id: str | None
     id: str
-    is_premier: bool
-    latitude: float
-    longitude: float
+    development_id: str | None
+    title: str
     operation: ImovelwebOperation | None
     price: ImovelwebMoney | None
     price_drop_percent: int | None
-    title: str
+    latitude: float
+    longitude: float
+    coordinates_visibility: ImovelwebVisibilityValue | None
+    is_premier: bool
 
 
 class ImovelwebMoney(BaseModel):
@@ -1033,9 +1033,9 @@ class ImovelwebMoneyRange(BaseModel):
     shows no starting price, as its site then asks you to enquire.
     """
 
-    currency: ImovelwebCurrencyValue | None
-    max: float | None
     min: float | None
+    max: float | None
+    currency: ImovelwebCurrencyValue | None
 
 
 class ImovelwebOperationPrice(BaseModel):
@@ -1058,18 +1058,18 @@ class ImovelwebPicture(BaseModel):
     original's.
     """
 
-    caption: str | None
-    height: int | None
     kind: ImovelwebMediaKindValue | None
+    caption: str | None
+    width: int | None
+    height: int | None
+    url_1200x1200: str | None
+    url_720x532: str
+    url_360x266: str
+    url_215x159: str | None
+    url_100x75: str | None
+    url_130x70: str | None
     resized_url_1200x1200: str | None
     resized_url_720x532: str | None
-    url_100x75: str | None
-    url_1200x1200: str | None
-    url_130x70: str | None
-    url_215x159: str | None
-    url_360x266: str
-    url_720x532: str
-    width: int | None
 
 
 class ImovelwebPlace(BaseModel):
@@ -1078,9 +1078,9 @@ class ImovelwebPlace(BaseModel):
     every level except the country; `acronym` is the state's two letters.
     """
 
-    acronym: str | None
     id: str
     name: str
+    acronym: str | None
 
 
 class ImovelwebPoint(BaseModel):
@@ -1096,26 +1096,26 @@ class ImovelwebPublisher(BaseModel):
     count its profile page lists. `ratings` is null when imovelweb keeps no statistics.
     """
 
+    id: str
+    name: str
+    type: ImovelwebPublisherKindValue | None
+    description: str | None
     about: str | None
-    active_listing_count: int | None
+    phone_text: str | None
+    phone_numbers: list[str]
     address: str | None
+    logo_url: str | None
     cover_picture_url: str | None
     cover_pictures: list[ImovelwebCoverPicture]
-    description: str | None
+    video_url: str | None
+    joined_year: int | None
+    active_listing_count: int | None
+    listed_count: int | None
+    is_premier: bool
     has_main_phone: bool
     has_microsite: bool
-    id: str
-    is_premier: bool
-    joined_year: int | None
-    listed_count: int | None
-    logo_url: str | None
-    name: str
-    phone_numbers: list[str]
-    phone_text: str | None
     ratings: ImovelwebPublisherRatings | None
     raw: ImovelwebPublisherRaw
-    type: ImovelwebPublisherKindValue | None
-    video_url: str | None
 
 
 class ImovelwebPublisherRatings(BaseModel):
@@ -1125,11 +1125,11 @@ class ImovelwebPublisherRatings(BaseModel):
     """
 
     average: float | None
+    recommend_percent: float | None
+    review_count: int | None
     is_new_publisher: bool
     questions: list[ImovelwebRatingQuestion]
     raw: ImovelwebPublisherRatingsRaw
-    recommend_percent: float | None
-    review_count: int | None
 
 
 class ImovelwebPublisherRatingsRaw(BaseModel):
@@ -1147,9 +1147,9 @@ class ImovelwebPublisherRaw(BaseModel):
 
 
 class ImovelwebRatingQuestion(BaseModel):
-    average: float
-    question: str
     topic: str
+    question: str
+    average: float
 
 
 class ImovelwebRawAppliedFilter(BaseModel):
@@ -1157,12 +1157,12 @@ class ImovelwebRawAppliedFilter(BaseModel):
     One filter imovelweb says it applied, in its own filter names and codes.
     """
 
-    groups: list[ImovelwebRawAppliedFilterGroup] | None = None
-    idsArea: ImovelwebRawAppliedFilterAreaKind | None = None
-    options: list[ImovelwebRawAppliedFilterOption] | None = None
-    renderType: int | None = None
     type: str
+    options: list[ImovelwebRawAppliedFilterOption] | None = None
+    groups: list[ImovelwebRawAppliedFilterGroup] | None = None
     units: list[ImovelwebRawAppliedFilterUnit] | None = None
+    idsArea: ImovelwebRawAppliedFilterAreaKind | None = None
+    renderType: int | None = None
 
 
 class ImovelwebRawAppliedFilterAreaKind(BaseModel):
@@ -1177,12 +1177,12 @@ class ImovelwebRawAppliedFilterGroup(BaseModel):
 
 class ImovelwebRawAppliedFilterOption(BaseModel):
     label: str | None = None
-    max: str | None = None
-    maxLabel: str | None = None
-    min: str | None = None
-    minLabel: str | None = None
-    subtypes: list[ImovelwebRawAppliedFilterSubtype] | None = None
     type: str | None = None
+    min: str | None = None
+    max: str | None = None
+    minLabel: str | None = None
+    maxLabel: str | None = None
+    subtypes: list[ImovelwebRawAppliedFilterSubtype] | None = None
 
 
 class ImovelwebRawAppliedFilterSubtype(BaseModel):
@@ -1197,40 +1197,40 @@ class ImovelwebRawAppliedFilterUnit(BaseModel):
 
 
 class ImovelwebRawDetailPicture(BaseModel):
-    height: int | None
     multimediaTypeId: int
     order: int
+    height: int | None
+    width: int | None
     resizeUrl1200x1200: str
     resizeUrl720x532: str
-    title: str
-    url100x75: str
     url1200x1200: str
-    url215x159: str
-    url360x266: str
     url730x532: str
-    width: int | None
+    url360x266: str
+    url215x159: str
+    url100x75: str
+    title: str
 
 
 class ImovelwebRawDevelopmentData(BaseModel):
-    ambientes: ImovelwebRawNumberRange
-    bathrooms: ImovelwebRawNumberRange
-    coveredArea: ImovelwebRawNumberRange
-    delivery: str
-    garages: ImovelwebRawNumberRange
-    majorPrices: ImovelwebRawPriceRange | None = None
-    minorPrices: ImovelwebRawPriceRange | None = None
-    numberOfUnits: int
-    prices: ImovelwebRawPriceRange | None = None
-    pricesByOperationType: list[ImovelwebRawPricesByOperationType] | None = None
-    rooms: ImovelwebRawNumberRange
-    steps: list[ImovelwebRawDevelopmentStep]
     totalArea: ImovelwebRawNumberRange
+    coveredArea: ImovelwebRawNumberRange
+    prices: ImovelwebRawPriceRange | None = None
+    minorPrices: ImovelwebRawPriceRange | None = None
+    majorPrices: ImovelwebRawPriceRange | None = None
+    pricesByOperationType: list[ImovelwebRawPricesByOperationType] | None = None
+    numberOfUnits: int
+    ambientes: ImovelwebRawNumberRange
+    rooms: ImovelwebRawNumberRange
+    bathrooms: ImovelwebRawNumberRange
+    garages: ImovelwebRawNumberRange
     unitGroupsData: dict[str, dict[str, ImovelwebRawUnitGroup]]
+    steps: list[ImovelwebRawDevelopmentStep]
+    delivery: str
 
 
 class ImovelwebRawDevelopmentStep(BaseModel):
-    stage: str
     status: str
+    stage: str
 
 
 class ImovelwebRawFeature(BaseModel):
@@ -1238,14 +1238,14 @@ class ImovelwebRawFeature(BaseModel):
     A listing attribute keyed by imovelweb's feature code, with its value as a string.
     """
 
-    featureCategoryId: str | None = None
     featureId: str
-    icon: str | None = None
     label: str
-    maxValue: str | None = None
     measure: str | None = None
-    minValue: str | None = None
     value: str | None
+    icon: str | None = None
+    featureCategoryId: str | None = None
+    minValue: str | None = None
+    maxValue: str | None = None
 
 
 class ImovelwebRawMedia(BaseModel):
@@ -1254,8 +1254,8 @@ class ImovelwebRawMedia(BaseModel):
     """
 
     order: int
-    preview: str | None = None
     reference: str
+    preview: str | None = None
 
 
 class ImovelwebRawNumberRange(BaseModel):
@@ -1269,11 +1269,11 @@ class ImovelwebRawPrice(BaseModel):
     `formattedAmount`.
     """
 
-    amount: float | None
-    currency: str
-    currencyId: str | None = None
-    formattedAmount: str | None
     isoCode: str | None = None
+    currencyId: str | None = None
+    amount: float | None
+    formattedAmount: str | None
+    currency: str
 
 
 class ImovelwebRawPriceRange(BaseModel):
@@ -1287,38 +1287,38 @@ class ImovelwebRawPricesByOperationType(BaseModel):
 
 
 class ImovelwebRawPromotion(BaseModel):
-    description: str
     title: str
+    description: str
 
 
 class ImovelwebRawRequestVisitUrl(BaseModel):
     urlControl: str | None = None
-    urlEarlyDemand: str | None = None
     urlVariant: str | None = None
     urlWhatsappConcierge: str | None = None
+    urlEarlyDemand: str | None = None
 
 
 class ImovelwebRawUnitGroup(BaseModel):
-    coveredArea: ImovelwebRawNumberRange
-    majorPrices: ImovelwebRawPriceRange | None = None
-    minorPrices: ImovelwebRawPriceRange | None = None
-    numberOfUnits: int
-    operationTypeId: str | None
-    picture: str | None = None
-    prices: ImovelwebRawPriceRange | None = None
-    realEstateTypeId: str
-    rooms: str
-    title: str
     totalArea: ImovelwebRawNumberRange
+    coveredArea: ImovelwebRawNumberRange
+    prices: ImovelwebRawPriceRange | None = None
+    minorPrices: ImovelwebRawPriceRange | None = None
+    majorPrices: ImovelwebRawPriceRange | None = None
+    numberOfUnits: int
+    picture: str | None = None
+    title: str
+    rooms: str
+    realEstateTypeId: str
+    operationTypeId: str | None
 
 
 class ImovelwebRequestVisitRaw(BaseModel):
     activeModal5A: bool
     activeModalPostlead5A: bool
-    cronutEarlyDemand: bool
-    cronutRent: bool
-    cronutSell: bool
     requestVisitUrl: ImovelwebRawRequestVisitUrl
+    cronutSell: bool
+    cronutRent: bool
+    cronutEarlyDemand: bool
     showWhatsapp: bool
 
 
@@ -1328,25 +1328,25 @@ class ImovelwebSimilarListing(BaseModel):
     as display text, which this API decodes; `location.label` is the card's own wording.
     """
 
-    ad_tier: ImovelwebAdTierValue | None
-    bathrooms: int | None
     bedrooms: int | None
-    building_age_years: int | None
-    id: str
-    is_premier: bool
-    location: ImovelwebSimilarListingLocation
-    operation: ImovelwebOperation | None
-    parking_spaces: int | None
-    photos: list[ImovelwebPicture]
-    posting_type: ImovelwebPostingTypeValue | None
-    price: ImovelwebMoney | None
-    property_type: ImovelwebPropertyKindValue | None
-    publisher_logo_url: str | None
-    raw: ImovelwebSimilarListingRaw
+    bathrooms: int | None
     suites: int | None
-    title: str
+    parking_spaces: int | None
+    building_age_years: int | None
     total_area_m2: float | None
     usable_area_m2: float | None
+    id: str
+    title: str
+    posting_type: ImovelwebPostingTypeValue | None
+    property_type: ImovelwebPropertyKindValue | None
+    operation: ImovelwebOperation | None
+    price: ImovelwebMoney | None
+    location: ImovelwebSimilarListingLocation
+    photos: list[ImovelwebPicture]
+    publisher_logo_url: str | None
+    is_premier: bool
+    ad_tier: ImovelwebAdTierValue | None
+    raw: ImovelwebSimilarListingRaw
 
 
 class ImovelwebSimilarListingLocation(BaseModel):
@@ -1355,13 +1355,13 @@ class ImovelwebSimilarListingLocation(BaseModel):
 
 
 class ImovelwebSimilarListingRaw(BaseModel):
+    publicationAreaId: str | None
     descripcionNormalized: str | None
     developmentData: ImovelwebRawDevelopmentData | None
-    mainFeatures: dict[str, ImovelwebRawFeature]
-    operationType: str | None = None
     postingType: str | None = None
-    publicationAreaId: str | None
     realestateType: str | None = None
+    operationType: str | None = None
+    mainFeatures: dict[str, ImovelwebRawFeature]
 
 
 class ImovelwebSimilarListings(BaseModel):
@@ -1373,15 +1373,15 @@ class ImovelwebUnitGroup(BaseModel):
     The development's units of one type and bedroom count.
     """
 
-    bedrooms: int | None
-    operation: ImovelwebOperation | None
-    price: ImovelwebMoneyRange | None
-    property_type: ImovelwebPropertyKindValue | None
-    raw: ImovelwebUnitGroupRaw
     title: str
-    total_area_m2: ImovelwebAreaRange | None
+    operation: ImovelwebOperation | None
+    property_type: ImovelwebPropertyKindValue | None
+    bedrooms: int | None
     unit_count: int
+    price: ImovelwebMoneyRange | None
     usable_area_m2: ImovelwebAreaRange | None
+    total_area_m2: ImovelwebAreaRange | None
+    raw: ImovelwebUnitGroupRaw
 
 
 class ImovelwebUnitGroupRaw(BaseModel):
@@ -1389,8 +1389,8 @@ class ImovelwebUnitGroupRaw(BaseModel):
 
 
 class ImovelwebViewport(BaseModel):
-    east: float
     north: float
+    east: float
     south: float
     west: float
 
