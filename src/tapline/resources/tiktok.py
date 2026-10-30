@@ -13,20 +13,20 @@ from typing import Literal
 from .._resource import AsyncAPIResource, Request, SyncAPIResource
 from .._types import NotGiven, Timeout, not_given
 from ..tiktok import (
-    GetCommentsResponse,
-    GetFollowersResponse,
-    GetFollowingResponse,
-    GetProfileVideosResponse,
-    GetTrendingFeedResponse,
-    GetVideoResponse,
-    SearchHashtagResponse,
     TikTokCollectionVideosResponse,
     TikTokCommentRepliesResponse,
+    TikTokCommentsResponse,
+    TikTokFollowersResponse,
+    TikTokFollowingResponse,
+    TikTokHashtagSearchResponse,
     TikTokProfileResponse,
+    TikTokProfileVideosResponse,
     TikTokSearchSuggestionsResponse,
     TikTokSongResponse,
     TikTokSongVideosResponse,
     TikTokTranscriptResponse,
+    TikTokTrendingFeedResponse,
+    TikTokVideoResponse,
 )
 
 __all__ = ["SyncTiktok", "Tiktok"]
@@ -46,9 +46,9 @@ def _get_collection_videos(
 
 def _get_trending_feed(
     *, region: str, trim: bool | None = None
-) -> Request[GetTrendingFeedResponse]:
+) -> Request[TikTokTrendingFeedResponse]:
     return Request(
-        _PREFIX + "/get-trending-feed", GetTrendingFeedResponse, {"region": region, "trim": trim}
+        _PREFIX + "/get-trending-feed", TikTokTrendingFeedResponse, {"region": region, "trim": trim}
     )
 
 
@@ -73,10 +73,10 @@ def _get_profile_videos(
     sort_by: Literal["latest", "popular"] | None = None,
     trim: bool | None = None,
     user_id: str | None = None,
-) -> Request[GetProfileVideosResponse]:
+) -> Request[TikTokProfileVideosResponse]:
     return Request(
         _PREFIX + "/profile/videos",
-        GetProfileVideosResponse,
+        TikTokProfileVideosResponse,
         {
             "handle": handle,
             "max_cursor": max_cursor,
@@ -90,10 +90,10 @@ def _get_profile_videos(
 
 def _search_hashtag(
     *, hashtag: str, cursor: int | None = None, region: str | None = None, trim: bool | None = None
-) -> Request[SearchHashtagResponse]:
+) -> Request[TikTokHashtagSearchResponse]:
     return Request(
         _PREFIX + "/search/hashtag",
-        SearchHashtagResponse,
+        TikTokHashtagSearchResponse,
         {"hashtag": hashtag, "cursor": cursor, "region": region, "trim": trim},
     )
 
@@ -126,20 +126,20 @@ def _get_followers(
     min_time: int | None = None,
     trim: bool | None = None,
     user_id: str | None = None,
-) -> Request[GetFollowersResponse]:
+) -> Request[TikTokFollowersResponse]:
     return Request(
         _PREFIX + "/user/followers",
-        GetFollowersResponse,
+        TikTokFollowersResponse,
         {"handle": handle, "min_time": min_time, "trim": trim, "user_id": user_id},
     )
 
 
 def _get_following(
     *, handle: str, min_time: int | None = None, trim: bool | None = None
-) -> Request[GetFollowingResponse]:
+) -> Request[TikTokFollowingResponse]:
     return Request(
         _PREFIX + "/user/following",
-        GetFollowingResponse,
+        TikTokFollowingResponse,
         {"handle": handle, "min_time": min_time, "trim": trim},
     )
 
@@ -151,10 +151,10 @@ def _get_video(
     get_transcript: bool | None = None,
     region: str | None = None,
     trim: bool | None = None,
-) -> Request[GetVideoResponse]:
+) -> Request[TikTokVideoResponse]:
     return Request(
         _PREFIX + "/video",
-        GetVideoResponse,
+        TikTokVideoResponse,
         {
             "url": url,
             "cache_max_age": cache_max_age,
@@ -177,10 +177,10 @@ def _get_comment_replies(
 
 def _get_comments(
     *, url: str, cursor: int | None = None, trim: bool | None = None
-) -> Request[GetCommentsResponse]:
+) -> Request[TikTokCommentsResponse]:
     return Request(
         _PREFIX + "/video/comments",
-        GetCommentsResponse,
+        TikTokCommentsResponse,
         {"url": url, "cursor": cursor, "trim": trim},
     )
 
@@ -214,7 +214,7 @@ class Tiktok(AsyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokCollectionVideosResponse:
-        """The videos saved in a collection, as web video objects (`id`, `desc`, `author`, `stats`, `video`), 30 per page. Pass `max_cursor` back as `cursor` while `has_more` is true. Costs 1 credit.
+        """The videos saved in a collection, 30 per page. Pass `max_cursor` back as `cursor` while `has_more` is true. Costs 1 credit.
 
         Args:
             url: A public TikTok collection URL:
@@ -234,17 +234,18 @@ class Tiktok(AsyncAPIResource):
         region: str,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetTrendingFeedResponse:
+    ) -> TikTokTrendingFeedResponse:
         """Returns about six videos from the For You feed for `region`. Each call starts a fresh feed, so there is no cursor. Costs 1 credit.
 
         Args:
             region: Two-letter country code, such as `US` or `GB`. The feed is what
                 TikTok serves a viewer in that country, not only videos from it.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetTrendingFeedResponse`.
+            A :class:`~tapline.tiktok.TikTokTrendingFeedResponse`.
         """
         return await self._send(_get_trending_feed(region=region, trim=trim), timeout=timeout)
 
@@ -285,8 +286,8 @@ class Tiktok(AsyncAPIResource):
         trim: bool | None = None,
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetProfileVideosResponse:
-        """Videos a user posted, newest first or most popular first, 35 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
+    ) -> TikTokProfileVideosResponse:
+        """Videos a user posted, newest first or most popular first, 35 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `max_cursor` back for the next page while `has_more` is true. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or
@@ -297,13 +298,14 @@ class Tiktok(AsyncAPIResource):
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
             sort_by: `latest` (default) or `popular`, most viewed first.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             user_id: The numeric TikTok user id (`user.id` from
                 `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
+            A :class:`~tapline.tiktok.TikTokProfileVideosResponse`.
         """
         return await self._send(
             _get_profile_videos(
@@ -325,8 +327,8 @@ class Tiktok(AsyncAPIResource):
         region: str | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> SearchHashtagResponse:
-        """Videos under a hashtag, 30 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `cursor` back while `has_more` is 1; a video may repeat across pages. Costs 1 credit.
+    ) -> TikTokHashtagSearchResponse:
+        """Videos under a hashtag, 30 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `cursor` back while `has_more` is true; a video may repeat across pages. Costs 1 credit.
 
         Args:
             hashtag: The hashtag, with or without a leading #.
@@ -334,11 +336,12 @@ class Tiktok(AsyncAPIResource):
             region: Two-letter country code for the proxy, such as `US`, `GB` or
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.SearchHashtagResponse`.
+            A :class:`~tapline.tiktok.TikTokHashtagSearchResponse`.
         """
         return await self._send(
             _search_hashtag(hashtag=hashtag, cursor=cursor, region=region, trim=trim),
@@ -352,7 +355,7 @@ class Tiktok(AsyncAPIResource):
         region: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSearchSuggestionsResponse:
-        """Autocomplete suggestions for a search, with `text`, `position`, `language`, and `score` for each. Costs 1 credit.
+        """Autocomplete suggestions for a search. Costs 1 credit.
 
         Args:
             query: What to search TikTok for.
@@ -374,7 +377,7 @@ class Tiktok(AsyncAPIResource):
         clip_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongResponse:
-        """Returns a sound as `music_info`, including its title, author, album, duration, video count, playback URL, and cover images. Costs 1 credit.
+        """Returns a sound as `music`. Costs 1 credit.
 
         Args:
             clip_id: The sound's clip id, the number at the end of a sound URL such
@@ -394,7 +397,7 @@ class Tiktok(AsyncAPIResource):
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongVideosResponse:
-        """Videos that use a sound, 30 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+        """Videos that use a sound, 30 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             clip_id: The sound's clip id, the number at the end of a sound URL such
@@ -416,7 +419,7 @@ class Tiktok(AsyncAPIResource):
         trim: bool | None = None,
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetFollowersResponse:
+    ) -> TikTokFollowersResponse:
         """Returns accounts following a user, newest first, 30 per page. Pass `min_time` back while `has_more` is true. Costs 1 credit.
 
         Args:
@@ -424,13 +427,14 @@ class Tiktok(AsyncAPIResource):
                 `user_id`, not both.
             min_time: The `min_time` from the previous page. Omit it for the first
                 page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             user_id: The numeric TikTok user id (`user.id` from
                 `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetFollowersResponse`.
+            A :class:`~tapline.tiktok.TikTokFollowersResponse`.
         """
         return await self._send(
             _get_followers(handle=handle, min_time=min_time, trim=trim, user_id=user_id),
@@ -444,18 +448,19 @@ class Tiktok(AsyncAPIResource):
         min_time: int | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetFollowingResponse:
+    ) -> TikTokFollowingResponse:
         """Accounts a user follows, newest first, 30 per page, in the same user layout as `/user/followers`. Pass `min_time` back while `has_more` is true. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @.
             min_time: The `min_time` from the previous page. Omit it for the first
                 page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetFollowingResponse`.
+            A :class:`~tapline.tiktok.TikTokFollowingResponse`.
         """
         return await self._send(
             _get_following(handle=handle, min_time=min_time, trim=trim), timeout=timeout
@@ -470,8 +475,8 @@ class Tiktok(AsyncAPIResource):
         region: str | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetVideoResponse:
-        """Returns one video or photo post as `aweme_detail`, with media, author, and engagement data. Set `get_transcript=true` to include WEBVTT captions when available. Costs 1 credit.
+    ) -> TikTokVideoResponse:
+        """Returns one video or photo post as `video`. Set `get_transcript=true` to include WEBVTT captions when available. Costs 1 credit.
 
         Args:
             url: A TikTok video or photo post URL:
@@ -484,11 +489,12 @@ class Tiktok(AsyncAPIResource):
             region: Two-letter country code for the proxy, such as `US`, `GB` or
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetVideoResponse`.
+            A :class:`~tapline.tiktok.TikTokVideoResponse`.
         """
         return await self._send(
             _get_video(
@@ -509,7 +515,7 @@ class Tiktok(AsyncAPIResource):
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokCommentRepliesResponse:
-        """Replies to one comment on a video, 20 per page. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+        """Replies to one comment on a video, 20 per page. Pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             comment_id: The comment id: `cid` from `/v1/tiktok/video/comments`.
@@ -533,19 +539,20 @@ class Tiktok(AsyncAPIResource):
         cursor: int | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetCommentsResponse:
-        """Comments on a video, 20 per page, with `text`, `digg_count`, `reply_comment_total`, `create_time` and the commenter's `user`, plus `total`. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+    ) -> TikTokCommentsResponse:
+        """Comments on a video, 20 per page. Pass a comment's `cid` to `/video/comment/replies` and pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             url: A TikTok video or photo post URL:
                 `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
                 `https://vm.tiktok.com/<code>/` share link.
             cursor: The `cursor` from the previous page. Omit it for the first page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetCommentsResponse`.
+            A :class:`~tapline.tiktok.TikTokCommentsResponse`.
         """
         return await self._send(_get_comments(url=url, cursor=cursor, trim=trim), timeout=timeout)
 
@@ -597,7 +604,7 @@ class SyncTiktok(SyncAPIResource):
         cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokCollectionVideosResponse:
-        """The videos saved in a collection, as web video objects (`id`, `desc`, `author`, `stats`, `video`), 30 per page. Pass `max_cursor` back as `cursor` while `has_more` is true. Costs 1 credit.
+        """The videos saved in a collection, 30 per page. Pass `max_cursor` back as `cursor` while `has_more` is true. Costs 1 credit.
 
         Args:
             url: A public TikTok collection URL:
@@ -617,17 +624,18 @@ class SyncTiktok(SyncAPIResource):
         region: str,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetTrendingFeedResponse:
+    ) -> TikTokTrendingFeedResponse:
         """Returns about six videos from the For You feed for `region`. Each call starts a fresh feed, so there is no cursor. Costs 1 credit.
 
         Args:
             region: Two-letter country code, such as `US` or `GB`. The feed is what
                 TikTok serves a viewer in that country, not only videos from it.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetTrendingFeedResponse`.
+            A :class:`~tapline.tiktok.TikTokTrendingFeedResponse`.
         """
         return self._send(_get_trending_feed(region=region, trim=trim), timeout=timeout)
 
@@ -668,8 +676,8 @@ class SyncTiktok(SyncAPIResource):
         trim: bool | None = None,
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetProfileVideosResponse:
-        """Videos a user posted, newest first or most popular first, 35 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `max_cursor` back for the next page while `has_more` is 1. Costs 1 credit.
+    ) -> TikTokProfileVideosResponse:
+        """Videos a user posted, newest first or most popular first, 35 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `max_cursor` back for the next page while `has_more` is true. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or
@@ -680,13 +688,14 @@ class SyncTiktok(SyncAPIResource):
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
             sort_by: `latest` (default) or `popular`, most viewed first.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             user_id: The numeric TikTok user id (`user.id` from
                 `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetProfileVideosResponse`.
+            A :class:`~tapline.tiktok.TikTokProfileVideosResponse`.
         """
         return self._send(
             _get_profile_videos(
@@ -708,8 +717,8 @@ class SyncTiktok(SyncAPIResource):
         region: str | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> SearchHashtagResponse:
-        """Videos under a hashtag, 30 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `cursor` back while `has_more` is 1; a video may repeat across pages. Costs 1 credit.
+    ) -> TikTokHashtagSearchResponse:
+        """Videos under a hashtag, 30 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `cursor` back while `has_more` is true; a video may repeat across pages. Costs 1 credit.
 
         Args:
             hashtag: The hashtag, with or without a leading #.
@@ -717,11 +726,12 @@ class SyncTiktok(SyncAPIResource):
             region: Two-letter country code for the proxy, such as `US`, `GB` or
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.SearchHashtagResponse`.
+            A :class:`~tapline.tiktok.TikTokHashtagSearchResponse`.
         """
         return self._send(
             _search_hashtag(hashtag=hashtag, cursor=cursor, region=region, trim=trim),
@@ -735,7 +745,7 @@ class SyncTiktok(SyncAPIResource):
         region: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSearchSuggestionsResponse:
-        """Autocomplete suggestions for a search, with `text`, `position`, `language`, and `score` for each. Costs 1 credit.
+        """Autocomplete suggestions for a search. Costs 1 credit.
 
         Args:
             query: What to search TikTok for.
@@ -755,7 +765,7 @@ class SyncTiktok(SyncAPIResource):
         clip_id: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongResponse:
-        """Returns a sound as `music_info`, including its title, author, album, duration, video count, playback URL, and cover images. Costs 1 credit.
+        """Returns a sound as `music`. Costs 1 credit.
 
         Args:
             clip_id: The sound's clip id, the number at the end of a sound URL such
@@ -775,7 +785,7 @@ class SyncTiktok(SyncAPIResource):
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokSongVideosResponse:
-        """Videos that use a sound, 30 per page. Each item includes its `aweme_id`, engagement, playback data, and author. Counts of 10,000 or more may be rounded. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+        """Videos that use a sound, 30 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             clip_id: The sound's clip id, the number at the end of a sound URL such
@@ -797,7 +807,7 @@ class SyncTiktok(SyncAPIResource):
         trim: bool | None = None,
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetFollowersResponse:
+    ) -> TikTokFollowersResponse:
         """Returns accounts following a user, newest first, 30 per page. Pass `min_time` back while `has_more` is true. Costs 1 credit.
 
         Args:
@@ -805,13 +815,14 @@ class SyncTiktok(SyncAPIResource):
                 `user_id`, not both.
             min_time: The `min_time` from the previous page. Omit it for the first
                 page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             user_id: The numeric TikTok user id (`user.id` from
                 `/v1/tiktok/profile`). Send `handle` or `user_id`, not both.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetFollowersResponse`.
+            A :class:`~tapline.tiktok.TikTokFollowersResponse`.
         """
         return self._send(
             _get_followers(handle=handle, min_time=min_time, trim=trim, user_id=user_id),
@@ -825,18 +836,19 @@ class SyncTiktok(SyncAPIResource):
         min_time: int | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetFollowingResponse:
+    ) -> TikTokFollowingResponse:
         """Accounts a user follows, newest first, 30 per page, in the same user layout as `/user/followers`. Pass `min_time` back while `has_more` is true. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @.
             min_time: The `min_time` from the previous page. Omit it for the first
                 page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetFollowingResponse`.
+            A :class:`~tapline.tiktok.TikTokFollowingResponse`.
         """
         return self._send(
             _get_following(handle=handle, min_time=min_time, trim=trim), timeout=timeout
@@ -851,8 +863,8 @@ class SyncTiktok(SyncAPIResource):
         region: str | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetVideoResponse:
-        """Returns one video or photo post as `aweme_detail`, with media, author, and engagement data. Set `get_transcript=true` to include WEBVTT captions when available. Costs 1 credit.
+    ) -> TikTokVideoResponse:
+        """Returns one video or photo post as `video`. Set `get_transcript=true` to include WEBVTT captions when available. Costs 1 credit.
 
         Args:
             url: A TikTok video or photo post URL:
@@ -865,11 +877,12 @@ class SyncTiktok(SyncAPIResource):
             region: Two-letter country code for the proxy, such as `US`, `GB` or
                 `PH`. TikTok answers as it does to a viewer in that country; it does
                 not filter results to that country.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetVideoResponse`.
+            A :class:`~tapline.tiktok.TikTokVideoResponse`.
         """
         return self._send(
             _get_video(
@@ -890,7 +903,7 @@ class SyncTiktok(SyncAPIResource):
         cursor: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokCommentRepliesResponse:
-        """Replies to one comment on a video, 20 per page. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+        """Replies to one comment on a video, 20 per page. Pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             comment_id: The comment id: `cid` from `/v1/tiktok/video/comments`.
@@ -914,19 +927,20 @@ class SyncTiktok(SyncAPIResource):
         cursor: int | None = None,
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> GetCommentsResponse:
-        """Comments on a video, 20 per page, with `text`, `digg_count`, `reply_comment_total`, `create_time` and the commenter's `user`, plus `total`. Pass `cursor` back while `has_more` is 1. Costs 1 credit.
+    ) -> TikTokCommentsResponse:
+        """Comments on a video, 20 per page. Pass a comment's `cid` to `/video/comment/replies` and pass `cursor` back while `has_more` is true. Costs 1 credit.
 
         Args:
             url: A TikTok video or photo post URL:
                 `https://www.tiktok.com/@<handle>/video/<id>`, `/photo/<id>`, or a
                 `https://vm.tiktok.com/<code>/` share link.
             cursor: The `cursor` from the previous page. Omit it for the first page.
-            trim: Set to `true` to return fewer fields per item.
+            trim: Retained for compatibility. Both values return the same complete
+                cleaned response.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A :class:`~tapline.tiktok.GetCommentsResponse`.
+            A :class:`~tapline.tiktok.TikTokCommentsResponse`.
         """
         return self._send(_get_comments(url=url, cursor=cursor, trim=trim), timeout=timeout)
 

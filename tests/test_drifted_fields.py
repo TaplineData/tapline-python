@@ -17,11 +17,7 @@ import pytest
 from conftest import VIDEO_ID, Engine, MockAPI, fetch_market_trades
 from tapline.brave_search import BraveSearchPlaceContact, BraveSearchWebPage
 from tapline.ponsfamily import MarketTrade
-from tapline.tiktok import (
-    GetCommentsResponse,
-    TikTokCommentsResponse,
-    TikTokTrimmedCommentsResponse,
-)
+from tapline.tiktok import TikTokCommentsResponse
 
 FIXTURES = Path(__file__).resolve().parents[2] / "fixtures"
 TIKTOK_VIDEO_URL = "https://www.tiktok.com/@tiktok/video/7106594312292453675"
@@ -36,8 +32,8 @@ async def resolve(result: Any) -> Any:
     return await result if inspect.isawaitable(result) else result
 
 
-async def fetch_tiktok_comments(engine: Engine) -> GetCommentsResponse:
-    comments: GetCommentsResponse = await resolve(
+async def fetch_tiktok_comments(engine: Engine) -> TikTokCommentsResponse:
+    comments: TikTokCommentsResponse = await resolve(
         engine.client.tiktok.get_comments(url=TIKTOK_VIDEO_URL)
     )
     return comments
@@ -140,31 +136,15 @@ async def test_fields_are_neither_coerced_nor_dropped(api: MockAPI, engine: Engi
     assert video.model_dump(mode="json", exclude_unset=True, warnings=False) == payload
 
 
-class TestAFullOrTrimmedPageMissingAField:
-    async def test_a_trimmed_page_still_parses_as_the_trimmed_model(
-        self, api: MockAPI, engine: Engine
-    ) -> None:
-        payload = load_fixture("tiktok", "get_comments.opt_trim")
-        del payload["total"]
-        api.respond(httpx.Response(200, json=payload))
+async def test_a_tiktok_comments_page_missing_its_cursor_still_parses(
+    api: MockAPI, engine: Engine
+) -> None:
+    payload = load_fixture("tiktok", "get_comments.default")
+    del payload["cursor"]
+    api.respond(httpx.Response(200, json=payload))
 
-        comments = await fetch_tiktok_comments(engine)
+    comments = await fetch_tiktok_comments(engine)
 
-        assert isinstance(comments.root, TikTokTrimmedCommentsResponse)
-        assert cast(object, comments.root.total) is None
-        assert comments.root.cursor == payload["cursor"]
-        assert comments.root.end_of_pagination == payload["end_of_pagination"]
-
-    async def test_a_full_page_still_parses_as_the_full_model(
-        self, api: MockAPI, engine: Engine
-    ) -> None:
-        payload = load_fixture("tiktok", "get_comments.default")
-        del payload["cursor"]
-        api.respond(httpx.Response(200, json=payload))
-
-        comments = await fetch_tiktok_comments(engine)
-
-        assert isinstance(comments.root, TikTokCommentsResponse)
-        assert cast(object, comments.root.cursor) is None
-        assert comments.root.has_more == payload["has_more"]
-        assert comments.root.status_code == payload["status_code"]
+    assert cast(object, comments.cursor) is None
+    assert comments.has_more == payload["has_more"]
+    assert comments.comments[0].cid == payload["comments"][0]["cid"]

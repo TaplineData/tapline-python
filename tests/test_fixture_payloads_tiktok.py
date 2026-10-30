@@ -17,20 +17,20 @@ import pytest
 
 from conftest import extras
 from tapline.tiktok import (
-    GetCommentsResponse,
-    GetFollowersResponse,
-    GetFollowingResponse,
-    GetProfileVideosResponse,
-    GetTrendingFeedResponse,
-    GetVideoResponse,
-    SearchHashtagResponse,
     TikTokCollectionVideosResponse,
     TikTokCommentRepliesResponse,
+    TikTokCommentsResponse,
+    TikTokFollowersResponse,
+    TikTokFollowingResponse,
+    TikTokHashtagSearchResponse,
     TikTokProfileResponse,
+    TikTokProfileVideosResponse,
     TikTokSearchSuggestionsResponse,
     TikTokSongResponse,
     TikTokSongVideosResponse,
     TikTokTranscriptResponse,
+    TikTokTrendingFeedResponse,
+    TikTokVideoResponse,
 )
 
 FIXTURES = (
@@ -54,18 +54,18 @@ def cases(negative: bool) -> list[str]:
 
 RESPONSES: dict[str, type[Any]] = {
     "get_collection_videos": TikTokCollectionVideosResponse,
-    "get_trending_feed": GetTrendingFeedResponse,
+    "get_trending_feed": TikTokTrendingFeedResponse,
     "get_profile": TikTokProfileResponse,
-    "get_profile_videos": GetProfileVideosResponse,
-    "search_hashtag": SearchHashtagResponse,
+    "get_profile_videos": TikTokProfileVideosResponse,
+    "search_hashtag": TikTokHashtagSearchResponse,
     "get_search_suggestions": TikTokSearchSuggestionsResponse,
     "get_song": TikTokSongResponse,
     "get_song_videos": TikTokSongVideosResponse,
-    "get_followers": GetFollowersResponse,
-    "get_following": GetFollowingResponse,
-    "get_video": GetVideoResponse,
+    "get_followers": TikTokFollowersResponse,
+    "get_following": TikTokFollowingResponse,
+    "get_video": TikTokVideoResponse,
     "get_comment_replies": TikTokCommentRepliesResponse,
-    "get_comments": GetCommentsResponse,
+    "get_comments": TikTokCommentsResponse,
     "get_transcript": TikTokTranscriptResponse,
 }
 METHODS = [
