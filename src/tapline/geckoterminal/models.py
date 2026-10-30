@@ -75,6 +75,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -385,6 +386,9 @@ class NetworkMetricAttributes(BaseModel):
     swap_count_24h: int | None = None
     swap_volume_usd_48h_24h: str | None = None
     swap_volume_percent_change_24h: str | float | None = None
+    """
+    A decimal string; 0.0 when prior-day volume is zero.
+    """
     latest_pools_count: int
     trending_pools_count: int | None = None
     reserve_in_usd: str | None = None

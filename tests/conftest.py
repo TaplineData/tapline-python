@@ -76,11 +76,8 @@ def resolve_derived(request: dict[str, Any], produce: Callable[[str], Any]) -> d
     captured_params = request.get("params") or {}
     resolved: dict[str, Any] = {}
     for name, source in (request.get("derived") or {}).items():
-        produced = produce(source["$from"])
-        value: Any = (
-            produced.model_dump(mode="json", by_alias=True)
-            if isinstance(produced, pydantic.BaseModel)
-            else produced
+        value: Any = pydantic.TypeAdapter(Any).dump_python(
+            produce(source["$from"]), mode="json", by_alias=True
         )
         for key, index in CAPTURE_PATH_STEP.findall(source["path"]):
             value = value[int(index)] if index else value[key]

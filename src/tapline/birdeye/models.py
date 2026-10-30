@@ -141,6 +141,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -329,7 +330,7 @@ class BirdeyeNewListing(BaseModel):
     top10HolderPercentage: float | None = None
     holderTimestamp: int | None = None
     top10UserPercentage: float | None = None
-    devWalletBalance: str | float | None = None
+    devWalletBalance: float | str | None = None
     devWalletPercentage: float | None = None
     devWalletTimestamp: int | None = None
     graduatedAt: str | None = None

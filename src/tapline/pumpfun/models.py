@@ -67,21 +67,6 @@ class CalloutWindow(str, Enum):
     ALLTIME = "alltime"
 
 
-class CandleInterval(str, Enum):
-    FIELD_1S = "1s"
-    FIELD_15S = "15s"
-    FIELD_30S = "30s"
-    FIELD_1M = "1m"
-    FIELD_5M = "5m"
-    FIELD_15M = "15m"
-    FIELD_30M = "30m"
-    FIELD_1H = "1h"
-    FIELD_4H = "4h"
-    FIELD_6H = "6h"
-    FIELD_12H = "12h"
-    FIELD_24H = "24h"
-
-
 class CandleResolution(str, Enum):
     FIELD_1S = "1s"
     FIELD_15S = "15s"
@@ -92,21 +77,6 @@ class CandleResolution(str, Enum):
     FIELD_1H = "1h"
     FIELD_4H = "4h"
     FIELD_1D = "1d"
-
-
-class ChartTimeframe(str, Enum):
-    FIELD_1M = "1m"
-    FIELD_5M = "5m"
-    FIELD_15M = "15m"
-    FIELD_30M = "30m"
-    FIELD_1H = "1h"
-    FIELD_6H = "6h"
-    FIELD_12H = "12h"
-    FIELD_24H = "24h"
-    FIELD_1W = "1w"
-    FIELD_1MO = "1mo"
-    FIELD_3MO = "3mo"
-    FIELD_1Y = "1y"
 
 
 class ClipType(str, Enum):
@@ -323,6 +293,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -394,26 +365,26 @@ class VodPeriod(str, Enum):
 
 
 class Accrued(BaseModel):
-    firstTradeAt: str | None
-    lastTradeAt: str | None
-    numTrades: int
-    quote: str | None
     quoteMintAddress: str
+    quote: str | None
     usdAtTrade: str | None
     usdNow: str | None
+    numTrades: int
+    firstTradeAt: str | None
+    lastTradeAt: str | None
 
 
 class Achievement(BaseModel):
-    description: str
-    family: str
-    hiddenUntilEarned: bool
     id: str
-    imageUrl: str
-    metric: str | None
-    name: str
-    sortOrder: int
-    threshold: int | None
+    family: str
     tier: int
+    name: str
+    description: str
+    imageUrl: str
+    hiddenUntilEarned: bool
+    metric: str | None
+    threshold: int | None
+    sortOrder: int
 
 
 class Agentvolumeusd(BaseModel):
@@ -422,12 +393,12 @@ class Agentvolumeusd(BaseModel):
 
 
 class Aggregate(BaseModel):
-    asOf: str | None
-    buyVolumeUsd: str
     buys: int
-    netBase: Baseamount | None
-    sellVolumeUsd: str
     sells: int
+    buyVolumeUsd: str
+    sellVolumeUsd: str
+    netBase: Baseamount | None
+    asOf: str | None
 
 
 class ApprovedCreatorParams(BaseModel):
@@ -458,14 +429,6 @@ class AthBatchRequest(BaseModel):
 
 
 class AthParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
-    currency: AthCurrency | None = AthCurrency.USD
-    """
-    Quote currency.
-    """
     mint: Annotated[
         str,
         Field(
@@ -476,19 +439,27 @@ class AthParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    currency: AthCurrency | None = AthCurrency.USD
+    """
+    Quote currency.
+    """
+    chain: TokenChain | None = None
+    """
+    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
+    """
 
 
 class Attachment(BaseModel):
-    contentType: str
-    externalAssetId: str | None = None
-    filename: str
     key: str
+    url: str
+    contentType: str
     kind: str
-    playback: Playback | None = None
+    size: int
+    filename: str
     processingStatus: str | None = None
     provider: str | None = None
-    size: int
-    url: str
+    externalAssetId: str | None = None
+    playback: Playback | None = None
 
 
 class BanStatusParams(BaseModel):
@@ -510,14 +481,14 @@ class Baninfo(BaseModel):
 
 
 class Baseamount(BaseModel):
-    decimals: int
     raw: str
+    decimals: int
 
 
 class Bestcallout(BaseModel):
-    calloutTimestamp: int
     coinMint: str
     multiple: float
+    calloutTimestamp: int
 
 
 class Bestrank(BaseModel):
@@ -527,38 +498,38 @@ class Bestrank(BaseModel):
 
 
 class Bounty(BaseModel):
-    attachments: list[Attachment] | None = None
-    banInfo: Baninfo | None = None
-    bodyMarkdown: str
-    chainConfigSnapshot: Chainconfigsnapshot
-    coinAddress: str | None = None
-    contributors: list[Contributor]
-    counts: Count
-    createdAt: str
+    taskId: str
     creatorAddress: str
+    title: str
+    bodyMarkdown: str
     criteria: list[Criteria]
-    expiresAt: str
-    fundedAt: str
-    latestDisputePublishedAt: str | None = None
-    likeCount: int
-    location: Location | None = None
-    onChainBountyId: str
-    publishedAt: str
-    pumpBountiesProgramId: str
-    resolution: BountyResolution | None = None
-    resolutionHistory: list[BountyResolutionHistory] | None = None
+    submissionVisibility: str
     rewardDistribution: Rewarddistribution
     rewardLegs: list[Rewardleg]
+    contributors: list[Contributor]
+    attachments: list[Attachment] | None = None
+    coinAddress: str | None = None
+    status: str
+    createdAt: str
+    expiresAt: str
+    publishedAt: str
+    fundedAt: str
+    counts: Count
+    likeCount: int
+    pumpBountiesProgramId: str
+    onChainBountyId: str
+    chainConfigSnapshot: Chainconfigsnapshot
+    rewardTotalUsd: float
     rewardLegsUsd: list[Rewardlegsusd]
     rewardPricedAt: str
-    rewardTotalUsd: float
-    status: str
-    submissionVisibility: str
-    taskId: str
-    title: str
+    latestDisputePublishedAt: str | None = None
+    banInfo: Baninfo | None = None
     unbanInfo: Baninfo | None = None
-    unbanRequest: Unbanrequest | None = None
+    resolution: BountyResolution | None = None
+    resolutionHistory: list[BountyResolutionHistory] | None = None
     verification: Verification | None = None
+    unbanRequest: Unbanrequest | None = None
+    location: Location | None = None
 
 
 class BountyDraftResolution(BaseModel):
@@ -571,13 +542,13 @@ class BountyDraftResolution(BaseModel):
 
 
 class BountyFeedRecentParams(BaseModel):
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=50)] = 24
     """
     Maximum feed entries to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
     """
 
 
@@ -596,41 +567,33 @@ class BountyRecentPayoutsParams(BaseModel):
 
 
 class BountyResolution(BaseModel):
+    outcomeType: str
+    winners: list[Winner] | None = None
+    winnerCount: int | None = None
     decisionVersion: int
     disputeEndsAt: str
-    firstPublishAt: str | None = None
-    outcomeType: str
-    payedOutAt: str | None = None
     recordedAt: str
-    winnerCount: int | None = None
-    winners: list[Winner] | None = None
+    firstPublishAt: str | None = None
+    payedOutAt: str | None = None
 
 
 class BountyResolutionHistory(BaseModel):
+    outcomeType: str
+    winners: list[BountyResolutionHistoryWinner] | None = None
+    winnerCount: int | None = None
     decisionVersion: int
     disputeEndsAt: str
-    outcomeType: str
     recordedAt: str
-    winnerCount: int | None = None
-    winners: list[BountyResolutionHistoryWinner] | None = None
 
 
 class BountyResolutionHistoryWinner(BaseModel):
-    address: str
-    amountToPayAtomic: str
-    mintAddress: str
     submissionId: str
+    address: str
+    mintAddress: str
+    amountToPayAtomic: str
 
 
 class BountySubmissionsParams(BaseModel):
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=50)] = 24
-    """
-    Maximum submissions to return.
-    """
     requester_address: Annotated[
         str,
         Field(
@@ -641,20 +604,64 @@ class BountySubmissionsParams(BaseModel):
     """
     Solana wallet that made the submissions.
     """
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 24
+    """
+    Maximum submissions to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
 
 
 class BountyTasksParams(BaseModel):
+    phase: list[BountyPhase] | None = [BountyPhase.OPEN]
+    """
+    Lifecycle phases to return. Repeat for several. A phase is pump.fun's grouping of task states, not the task's `status`: an `OPEN` task can carry status `PENDING_RESOLUTION`. Tasks carry no `phase` field.
+    """
+    sort: BountySort | None = BountySort.REWARD_TOTAL_USD
+    """
+    Ranking column.
+    """
+    order: OrderDirection | None = OrderDirection.DESC
+    """
+    Sort direction.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 24
+    """
+    Maximum tasks to return.
+    """
+    facets: bool | None = True
+    """
+    Include aggregate facet counts alongside the tasks.
+    """
     coin_address: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Restrict to bounties on one Solana coin.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
+    q: Annotated[str | None, Field(max_length=256)] = None
+    """
+    Free-text search.
     """
     creator_address: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Bounties posted by this Solana wallet.
     """
-    cursor: str | None = None
+    reward_mints: list[RewardMint] | None = None
     """
-    `nextCursor` from the previous page; omit for the first page.
+    Bounties paying in these Solana token mints. Repeat for several.
+    """
+    reward_total_usd_gte: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Minimum reward in USD.
+    """
+    reward_total_usd_lte: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Maximum reward in USD.
     """
     expires_at_gte: Annotated[
         str | None,
@@ -674,9 +681,13 @@ class BountyTasksParams(BaseModel):
     """
     Expiring at or before this ISO 8601 date or time, such as `2026-11-01`.
     """
-    facets: bool | None = True
+    like_count_gte: Annotated[int | None, Field(ge=0)] = None
     """
-    Include aggregate facet counts alongside the tasks.
+    Minimum likes.
+    """
+    submission_count_gte: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum submissions.
     """
     include_banned: bool | None = None
     """
@@ -686,53 +697,13 @@ class BountyTasksParams(BaseModel):
     """
     Latitude for a distance search.
     """
-    like_count_gte: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum likes.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 24
-    """
-    Maximum tasks to return.
-    """
     lng: Annotated[float | None, Field(ge=-180.0, le=180.0)] = None
     """
     Longitude for a distance search.
     """
-    order: OrderDirection | None = OrderDirection.DESC
-    """
-    Sort direction.
-    """
-    phase: list[BountyPhase] | None = [BountyPhase.OPEN]
-    """
-    Lifecycle phases to return. Repeat for several. A phase is pump.fun's grouping of task states, not the task's `status`: an `OPEN` task can carry status `PENDING_RESOLUTION`. Tasks carry no `phase` field.
-    """
-    q: Annotated[str | None, Field(max_length=256)] = None
-    """
-    Free-text search.
-    """
     radius_km: Annotated[float | None, Field(gt=0.0)] = None
     """
     Radius in km for a distance search.
-    """
-    reward_mints: list[RewardMint] | None = None
-    """
-    Bounties paying in these Solana token mints. Repeat for several.
-    """
-    reward_total_usd_gte: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Minimum reward in USD.
-    """
-    reward_total_usd_lte: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Maximum reward in USD.
-    """
-    sort: BountySort | None = BountySort.REWARD_TOTAL_USD
-    """
-    Ranking column.
-    """
-    submission_count_gte: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum submissions.
     """
 
 
@@ -758,51 +729,51 @@ class BountyTopSpendersParams(BaseModel):
 
 
 class Byquote(BaseModel):
+    quoteMintAddress: str
+    coinCount: int
+    payingCount: int
     accrued: str
     accruedUsdAtTrade: str
-    coinCount: int
     paid: str
-    payingCount: int
-    quoteMintAddress: str
 
 
 class Callout(BaseModel):
-    accountKind: str | None = None
     calloutId: str
+    userId: str
+    coinMint: str
+    marketCap: float
     calloutPrice: float
     calloutPriceUsd: float
-    chain: str | None = None
-    coinMint: str
-    commentCount: int
+    multiple: float
     createdAt: int
-    hasLiked: None
-    hasReposted: None
-    isVerified: bool
-    likes: int
-    marketCap: float
-    maxMultiplier: float
-    maxMultiplierAt: str
     maxPriceSol: float
     maxPriceUsd: float
-    mediaUrl: str | None
-    multiple: float
-    perp: Annotated[None, Field(None)] = None
-    profileImage: str
-    quoteCount: int
-    quotedCallout: None
-    quotedCalloutId: None
-    replyCount: int
-    repostCount: int
     thesis: str
-    updateCount: int
-    updates: list[Any]
-    userId: str
-    userName: str
     user_uuid: str
-    verifiedBadgeVisible: bool | None = None
+    likes: int
+    hasLiked: None
+    hasReposted: None
+    repostCount: int
+    quoteCount: int
+    updates: list[Any]
+    updateCount: int
+    commentCount: int
+    replyCount: int
+    maxMultiplier: float
+    maxMultiplierAt: str
     viewCount: int
-    xFollowerCount: int
+    mediaUrl: str | None
+    quotedCalloutId: None
+    quotedCallout: None
+    chain: str | None = None
+    perp: CalloutPerp | None = None
+    userName: str
+    profileImage: str
+    isVerified: bool
+    verifiedBadgeVisible: bool | None = None
     xUsername: str | None
+    xFollowerCount: int
+    accountKind: str | None = None
 
 
 class CalloutLeaderboardStatsParams(BaseModel):
@@ -852,6 +823,17 @@ class CalloutParams(BaseModel):
     """
 
 
+class CalloutPerp(BaseModel):
+    side: str
+    leverageBps: int
+    entryPx: float
+    closePx: float | None
+    closedAt: str | None
+    lifecycleId: str
+    openedAt: str
+    realizedUsd: float | None
+
+
 class CalloutQuotesParams(BaseModel):
     callout_id: Annotated[
         str,
@@ -874,15 +856,6 @@ class CalloutQuotesParams(BaseModel):
 
 
 class CalloutRepliesParams(BaseModel):
-    before_id: Annotated[
-        str | None,
-        Field(
-            pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        ),
-    ] = None
-    """
-    Replies older than this reply id. Recency order only, so not with `sort=POSITION` or `PNL`.
-    """
     callout_id: Annotated[
         str,
         Field(
@@ -893,21 +866,30 @@ class CalloutRepliesParams(BaseModel):
     """
     Callout UUID.
     """
-    filter: ReplyFilter | None = ReplyFilter.ALL
-    """
-    Restrict to a reply audience.
-    """
     limit: Annotated[int | None, Field(ge=1, le=500)] = 200
     """
     Maximum replies to return.
     """
-    nested_limit: Annotated[int | None, Field(ge=0, le=10)] = None
+    filter: ReplyFilter | None = ReplyFilter.ALL
     """
-    Newest child replies to inline per reply.
+    Restrict to a reply audience.
+    """
+    before_id: Annotated[
+        str | None,
+        Field(
+            pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        ),
+    ] = None
+    """
+    Replies older than this reply id. Recency order only, so not with `sort=POSITION` or `PNL`.
     """
     page: Annotated[int | None, Field(ge=0)] = None
     """
     Page number for `sort=POSITION`.
+    """
+    sort: ReplySort | None = None
+    """
+    Reply order.
     """
     parent_reply_id: Annotated[
         str | None,
@@ -918,9 +900,9 @@ class CalloutRepliesParams(BaseModel):
     """
     List this reply's direct children instead of top-level replies.
     """
-    sort: ReplySort | None = None
+    nested_limit: Annotated[int | None, Field(ge=0, le=10)] = None
     """
-    Reply order.
+    Newest child replies to inline per reply.
     """
 
 
@@ -958,87 +940,57 @@ class CalloutStatsParams(BaseModel):
     """
 
 
-class Candle(BaseModel):
-    close: str
-    high: str
-    low: str
-    open: str
-    timestamp: int
-    volume: str
-
-
-class CandlesParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds, as returned by the coin endpoints. pump.fun does not use it to pick the window: any value returns the same series.
-    """
-    currency: AthCurrency | None = AthCurrency.USD
-    """
-    Quote currency for the candle values.
-    """
-    interval: CandleInterval | None = CandleInterval.FIELD_1M
-    """
-    Candle width.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 300
-    """
-    Maximum candles to return.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
 class ChainCandlesParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
-    """
     chain: Annotated[MarketChain, Field(examples=["base"])]
     """
     Chain the coin trades on; `hypercore` for HyperCore perps.
     """
-    count: Annotated[int | None, Field(ge=1, le=300)] = 200
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
-    Bars ending at `to`.
-    """
-    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
-    """
-    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
-    """
-    pool: str | None = None
-    """
-    One pool of the coin. Omit to stitch curve and AMM bars together.
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
     resolution: Annotated[CandleResolution, Field(examples=["1h"])]
     """
     Bar width.
     """
+    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
+    """
+    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
+    """
     to: Annotated[int | None, Field(ge=0)] = None
     """
     Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
     """
+    count: Annotated[int | None, Field(ge=1, le=300)] = 200
+    """
+    Bars ending at `to`.
+    """
+    pool: str | None = None
+    """
+    One pool of the coin. Omit to stitch curve and AMM bars together.
+    """
 
 
 class ChainPriceLineParams(BaseModel):
+    chain: Annotated[MarketChain, Field(examples=["base"])]
+    """
+    Chain the coin trades on; `hypercore` for HyperCore perps.
+    """
     address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
     Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
-    chain: Annotated[MarketChain, Field(examples=["base"])]
+    resolution: Annotated[CandleResolution, Field(examples=["1h"])]
     """
-    Chain the coin trades on; `hypercore` for HyperCore perps.
+    Bar width.
+    """
+    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
+    """
+    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
+    """
+    to: Annotated[int | None, Field(ge=0)] = None
+    """
+    Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
     """
     count: Annotated[int | None, Field(ge=1, le=300)] = 200
     """
@@ -1048,59 +1000,47 @@ class ChainPriceLineParams(BaseModel):
     """
     Most points returned; at or above `count` keeps every bar.
     """
-    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
-    """
-    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
-    """
-    resolution: Annotated[CandleResolution, Field(examples=["1h"])]
-    """
-    Bar width.
-    """
-    to: Annotated[int | None, Field(ge=0)] = None
-    """
-    Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
-    """
 
 
 class ChainTopHoldersParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
-    """
     chain: Annotated[TokenChain, Field(examples=["base"])]
     """
     Chain the coin lives on.
     """
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
+    """
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
+    """
 
 
 class ChainTradesParams(BaseModel):
+    chain: Annotated[MarketChain, Field(examples=["base"])]
+    """
+    Chain the coin trades on; `hypercore` for HyperCore perps.
+    """
     address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
     Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
-    after: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
     """
-    Trades newer than this `ordinalKey`.
-    """
-    before: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
-    """
-    Trades older than this `ordinalKey`.
-    """
-    chain: Annotated[MarketChain, Field(examples=["base"])]
-    """
-    Chain the coin trades on; `hypercore` for HyperCore perps.
+    Maximum trades to return.
     """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
     `nextCursor` from the previous page; omit for the first page.
     """
+    before: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    """
+    Trades older than this `ordinalKey`.
+    """
+    after: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    """
+    Trades newer than this `ordinalKey`.
+    """
     kinds: list[TradeKind] | None = None
     """
     Trade kinds to keep. HyperCore coins default to `perp_fill`.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum trades to return.
     """
     min_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
@@ -1117,11 +1057,11 @@ class ChainTradesParams(BaseModel):
 
 
 class Chainconfigsnapshot(BaseModel):
-    disputeFeeLamports: str
-    disputeSlashBps: int
     disputeWindowSeconds: str
     publishFeeLamports: str
+    disputeFeeLamports: str
     submissionFeeLamports: str
+    disputeSlashBps: int
 
 
 class ClipCountsParams(BaseModel):
@@ -1138,13 +1078,13 @@ class ClipCountsParams(BaseModel):
 
 
 class ClipReferenceRequest(BaseModel):
-    clip_id: Annotated[str, Field(examples=["20261006_063854:2579425_20261006_060002"])]
-    """
-    Clip identifier, returned as `vodId` by `/clips/top` for the same room.
-    """
     room_name: Annotated[str, Field(examples=["6m3Zx3EGdXs122QV4w9z3NMUuQjRZjnMQ7eA1Fqmpump"])]
     """
     Livestream room, which is the coin mint (`roomName` on `/clips/top`).
+    """
+    clip_id: Annotated[str, Field(examples=["20261006_063854:2579425_20261006_060002"])]
+    """
+    Clip identifier, returned as `vodId` by `/clips/top` for the same room.
     """
 
 
@@ -1156,121 +1096,117 @@ class ClipsBatchRequest(BaseModel):
 
 
 class ClipsById(BaseModel):
-    clipId: str
-    clipType: str
-    createdAt: str
-    deletionStatus: str
-    duration: int
-    endTime: str
-    hidden: bool
-    highlightCreatorAddress: str
-    mp4CreatedAt: str
-    mp4S3Key: str
-    mp4SizeBytes: int
-    mp4Url: str | None = None
-    playlistS3Key: str
-    playlistUrl: str | None = None
     roomName: str
+    clipId: str
     sessionId: str
     startTime: str
-    thumbnailS3Key: str
+    endTime: str
+    duration: int
+    mp4Url: str | None = None
+    mp4S3Key: str
+    mp4SizeBytes: int
+    mp4CreatedAt: str
     thumbnailUrl: str
+    thumbnailS3Key: str
+    playlistS3Key: str
     title: str | None = None
+    hidden: bool
+    clipType: str
+    createdAt: str
+    highlightCreatorAddress: str
+    deletionStatus: str
     viewCount: int
+    playlistUrl: str | None = None
 
 
 class Coin(BaseModel):
-    associated_bonding_curve: str | None = None
-    ath_market_cap: float | None = None
-    ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
-    base_decimals: int
-    bonding_curve: str | None = None
-    boost_mode: str | None = None
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool
-    created_timestamp: int
-    creator: str
-    cto_address: str | None = None
-    depth: int | None = None
-    description: str | None = None
-    fdv_usd: float | None = None
-    graduated_pool: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str | None = None
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float | None = None
-    mayhem: Mayhem | None = None
-    mayhem_state: str | None = None
-    metadata_uri: str | None = None
     mint: str
-    multichain_family: int
+    initialized: bool
     name: str
-    nsfw: bool
-    num_participants: int | None = None
-    platform: str | None = None
-    pool_address: str
-    price_usd: float | None = None
-    program: str | None = None
-    protocol: str | None = None
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    source: str | None = None
     symbol: str
-    telegram: str | None = None
-    thumbnail: str | None = None
-    thumbnail_updated_at: int | None = None
-    token_program: str | None = None
-    tokenized_agent: bool | None = None
-    total_supply: int | str | None = None
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
+    image_uri: str | None = None
+    metadata_uri: str | None = None
     twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool
-    video_uri: str | None = None
-    virtual_quote_reserves: int | None = None
+    bonding_curve: str | None = None
+    associated_bonding_curve: str | None = None
+    creator: str | None = None
+    created_timestamp: int
+    complete: bool
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int | str | None = None
     website: str | None = None
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    inverted: bool | None = None
+    is_banned: bool
+    pump_swap_pool: str | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    video_uri: str | None = None
+    livestream_ban_expiry: int | None = None
+    reply_count: int | None = None
+    is_currently_live: bool
+    ath_market_cap: float | None = None
+    ath_market_cap_timestamp: int | None = None
+    hide_banner: bool
+    program: str | None = None
+    token_program: str | None = None
+    quote_mint: str | None = None
+    base_decimals: int
+    quote_decimals: int | None = None
+    pool_address: str
+    is_cashback_enabled: bool | None = None
+    chain_id: str
+    multichain_family: int
+    protocol: str | None = None
+    total_supply_str: str
+    market_cap_usd: float | None = None
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str | None = None
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float | None = None
+    volume_1h_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    description: str | None = None
+    telegram: str | None = None
+    platform: str | None = None
+    graduated_pool: str | None = None
+    mayhem_state: str | None = None
+    mayhem: Mayhem | None = None
+    hidden: bool | None = None
+    is_backfill: bool | None = None
+    banner_uri: str | None = None
+    is_charity: bool | None = None
+    cto_address: str | None = None
+    last_reply: int | None = None
+    num_participants: int | None = None
+    thumbnail: str | None = None
+    thumbnail_updated_at: int | None = None
+    indexed_by_pump: bool | None = None
+    king_of_the_hill_timestamp: int | None = None
+    tokenized_agent: bool | None = None
+    fdv_usd: float | None = None
+    price_usd: float | None = None
+    source: str | None = None
 
 
 class CoinBoardParams(BaseModel):
     board: Annotated[CoinBoard, Field(examples=["graduated"])]
     """
     Which ranked board to read.
-    """
-    chains: Annotated[list[TokenChain] | None, Field(max_length=8)] = None
-    """
-    Keep only coins on these chains, at most 8: pump.fun refuses all nine at once. Repeat the parameter for several; omit it for every chain.
     """
     limit: Annotated[int | None, Field(ge=1, le=150)] = 30
     """
@@ -1280,35 +1216,39 @@ class CoinBoardParams(BaseModel):
     """
     Rows to skip.
     """
+    chains: Annotated[list[TokenChain] | None, Field(max_length=8)] = None
+    """
+    Keep only coins on these chains, at most 8: pump.fun refuses all nine at once. Repeat the parameter for several; omit it for every chain.
+    """
 
 
 class CoinClipsParams(BaseModel):
+    mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
+    """
+    Token mint address.
+    """
     clip_type: str | None = "HIGHLIGHT"
     """
     Clip category as pump.fun labels it: `COMPLETE`, `HIGHLIGHT` or `PREVIEW`. Any other value answers an empty list.
-    """
-    cursor: Annotated[str | None, Field(max_length=1024)] = None
-    """
-    `lastEvaluatedKey` from the previous page, with the same `clip_type`; omit for the first page.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum clips to return.
     """
-    mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
+    cursor: Annotated[str | None, Field(max_length=1024)] = None
     """
-    Token mint address.
+    `lastEvaluatedKey` from the previous page, with the same `clip_type`; omit for the first page.
     """
 
 
 class CoinFeeEventsParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
-    """
     chain: Annotated[TokenChain, Field(examples=["base"])]
     """
     Chain the coin lives on.
+    """
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
+    """
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
     """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
@@ -1330,12 +1270,12 @@ class CoinHolderPnlParams(BaseModel):
 
 
 class CoinMayhemState(BaseModel):
-    complete_reason: str | None = None
     mint: str
+    state: str
     mode: str
     multiplayer: bool | None = None
     pause_reason: str | None = None
-    state: str
+    complete_reason: str | None = None
 
 
 class CoinMayhemStateParams(BaseModel):
@@ -1346,33 +1286,81 @@ class CoinMayhemStateParams(BaseModel):
 
 
 class CoinNarrativesParams(BaseModel):
-    cursor: str | None = None
-    """
-    `cursor` from the previous answer; omit for the first page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum narratives to return.
     """
-    locale: Annotated[str | None, Field(max_length=16)] = None
+    cursor: str | None = None
     """
-    Language, such as `en`.
+    `cursor` from the previous answer; omit for the first page.
     """
     source: NarrativeSource | None = None
     """
     Board the narratives cover.
     """
+    locale: Annotated[str | None, Field(max_length=16)] = None
+    """
+    Language, such as `en`.
+    """
 
 
 class CoinParams(BaseModel):
-    chain: TokenChain | None = None
+    mint: Annotated[
+        str,
+        Field(
+            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
+            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
+        ),
+    ]
     """
-    Pin an EVM address that exists on several chains to one of them. A coin that is not on this chain answers 404. Omit to let pump.fun pick.
+    Coin address: a Solana mint or an EVM token (0x).
     """
     include_livestream_info: bool | None = False
     """
     Attach livestream metadata when the coin is streaming.
     """
+    chain: TokenChain | None = None
+    """
+    Pin an EVM address that exists on several chains to one of them. A coin that is not on this chain answers 404. Omit to let pump.fun pick.
+    """
+
+
+class CoinPosition(BaseModel):
+    userId: str
+    userName: str
+    profileImage: str
+    walletAddress: str
+    isVerified: bool
+    verifiedBadgeVisible: bool | None = None
+    xUsername: str | None
+    xProfileImage: str | None
+    accountKind: str | None = None
+    totalCallouts: int
+    amountHeld: float
+    valueUsd: float | None
+    pnlUsd: float
+    pnlPercentage: float | str | None
+    realizedPnlUsd: float
+    tokenPriceUsd: float | None
+    costBasisAmount: float
+    costBasisUsd: float | str | None
+    amountBoughtUsd: float | None
+    amountBought: float | None
+    callout: PositionCallout
+    contentKind: str
+    quote: PositionQuote | None
+    followerCount: int | None = None
+    resolvedAvatarDecoration: str | None = None
+    receiptBasisUsd: float | None = None
+
+
+class CoinSocial(BaseModel):
+    twitter: str | None
+    telegram: str | None
+    website: str | None
+
+
+class CoinTimelineParams(BaseModel):
     mint: Annotated[
         str,
         Field(
@@ -1382,53 +1370,18 @@ class CoinParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
-class CoinPosition(BaseModel):
-    accountKind: str | None = None
-    amountBought: float | None
-    amountBoughtUsd: float | None
-    amountHeld: float
-    callout: PositionCallout
-    contentKind: str
-    costBasisAmount: float
-    costBasisUsd: float | str | None
-    followerCount: int | None = None
-    isVerified: bool
-    pnlPercentage: float | str | None
-    pnlUsd: float
-    profileImage: str
-    quote: PositionQuote | None
-    realizedPnlUsd: float
-    receiptBasisUsd: float | None = None
-    resolvedAvatarDecoration: str | None = None
-    tokenPriceUsd: float | None
-    totalCallouts: int
-    userId: str
-    userName: str
-    valueUsd: float | None
-    verifiedBadgeVisible: bool | None = None
-    walletAddress: str
-    xProfileImage: str | None
-    xUsername: str | None
-
-
-class CoinSocial(BaseModel):
-    telegram: str | None
-    twitter: str | None
-    website: str | None
-
-
-class CoinTimelineParams(BaseModel):
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 50
     """
     Maximum timeline events to return.
     """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
+
+
+class CoinTopCalloutsParams(BaseModel):
     mint: Annotated[
         str,
         Field(
@@ -1438,113 +1391,100 @@ class CoinTimelineParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
-class CoinTopCalloutsParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin, to pin an EVM token.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum callouts to return.
     """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
+    chain: TokenChain | None = None
     """
-    Coin address: a Solana mint or an EVM token (0x).
+    Chain of the coin, to pin an EVM token.
     """
 
 
 class CoinsBatch(BaseModel):
-    associated_bonding_curve: str
-    ath_market_cap: float
-    ath_market_cap_timestamp: int
-    base_decimals: int
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool
-    created_timestamp: int
-    creator: str
-    depth: int | None = None
-    description: str | None = None
-    fdv_usd: float | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float
-    market_cap_usd: float
-    metadata_uri: str
     mint: str
-    multichain_family: int
+    initialized: bool
     name: str
-    nsfw: bool
-    pool_address: str
-    price_usd: float | None = None
-    program: str
-    protocol: str
-    pump_swap_pool: str
-    quote_decimals: int
-    quote_mint: str
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    source: str | None = None
     symbol: str
-    telegram: str | None = None
-    token_program: str
-    tokenized_agent: bool | None = None
-    total_supply: int
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
+    image_uri: str
+    metadata_uri: str
     twitter: str
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool
-    virtual_quote_reserves: int | None = None
+    bonding_curve: str
+    associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int
     website: str
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    inverted: bool | None = None
+    is_banned: bool
+    pump_swap_pool: str
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    is_currently_live: bool
+    ath_market_cap: float
+    ath_market_cap_timestamp: int
+    hide_banner: bool
+    program: str
+    token_program: str
+    quote_mint: str
+    base_decimals: int
+    quote_decimals: int
+    pool_address: str
+    is_cashback_enabled: bool
+    chain_id: str
+    multichain_family: int
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float | None = None
+    volume_1h_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    description: str | None = None
+    telegram: str | None = None
+    hidden: bool | None = None
+    indexed_by_pump: bool | None = None
+    is_backfill: bool | None = None
+    is_charity: bool | None = None
+    tokenized_agent: bool | None = None
+    fdv_usd: float | None = None
+    price_usd: float | None = None
+    source: str | None = None
 
 
 class CoinsBatchRequest(BaseModel):
-    include_nsfw: Annotated[bool | None, Field(deprecated=True)] = False
-    """
-    Has no effect: pump.fun returns flagged coins on this read either way.
-    """
     mints: Annotated[
         list[Mint],
         Field(examples=[["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"]], max_length=500),
     ]
     """
     Coin addresses (Solana mints or EVM tokens), at most 500.
+    """
+    include_nsfw: Annotated[bool | None, Field(deprecated=True)] = False
+    """
+    Has no effect: pump.fun returns flagged coins on this read either way.
     """
 
 
@@ -1555,13 +1495,25 @@ class CoinsCreatedByMode(BaseModel):
 
 
 class CoinsParams(BaseModel):
-    boost_modes: list[BoostMode] | None = None
+    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
-    Keep coins in these boost states. Repeat the parameter for several.
+    Rows to skip.
     """
-    complete: bool | None = None
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Maximum coins to return. pump.fun serves 70 at most.
+    """
+    sort: CoinSort | None = CoinSort.CREATED_TIMESTAMP
+    """
+    Ranking column.
+    """
+    order: CoinSortDirection | None = CoinSortDirection.DESC
+    """
+    Sort direction.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -1569,49 +1521,37 @@ class CoinsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
+    complete: bool | None = None
     """
-    Include coins flagged not-safe-for-work.
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
     """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    boost_modes: list[BoostMode] | None = None
     """
-    Maximum coins to return. pump.fun serves 70 at most.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
-    """
-    Rows to skip.
-    """
-    order: CoinSortDirection | None = CoinSortDirection.DESC
-    """
-    Sort direction.
-    """
-    sort: CoinSort | None = CoinSort.CREATED_TIMESTAMP
-    """
-    Ranking column.
+    Keep coins in these boost states. Repeat the parameter for several.
     """
 
 
 class Competition(BaseModel):
-    description: str
-    endsAt: str
-    entriesCount: int
     id: str
-    imageUrl: str
-    isFinal: bool
-    joinable: bool
-    kind: str
-    maxEntries: int
-    maxMembers: int
-    minMembers: int
-    participants: int
-    phase: str
-    prizeCopy: str
-    prizes: list[Prize]
-    registrationClosesAt: str
-    registrationOpensAt: str
     slug: str
-    startsAt: str
+    kind: str
     title: str
+    description: str
+    prizeCopy: str
+    imageUrl: str
+    prizes: list[Prize]
+    registrationOpensAt: str
+    registrationClosesAt: str
+    startsAt: str
+    endsAt: str
+    minMembers: int
+    maxMembers: int
+    maxEntries: int
+    entriesCount: int
+    participants: int
+    joinable: bool
+    phase: str
+    isFinal: bool
     top: list[Top]
     winners: list[CompetitionWinner]
 
@@ -1703,32 +1643,32 @@ class CompetitionParams(BaseModel):
 
 
 class CompetitionWinner(BaseModel):
-    buySpendSol: float
     entryId: str
-    isVerified: bool
+    participantId: str
     kind: str
-    lastRefreshedAtMs: int
+    rank: int
+    pnlUsd: float
+    realizedPnlUsd: float
+    unrealizedPnlUsd: float
+    buySpendSol: float
     memberCount: int
     membersFresh: int
-    participantId: str
-    pnlUsd: float
-    positionsCount: int
-    prize: str
-    profileImageUrl: str | None
-    rank: int
-    realizedPnlUsd: float
     struck: bool
+    lastRefreshedAtMs: int
+    positionsCount: int
     topPositions: list[Any]
-    unrealizedPnlUsd: float
-    username: str | None
-    verifiedBadgeVisible: bool
     walletAddress: str | None
+    username: str | None
+    profileImageUrl: str | None
+    isVerified: bool
+    verifiedBadgeVisible: bool
+    prize: str
 
 
 class Contributor(BaseModel):
     depositorAddress: str
-    firstContributedAt: str
     legsByMint: list[Legsbymint]
+    firstContributedAt: str
 
 
 class CostBasis(BaseModel):
@@ -1737,8 +1677,8 @@ class CostBasis(BaseModel):
 
 
 class Count(BaseModel):
-    disputeCount: int
     submissionCount: int
+    disputeCount: int
 
 
 class CreatorFeesParams(BaseModel):
@@ -1756,13 +1696,13 @@ class CreatorFeesParams(BaseModel):
     """
     Bucket width. pump.fun's `5m` series has answered 503 (not charged) for every creator tried since 2026-10-08.
     """
-    mint: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
-    """
-    Narrow the earnings to one Solana coin. A Solana creator only.
-    """
     period: FeePeriod | None = None
     """
     Window ending now. Omit for the widest window `interval` allows.
+    """
+    mint: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
+    """
+    Narrow the earnings to one Solana coin. A Solana creator only.
     """
 
 
@@ -1781,78 +1721,78 @@ class CreatorFeesTotalParams(BaseModel):
 
 class Criteria(BaseModel):
     id: str
-    order: int
-    required: bool
     text: str
+    required: bool
+    order: int
 
 
 class Daily(BaseModel):
-    averageMultiple: float
-    averageTimeToPeakMs: int | None
+    totalCallouts: int
     calloutsWithMultiple: int
-    distribution: list[Distribution]
-    medianMultiple: float
+    twoXPercent: float
     onePointFiveXPercent: float
     onePointTwoXPercent: float
-    ranks: TailRanks | None = None
-    tailAth1hUsd: float | None = None
-    tailAth24hUsd: float | None = None
-    tailAth4hUsd: float | None = None
-    tailAthHist1h: TailHistogram | None = None
-    tailAthHist24h: TailHistogram | None = None
-    tailAthHist4h: TailHistogram | None = None
+    averageMultiple: float
+    medianMultiple: float
+    averageTimeToPeakMs: int | None
+    distribution: list[Distribution]
     tailBuyers: int | None = None
     tailCallouts: int | None = None
     tailCallouts1h: int | None = None
-    tailCallouts24h: int | None = None
     tailCallouts4h: int | None = None
+    tailCallouts24h: int | None = None
     tailCohort1h: int | None = None
-    tailCohort24h: int | None = None
     tailCohort4h: int | None = None
-    tailPnl1hUsd: float | None = None
-    tailPnl24hUsd: float | None = None
-    tailPnl4hUsd: float | None = None
-    tailPnlHist1h: TailHistogram | None = None
-    tailPnlHist24h: TailHistogram | None = None
-    tailPnlHist4h: TailHistogram | None = None
+    tailCohort24h: int | None = None
     tailUniqueBuyers: int | None = None
+    tailPnl1hUsd: float | None = None
+    tailPnl4hUsd: float | None = None
+    tailPnl24hUsd: float | None = None
     tailVolumeUsd: float | None = None
-    totalCallouts: int
-    twoXPercent: float
+    tailAth1hUsd: float | None = None
+    tailAth4hUsd: float | None = None
+    tailAth24hUsd: float | None = None
+    tailAthHist1h: TailHistogram | None = None
+    tailAthHist4h: TailHistogram | None = None
+    tailAthHist24h: TailHistogram | None = None
+    tailPnlHist1h: TailHistogram | None = None
+    tailPnlHist4h: TailHistogram | None = None
+    tailPnlHist24h: TailHistogram | None = None
+    ranks: TailRanks | None = None
 
 
 class Data(BaseModel):
-    fee: CostBasis
-    fee_detail: FeeDetail
+    wallet: str
+    mint: str
+    unrealized: Unrealized | None
+    realized: Realized | None
+    total_buy_spend: CostBasis
+    total_buy_amount: float | None
+    last_slot_index_id: str | None
     has_transfers: bool
     has_untrusted_basis: bool
-    has_untrusted_sol_basis: bool | None = None
     has_untrusted_usd_basis: bool | None = None
-    last_slot_index_id: str | None
-    mint: str
-    realized: Realized | None
-    total_buy_amount: float | None
-    total_buy_spend: CostBasis
-    unrealized: Unrealized | None
-    wallet: str
+    has_untrusted_sol_basis: bool | None = None
+    fee: CostBasis
+    fee_detail: FeeDetail
 
 
 class DataToken(BaseModel):
-    balance: float
-    chain: str
-    decimals: int
-    dust_floor_filtered: bool
-    likely_lost: bool | None = None
-    network_id: int | str
-    priceSol: float | None = None
-    program: str | None
-    tokenPnL: Tokenpnl
-    token_image: str | None
     token_mint: str
     token_name: str | None
-    token_price: float
     token_symbol: str | None
+    token_image: str | None
+    program: str | None
+    token_price: float
+    decimals: int
+    balance: float
     value: float
+    chain: str
+    network_id: int | str
+    tokenPnL: Tokenpnl
+    dust_floor_filtered: bool
+    priceSol: float | None = None
+    likely_lost: bool | None = None
 
 
 class DexItem(RootModel[str]):
@@ -1860,83 +1800,83 @@ class DexItem(RootModel[str]):
 
 
 class Distributed(BaseModel):
-    amount: Baseamount | None = None
     quote: Pool
+    amount: Baseamount | None = None
 
 
 class Distribution(BaseModel):
-    count: int
-    max: float | None
     min: float
+    max: float | None
+    count: int
 
 
 class Earned(BaseModel):
-    amount: Baseamount | None = None
     quote: Pool
+    amount: Baseamount | None = None
     usd: str | None = None
 
 
 class Entry(BaseModel):
-    buySpendSol: float
-    isVerified: bool
-    lastRefreshedAtMs: int
-    pnlPercent: float
+    rank: int
+    walletAddress: str
     pnlSol: float
     pnlUsd: float
-    positionsCount: int | None = None
-    profileImage: str
-    rank: int
+    pnlPercent: float
+    buySpendSol: float
+    lastRefreshedAtMs: int
     realizedPnlSol: float
     realizedPnlUsd: float
-    topPositions: list[Topposition] | None = None
     unrealizedPnlSol: float
     unrealizedPnlUsd: float
-    userId: str | None = None
+    positionsCount: int | None = None
+    topPositions: list[Topposition] | None = None
     username: str
-    verifiedBadgeVisible: bool | None = None
-    walletAddress: str
+    profileImage: str
     xUsername: str | None
+    isVerified: bool
+    verifiedBadgeVisible: bool | None = None
+    userId: str | None = None
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class Event(BaseModel):
-    blockTime: int
-    distributed: Distributed | None = None
     kind: str
-    newAdmin: str | None = None
+    blockTime: int
+    txId: str
     ordinal: str | None = None
+    distributed: Distributed | None = None
     recipients: list[Recipient] | None = None
     shareholders: list[Shareholder] | None = None
-    txId: str
+    newAdmin: str | None = None
 
 
 class Evidence(BaseModel):
-    callout: EvidenceCallout | None
     kind: str
+    callout: EvidenceCallout | None
     leaderboard: EvidenceLeaderboard | None
 
 
 class EvidenceCallout(BaseModel):
-    calledOutAt: str
     calloutId: str
     mint: str
     multiple: float
+    calledOutAt: str
     peakedAt: str
 
 
@@ -1945,19 +1885,19 @@ class EvidenceLeaderboard(BaseModel):
 
 
 class Facet(BaseModel):
+    status: list[Status]
     phase: list[Status]
     rewardMints: list[Status]
-    status: list[Status]
 
 
 class FeeDetail(BaseModel):
-    ata_rent: CostBasis
     base: CostBasis
-    cashback: CostBasis
     priority: CostBasis
-    protocol: CostBasis
     tip: CostBasis
     ui: CostBasis
+    ata_rent: CostBasis
+    protocol: CostBasis
+    cashback: CostBasis
 
 
 class FeeSharingSharesParams(BaseModel):
@@ -1971,13 +1911,13 @@ class FeeSharingSharesParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    cursor: str | None = ""
-    """
-    Cursor from a previous page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum shares to return.
+    """
+    cursor: str | None = ""
+    """
+    Cursor from a previous page.
     """
 
 
@@ -1999,10 +1939,10 @@ class FeeSharingTotalsParams(BaseModel):
 
 
 class Finishe(BaseModel):
-    periodLabel: str
-    periodStart: str
     periodType: str
+    periodLabel: str
     rank: int
+    periodStart: str
 
 
 class FirstTradeParams(BaseModel):
@@ -2031,15 +1971,15 @@ class FollowSuggestionsParams(BaseModel):
 
 
 class Follower(BaseModel):
-    address: str
-    followers: int
-    kind: str | None = None
+    username: str
     profile_image: str
-    resolved_avatar_decoration: str | None = None
-    timestamp: int | str | None
+    address: str
     userId: str | None = None
     user_id: str | None = None
-    username: str
+    kind: str | None = None
+    timestamp: int | str | None
+    followers: int
+    resolved_avatar_decoration: str | None = None
 
 
 class FollowersCountParams(BaseModel):
@@ -2118,15 +2058,6 @@ class FollowingParams(BaseModel):
     """
 
 
-class Fundingsource(BaseModel):
-    amount: float
-    funder: str
-    funderName: str | None
-    funderType: str | None
-    signature: str
-    timestamp: int | str
-
-
 class Generatedmedia(BaseModel):
     pnlLoop: Pnlloop
     replayIntro: Replayintro
@@ -2137,8 +2068,8 @@ class Geofence(BaseModel):
 
 
 class GetAchievementCatalogResponse(BaseModel):
-    achievements: list[Achievement]
     catalogVersion: str
+    achievements: list[Achievement]
 
 
 class GetApprovedCreatorResponse(BaseModel):
@@ -2153,14 +2084,14 @@ class GetAthBatchResponse(RootModel[dict[str, GetAthResponse]]):
     root: dict[str, GetAthResponse]
 
 
-class GetBanStatusResponse(RootModel[dict[str, Any] | None]):
-    root: dict[str, Any] | None
+class GetBanStatusResponse(RootModel[bool | dict[str, Any] | None]):
+    root: bool | dict[str, Any] | None
 
 
 class GetBountyFeedRecentResponse(BaseModel):
     items: list[Item]
-    nextCursor: str | None = None
     refreshedAt: str | None
+    nextCursor: str | None = None
 
 
 class GetBountyFeedTrendingResponse(BaseModel):
@@ -2169,33 +2100,33 @@ class GetBountyFeedTrendingResponse(BaseModel):
 
 
 class GetBountyFeedTrendingResponseItem(BaseModel):
-    bounty: Bounty | None = None
-    parentBounty: Parentbounty | None = None
-    parentTaskId: str | None = None
+    type: str
     pool: str
     score: float
+    bounty: Bounty | None = None
+    parentTaskId: str | None = None
+    parentBounty: Parentbounty | None = None
     submission: ItemSubmission | None = None
-    type: str
 
 
 class GetBountyRecentPayoutsResponse(BaseModel):
-    computedAt: str
     items: list[GetBountyRecentPayoutsResponseItem]
+    computedAt: str
 
 
 class GetBountyRecentPayoutsResponseItem(BaseModel):
     address: str
     amountUsd: float
-    mintAddress: str
     payedOutAt: str
     taskId: str
+    mintAddress: str
 
 
 class GetBountyStatsResponse(BaseModel):
     liveCount: int
-    paidOutTotalUsd: float
-    submissionCount: int
     unclaimedRewardTotalUsd: float
+    submissionCount: int
+    paidOutTotalUsd: float
 
 
 class GetBountySubmissionCountResponse(BaseModel):
@@ -2204,110 +2135,110 @@ class GetBountySubmissionCountResponse(BaseModel):
 
 class GetBountySubmissionsResponse(BaseModel):
     items: list[Item]
-    nextCursor: str | None = None
     refreshedAt: str | None
+    nextCursor: str | None = None
 
 
 class GetBountyTasksResponse(BaseModel):
-    facets: Facet | None = None
     items: list[GetBountyTasksResponseItem]
     nextCursor: str | None = None
+    facets: Facet | None = None
 
 
 class GetBountyTasksResponseItem(BaseModel):
-    attachments: list[SubmissionAttachment] | None = None
-    banInfo: SubmissionBaninfo | None = None
-    bodyMarkdown: str
-    chainConfigSnapshot: Chainconfigsnapshot
-    coinAddress: str | None = None
-    counts: Count
-    createdAt: str
+    taskId: str
     creatorAddress: str
-    creatorXFollowerCount: int
-    creatorXVerified: bool | None = None
+    title: str
+    bodyMarkdown: str
     criteria: list[Criteria]
-    expiresAt: str | None = None
-    fundedAt: str
-    isNsfw: bool
-    latestDisputePublishedAt: str | None = None
-    likeCount: int
-    location: Location | None = None
-    onChainBountyId: str
-    payoutMode: str | None = None
-    publishedAt: str
-    pumpBountiesProgramId: str
-    resolution: ItemResolution | None = None
-    resolutionHistory: list[ItemResolutionhistory] | None = None
+    submissionVisibility: str
     rewardLegs: list[Rewardleg]
+    attachments: list[SubmissionAttachment] | None = None
+    coinAddress: str | None = None
+    status: str
+    payoutMode: str | None = None
+    createdAt: str
+    expiresAt: str | None = None
+    publishedAt: str
+    fundedAt: str
+    counts: Count
+    likeCount: int
+    pumpBountiesProgramId: str
+    onChainBountyId: str
+    chainConfigSnapshot: Chainconfigsnapshot
+    isNsfw: bool
+    rewardTotalUsd: float
     rewardLegsUsd: list[Rewardlegsusd]
     rewardPricedAt: str
-    rewardTotalUsd: float
-    status: str
-    submissionVisibility: str
-    taskId: str
-    title: str
+    creatorXFollowerCount: int
+    banInfo: SubmissionBaninfo | None = None
     unbanInfo: SubmissionBaninfo | None = None
+    location: Location | None = None
+    creatorXVerified: bool | None = None
+    latestDisputePublishedAt: str | None = None
+    resolution: ItemResolution | None = None
+    resolutionHistory: list[ItemResolutionhistory] | None = None
     verification: ItemVerification | None = None
 
 
 class GetBountyTopCoinsResponse(BaseModel):
-    computedAt: str
     items: list[GetBountyTopCoinsResponseItem]
     windowDays: int
+    computedAt: str
 
 
 class GetBountyTopCoinsResponseItem(BaseModel):
-    bountyCount: int
     coinAddress: str
     totalRewardUsd: float
+    bountyCount: int
 
 
 class GetBountyTopEarnersResponse(BaseModel):
-    computedAt: str
     items: list[GetBountyTopEarnersResponseItem]
     windowDays: int
+    computedAt: str
 
 
 class GetBountyTopEarnersResponseItem(BaseModel):
     address: str
-    lastPayedOutAt: str
-    payoutCount: int
     totalEarnedUsd: float
+    payoutCount: int
+    lastPayedOutAt: str
 
 
 class GetBountyTopSpendersResponse(BaseModel):
-    computedAt: str
     items: list[GetBountyTopSpendersResponseItem]
     windowDays: int
+    computedAt: str
 
 
 class GetBountyTopSpendersResponseItem(BaseModel):
     address: str
-    lastPayedOutAt: str
-    payoutCount: int
     totalSpentUsd: float
+    payoutCount: int
+    lastPayedOutAt: str
 
 
 class GetCalloutLeaderboardStatsResponse(BaseModel):
-    bestCallout: Bestcallout
-    bestRank: Bestrank | None = None
-    firstAppearance: Firstappearance | None = None
-    monthly: Weekly
-    snapshotAt: int
     userId: str
     user_uuid: str
     weekly: Weekly
+    monthly: Weekly
+    bestCallout: Bestcallout
+    snapshotAt: int
+    bestRank: Bestrank | None = None
+    firstAppearance: Firstappearance | None = None
 
 
 class GetCalloutLikersResponse(BaseModel):
-    hasMore: bool
     likers: list[Liker]
+    hasMore: bool
 
 
 class GetCalloutQuotesResponse(BaseModel):
-    hasMore: bool
-    items: list[GetCalloutQuotesResponseItem]
     quotes: list[Quote]
+    items: list[GetCalloutQuotesResponseItem]
+    hasMore: bool
 
 
 class GetCalloutQuotesResponseItem(BaseModel):
@@ -2320,8 +2251,8 @@ class GetCalloutRepliesResponse(BaseModel):
 
 
 class GetCalloutRepostersResponse(BaseModel):
-    hasMore: bool
     reposters: list[Reposter]
+    hasMore: bool
 
 
 class GetCalloutResponse(BaseModel):
@@ -2329,33 +2260,33 @@ class GetCalloutResponse(BaseModel):
 
 
 class GetCalloutStatsResponse(BaseModel):
+    daily: Daily
+    weekly: Daily
+    monthly: Daily
     allTime: Daily
     computedAt: str
-    daily: Daily
     lastRound: Daily | None = None
-    monthly: Daily
-    weekly: Daily
 
 
 class GetChainCandlesResponse(BaseModel):
     candles: list[GetChainCandlesResponseCandle]
     hasOlder: bool
-    served: Served
     source: str
+    served: Served
     supplyUsed: str | None = None
 
 
 class GetChainCandlesResponseCandle(BaseModel):
-    close: str
-    final: bool
-    high: str
-    isCorrection: bool
-    low: str
-    open: str
     openTimeMs: int
-    pool: Pool | None = None
-    trades: int
+    open: str
+    high: str
+    low: str
+    close: str
     volumeUsd: str
+    trades: int
+    final: bool
+    isCorrection: bool
+    pool: Pool | None = None
 
 
 class GetChainPriceLineResponse(BaseModel):
@@ -2370,31 +2301,31 @@ class GetChainTopHoldersResponse(BaseModel):
 
 
 class GetChainTradesResponse(BaseModel):
+    trades: list[Trade]
     aggregates: Aggregate
     cursor: str | None
     source: str
-    trades: list[Trade]
 
 
 class GetClipCountsResponse(BaseModel):
-    clips: int
-    hidden: int
-    softDeleted: int
     total: int
+    hidden: int
     visible: int
+    clips: int
+    softDeleted: int
 
 
 class GetCoinBoardResponse(BaseModel):
-    as_of_ms: int
     board: str
-    coins: list[Coin]
     version: str
+    as_of_ms: int
+    coins: list[Coin]
 
 
 class GetCoinClipsResponse(BaseModel):
     clips: list[ClipsById]
-    hasMore: bool
     lastEvaluatedKey: str | None = None
+    hasMore: bool
 
 
 class GetCoinFeeEventsResponse(BaseModel):
@@ -2404,9 +2335,9 @@ class GetCoinFeeEventsResponse(BaseModel):
 
 
 class GetCoinHolderPnlResponse(BaseModel):
+    success: bool
     data: list[Data]
     errors: list[Any]
-    success: bool
 
 
 class GetCoinMayhemStateResponse(RootModel[CoinMayhemState | None]):
@@ -2414,76 +2345,82 @@ class GetCoinMayhemStateResponse(RootModel[CoinMayhemState | None]):
 
 
 class GetCoinNarrativesResponse(BaseModel):
+    narratives: list[Any]
     cursor: str
     hasMore: bool
-    narratives: list[Any]
 
 
 class GetCoinResponse(BaseModel):
-    associated_bonding_curve: str | None = None
-    ath_market_cap: float
-    ath_market_cap_timestamp: int
-    base_decimals: int
-    bonding_curve: str | None = None
-    boost_mode: str | None = None
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool | None = None
-    created_timestamp: int
-    creator: str | None = None
-    depth: int | None = None
-    description: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float
-    market_cap_quote: float | None = None
-    market_cap_usd: float
-    metadata_uri: str | None = None
     mint: str
-    multichain_family: int
+    initialized: bool
     name: str
-    nsfw: bool
-    platform: str | None = None
-    pool_address: str
-    program: str | None = None
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int
-    quote_mint: str
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
     symbol: str
-    telegram: str | None = None
-    token_program: str | None = None
-    total_supply: int | None = None
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
+    image_uri: str
+    metadata_uri: str | None = None
     twitter: str | None = None
-    updated_at: int
-    usd_market_cap: float
-    verified: bool
-    virtual_quote_reserves: int | None = None
+    bonding_curve: str | None = None
+    associated_bonding_curve: str | None = None
+    creator: str | None = None
+    created_timestamp: int
+    complete: bool | None = None
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int | None = None
     website: str | None = None
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    inverted: bool | None = None
+    is_banned: bool
+    pump_swap_pool: str | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    is_currently_live: bool
+    ath_market_cap: float
+    ath_market_cap_timestamp: int
+    hide_banner: bool
+    program: str | None = None
+    token_program: str | None = None
+    quote_mint: str
+    base_decimals: int
+    quote_decimals: int
+    pool_address: str
+    is_cashback_enabled: bool | None = None
+    chain_id: str
+    multichain_family: int
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str | None = None
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    description: str | None = None
+    volume_1h_usd: float | None = None
+    hidden: bool | None = None
+    platform: str | None = None
+    is_backfill: bool | None = None
+    telegram: str | None = None
 
 
 class GetCoinTimelineResponse(BaseModel):
@@ -2492,13 +2429,13 @@ class GetCoinTimelineResponse(BaseModel):
 
 
 class GetCoinTimelineResponseItem(BaseModel):
-    creator: str | None = None
     eventType: str
-    recipients: list[ItemRecipient] | None = None
-    shareholders: list[ItemShareholder] | None = None
     timestamp: str
-    totalDistributed: str | None = None
+    creator: str | None = None
+    shareholders: list[ItemShareholder] | None = None
     tx: str | None = None
+    totalDistributed: str | None = None
+    recipients: list[ItemRecipient] | None = None
 
 
 class GetCoinTopCalloutsResponse(BaseModel):
@@ -2507,38 +2444,38 @@ class GetCoinTopCalloutsResponse(BaseModel):
 
 class GetCoinTopCalloutsResponseCallout(BaseModel):
     calloutId: str
+    userId: str
+    coinMint: str
+    marketCap: float
     calloutPrice: float
     calloutPriceUsd: float | None = None
-    chain: str | None = None
-    coinMint: str
-    commentCount: int | None = None
+    multiple: float
     createdAt: int
-    hasLiked: Annotated[None, Field(None)] = None
-    hasReposted: Annotated[None, Field(None)] = None
-    isVerified: bool | None = None
-    likes: int | None = None
-    marketCap: float
-    maxMultiplier: float | None = None
-    maxMultiplierAt: str | None = None
     maxPriceSol: float
     maxPriceUsd: float | None = None
-    mediaUrl: str | None = None
-    multiple: float
-    peakTimestamp: int | None = None
-    perp: Annotated[None, Field(None)] = None
-    profileImage: str | None = None
-    quoteCount: int | None = None
-    quotedCallout: Annotated[None, Field(None)] = None
-    quotedCalloutId: Annotated[None, Field(None)] = None
-    replyCount: int | None = None
-    repostCount: int | None = None
     thesis: str
-    updateCount: int | None = None
-    updates: list[Any] | None = None
-    userId: str
     user_uuid: str
+    likes: int | None = None
+    hasLiked: Annotated[None, Field(None)] = None
+    hasReposted: Annotated[None, Field(None)] = None
+    repostCount: int | None = None
+    quoteCount: int | None = None
+    updates: list[Any] | None = None
+    updateCount: int | None = None
+    commentCount: int | None = None
+    replyCount: int | None = None
+    maxMultiplier: float | None = None
+    maxMultiplierAt: str | None = None
+    mediaUrl: str | None = None
+    quotedCalloutId: Annotated[None, Field(None)] = None
+    quotedCallout: Annotated[None, Field(None)] = None
+    chain: str | None = None
+    perp: Annotated[None, Field(None)] = None
+    peakTimestamp: int | None = None
     username: str | None = None
+    profileImage: str | None = None
     xUsername: str | None = None
+    isVerified: bool | None = None
 
 
 class GetCompetitionEntryHighlightsResponse(BaseModel):
@@ -2552,8 +2489,8 @@ class GetCompetitionEntryResponse(BaseModel):
 
 
 class GetCompetitionHighlightsResponse(BaseModel):
-    builtAtMs: int
     competitionId: str
+    builtAtMs: int
     isFinal: bool
     rows: list[Row]
 
@@ -2564,13 +2501,13 @@ class GetCompetitionResponse(BaseModel):
 
 
 class GetCreatorFeesResponse(BaseModel):
-    claimable: SeriesEarned | None = None
     creator: str
-    earned: list[Earned]
     interval: str
-    isClaimable: bool
     period: str
+    earned: list[Earned]
+    isClaimable: bool
     series: list[Series]
+    claimable: SeriesEarned | None = None
 
 
 class GetFeeSharingSharesResponse(BaseModel):
@@ -2579,29 +2516,29 @@ class GetFeeSharingSharesResponse(BaseModel):
 
 
 class GetFeeSharingSharesResponseItem(BaseModel):
+    mint: str
     bps: int
     isAdmin: bool
-    mint: str
-    poolAddress: str | None
     sharingConfig: str
+    poolAddress: str | None
 
 
 class GetFirstTradeResponse(BaseModel):
-    amountSol: str
-    amountUsd: str
-    baseAmount: str
-    fillPriceSol: str
-    fillPriceUsd: str
-    isDevBuy: bool
-    priceSol: str
-    priceUsd: str
-    program: str
-    quoteAmount: str
     slotIndexId: str
-    timestamp: str
     tx: str
-    type: str
+    timestamp: str
     userAddress: str
+    type: str
+    program: str
+    priceUsd: str
+    priceSol: str
+    amountUsd: str
+    amountSol: str
+    baseAmount: str
+    quoteAmount: str
+    fillPriceUsd: str
+    fillPriceSol: str
+    isDevBuy: bool
 
 
 class GetFollowSuggestionsResponse(BaseModel):
@@ -2619,113 +2556,113 @@ class GetFollowingCountResponse(BaseModel):
 
 
 class GetGlobalParamsResponse(BaseModel):
-    fee_basis_points: int
-    initial_real_token_reserves: int
-    initial_virtual_quote_reserves: int
-    initial_virtual_sol_reserves: int
-    initial_virtual_token_reserves: int
-    signature: str
     slot: int
-    timestamp: int
+    signature: str
+    initial_virtual_token_reserves: int
+    initial_virtual_sol_reserves: int
+    initial_virtual_quote_reserves: int
+    initial_real_token_reserves: int
     token_total_supply: int
+    fee_basis_points: int
+    timestamp: int
 
 
 class GetGroupMembersPnlResponse(BaseModel):
-    builtAtMs: int
     period: str
-    rows: list[GetGroupMembersPnlResponseRow]
+    builtAtMs: int
     windowStartSec: int
+    rows: list[GetGroupMembersPnlResponseRow]
 
 
 class GetGroupMembersPnlResponseRow(BaseModel):
-    pnlUsd: float
     userId: str
     walletAddress: str
+    pnlUsd: float
 
 
 class GetGroupMembersResponse(BaseModel):
-    hasMore: bool
     members: list[GetGroupMembersResponseMember]
+    hasMore: bool
 
 
 class GetGroupMembersResponseMember(BaseModel):
-    createdAt: str
-    inCompetition: bool | None = None
-    invitedBy: str
     profile: Liker
     role: str
     status: str
+    invitedBy: str
+    createdAt: str
+    inCompetition: bool | None = None
 
 
 class GetGroupPnlLeaderboardResponse(BaseModel):
     entries: list[GetGroupPnlLeaderboardResponseEntry]
-    periodLabel: str
     periodType: int
-    totalRanked: int
+    periodLabel: str
     windowStartSec: int
+    totalRanked: int
 
 
 class GetGroupPnlLeaderboardResponseEntry(BaseModel):
-    buySpendSol: float
+    rank: int
     groupId: str
-    isVerified: bool
-    lastRefreshedAtMs: int
-    memberCount: int
-    membersCounted: int
-    pnlPercent: float
     pnlSol: float
     pnlUsd: float
-    positionsCount: int
-    profileImageUrl: str
-    rank: int
+    pnlPercent: float
+    buySpendSol: float
+    lastRefreshedAtMs: int
     realizedPnlSol: float
     realizedPnlUsd: float
-    topPositions: list[Topposition]
     unrealizedPnlSol: float
     unrealizedPnlUsd: float
+    memberCount: int
+    membersCounted: int
+    positionsCount: int
+    topPositions: list[Topposition]
     username: str
+    profileImageUrl: str | None
+    isVerified: bool
     verifiedBadgeVisible: bool
 
 
 class GetHolderRewardsResponse(BaseModel):
-    byQuote: list[Byquote]
-    coins: list[GetHolderRewardsResponseCoin]
     generatedAt: str
-    matchingCount: int
+    coins: list[GetHolderRewardsResponseCoin]
     next: None
-    offset: int
     quotes: dict[str, QuoteEntry]
     totals: Total
+    matchingCount: int
+    offset: int
+    byQuote: list[Byquote]
 
 
 class GetHolderRewardsResponseCoin(BaseModel):
-    accrued: Accrued
-    athMarketCapUsd: float | None
-    createdAt: str
+    mint: str
     holderRewardsPda: str
+    name: str
+    symbol: str
     imageUri: str | None
+    createdAt: str
+    lastTradeAt: str | None
+    marketCapUsd: float | None
+    athMarketCapUsd: float | None
     isGraduated: bool
     isLive: bool
     isNsfw: bool
-    lastTradeAt: str | None
-    marketCapUsd: float | None
-    mint: str
-    name: str
-    payouts: Payout | None
-    quoteMintAddress: str
     socials: CoinSocial
-    symbol: str
+    quoteMintAddress: str
+    accrued: Accrued
+    payouts: Payout | None
 
 
 class GetHolderStatsResponse(BaseModel):
-    asOf: int
-    bundlersHoldingsPercent: float
-    devHoldingsPercent: int | None
     mint: str
-    snipersHoldingsPercent: float
-    top10HoldersPercent: float
-    totalFeesSol: float
     totalHolders: int
+    top10HoldersPercent: float
+    devHoldingsPercent: int | None
+    snipersHoldingsPercent: float
+    bundlersHoldingsPercent: float
+    totalFeesSol: float
+    asOf: int
 
 
 class GetHomeFeedResponse(BaseModel):
@@ -2733,22 +2670,22 @@ class GetHomeFeedResponse(BaseModel):
 
 
 class GetHomeFeedResponseCoin(BaseModel):
-    chain: str
-    coinDescription: None
-    coinImage: str | None
     coinMint: str
     coinName: str | None
-    followedHolders: None
+    coinImage: str | None
+    symbol: str | None
+    coinDescription: None
     marketCap: float | None
-    narrative: None
-    platform: str | None = None
-    position: CoinPosition
-    positions: list[HomeFeedLegacyPosition] | None = None
-    program: str | None = None
     protocol: str | None = None
+    platform: str | None = None
+    program: str | None = None
+    chain: str | None
+    narrative: None
+    position: CoinPosition
     recommendationId: str
     recommendationRank: int
-    symbol: str | None
+    followedHolders: None
+    positions: list[HomeFeedLegacyPosition] | None = None
 
 
 class GetHotCoinResponse(BaseModel):
@@ -2756,77 +2693,77 @@ class GetHotCoinResponse(BaseModel):
 
 
 class GetInMemoryCoinResponse(BaseModel):
-    field_dirtyBoards: Annotated[int | None, Field(alias="_dirtyBoards")] = None
-    field_lastLruTouchTs: Annotated[int | None, Field(alias="_lastLruTouchTs")] = None
-    field_lastTradeTs: Annotated[int | None, Field(alias="_lastTradeTs")] = None
-    field_lastUpdated: Annotated[int | None, Field(alias="_lastUpdated")] = None
-    athMarketCapUsd: float
-    builderTipSol: int
-    builderTipSolV2: float
-    builderTipUsd: int
-    builderTipUsdV2: float
-    bundlerOwnedPercentageV2: float
-    buyCount: int
-    chain: str
-    coinCreatedSupply: int
-    creationTime: int
-    currentMarketPrice: int
-    description: str
-    dev: str
-    devHoldingsPercent: int
-    feeSeedSol: int
-    feeSeedUsd: int
-    graduationDate: int
-    hasSocial: bool
-    hasTelegram: bool
-    hasTwitter: bool
-    hasWebsite: bool
-    imageUrl: str
-    isBanned: bool
-    isCashbackEnabled: bool
-    isCharity: bool
-    isCurrentlyLive: bool
-    isHolderReward: bool | None = None
-    isMayhemMode: bool
-    isMultiplayer: bool | None = None
-    isNsfw: bool
-    lastRecommendedAt: int
-    marketCapUsd: float
-    mayhemBotCoinSupplied: int
-    mayhemMode: None
-    mayhemState: None
     mint: str
+    chain: str
     name: str
-    numHolders: int
-    numKolsTraded: int
-    numLiveParticipants: int
-    pair: str
-    platform: str
-    priorityFeeSol: float
-    priorityFeeUsd: float
-    program: str
-    progress: int
-    quoteMint: str | None = None
-    sellCount: int
-    sniperCount: int
-    snipersOwnedPercent: float
-    telegramReuseCount: int
     ticker: str
-    top10HoldersPercent: float
-    totalFees: float
-    totalFeesUSD: float
-    tradingAppFeeSol: int
-    tradingAppFeeSolV2: float
-    tradingAppFeeUsd: int
-    tradingAppFeeUsdV2: float
-    twitterReuseCount: int
-    txCount: int
-    txFeeSolV2: float
-    txFeeUsdV2: float
-    videoUri: str
+    dev: str
+    program: str
+    platform: str
+    creationTime: int
+    quoteMint: str | None = None
+    pair: str
+    marketCapUsd: float
     volumeSol: float
     volumeUsd: float
+    progress: int
+    graduationDate: int
+    athMarketCapUsd: float
+    currentMarketPrice: int
+    sniperCount: int
+    numKolsTraded: int
+    txCount: int
+    buyCount: int
+    sellCount: int
+    priorityFeeSol: float
+    priorityFeeUsd: float
+    builderTipSol: int
+    builderTipUsd: int
+    tradingAppFeeSol: int
+    tradingAppFeeUsd: int
+    builderTipSolV2: float
+    builderTipUsdV2: float
+    tradingAppFeeSolV2: float
+    tradingAppFeeUsdV2: float
+    txFeeSolV2: float
+    txFeeUsdV2: float
+    feeSeedSol: int
+    feeSeedUsd: int
+    isMayhemMode: bool
+    mayhemState: None
+    mayhemMode: None
+    isMultiplayer: bool | None = None
+    mayhemBotCoinSupplied: int
+    isCashbackEnabled: bool
+    isHolderReward: bool | None = None
+    isCurrentlyLive: bool
+    numLiveParticipants: int
+    isCharity: bool
+    isNsfw: bool
+    isBanned: bool
+    imageUrl: str
+    description: str
+    videoUri: str
+    hasSocial: bool
+    hasTwitter: bool
+    hasWebsite: bool
+    hasTelegram: bool
+    twitterReuseCount: int
+    telegramReuseCount: int
     websiteReuseCount: int
+    numHolders: int
+    top10HoldersPercent: float
+    devHoldingsPercent: int
+    snipersOwnedPercent: float
+    bundlerOwnedPercentageV2: float
+    coinCreatedSupply: int
+    lastRecommendedAt: int
+    totalFees: float
+    totalFeesUSD: float
+    field_lastTradeTs: Annotated[int | None, Field(alias="_lastTradeTs")] = None
+    field_lastUpdated: Annotated[int | None, Field(alias="_lastUpdated")] = None
+    field_lastLruTouchTs: Annotated[int | None, Field(alias="_lastLruTouchTs")] = None
+    field_dirtyBoards: Annotated[int | None, Field(alias="_dirtyBoards")] = None
 
 
 class GetLivestreamHistoryResponse(BaseModel):
@@ -2836,198 +2773,198 @@ class GetLivestreamHistoryResponse(BaseModel):
 
 class GetLivestreamHistoryResponseItem(BaseModel):
     id: int
-    streamEndTimestamp: int
     streamStartTimestamp: int
+    streamEndTimestamp: int
     title: str
 
 
 class GetMarketActivityResponse(BaseModel):
-    field_1h: Annotated[GetMarketActivityResponse5m | None, Field(alias="1h")]
-    field_24h: Annotated[GetMarketActivityResponse5m | None, Field(alias="24h")]
     field_5m: Annotated[GetMarketActivityResponse5m | None, Field(alias="5m")]
+    field_1h: Annotated[GetMarketActivityResponse5m | None, Field(alias="1h")]
     field_6h: Annotated[GetMarketActivityResponse5m | None, Field(alias="6h")]
+    field_24h: Annotated[GetMarketActivityResponse5m | None, Field(alias="24h")]
 
 
 class GetMarketActivityResponse5m(BaseModel):
-    buyVolumeUSD: float
-    numBuyers: int
-    numBuys: int
-    numSellers: int
-    numSells: int
     numTxs: int
-    numUsers: int
-    priceChangePercent: float
-    sellVolumeUSD: float
     volumeUSD: float
+    numUsers: int
+    numBuys: int
+    numSells: int
+    buyVolumeUSD: float
+    sellVolumeUSD: float
+    numBuyers: int
+    numSellers: int
+    priceChangePercent: float
 
 
 class GetMayhemCoinTopTradersResponse(BaseModel):
     mint: str
-    traders: list[GetMayhemCoinTopTradersResponseTrader]
     updatedAt: int
+    traders: list[GetMayhemCoinTopTradersResponseTrader]
 
 
 class GetMayhemCoinTopTradersResponseTrader(BaseModel):
+    rank: int
     address: str
+    username: str | None
+    profileImage: str | None
+    realisedPnlUsd: float
     averageEntryMarketCapUsd: float | None
     averageExitMarketCapUsd: float | None
-    buyTransactionCount: int
-    lastActivityAt: int
-    profileImage: str | None
-    rank: int
-    realisedPnlUsd: float
-    sellTransactionCount: int
-    tokenAmountBought: int
-    tokenAmountSold: int
-    tokenBalance: str
     totalBoughtUsd: float
     totalSoldUsd: float
-    username: str | None
+    buyTransactionCount: int
+    sellTransactionCount: int
+    tokenBalance: str
+    tokenAmountBought: int
+    tokenAmountSold: int
+    lastActivityAt: int
 
 
 class GetMayhemOverviewResponse(BaseModel):
     activeCoins: int
     agentVolumeUsd: Agentvolumeusd
+    distinctTraders: Agentvolumeusd
     coinsCreated: Agentvolumeusd
     coinsCreatedByMode: CoinsCreatedByMode
-    distinctTraders: Agentvolumeusd
     updatedAt: int
 
 
 class GetMayhemStatsResponse(BaseModel):
     buyCount: int
-    netSolDeployed: str
     sellCount: int
     totalBuyVolumeSol: str
     totalSellVolumeSol: str
+    netSolDeployed: str
 
 
 class GetMayhemTopCoinsResponse(BaseModel):
+    window: str
     items: list[GetMayhemTopCoinsResponseItem]
     updatedAt: int
-    window: str
 
 
 class GetMayhemTopCoinsResponseItem(BaseModel):
+    rank: int
     mint: str
     netUsdDeployed: float
-    rank: int
 
 
 class GetMayhemTopTradersResponse(BaseModel):
+    window: str
     items: list[GetMayhemTopTradersResponseItem]
     updatedAt: int
-    window: str
 
 
 class GetMayhemTopTradersResponseItem(BaseModel):
-    address: str
     rank: int
+    address: str
     realisedPnlUsd: float
-    tradeCount: int
-    volumeUsd: float
     winRate: float
+    volumeUsd: float
+    tradeCount: int
 
 
 class GetMintPositionsResponse(BaseModel):
-    hasMore: bool | None = None
     positions: list[GetMintPositionsResponsePosition]
     totalCount: int
+    hasMore: bool | None = None
 
 
 class GetMintPositionsResponsePosition(BaseModel):
-    accountKind: str | None = None
-    amountBought: float
-    amountBoughtUsd: float
-    amountHeld: float
-    callout: PositionCallout | None
-    chainId: int
     coinMint: str
-    costBasisAmount: float
-    costBasisUsd: float
-    isVerified: bool
-    lowQuality: bool | None = None
-    pnlPercentage: float
-    pnlUsd: float
-    profile: Liker | None = None
-    profileImage: str | None
-    realizedPnlUsd: float
-    receiptBasisUsd: float | None = None
-    recommendationId: str | None = None
-    recommendationRank: int | None = None
-    resolvedAvatarDecoration: str | None = None
+    chainId: int
     userId: str
     userName: str
-    verifiedBadgeVisible: bool | None = None
+    profileImage: str | None
     walletAddress: str
+    isVerified: bool
+    verifiedBadgeVisible: bool | None = None
     xUsername: str | None
+    accountKind: str | None = None
+    amountHeld: float
+    pnlUsd: float
+    pnlPercentage: float
+    realizedPnlUsd: float
+    costBasisAmount: float
+    costBasisUsd: float
+    amountBoughtUsd: float
+    amountBought: float
+    callout: PositionCallout | None
+    lowQuality: bool | None = None
+    recommendationId: str | None = None
+    recommendationRank: int | None = None
+    profile: Liker | None = None
+    resolvedAvatarDecoration: str | None = None
+    receiptBasisUsd: float | None = None
 
 
 class GetMoversBoardResponse(BaseModel):
     board: str
-    entries: list[GetMoversBoardResponseEntry]
-    serverTs: int
     version: int
+    serverTs: int
+    entries: list[GetMoversBoardResponseEntry]
 
 
 class GetMoversBoardResponseEntry(BaseModel):
-    age: int
-    ath: float
-    bc: int
-    bo: float | None = None
-    c: str
-    cb: bool
-    desc: str | None = None
-    dh: float
-    dw: str
-    gd: int
-    hr: bool | None = None
-    hs: bool
-    i: str
-    ic: bool
-    ih: bool
-    kol: int
-    lp: str | None = None
-    lv: bool
     m: str
-    mc: float
-    mh: bool
+    c: str
     n: str
-    nh: int
-    np: int
-    p: float
-    pa: str | None = None
-    pg: str
-    pl: str
-    rid: str | None = None
-    sc: int
-    sn: int
-    so: float | None = None
     t: str
-    t10: float
-    tf: float | None = None
-    tfUsd: float | None = None
-    tg: bool
-    tw: bool
-    tx5: int
-    txc: int
+    i: str
+    mc: float
     v: float
+    vUsd: float
+    p: float
+    v5: float
     v15: float
     v1h: float
     v24h: float
-    v5: float
-    vUsd: float
+    vUsd5: float
     vUsd15: float
     vUsd1h: float
     vUsd24h: float
-    vUsd5: float
+    tx5: int
+    age: int
+    kol: int
+    sn: int
+    mh: bool
+    hs: bool
+    pg: str
+    pl: str
+    lp: str | None = None
+    gd: int
+    ath: float
+    bc: int
+    sc: int
+    txc: int
+    nh: int
+    t10: float
+    dh: float
+    tw: bool
     ws: bool
+    tg: bool
+    cb: bool
+    hr: bool | None = None
+    dw: str
+    lv: bool
+    np: int
+    ic: bool
+    so: float | None = None
+    bo: float | None = None
+    pa: str | None = None
+    ih: bool
+    tf: float | None = None
+    tfUsd: float | None = None
+    rid: str | None = None
+    desc: str | None = None
 
 
 class GetNewCalloutsCountResponse(BaseModel):
+    newCount: int
     capped: bool
     headToken: str
-    newCount: int
 
 
 class GetNewCalloutsFeedResponse(BaseModel):
@@ -3038,19 +2975,19 @@ class GetNewCalloutsFeedResponse(BaseModel):
 
 
 class GetNewCalloutsFeedResponseCoin(BaseModel):
-    chain: str
-    coinDescription: None
-    coinImage: str | None
     coinMint: str
     coinName: str | None
-    followedHolders: None
-    marketCap: float | None
-    narrative: None
-    platform: str | None
-    position: CoinPosition
-    program: str | None
-    protocol: str | None
+    coinImage: str | None
     symbol: str | None
+    coinDescription: None
+    marketCap: float | None
+    protocol: str | None
+    platform: str | None
+    program: str | None
+    chain: str | None
+    narrative: None
+    position: CoinPosition
+    followedHolders: None
 
 
 class GetOnboardingSuggestionsResponse(BaseModel):
@@ -3058,36 +2995,36 @@ class GetOnboardingSuggestionsResponse(BaseModel):
 
 
 class GetOnboardingSuggestionsResponseEntry(BaseModel):
-    followers: int
-    isVerified: bool
-    pnlUsd: float
-    profileImage: str
+    walletAddress: str
     userId: str
     username: str
+    profileImage: str
+    isVerified: bool
     verifiedBadgeVisible: bool
-    walletAddress: str
+    pnlUsd: float
+    followers: int
 
 
 class GetPayoutsLeaderboardResponse(BaseModel):
     entries: list[GetPayoutsLeaderboardResponseEntry]
-    generatedAt: str
     totalEarners: int
+    generatedAt: str
 
 
 class GetPayoutsLeaderboardResponseEntry(BaseModel):
-    isVerified: bool
-    lastPaidAt: str
-    payoutCount: int
-    profileImageUrl: str
     rank: int
-    totalPaidUsdc: float
-    twitterId: str | None
-    twitterUrl: str | None
     userId: str
     username: str
+    profileImageUrl: str
+    isVerified: bool
     verifiedBadgeVisible: bool | None = None
-    walletAddress: str | None = None
+    twitterId: str | None
+    twitterUrl: str | None
     wallets: list[str]
+    walletAddress: str | None = None
+    totalPaidUsdc: float
+    payoutCount: int
+    lastPaidAt: str
 
 
 class GetPerpOrdersResponse(BaseModel):
@@ -3096,37 +3033,37 @@ class GetPerpOrdersResponse(BaseModel):
 
 
 class GetPerpTradesResponse(BaseModel):
+    trades: list[GetPerpTradesResponseTrade]
     aggregates: Aggregate
     cursor: str | None
     source: str
-    trades: list[GetPerpTradesResponseTrade]
 
 
 class GetPerpTradesResponseTrade(BaseModel):
-    baseAmount: Baseamount | None
-    blockId: str
-    blockTimeMs: int
-    coin: Pool
-    eventIndex: int
-    isBackfill: bool
-    kind: str
-    late: bool
-    legIndex: int
     ordinalKey: str
-    perp: Perp | None = None
-    pool: None
-    priceQuote: str | None
-    priceUsd: str | None
-    quote: TradeQuote | None
-    quoteAmount: Baseamount | None
-    quotePriceUsd: str | None
-    side: str | None
-    trader: Trader
-    txId: str
+    blockId: str
     txIndex: int
-    valueNative: str | None
-    valueUsd: str
+    eventIndex: int
+    blockTimeMs: int
+    txId: str
+    legIndex: int
+    late: bool
+    isBackfill: bool
+    side: str | None
+    kind: str
     venue: str
+    pool: None
+    trader: Trader
+    baseAmount: Baseamount | None
+    quoteAmount: Baseamount | None
+    quote: TradeQuote | None
+    priceUsd: str | None
+    priceQuote: str | None
+    quotePriceUsd: str | None
+    valueUsd: str
+    valueNative: str | None
+    coin: Pool
+    perp: Perp | None = None
 
 
 class GetPlaylistMapResponse(BaseModel):
@@ -3136,76 +3073,76 @@ class GetPlaylistMapResponse(BaseModel):
 class GetPnlLeaderboardPositionsResponse(BaseModel):
     entries: list[GetPnlLeaderboardPositionsResponseEntry]
     periodLabel: str
-    totalRanked: int
     windowStartSec: int
+    totalRanked: int
 
 
 class GetPnlLeaderboardPositionsResponseEntry(BaseModel):
-    amountBought: float | None
-    amountBoughtUsd: float | None
-    amountHeld: float | None
-    avgEntryMcapUsd: float | None
-    callout: PositionCallout
+    rank: int
+    walletAddress: str
     coinMint: str
+    pnlUsd: float
+    pnlPercentage: float | None
+    amountHeld: float | None
+    isExited: bool | None
     costBasisAmount: float | None
     costBasisUsd: float | None
-    heldValueSol: int
-    isExited: bool | None
-    isVerified: bool
-    lastRefreshedAtMs: int
-    leaderboardPnlUsd: float
-    pnlPercentage: float | None
-    pnlUsd: float
-    profileImage: str
-    rank: int
+    amountBoughtUsd: float | None
+    amountBought: float | None
     realizedPnlUsd: float | None
-    userId: str | None = None
-    username: str
+    avgEntryMcapUsd: float | None
+    callout: PositionCallout
+    leaderboardPnlUsd: float
+    heldValueSol: int
     valueUsd: float | None
-    verifiedBadgeVisible: bool | None = None
-    walletAddress: str
+    lastRefreshedAtMs: int
+    username: str
+    profileImage: str
     xUsername: str | None
+    isVerified: bool
+    verifiedBadgeVisible: bool | None = None
+    userId: str | None = None
 
 
 class GetPnlLeaderboardResponse(BaseModel):
     entries: list[Entry]
-    periodLabel: str
     periodType: int
+    periodLabel: str
     windowStartSec: int
 
 
 class GetPortfolioSummaryResponse(BaseModel):
-    cache: PortfolioSummaryCache | None = None
-    computedAt: int | None = None
-    equityAtWindowStart: CostBasis
-    evmAddress: str | None = None
+    wallet: str
     from_: Annotated[int, Field(alias="from")]
-    heldOpenValue: CostBasis
-    maxCapitalDeployed: CostBasis
-    missingPriceMints: list[str]
-    nativeBalanceSol: float | None = None
-    percentage: CostBasis
+    to: int
     pnl: CostBasis
     realizedPnl: CostBasis
-    solPriceUsd: float | None = None
-    to: int
-    tokenCount: int
-    totalBuySpend: CostBasis
-    totalValueUsd: float
-    tradePercentage: CostBasis
     unrealizedPnl: CostBasis
-    wallet: str
+    percentage: CostBasis
+    totalBuySpend: CostBasis
+    heldOpenValue: CostBasis
+    maxCapitalDeployed: CostBasis
+    equityAtWindowStart: CostBasis
+    missingPriceMints: list[str]
+    tokenCount: int
+    tradePercentage: CostBasis
+    totalValueUsd: float
+    solPriceUsd: float | None = None
+    nativeBalanceSol: float | None = None
+    evmAddress: str | None = None
+    computedAt: int | None = None
+    cache: PortfolioSummaryCache | None = None
 
 
 class GetPortfolioValueChartResponse(BaseModel):
-    currency: str
-    equityFrom: int
-    meta: Meta
     period: str
-    points: list[GetPortfolioValueChartResponsePoint]
     range: str
+    currency: str
+    points: list[GetPortfolioValueChartResponsePoint]
+    equityFrom: int
     resolutionSec: int
     valueNow: float
+    meta: Meta
 
 
 class GetPortfolioValueChartResponsePoint(BaseModel):
@@ -3214,96 +3151,81 @@ class GetPortfolioValueChartResponsePoint(BaseModel):
 
 
 class GetReplyLikersResponse(BaseModel):
-    hasMore: bool
     likers: list[Liker]
+    hasMore: bool
 
 
 class GetReplyRepostersResponse(BaseModel):
-    hasMore: bool
     reposters: list[Reposter]
+    hasMore: bool
 
 
 class GetReplyThreadResponse(BaseModel):
-    ancestors: list[Reply]
     callout: GetReplyThreadResponseCallout
+    ancestors: list[Reply]
     reply: Reply
 
 
 class GetReplyThreadResponseCallout(BaseModel):
-    accountKind: str
-    callout: PositionCallout
     coinMint: str
-    isVerified: bool
-    mediaUrl: str | None
-    profileImage: str
+    walletAddress: str
     userId: str
     userName: str
+    profileImage: str
+    isVerified: bool
     verifiedBadgeVisible: bool
-    walletAddress: str
-    xFollowerCount: int
     xUsername: str
+    xFollowerCount: int
+    accountKind: str
+    mediaUrl: str | None
+    callout: PositionCallout
 
 
 class GetSearchQuoteFacetsResponse(BaseModel):
-    otherCount: int
     quoteFacets: list[Quotefacet]
+    otherCount: int
 
 
 class GetShareholderFeesResponse(BaseModel):
     coins: list[GetShareholderFeesResponseCoin]
-    nextCursor: str | None = None
     totals: GetShareholderFeesResponseTotal
+    nextCursor: str | None = None
 
 
 class GetShareholderFeesResponseCoin(BaseModel):
     coin: Pool
     configAddress: str
-    shareBps: int
-    shareholderClaimed: list[Distributed]
-    shareholderEarned: list[Distributed]
-    shareholderUnclaimed: list[Distributed]
-    totalClaimed: list[Distributed]
     totalEarned: list[Earned]
+    totalClaimed: list[Distributed]
     totalUnclaimed: list[Distributed]
+    shareholderEarned: list[Distributed]
+    shareholderClaimed: list[Distributed]
+    shareholderUnclaimed: list[Distributed]
+    shareBps: int
 
 
 class GetShareholderFeesResponseTotal(BaseModel):
-    claimed: list[Distributed]
     earned: list[Distributed]
+    claimed: list[Distributed]
     unclaimed: list[Distributed]
 
 
 class GetSolPriceResponse(BaseModel):
-    asOfTimestamp: int
     solPrice: float
+    asOfTimestamp: int
     stale: bool
 
 
 class GetTokenHolderCountResponse(BaseModel):
-    chain: str
-    holderCount: int
     mint: str
+    chain: str
     networkId: int
-
-
-class GetTopHoldersResponse(BaseModel):
-    topHolders: list[GetTopHoldersResponseTopholder]
-    totalHolders: int
-
-
-class GetTopHoldersResponseTopholder(BaseModel):
-    address: str
-    amount: float
-    enteredAt: int | None
-    fundingSource: Fundingsource | None
-    isBundler: bool
-    isDev: bool
-    isSniper: bool
+    holderCount: int
 
 
 class GetTopTokenMintChainsResponse(BaseModel):
-    chains: dict[str, list[str]]
     mints: list[str]
+    chains: dict[str, list[str]]
 
 
 class GetTopTokenMintsResponse(RootModel[list[str]]):
@@ -3311,85 +3233,63 @@ class GetTopTokenMintsResponse(RootModel[list[str]]):
 
 
 class GetTopTraderTradesResponse(BaseModel):
-    boardsBuiltAtMs: int
-    generatedAtMs: int
     mint: str
-    page: Page | None
     traders: list[GetTopTraderTradesResponseTrader]
     trades: list[GetTopTraderTradesResponseTrade]
+    boardsBuiltAtMs: int
+    generatedAtMs: int
+    page: Page | None
 
 
 class GetTopTraderTradesResponseTrade(BaseModel):
-    amountSol: float
+    tx: str
+    isBuy: bool
+    timestamp: str
     amountUsd: float
     baseAmount: float
-    chainId: int
-    isBuy: bool
-    mint: str
     priceUsd: float
-    slotIndexId: str
-    timestamp: str
-    tx: str
-    userId: str
+    mint: str
+    chainId: int
     walletAddress: str
+    userId: str
+    slotIndexId: str
+    amountSol: float
 
 
 class GetTopTraderTradesResponseTrader(BaseModel):
-    bestRank: int
-    isVerified: bool
-    periods: list[str]
-    profileImage: str
-    tradeCount: int
-    tradingWallets: list[str]
     userId: str
-    username: str
-    verifiedBadgeVisible: bool
     walletAddress: str
-
-
-class GetTradesResponse(BaseModel):
-    pagination: PageCursor
-    trades: list[GetTradesResponseTrade]
-
-
-class GetTradesResponseTrade(BaseModel):
-    amountSol: str
-    amountUsd: str
-    baseAmount: str
-    fillPriceSol: str
-    fillPriceUsd: str
-    priceSol: str
-    priceUsd: str
-    program: str
-    quoteAmount: str
-    slotIndexId: str
-    timestamp: str
-    tx: str
-    type: str
-    userAddress: str
+    username: str
+    profileImage: str
+    isVerified: bool
+    verifiedBadgeVisible: bool
+    bestRank: int
+    periods: list[str]
+    tradingWallets: list[str]
+    tradeCount: int
 
 
 class GetTrendingBoardResponse(BaseModel):
     board: str
-    entries: list[GetMoversBoardResponseEntry]
-    serverTs: int
     version: int
+    serverTs: int
+    entries: list[GetMoversBoardResponseEntry]
 
 
 class GetUserAchievementsResponse(BaseModel):
     achievements: list[GetUserAchievementsResponseAchievement]
-    catalogVersion: str
     progress: list[Progress]
+    catalogVersion: str
 
 
 class GetUserAchievementsResponseAchievement(BaseModel):
     achievementId: str
-    evidence: Evidence | None
-    holderCount: int
-    holderPercent: float
-    seen: bool
     unlockedAt: str
     value: float
+    seen: bool
+    holderCount: int
+    holderPercent: float
+    evidence: Evidence | None
 
 
 class GetUserCalloutRepliesResponse(BaseModel):
@@ -3403,41 +3303,41 @@ class GetUserCalloutsResponse(BaseModel):
 
 class GetUserCalloutsResponseCallout(BaseModel):
     calloutId: str
+    userId: str
+    coinMint: str
+    marketCap: float
     calloutPrice: float
     calloutPriceUsd: float
-    chain: str | None = None
-    coinMint: str
-    commentCount: int
+    multiple: float
     createdAt: int
-    hasLiked: None
-    hasReposted: None
-    likes: int
-    marketCap: float
-    maxMultiplier: float
-    maxMultiplierAt: str | None
     maxPriceSol: float
     maxPriceUsd: float
-    mediaUrl: str | None
-    multiple: float
-    perp: Annotated[None, Field(None)] = None
-    quoteCount: int
-    quotedCallout: None
-    quotedCalloutId: None
-    replyCount: int
+    thesis: str
+    user_uuid: str
+    likes: int
+    hasLiked: None
+    hasReposted: None
     repostCount: int
+    quoteCount: int
+    updates: list[Update]
+    updateCount: int
+    commentCount: int
+    replyCount: int
+    maxMultiplier: float
+    maxMultiplierAt: str | None
+    viewCount: int
+    mediaUrl: str | None
+    quotedCalloutId: None
+    quotedCallout: None
+    chain: str | None = None
+    perp: Annotated[None, Field(None)] = None
     tailBuyers: int | None = None
     tailCohort1h: int | None = None
-    tailCohort24h: int | None = None
     tailCohort4h: int | None = None
+    tailCohort24h: int | None = None
     tailPnl1hUsd: float | None = None
-    tailPnl24hUsd: float | None = None
     tailPnl4hUsd: float | None = None
-    thesis: str
-    updateCount: int
-    updates: list[Update]
-    userId: str
-    user_uuid: str
-    viewCount: int
+    tailPnl24hUsd: float | None = None
 
 
 class GetUserCoinCalloutResponse(BaseModel):
@@ -3446,91 +3346,91 @@ class GetUserCoinCalloutResponse(BaseModel):
 
 
 class GetUserCreatedCoinsResponse(BaseModel):
-    coins: list[GetUserCreatedCoinsResponseCoin]
-    count: int
     limit: int
     offset: int
+    count: int
+    coins: list[GetUserCreatedCoinsResponseCoin]
 
 
 class GetUserCreatedCoinsResponseCoin(BaseModel):
-    associated_bonding_curve: str
-    ath_market_cap: float | None = None
-    ath_market_cap_timestamp: int | None = None
-    base_decimals: int
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool
-    created_timestamp: int
-    creator: str
-    depth: int | None = None
-    description: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float
-    market_cap_usd: float | None = None
-    metadata_uri: str
     mint: str
-    multichain_family: int
+    initialized: bool
     name: str
-    nsfw: bool
-    platform: str | None = None
-    pool_address: str
-    program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int
-    quote_mint: str
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
     symbol: str
-    token_program: str
-    tokenized_agent: bool | None = None
-    total_supply: int
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
+    description: str | None = None
+    image_uri: str
+    metadata_uri: str
     twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool
-    virtual_quote_reserves: int | None = None
+    bonding_curve: str
+    associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int
     website: str | None = None
+    show_name: bool
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    is_currently_live: bool
+    hide_banner: bool
+    program: str
+    token_program: str
+    quote_mint: str
+    base_decimals: int
+    quote_decimals: int
+    pool_address: str
+    is_cashback_enabled: bool | None = None
+    chain_id: str
+    multichain_family: int
+    protocol: str
+    total_supply_str: str
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    depth: int | None = None
+    security_verdict: SecurityVerdict | None = None
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    updated_at: int | None = None
+    ath_market_cap: float | None = None
+    ath_market_cap_timestamp: int | None = None
+    market_cap_usd: float | None = None
+    usd_market_cap: float | None = None
+    platform: str | None = None
+    transfer_hook_program: str | None = None
+    volume_1h_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    hidden: bool | None = None
+    indexed_by_pump: bool | None = None
+    is_backfill: bool | None = None
+    is_charity: bool | None = None
+    tokenized_agent: bool | None = None
 
 
 class GetUserOverviewResponse(BaseModel):
-    achievementBadgeIds: list[str]
     address: str
-    banned: bool
+    profile: GetUserResponse | None
+    isPumpUser: bool
     counts: GetUserOverviewResponseCount
+    verified: bool
+    achievementBadgeIds: list[str]
+    banned: bool
     createdCoinsCount: int
     degraded: list[Any]
-    isPumpUser: bool
-    profile: GetUserResponse | None
-    verified: bool
 
 
 class GetUserOverviewResponseCount(BaseModel):
@@ -3545,34 +3445,34 @@ class GetUserPortfolioResponse(BaseModel):
 
 
 class GetUserPortfolioResponsePosition(BaseModel):
-    amountBought: float | None
-    amountBoughtUsd: float | None
-    amountHeld: float
-    callout: PositionCallout | None
-    chainId: int
-    coin: PositionCoin | None = None
     coinMint: str
+    chainId: int
+    isExited: bool
+    walletAddress: str
+    amountHeld: float
+    pnlUsd: float | None
+    pnlPercentage: float | None
     costBasisAmount: float | None
     costBasisUsd: float | None
-    dustFloorFiltered: bool
-    hasTransfers: bool | None = None
-    hasUntrustedSolBasis: bool | None = None
-    hasUntrustedUsdBasis: bool | None = None
-    isExited: bool
-    isNative: bool
-    lastSlotIndexId: str | None = None
-    likelyLost: bool | None = None
-    openedAt: str | None = None
-    pnlPercentage: float | None
-    pnlUsd: float | None
-    potentialSpam: bool
-    realizedPnlUsd: float | None = None
-    tokenPriceUsd: float | None
-    tradeCount: int | None = None
-    updatedAt: str | None = None
-    userMarkedNonSpam: bool
+    amountBoughtUsd: float | None
+    amountBought: float | None
+    callout: PositionCallout | None
     valueUsd: float | None = None
-    walletAddress: str
+    tokenPriceUsd: float | None
+    potentialSpam: bool
+    userMarkedNonSpam: bool
+    dustFloorFiltered: bool
+    isNative: bool
+    coin: PositionCoin | None = None
+    hasTransfers: bool | None = None
+    likelyLost: bool | None = None
+    hasUntrustedUsdBasis: bool | None = None
+    hasUntrustedSolBasis: bool | None = None
+    realizedPnlUsd: float | None = None
+    updatedAt: str | None = None
+    lastSlotIndexId: str | None = None
+    openedAt: str | None = None
+    tradeCount: int | None = None
 
 
 class GetUserPositionsResponse(BaseModel):
@@ -3580,95 +3480,95 @@ class GetUserPositionsResponse(BaseModel):
 
 
 class GetUserPositionsResponsePosition(BaseModel):
-    amountBought: float
-    amountBoughtUsd: float
-    amountHeld: float
-    callout: PositionCallout | None
-    chainId: int
     coinMint: str
+    chainId: int
+    isExited: bool
+    walletAddress: str
+    amountHeld: float
+    pnlUsd: float
+    pnlPercentage: float | None
     costBasisAmount: float
     costBasisUsd: float
+    amountBoughtUsd: float
+    amountBought: float
+    callout: PositionCallout | None
     hasTransfers: bool
-    hasUntrustedSolBasis: bool | None = None
-    hasUntrustedUsdBasis: bool | None = None
-    isExited: bool
-    lastSlotIndexId: str | None = None
     likelyLost: bool
-    pnlPercentage: float | None
-    pnlUsd: float
-    realizedPnlUsd: float
-    tokenPriceUsd: float
-    updatedAt: str
+    hasUntrustedUsdBasis: bool | None = None
+    hasUntrustedSolBasis: bool | None = None
     valueUsd: float
-    walletAddress: str
+    tokenPriceUsd: float
+    realizedPnlUsd: float
+    updatedAt: str
+    lastSlotIndexId: str | None = None
 
 
 class GetUserRepostsResponse(BaseModel):
-    nextCursor: str | None
     reposts: list[Repost]
+    nextCursor: str | None
 
 
 class GetUserResponse(BaseModel):
-    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
-    avatar_decoration: str | None = None
-    bio: str | None
-    canonical_evm_wallet: str | None = None
-    canonical_svm_wallet: str
-    followers: int
-    following: int
-    group_badges: list[GroupBadge]
-    header_image_url: str | None
-    is_banned: bool | None = None
-    is_pump_user: bool
-    kind: str
-    last_username_update_timestamp: int | None
-    member_count: int
-    profile_image: str
-    resolved_avatar_decoration: str | None = None
     userId: str
+    is_pump_user: bool
+    is_banned: bool | None = None
     username: str
+    profile_image: str
+    header_image_url: str | None
+    avatar_decoration: str | None = None
+    kind: str
+    member_count: int
+    last_username_update_timestamp: int | None
+    following: int
+    followers: int
+    bio: str | None
     x_username: str | None
+    canonical_svm_wallet: str
+    canonical_evm_wallet: str | None = None
+    group_badges: list[GroupBadge]
+    resolved_avatar_decoration: str | None = None
+    active_competition_entry: Annotated[None, Field(None)] = None
 
 
 class GetUserTradesResponse(BaseModel):
-    coins: list[GetUserTradesResponseCoin] | None = None
-    nextCursor: str | None
-    traders: list[GetUserTradesResponseTrader]
     trades: list[GetUserTradesResponseTrade]
+    traders: list[GetUserTradesResponseTrader]
+    nextCursor: str | None
+    coins: list[GetUserTradesResponseCoin] | None = None
 
 
 class GetUserTradesResponseCoin(BaseModel):
-    chainId: int
-    image: str | None
     mint: str
+    chainId: int
     name: str | None
     symbol: str | None
+    image: str | None
 
 
 class GetUserTradesResponseTrade(BaseModel):
-    amountSol: float | None
+    tx: str
+    isBuy: bool
+    timestamp: str
     amountUsd: float | None
     baseAmount: float
-    chainId: int
-    isBuy: bool
-    kind: str | None = None
-    mint: str
     priceUsd: float | None
-    slotIndexId: str
-    timestamp: str
-    tx: str
-    userId: str
+    mint: str
+    chainId: int
     walletAddress: str
+    userId: str
+    slotIndexId: str
+    amountSol: float | None
+    kind: str | None = None
 
 
 class GetUserTradesResponseTrader(BaseModel):
-    isVerified: bool
-    profileImage: str
     userId: str
     userName: str
-    verifiedBadgeVisible: bool
+    profileImage: str
     walletAddress: str
+    isVerified: bool
+    verifiedBadgeVisible: bool
 
 
 class GetUsernameExistsResponse(BaseModel):
@@ -3684,36 +3584,36 @@ class GetVerifiedProfilesResponse(RootModel[dict[str, bool]]):
 
 
 class GetWalletBalanceSummaryResponse(BaseModel):
-    data: GetWalletBalanceSummaryResponseData
     success: bool
+    data: GetWalletBalanceSummaryResponseData
 
 
 class GetWalletBalanceSummaryResponseData(BaseModel):
+    total_value: float
+    native_balance: float
+    native_lamports: int
+    wrapped_sol_balance: int | None = None
+    sol_price: float
+    token_count: int
     dust_count: int | None = None
     dust_value_usd: float | None = None
     hidden_count: int | None = None
     hidden_value_usd: float | None = None
     last_update_ts: int
-    multi_chain_breakdown: MultiChainBreakdown | None = None
-    native_balance: float
-    native_lamports: int
     portfolioPnL: Portfoliopnl
-    sol_price: float
-    token_count: int
-    total_value: float
-    wrapped_sol_balance: int | None = None
+    multi_chain_breakdown: MultiChainBreakdown | None = None
 
 
 class GetWalletBalancesResponse(BaseModel):
+    success: bool
     data: GetWalletBalancesResponseData
     pagination: GetWalletBalancesResponsePagination
-    success: bool
 
 
 class GetWalletBalancesResponseData(BaseModel):
-    hidden_count: int | None = None
-    last_update_ts: int
     tokens: list[DataToken]
+    last_update_ts: int
+    hidden_count: int | None = None
 
 
 class GetWalletBalancesResponsePagination(BaseModel):
@@ -3728,112 +3628,112 @@ class GetWalletOverviewResponse(BaseModel):
 
 
 class GetWalletPnlBatchResponse(BaseModel):
-    data: list[GetWalletPnlBatchResponseData]
     success: bool
+    data: list[GetWalletPnlBatchResponseData]
 
 
 class GetWalletPnlBatchResponseData(BaseModel):
-    fee: CostBasis
-    fee_detail: FeeDetail
+    mint: str
+    unrealized: Unrealized | None
+    realized: Realized | None
+    total_buy_spend: CostBasis
+    total_buy_amount: float | None
+    last_slot_index_id: str | None
     has_transfers: bool
     has_untrusted_basis: bool
-    has_untrusted_sol_basis: bool | None = None
     has_untrusted_usd_basis: bool | None = None
-    last_slot_index_id: str | None
-    mint: str
-    realized: Realized | None
-    total_buy_amount: float | None
-    total_buy_spend: CostBasis
-    unrealized: Unrealized | None
+    has_untrusted_sol_basis: bool | None = None
+    fee: CostBasis
+    fee_detail: FeeDetail
 
 
 class GetWalletScreeningResponse(BaseModel):
-    address: str
-    message: str
     statusCode: int
+    message: str
+    address: str
 
 
 class GetWalletTokenPnlResponse(BaseModel):
-    data: GetWalletTokenPnlResponseData
     success: bool
+    data: GetWalletTokenPnlResponseData
 
 
 class GetWalletTokenPnlResponseData(BaseModel):
-    amount_held: float | None
-    ata_rent_sol: float | None
-    ata_rent_usd: float | None
-    base_fee_sol: float | None
-    base_fee_usd: float | None
-    cashback_sol: float | None
-    cashback_usd: float | None
-    cost_basis_amount: float | None
-    cost_basis_sol: float | None
+    mint: str
     cost_basis_usd: float | None
-    fee_sol: float | None
-    fee_usd: float | None
+    cost_basis_sol: float | None
+    unrealized_pnl_usd: float | None
+    unrealized_pnl_sol: float | None
+    unrealized_pnl_usd_mark: float | None = None
+    unrealized_pnl_sol_mark: float | None = None
+    percentage_usd: float | None
+    percentage_sol: float | None
+    realized_pnl_usd: float | None
+    realized_pnl_sol: float | None
+    last_slot_index_id: str | None
+    amount_held: float | None
+    cost_basis_amount: float | None
+    total_buy_spend_usd: float | None
+    total_buy_spend_sol: float | None
+    total_buy_amount: float | None
     has_transfers: bool
     has_untrusted_basis: bool
-    has_untrusted_sol_basis: bool | None = None
     has_untrusted_usd_basis: bool | None = None
-    last_slot_index_id: str | None
-    mint: str
-    percentage_sol: float | None
-    percentage_usd: float | None
+    has_untrusted_sol_basis: bool | None = None
+    fee_sol: float | None
+    fee_usd: float | None
+    base_fee_sol: float | None
+    base_fee_usd: float | None
     priority_fee_sol: float | None
     priority_fee_usd: float | None
-    protocol_fee_sol: float | None
-    protocol_fee_usd: float | None
-    realized_pnl_sol: float | None
-    realized_pnl_usd: float | None
     tip_fee_sol: float | None
     tip_fee_usd: float | None
-    total_buy_amount: float | None
-    total_buy_spend_sol: float | None
-    total_buy_spend_usd: float | None
     ui_fee_sol: float | None
     ui_fee_usd: float | None
-    unrealized_pnl_sol: float | None
-    unrealized_pnl_sol_mark: float | None = None
-    unrealized_pnl_usd: float | None
-    unrealized_pnl_usd_mark: float | None = None
+    ata_rent_sol: float | None
+    ata_rent_usd: float | None
+    protocol_fee_sol: float | None
+    protocol_fee_usd: float | None
+    cashback_sol: float | None
+    cashback_usd: float | None
 
 
 class GetWalletTradesResponse(BaseModel):
+    trades: list[GetWalletTradesResponseTrade]
+    pagination: GetWalletTradesResponsePagination
     chain: str | None = None
     nativeUnit: str | None = None
-    pagination: GetWalletTradesResponsePagination
     token: GetWalletTradesResponseToken | None = None
-    trades: list[GetWalletTradesResponseTrade]
 
 
 class GetWalletTradesResponsePagination(BaseModel):
-    hasMore: bool
     nextCursor: str | None
+    hasMore: bool
 
 
 class GetWalletTradesResponseToken(BaseModel):
-    image: str
     mint: str
     name: str
     symbol: str
+    image: str
 
 
 class GetWalletTradesResponseTrade(BaseModel):
-    amountSol: float
-    amountUsd: float
-    baseAmount: float
-    legCount: int
-    mint: str
-    poolAddress: str
+    tx: str
     slotIndexId: str
     timestamp: str
-    tx: str
     type: str
+    mint: str
+    baseAmount: float
+    amountSol: float
+    amountUsd: float
+    legCount: int
+    poolAddress: str
 
 
 class GetWalletTransactionsResponse(BaseModel):
-    pagination: GetWalletTransactionsResponsePagination
     transactions: list[Transaction]
+    pagination: GetWalletTransactionsResponsePagination
 
 
 class GetWalletTransactionsResponsePagination(BaseModel):
@@ -3851,9 +3751,9 @@ class GlobalParamsParams(BaseModel):
 
 class GroupBadge(BaseModel):
     group_id: str
+    username: str
     profile_image_url: str
     role: str
-    username: str
 
 
 class GroupMembersParams(BaseModel):
@@ -3895,29 +3795,29 @@ class GroupMembersPnlParams(BaseModel):
 
 
 class GroupPnlLeaderboardParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum squads to return.
-    """
     period: LeaderboardPeriod | None = LeaderboardPeriod.DAILY
     """
     Ranking window.
-    """
-    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
-    """
-    Top positions shown per squad (pump.fun's default 3).
     """
     sort: LeaderboardSort | None = None
     """
     Which PnL figure ranks squads.
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
+    """
+    Maximum squads to return.
+    """
+    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
+    """
+    Top positions shown per squad (pump.fun's default 3).
+    """
 
 
 class Groupbadge(BaseModel):
     groupId: str
+    username: str
     profileImageUrl: str
     role: str
-    username: str
 
 
 class HolderListRequest(BaseModel):
@@ -3939,29 +3839,29 @@ class HolderRewardsParams(BaseModel):
     """
     `nextCursor` from the previous page; omit for the first page.
     """
+    sort: HolderRewardSort | None = HolderRewardSort.ACCRUED
+    """
+    Ranking column.
+    """
     direction: OrderDirection | None = OrderDirection.DESC
     """
     Sort direction.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=2000)] = 50
-    """
-    Coins per page.
-    """
-    page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    Page number, from 1.
-    """
-    paying_only: bool | None = None
-    """
-    Only coins that paid holders.
     """
     quote: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Only coins quoted in this token mint.
     """
-    sort: HolderRewardSort | None = HolderRewardSort.ACCRUED
+    paying_only: bool | None = None
     """
-    Ranking column.
+    Only coins that paid holders.
+    """
+    page: Annotated[int | None, Field(ge=1)] = 1
+    """
+    Page number, from 1.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=2000)] = 50
+    """
+    Coins per page.
     """
 
 
@@ -3979,54 +3879,58 @@ class HolderStatsParams(BaseModel):
 
 
 class HoldingCallout(BaseModel):
-    calledOutAtMcap: float
     calloutId: str
-    calloutPrice: float
+    calledOutAtMcap: float
+    multiple: float
+    thesis: str
+    mediaUrl: str | None
     calloutTimestamp: str
-    commentCount: int
-    hasLiked: None
-    hasReposted: None
     likes: int
+    hasLiked: None
+    updates: list[Update]
+    updateCount: int
+    commentCount: int
+    replyCount: int
     maxMultiplier: float
     maxMultiplierAt: str
-    mediaUrl: str | None
-    multiple: float
-    quoteCount: int
-    quotedCallout: None
-    quotedCalloutId: None
-    replyCount: int
+    calloutPrice: float
     repostCount: int
-    thesis: str
-    updateCount: int
-    updates: list[Update]
+    quoteCount: int
+    hasReposted: None
     viewCount: int
+    quotedCalloutId: None
+    quotedCallout: None
 
 
 class HomeFeedLegacyPosition(BaseModel):
-    amountBought: float
-    amountBoughtUsd: float
-    amountHeld: float
-    callout: HoldingCallout
-    contentKind: str
-    costBasisAmount: float
-    costBasisUsd: float
-    isVerified: bool
-    pnlPercentage: float
-    pnlUsd: float
-    profileImage: str
-    quote: None
-    realizedPnlUsd: float
-    tokenPriceUsd: float
-    totalCallouts: int
     userId: str
     userName: str
-    valueUsd: float
+    profileImage: str
     walletAddress: str
-    xProfileImage: str | None
+    isVerified: bool
     xUsername: str | None
+    xProfileImage: str | None
+    totalCallouts: int
+    amountHeld: float
+    valueUsd: float
+    pnlUsd: float
+    pnlPercentage: float
+    realizedPnlUsd: float
+    tokenPriceUsd: float
+    costBasisAmount: float
+    costBasisUsd: float
+    amountBoughtUsd: float
+    amountBought: float
+    callout: HoldingCallout
+    contentKind: str
+    quote: None
 
 
 class HomeFeedParams(BaseModel):
+    page_size: Annotated[int | None, Field(ge=1, le=200)] = 150
+    """
+    Number of feed entries to return.
+    """
     chain: FeedChain | None = FeedChain.ALL
     """
     Restrict the feed to one chain. pump.fun's feed does not cover Monad.
@@ -4034,10 +3938,6 @@ class HomeFeedParams(BaseModel):
     page: Annotated[int | None, Field(ge=0)] = None
     """
     Page number, from 0.
-    """
-    page_size: Annotated[int | None, Field(ge=1, le=200)] = 150
-    """
-    Number of feed entries to return.
     """
     updates_limit: Annotated[int | None, Field(ge=1, le=10)] = None
     """
@@ -4067,39 +3967,39 @@ class InMemoryCoinParams(BaseModel):
 
 
 class Item(BaseModel):
-    parentBounty: Parentbounty
-    parentTaskId: str
+    type: str
     pool: str
     score: float
+    parentTaskId: str
+    parentBounty: Parentbounty
     submission: Submission
-    type: str
 
 
 class ItemRecipient(BaseModel):
     address: str
-    amount: str
     shareBps: int
+    amount: str
 
 
 class ItemResolution(BaseModel):
-    claimsLastSyncedAt: str | None = None
-    claimsRefreshCursor: int | None = None
-    decisionVersion: int
-    disputeEndsAt: str
     firstPublishAt: str | None = None
     moderatorAddress: str
     outcomeType: str
-    payedOutAt: str | None = None
+    disputeEndsAt: str
     recordedAt: str
+    decisionVersion: int
+    payedOutAt: str | None = None
     winners: list[Winner] | None = None
+    claimsLastSyncedAt: str | None = None
+    claimsRefreshCursor: int | None = None
 
 
 class ItemResolutionhistory(BaseModel):
-    decisionVersion: int
-    disputeEndsAt: str
-    moderatorAddress: str
     outcomeType: str
+    moderatorAddress: str
     recordedAt: str
+    disputeEndsAt: str
+    decisionVersion: int
     winners: list[BountyResolutionHistoryWinner] | None = None
 
 
@@ -4109,22 +4009,22 @@ class ItemShareholder(BaseModel):
 
 
 class ItemSubmission(BaseModel):
-    appendedUpdateCount: int | None = None
-    attachments: list[SubmissionAttachment] | None = None
-    banInfo: Baninfo | None = None
-    bodyMarkdown: str
-    commentCount: int
-    createdAt: str
-    editedAt: str | None = None
-    latestUpdate: Latestupdate | None = None
-    likeCount: int
-    links: list[str] | None = None
-    publishedAt: str
-    requesterAddress: str
     submissionId: str
     taskId: str
-    unbanInfo: Baninfo | None = None
+    requesterAddress: str
+    createdAt: str
     updatedAt: str
+    publishedAt: str
+    editedAt: str | None = None
+    bodyMarkdown: str
+    links: list[str] | None = None
+    attachments: list[SubmissionAttachment] | None = None
+    likeCount: int
+    commentCount: int
+    appendedUpdateCount: int | None = None
+    latestUpdate: Latestupdate | None = None
+    banInfo: Baninfo | None = None
+    unbanInfo: Baninfo | None = None
 
 
 class ItemVerification(BaseModel):
@@ -4132,29 +4032,29 @@ class ItemVerification(BaseModel):
 
 
 class Latestupdate(BaseModel):
-    attachments: list[SubmissionAttachment] | None = None
-    bodyMarkdown: str
-    createdAt: str
-    links: list[str] | None = None
     updateId: str
+    createdAt: str
+    bodyMarkdown: str
+    attachments: list[SubmissionAttachment] | None = None
+    links: list[str] | None = None
 
 
 class Leaderboard(BaseModel):
     builtAtMs: int
-    endSec: int
-    entries: list[Top]
-    isFinal: bool
     startSec: int
+    endSec: int
     totalRanked: int
+    isFinal: bool
+    entries: list[Top]
 
 
 class LeaderboardTierStats(BaseModel):
     appearances: int
-    averageRank: float | None = None
     currentStreak: int
-    firstPlaceFinishes: int
     longestStreak: int
+    firstPlaceFinishes: int
     topThreeFinishes: int
+    averageRank: float | None = None
 
 
 class Legsbymint(BaseModel):
@@ -4164,244 +4064,235 @@ class Legsbymint(BaseModel):
 
 
 class Liker(BaseModel):
-    activeCompetitionEntry: Annotated[None, Field(None)] = None
+    userId: str
+    username: str
     bio: str
-    createdAt: str
+    profileImageUrl: str
+    headerImageUrl: str
     followerCount: int
     followingCount: int
-    generatedMedia: Generatedmedia | None
-    groupBadges: list[Groupbadge]
-    headerImageUrl: str
-    isPumpUser: bool | None = None
+    createdAt: str
+    updatedAt: str
+    walletAddress: str
+    socials: list[Social]
     isVerified: bool
+    verifiedBadgeVisible: bool
     kind: str
     memberCount: int
     membershipPolicy: None
-    profileImageUrl: str
+    groupBadges: list[Groupbadge]
+    generatedMedia: Generatedmedia | None
+    isPumpUser: bool | None = None
     resolvedAvatarDecoration: str | None = None
-    socials: list[Social]
-    updatedAt: str
-    userId: str
-    username: str
-    verifiedBadgeVisible: bool
-    walletAddress: str
-
-
-class LineChart(BaseModel):
-    price: float
-    time: int
-
-
-class LineChartParams(BaseModel):
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds, as returned by the coin endpoints. pump.fun does not use it to pick the window: any value returns the same series.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-    timeframe: ChartTimeframe | None = ChartTimeframe.FIELD_24H
-    """
-    Series window.
-    """
-    width: Annotated[int | None, Field(ge=2, le=512)] = 64
-    """
-    Points pump.fun aims for. It treats this as a hint: the count it returns varies with the timeframe and can exceed `width`.
-    """
+    activeCompetitionEntry: Annotated[None, Field(None)] = None
 
 
 class ListCompetitionsResponse(BaseModel):
+    upcoming: list[Any]
     live: list[Competition]
     past: list[Competition]
-    upcoming: list[Any]
 
 
 class ListedCoin(BaseModel):
+    mint: str
+    initialized: bool
+    name: str
+    symbol: str
+    description: str | None = None
+    image_uri: str | None = None
+    metadata_uri: str | None = None
+    bonding_curve: str
     associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
+    virtual_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    virtual_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    total_supply: int
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    updated_at: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    is_currently_live: bool
     ath_market_cap: float | int | str | None = None
     ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
+    hide_banner: bool
+    program: str
+    token_program: str | None = None
+    mayhem_state: str | None = None
+    quote_mint: str | None = None
     base_decimals: int | None = None
-    bonding_curve: str
-    boost_mode: str
+    quote_decimals: int | None = None
+    pool_address: str | None = None
+    is_cashback_enabled: bool | None = None
     chain_id: str
-    complete: bool
-    created_timestamp: int
-    creator: str
+    multichain_family: int
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float | None = None
+    virtual_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    market_cap_quote: float | None = None
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
+    username: str | None = None
+    profile_image: str | None = None
+    usd_market_cap: float | None = None
+    twitter: str | None = None
+    website: str | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    telegram: str | None = None
+    last_reply: int | None = None
+    banner_uri: str | None = None
+    is_charity: bool | None = None
+    video_uri: str | None = None
+    hidden: bool | None = None
+    king_of_the_hill_timestamp: int | None = None
+    market_id: str | None = None
+    raydium_pool: str | None = None
+    indexed_by_pump: bool | None = None
     cto_address: str | None = None
     cto_profile_image: str | None = None
     cto_username: str | None = None
-    depth: int | None = None
-    description: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str | None = None
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float
-    market_id: str | None = None
-    mayhem_state: str | None = None
-    metadata_uri: str | None = None
-    mint: str
-    multichain_family: int
-    name: str
-    nsfw: bool
-    pool_address: str | None = None
-    profile_image: str | None = None
-    program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    raydium_pool: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
-    show_name: bool
-    symbol: str
-    telegram: str | None = None
-    token_program: str | None = None
-    total_supply: int
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float
-    username: str | None = None
-    verified: bool
-    video_uri: str | None = None
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
-    website: str | None = None
 
 
 class ListedUser(BaseModel):
-    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
-    avatar_decoration: str | None
-    bio: str | None
-    canonical_evm_wallet: str | None = None
-    canonical_svm_wallet: str
-    followers: int
-    following: int
-    header_image_url: str | None
-    is_banned: bool
-    is_pump_user: bool
-    kind: str
-    last_username_update_timestamp: int | None
-    member_count: int
-    profile_image: str
-    resolved_avatar_decoration: str | None = None
     userId: str
+    is_pump_user: bool
+    is_banned: bool
     username: str
+    profile_image: str
+    header_image_url: str | None
+    avatar_decoration: str | None
+    kind: str
+    member_count: int
+    last_username_update_timestamp: int | None
+    following: int
+    followers: int
+    bio: str | None
     x_username: str | None
+    canonical_svm_wallet: str
+    canonical_evm_wallet: str | None = None
+    resolved_avatar_decoration: str | None = None
+    active_competition_entry: Annotated[None, Field(None)] = None
 
 
 class LiveCoin(BaseModel):
+    mint: str
+    initialized: bool
+    name: str
+    symbol: str
+    description: str | None = None
+    image_uri: str
+    metadata_uri: str
+    twitter: str | None = None
+    bonding_curve: str
     associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
+    total_supply: int
+    website: str | None = None
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    is_currently_live: bool
     ath_market_cap: float | None = None
     ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
-    base_decimals: int | None = None
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    complete: bool
-    created_timestamp: int
-    creator: str
-    cto_address: str | None = None
-    depth: int
-    description: str | None = None
-    hidden: bool | None = None
     hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
+    program: str
+    token_program: str | None = None
+    quote_mint: str | None = None
+    base_decimals: int | None = None
+    quote_decimals: int | None = None
+    pool_address: str | None = None
     is_cashback_enabled: bool
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    livestream_title: str | None = None
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float | None = None
-    mayhem: LiveCoinMayhem | None = None
-    mayhem_state: str | None = None
-    metadata_uri: str
-    mint: str
+    chain_id: str
     multichain_family: int
-    name: str
-    nsfw: bool
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float | None = None
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float | None = None
+    thumbnail: str
+    thumbnail_updated_at: int | None = None
     num_participants: int
-    playlist_status: str | None
-    playlist_updated_at: str | None
+    livestream_title: str | None = None
     playlist_url: str | None
     playlist_url_high: str | None
     playlist_url_low: str | None
-    pool_address: str | None = None
-    program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    symbol: str
-    telegram: str | None = None
-    thumbnail: str
-    thumbnail_updated_at: int | None = None
-    token_program: str | None = None
-    tokenized_agent: bool | None = None
-    total_supply: int
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool
-    video_uri: str | None = None
-    virtual_quote_reserves: int | None = None
-    virtual_sol_reserves: int | None = None
-    virtual_token_reserves: int | None = None
     vod_playlist_url: str | None
-    website: str | None = None
+    playlist_status: str | None
+    playlist_updated_at: str | None
+    telegram: str | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    king_of_the_hill_timestamp: int | None = None
+    banner_uri: str | None = None
+    last_reply: int | None = None
+    cto_address: str | None = None
+    mayhem: LiveCoinMayhem | None = None
+    mayhem_state: str | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    video_uri: str | None = None
+    hidden: bool | None = None
+    indexed_by_pump: bool | None = None
+    is_backfill: bool | None = None
+    is_charity: bool | None = None
+    tokenized_agent: bool | None = None
 
 
 class LiveCoinMayhem(BaseModel):
@@ -4411,10 +4302,6 @@ class LiveCoinMayhem(BaseModel):
 
 
 class LiveCoinsParams(BaseModel):
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=70)] = 60
     """
     Maximum coins to return.
@@ -4423,22 +4310,26 @@ class LiveCoinsParams(BaseModel):
     """
     Rows to skip.
     """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
+    """
 
 
 class Livestream(BaseModel):
-    creatorAddress: str
-    downrankScore: int
     id: int
-    isLive: bool
-    maxParticipants: int
     mintId: str
-    mode: str
-    numParticipants: int
+    creatorAddress: str
     streamStartTimestamp: int
-    supabaseId: int | None = None
+    numParticipants: int
+    maxParticipants: int
+    isLive: bool
     thumbnail: str
     thumbnailUpdatedAt: int
+    downrankScore: int
     title: str
+    mode: str
+    supabaseId: int | None = None
 
 
 class GetLivestreamResponse(RootModel[Livestream | None]):
@@ -4446,13 +4337,13 @@ class GetLivestreamResponse(RootModel[Livestream | None]):
 
 
 class LivestreamHistoryParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum sessions to return.
-    """
     mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
     """
     Token mint address.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum sessions to return.
     """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
@@ -4468,37 +4359,37 @@ class LivestreamParams(BaseModel):
 
 
 class Location(BaseModel):
-    label: str
-    lat: float
     lng: float
     radiusMeters: int
+    label: str
+    lat: float
 
 
 class MapEntry(BaseModel):
-    endedAt: str | None
     playlistKey: str | None
-    playlistKeyHigh: str | None
-    playlistKeyLow: str | None
     playlistUrl: str | None
+    playlistKeyHigh: str | None
     playlistUrlHigh: str | None
+    playlistKeyLow: str | None
     playlistUrlLow: str | None
-    startedAt: str | None
-    status: str | None
-    thumbnailKey: str | None
-    thumbnailUrl: str | None
-    updatedAt: str | None
     vodPlaylistKey: str | None
     vodPlaylistUrl: str | None
+    thumbnailKey: str | None
+    thumbnailUrl: str | None
+    status: str | None
+    updatedAt: str | None
+    startedAt: str | None
+    endedAt: str | None
 
 
 class MarketActivityBatchEntry(BaseModel):
-    field_15m: Annotated[GetMarketActivityResponse5m | None, Field(alias="15m")] = None
-    field_1h: Annotated[GetMarketActivityResponse5m, Field(alias="1h")]
-    field_1m: Annotated[GetMarketActivityResponse5m | None, Field(alias="1m")] = None
-    field_24h: Annotated[GetMarketActivityResponse5m, Field(alias="24h")]
-    field_30m: Annotated[GetMarketActivityResponse5m | None, Field(alias="30m")] = None
     field_5m: Annotated[GetMarketActivityResponse5m | None, Field(alias="5m")]
+    field_1h: Annotated[GetMarketActivityResponse5m, Field(alias="1h")]
     field_6h: Annotated[GetMarketActivityResponse5m, Field(alias="6h")]
+    field_24h: Annotated[GetMarketActivityResponse5m, Field(alias="24h")]
+    field_1m: Annotated[GetMarketActivityResponse5m | None, Field(alias="1m")] = None
+    field_15m: Annotated[GetMarketActivityResponse5m | None, Field(alias="15m")] = None
+    field_30m: Annotated[GetMarketActivityResponse5m | None, Field(alias="30m")] = None
 
 
 class GetMarketActivityBatchResponse(RootModel[dict[str, MarketActivityBatchEntry]]):
@@ -4506,14 +4397,6 @@ class GetMarketActivityBatchResponse(RootModel[dict[str, MarketActivityBatchEntr
 
 
 class MarketActivityBatchRequest(BaseModel):
-    intervals: list[MarketActivityInterval] | None = None
-    """
-    Rolling windows to aggregate. Defaults to 5m, 1h, 6h and 24h.
-    """
-    metrics: list[MarketActivityMetric] | None = None
-    """
-    Metrics to return per window. Defaults to every metric.
-    """
     mints: Annotated[
         list[Mint],
         Field(
@@ -4525,13 +4408,17 @@ class MarketActivityBatchRequest(BaseModel):
     """
     Coin addresses (Solana mints or EVM tokens), 1 to 50.
     """
+    intervals: list[MarketActivityInterval] | None = None
+    """
+    Rolling windows to aggregate. Defaults to 5m, 1h, 6h and 24h.
+    """
+    metrics: list[MarketActivityMetric] | None = None
+    """
+    Metrics to return per window. Defaults to every metric.
+    """
 
 
 class MarketActivityParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
     mint: Annotated[
         str,
         Field(
@@ -4542,90 +4429,118 @@ class MarketActivityParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    chain: TokenChain | None = None
+    """
+    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
+    """
 
 
 class Mayhem(BaseModel):
-    complete_reason: str | None = None
-    mode: str | None = None
-    pause_reason: str | None = None
     state: str
+    mode: str | None = None
+    complete_reason: str | None = None
+    pause_reason: str | None = None
 
 
 class MayhemCoin(BaseModel):
+    mint: str
+    initialized: bool
+    name: str
+    symbol: str
+    description: str | None = None
+    image_uri: str | None = None
+    metadata_uri: str
+    bonding_curve: str
     associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
+    virtual_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    virtual_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    total_supply: int
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    updated_at: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    is_currently_live: bool
     ath_market_cap: float
     ath_market_cap_timestamp: int
-    banner_uri: str | None = None
-    base_decimals: int
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool
-    created_timestamp: int
-    creator: str
-    cto_address: str | None = None
-    cto_profile_image: str | None = None
-    cto_username: str | None = None
-    depth: int | None = None
-    description: str | None = None
     hide_banner: bool
-    image_uri: str
-    initialized: bool
-    inverted: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float
-    market_cap_quote: float
-    market_cap_usd: float
-    mayhem_state: str
-    metadata_uri: str
-    mint: str
-    multichain_family: int
-    name: str
-    nsfw: bool
-    num_participants: int | None = None
-    pool_address: str
-    profile_image: str | None = None
     program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
-    show_name: bool
-    symbol: str
-    telegram: str | None = None
-    thumbnail: str | None = None
-    thumbnail_updated_at: int | None = None
     token_program: str
-    tokenized_agent: bool | None = None
-    total_supply: int
+    mayhem_state: str
+    quote_mint: str | None = None
+    base_decimals: int
+    quote_decimals: int | None = None
+    pool_address: str | None = None
+    is_cashback_enabled: bool
+    chain_id: str
+    multichain_family: int
+    protocol: str
     total_supply_str: str
+    market_cap_usd: float
+    virtual_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    market_cap_quote: float
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int
-    usd_market_cap: float
+    depth: int | None = None
     username: str | None = None
-    verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
+    profile_image: str | None = None
+    usd_market_cap: float
     volume_1h_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    twitter: str | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    thumbnail: str | None = None
+    thumbnail_updated_at: int | None = None
+    num_participants: int | None = None
+    banner_uri: str | None = None
     website: str | None = None
+    telegram: str | None = None
+    last_reply: int | None = None
+    tokenized_agent: bool | None = None
+    king_of_the_hill_timestamp: int | None = None
+    cto_address: str | None = None
+    cto_username: str | None = None
+    cto_profile_image: str | None = None
+    is_charity: bool | None = None
 
 
 class MayhemCoinTopTradersParams(BaseModel):
@@ -4642,10 +4557,6 @@ class MayhemCoinTopTradersParams(BaseModel):
 
 
 class MayhemCoinsParams(BaseModel):
-    include_nsfw: bool | None = None
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 60
     """
     Maximum coins to return. pump.fun serves 60 at most.
@@ -4657,6 +4568,10 @@ class MayhemCoinsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=1000)] = None
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = None
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -4688,35 +4603,35 @@ class MayhemTopTradersParams(BaseModel):
 
 
 class Member(BaseModel):
-    buySpendSol: float
-    fresh: bool
-    isVerified: bool
-    lastRefreshedAtMs: int
+    userId: str
+    walletAddress: str
     pnlUsd: float
-    profileImageUrl: str
     realizedPnlUsd: float
     unrealizedPnlUsd: float
-    userId: str
+    buySpendSol: float
+    fresh: bool
+    lastRefreshedAtMs: int
     username: str
+    profileImageUrl: str
+    isVerified: bool
     verifiedBadgeVisible: bool
-    walletAddress: str
 
 
 class Meta(BaseModel):
-    coverageFrom: int | None = None
-    walletsAnswered: int
-    walletsDegraded: list[Any]
     walletsRequested: int
+    walletsAnswered: int
     walletsUnanswered: list[Any]
+    walletsDegraded: list[Any]
+    coverageFrom: int | None = None
 
 
 class Metadata(BaseModel):
-    decimals: str | None = None
-    icon: str
     name: str
+    symbol: str
+    icon: str
+    decimals: str | None = None
     program: str | None = None
     supported: str | None = None
-    symbol: str
 
 
 class Mint(RootModel[str]):
@@ -4728,18 +4643,6 @@ class Mint4(RootModel[str]):
 
 
 class MintPositionsParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    `RANKED` only: chain of an EVM coin.
-    """
-    dust_floor_usd: Annotated[float | None, Field(ge=0.0, le=100000.0)] = None
-    """
-    Ignore positions below this USD value. Refused with `RANKED` and `CLOSED_PNL`.
-    """
-    include_profile: bool | None = None
-    """
-    Embed each holder's full profile.
-    """
     mint: Annotated[
         str,
         Field(
@@ -4750,103 +4653,87 @@ class MintPositionsParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
-    page: Annotated[int | None, Field(ge=0)] = None
-    """
-    Page number, from 0. Not with `RANKED`.
-    """
     page_size: Annotated[int | None, Field(ge=1, le=50)] = 50
     """
     Positions per page.
-    """
-    page_token: Annotated[str | None, Field(max_length=256)] = None
-    """
-    `RANKED` only: `nextPageToken` from the previous page. pump.fun answered `RANKED` in one page (`hasMore` false) with no `nextPageToken` in every probe since 2026-10-08.
     """
     sort_by: MintPositionSort | None = MintPositionSort.TOP
     """
     Ranking column.
     """
-    updates_limit: Annotated[int | None, Field(ge=0, le=20)] = None
-    """
-    Author updates per callout (pump.fun's default 5).
-    """
     with_thesis: bool | None = None
     """
     Only positions carrying a written thesis. `RANKED` and `CLOSED_PNL` need `true`.
     """
+    page: Annotated[int | None, Field(ge=0)] = None
+    """
+    Page number, from 0. Not with `RANKED`.
+    """
+    updates_limit: Annotated[int | None, Field(ge=0, le=20)] = None
+    """
+    Author updates per callout (pump.fun's default 5).
+    """
+    include_profile: bool | None = None
+    """
+    Embed each holder's full profile.
+    """
+    dust_floor_usd: Annotated[float | None, Field(ge=0.0, le=100000.0)] = None
+    """
+    Ignore positions below this USD value. Refused with `RANKED` and `CLOSED_PNL`.
+    """
+    page_token: Annotated[str | None, Field(max_length=256)] = None
+    """
+    `RANKED` only: `nextPageToken` from the previous page. pump.fun answered `RANKED` in one page (`hasMore` false) with no `nextPageToken` in every probe since 2026-10-08.
+    """
+    chain: TokenChain | None = None
+    """
+    `RANKED` only: chain of an EVM coin.
+    """
 
 
 class Monad(BaseModel):
-    dust_count: int | None = None
-    dust_value_usd: float | None = None
+    wallet_address: str | None
+    total_value: float
+    token_count: int
     hidden_count: int | None = None
     hidden_value_usd: float | None = None
-    token_count: int
-    total_value: float
-    wallet_address: str | None
+    dust_count: int | None = None
+    dust_value_usd: float | None = None
 
 
 class MoversBoardParams(BaseModel):
-    chains: list[NonMonadChain] | None = None
-    """
-    Keep only coins on these chains. Repeat the parameter for several.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum board entries to return. pump.fun serves at most 150.
     """
+    chains: list[NonMonadChain] | None = None
+    """
+    Keep only coins on these chains. Repeat the parameter for several.
+    """
 
 
 class MultiChainBreakdown(BaseModel):
-    arc: Solana | None = None
-    base: Solana
-    bsc: Solana
+    solana: Solana
     ethereum: Solana
+    bsc: Solana
+    base: Solana
+    robinhood: Solana
     hype: Solana
     ink: Solana | None = None
-    megaeth: Solana | None = None
+    arc: Solana | None = None
     monad: Monad | None = None
-    polygon: Solana | None = None
-    robinhood: Solana
-    solana: Solana
+    megaeth: Solana | None = None
     xlayer: Solana | None = None
+    polygon: Solana | None = None
 
 
 class Nativeasset(BaseModel):
-    address: str
     chainId: str
+    address: str
     symbol: str
 
 
 class NewCalloutsCountParams(BaseModel):
-    chain: FeedChain | None = FeedChain.ALL
-    """
-    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
-    """
-    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at most this.
-    """
-    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at most this.
-    """
-    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at most this.
-    """
-    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at least this.
-    """
-    min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at least this.
-    """
-    min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at least this.
-    """
     since: Annotated[
         str,
         Field(
@@ -4857,37 +4744,37 @@ class NewCalloutsCountParams(BaseModel):
     """
     `headToken` from `/home-feed/new`, kept until you reload the feed.
     """
-
-
-class NewCalloutsFeedParams(BaseModel):
     chain: FeedChain | None = FeedChain.ALL
     """
     Restrict the feed to one chain. pump.fun's feed does not cover Monad.
-    """
-    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at most this.
-    """
-    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at most this.
-    """
-    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at most this.
-    """
-    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at least this.
     """
     min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
     Keep positions whose net USD cost basis is at least this.
     """
+    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at most this.
+    """
+    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at least this.
+    """
+    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at most this.
+    """
     min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
     Keep coins whose current market cap in USD is at least this.
     """
+    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at most this.
+    """
+
+
+class NewCalloutsFeedParams(BaseModel):
     page_size: Annotated[int | None, Field(ge=1, le=50)] = 25
     """
     Number of callouts to return.
@@ -4905,6 +4792,34 @@ class NewCalloutsFeedParams(BaseModel):
     """
     Author updates to include per callout.
     """
+    chain: FeedChain | None = FeedChain.ALL
+    """
+    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
+    """
+    min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at least this.
+    """
+    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at most this.
+    """
+    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at least this.
+    """
+    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at most this.
+    """
+    min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at least this.
+    """
+    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at most this.
+    """
 
 
 class OnboardingSuggestionsParams(BaseModel):
@@ -4915,60 +4830,60 @@ class OnboardingSuggestionsParams(BaseModel):
 
 
 class Page(BaseModel):
-    limit: int
     nextCursor: str | None
     to: int | None
+    limit: int
 
 
 class PageCursor(BaseModel):
+    nextCursor: str | None
     hasMore: bool
     limit: int
-    nextCursor: str | None
 
 
 class Parentbounty(BaseModel):
-    attachments: list[Attachment] | None = None
-    banInfo: Baninfo | None = None
-    bodyMarkdown: str
-    chainConfigSnapshot: Chainconfigsnapshot
-    coinAddress: str | None = None
-    contributors: list[Contributor]
-    counts: Count
-    createdAt: str
+    taskId: str
     creatorAddress: str
+    title: str
+    bodyMarkdown: str
     criteria: list[Criteria]
-    draftResolution: BountyDraftResolution | None = None
-    expiresAt: str
-    fundedAt: str
-    latestDisputePublishedAt: str | None = None
-    likeCount: int
-    onChainBountyId: str
-    publishedAt: str
-    pumpBountiesProgramId: str
-    resolution: BountyResolution | None = None
-    resolutionHistory: list[BountyResolutionHistory] | None = None
+    submissionVisibility: str
     rewardDistribution: Rewarddistribution
     rewardLegs: list[Rewardleg]
+    contributors: list[Contributor]
+    attachments: list[Attachment] | None = None
+    coinAddress: str | None = None
+    status: str
+    createdAt: str
+    expiresAt: str
+    publishedAt: str
+    fundedAt: str
+    counts: Count
+    likeCount: int
+    pumpBountiesProgramId: str
+    onChainBountyId: str
+    chainConfigSnapshot: Chainconfigsnapshot
+    rewardTotalUsd: float
     rewardLegsUsd: list[Rewardlegsusd]
     rewardPricedAt: str
-    rewardTotalUsd: float
-    status: str
-    submissionVisibility: str
-    taskId: str
-    title: str
+    latestDisputePublishedAt: str | None = None
+    resolution: BountyResolution | None = None
+    draftResolution: BountyDraftResolution | None = None
+    resolutionHistory: list[BountyResolutionHistory] | None = None
+    banInfo: Baninfo | None = None
     unbanInfo: Baninfo | None = None
     unbanRequest: Unbanrequest | None = None
 
 
 class Payout(BaseModel):
-    lastPayoutAt: str
-    opsCharge: str | None
+    quoteMintAddress: str
     paidToHolders: str | None
     paidToHoldersQuote: str | None
     paidToHoldersUsd: str | None
+    opsCharge: str | None
     payoutCount: int
-    quoteMintAddress: str
     recipientCount: int
+    lastPayoutAt: str
 
 
 class PayoutsLeaderboardParams(BaseModel):
@@ -4987,23 +4902,23 @@ class PayoutsLeaderboardParams(BaseModel):
 
 
 class Perp(BaseModel):
-    closedPnlUsd: str
     dir: str
+    closedPnlUsd: str
     feeUsd: str
     isLiquidation: bool
     twapId: str | None = None
 
 
 class PerpMarket(BaseModel):
-    assetClass: str
-    chain: str
-    description: str | None = None
-    image_backdrop: str | None = None
-    image_uri: str | None = None
     mint: str
     name: str
-    perp: PerpPerp
     symbol: str
+    image_uri: str | None = None
+    chain: str
+    assetClass: str
+    perp: PerpPerp
+    description: str | None = None
+    image_backdrop: str | None = None
 
 
 class PerpOrdersParams(BaseModel):
@@ -5024,21 +4939,21 @@ class PerpOrdersParams(BaseModel):
 
 
 class PerpPerp(BaseModel):
-    asOf: str
-    category: str | None
-    dex: str | None
-    fundingRateHourly: str
-    isDelisted: bool
     markPx: str
-    maxLeverage: int
-    nextFundingAt: str
-    onlyIsolated: bool
-    openInterestUsd: str
     oraclePx: str
-    priceChange24hBps: int
+    fundingRateHourly: str
+    openInterestUsd: str
+    nextFundingAt: str
+    asOf: str
     stale: bool
+    maxLeverage: int
     szDecimals: int
+    onlyIsolated: bool
+    dex: str | None
+    category: str | None
+    isDelisted: bool
     volume24hUsd: str
+    priceChange24hBps: int
 
 
 class PerpTradesParams(BaseModel):
@@ -5052,6 +4967,10 @@ class PerpTradesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
+    """
+    Maximum rows to return.
+    """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
     `nextCursor` from the previous page; omit for the first page.
@@ -5060,13 +4979,13 @@ class PerpTradesParams(BaseModel):
     """
     Row kinds. pump.fun returns fills and transfers by default.
     """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum rows to return.
-    """
 
 
 class PerpsParams(BaseModel):
+    sort: PerpSort | None = PerpSort.VOLUME_24H
+    """
+    Ranking column.
+    """
     limit: Annotated[int | None, Field(ge=1, le=150)] = 30
     """
     Maximum perps to return.
@@ -5075,16 +4994,12 @@ class PerpsParams(BaseModel):
     """
     Rows to skip.
     """
-    sort: PerpSort | None = PerpSort.VOLUME_24H
-    """
-    Ranking column.
-    """
 
 
 class Playback(BaseModel):
-    hlsUrl: str
-    mp4Url: str
     posterUrl: str
+    mp4Url: str
+    hlsUrl: str
 
 
 class PlaylistMapRequest(BaseModel):
@@ -5098,48 +5013,48 @@ class PlaylistMapRequest(BaseModel):
 
 
 class PnlLeaderboardParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 100
-    """
-    Maximum traders to return. pump.fun serves 100 at most.
-    """
     period: LeaderboardPeriod | None = LeaderboardPeriod.DAILY
     """
     Ranking window.
-    """
-    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
-    """
-    Top positions shown per trader (pump.fun's default 3).
     """
     sort: LeaderboardSort | None = LeaderboardSort.COMBINED
     """
     Which PnL figure ranks traders.
     """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 100
+    """
+    Maximum traders to return. pump.fun serves 100 at most.
+    """
+    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
+    """
+    Top positions shown per trader (pump.fun's default 3).
+    """
 
 
 class PnlLeaderboardPositionsParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=25)] = None
-    """
-    Maximum positions to return.
-    """
     period: PositionsPeriod | None = PositionsPeriod.DAILY
     """
     Ranking window.
     """
+    limit: Annotated[int | None, Field(ge=1, le=25)] = None
+    """
+    Maximum positions to return.
+    """
 
 
 class Pnlloop(BaseModel):
-    durationSeconds: float
     uid: str
+    durationSeconds: float
 
 
 class Point(BaseModel):
-    price: str
     time: int
+    price: str
 
 
 class Pool(BaseModel):
-    address: str
     chainId: str
+    address: str
 
 
 class PortfolioSummaryCache(BaseModel):
@@ -5177,64 +5092,64 @@ class PortfolioValueChartParams(BaseModel):
 
 class Portfoliopnl(BaseModel):
     total_cost_basis_usd: float
-    total_percentage: float
     total_unrealized_usd: float
+    total_percentage: float
 
 
 class Position(BaseModel):
-    amountBought: float
-    amountBoughtUsd: float
     amountHeld: float
-    avgEntryMcapUsd: float | None
+    valueUsd: float | None
+    pnlUsd: float
+    pnlPercentage: float
+    isExited: bool
     costBasisAmount: float
     costBasisUsd: float | None
-    isExited: bool
-    perp: Annotated[None, Field(None)] = None
-    pnlPercentage: float
-    pnlUsd: float
+    amountBoughtUsd: float
+    amountBought: float
     realizedPnlUsd: float
+    avgEntryMcapUsd: float | None
+    perp: Annotated[None, Field(None)] = None
     receiptBasisUsd: float | None = None
-    valueUsd: float | None
 
 
 class PositionCallout(BaseModel):
-    actingUser: Annotated[None, Field(None)] = None
-    actingUserId: Annotated[None, Field(None)] = None
-    assetClass: str | None = None
-    calledOutAtMcap: float
     calloutId: str
-    calloutPrice: float
-    calloutTimestamp: str
     chain: str | None = None
-    commentCount: int
-    hasLiked: None
-    hasReposted: None
+    assetClass: str | None = None
+    perp: CalloutPerp | None = None
+    calledOutAtMcap: float
+    multiple: float
+    thesis: str
+    mediaUrl: str | None
+    calloutTimestamp: str
     likes: int
+    hasLiked: None
+    updates: list[Update]
+    updateCount: int
+    commentCount: int
+    replyCount: int
     maxMultiplier: float
     maxMultiplierAt: str | None
-    mediaUrl: str | None
-    multiple: float
-    perp: Annotated[None, Field(None)] = None
-    quoteCount: int
-    quotedCallout: None
-    quotedCalloutId: None
-    replyCount: int
+    calloutPrice: float
     repostCount: int
-    thesis: str
-    updateCount: int
-    updates: list[Update]
+    quoteCount: int
+    hasReposted: None
     viewCount: int | None = None
+    quotedCalloutId: None
+    quotedCallout: None
+    actingUserId: Annotated[None, Field(None)] = None
+    actingUser: Annotated[None, Field(None)] = None
 
 
 class PositionCoin(BaseModel):
+    name: str | None
+    symbol: str | None
     imageUri: str | None
     marketCapUsd: float | None
-    name: str | None
+    totalSupply: float | None
+    protocol: str | None = None
     platform: str | None = None
     program: str | None = None
-    protocol: str | None = None
-    symbol: str | None
-    totalSupply: float | None
 
 
 class PositionQuote(BaseModel):
@@ -5244,9 +5159,9 @@ class PositionQuote(BaseModel):
 
 
 class Prize(BaseModel):
-    amount: str
     rankFrom: int
     rankTo: int
+    amount: str
 
 
 class ProfileIdsRequest(BaseModel):
@@ -5264,12 +5179,12 @@ class ProfileIdsRequest(BaseModel):
 
 
 class Progress(BaseModel):
-    currentValue: float
     metric: str
-    nextAchievementId: str | None
+    currentValue: float
     nextThreshold: int | None
-    previousAchievementId: str | None
+    nextAchievementId: str | None
     previousThreshold: int | None
+    previousAchievementId: str | None
 
 
 class Qr(BaseModel):
@@ -5278,37 +5193,37 @@ class Qr(BaseModel):
 
 
 class Quote(BaseModel):
-    accountKind: str
-    authorReply: None
+    id: str
     content: str
     createdAt: str
-    directReplyCount: int
-    hasLiked: None
-    id: str
-    isQuote: bool
     likeCount: int
+    userId: str
+    walletAddress: str
+    userName: str
+    profileImage: str
+    accountKind: str
     mediaUrl: str | None
     parentMessageId: str | None
-    positionAmountBought: float
-    positionAmountBoughtUsd: float
+    rootMessageId: str | None
+    directReplyCount: int
+    threadReplyCount: int | None
+    previewReplies: list[Any]
+    authorReply: None
+    tombstone: bool
+    hasLiked: None
+    viewerFollowsAuthor: None
+    repostCount: int
     positionAmountHeld: float | None
-    positionAvgEntryMcapUsd: float | None
+    positionValueUsd: float | None
+    positionPnlUsd: float
+    positionPnlPercentage: float
     positionCostBasisAmount: float
     positionCostBasisUsd: float | None
-    positionPnlPercentage: float
-    positionPnlUsd: float
+    positionAmountBoughtUsd: float
+    positionAmountBought: float
     positionRealizedPnlUsd: float
-    positionValueUsd: float | None
-    previewReplies: list[Any]
-    profileImage: str
-    repostCount: int
-    rootMessageId: str | None
-    threadReplyCount: int | None
-    tombstone: bool
-    userId: str
-    userName: str
-    viewerFollowsAuthor: None
-    walletAddress: str
+    positionAvgEntryMcapUsd: float | None
+    isQuote: bool
 
 
 class QuoteCallout(BaseModel):
@@ -5331,21 +5246,21 @@ class QuoteCallout(BaseModel):
 
 
 class QuoteEntry(BaseModel):
-    decimals: int | None
-    imageUri: str | None
     mint: str
-    name: str | None
-    symbol: str | None
+    decimals: int | None
     usdPrice: float | None
+    symbol: str | None
+    name: str | None
+    imageUri: str | None
 
 
 class Quotefacet(BaseModel):
-    assetClass: str | None = None
-    coinCount: int
-    imageUri: str | None = None
     mint: str
-    name: str | None = None
+    coinCount: int
     symbol: str | None = None
+    name: str | None = None
+    imageUri: str | None = None
+    assetClass: str | None = None
 
 
 class RawCoinsBatchRequest(BaseModel):
@@ -5363,71 +5278,63 @@ class RawCoinsBatchRequest(BaseModel):
 
 
 class Realized(BaseModel):
-    amount_sold: float
+    pnl: CostBasis
+    percentage: CostBasis
     avg_buy_price: CostBasis
     avg_sell_price: CostBasis
-    percentage: CostBasis
-    pnl: CostBasis
+    amount_sold: float
     total_in: CostBasis
     total_out: CostBasis
 
 
 class Recipient(BaseModel):
     address: str
-    amount: Baseamount
     shareBps: int
+    amount: Baseamount
 
 
 class Replayintro(BaseModel):
+    uid: str
     durationSeconds: float
     fireAt: float
-    uid: str
 
 
 class Reply(BaseModel):
-    accountKind: str | None = None
-    authorReply: Reply | None
+    id: str
     content: str
     createdAt: str
-    directReplyCount: int
-    hasLiked: None
-    id: str
-    isQuote: bool
     likeCount: int
+    userId: str
+    walletAddress: str
+    userName: str
+    profileImage: str
+    accountKind: str | None = None
     mediaUrl: str | None
     parentMessageId: str | None
-    positionAmountBought: float | None
-    positionAmountBoughtUsd: float | None
+    rootMessageId: str | None
+    directReplyCount: int
+    threadReplyCount: int | None
+    previewReplies: list[Any]
+    authorReply: Reply | None
+    tombstone: bool
+    hasLiked: None
+    viewerFollowsAuthor: None
+    repostCount: int
     positionAmountHeld: float | None
-    positionAvgEntryMcapUsd: float | None
+    positionValueUsd: float | None
+    positionPnlUsd: float | None
+    positionPnlPercentage: float | None
     positionCostBasisAmount: float
     positionCostBasisUsd: float | None
-    positionPnlPercentage: float | None
-    positionPnlUsd: float | None
+    positionAmountBoughtUsd: float | None
+    positionAmountBought: float | None
     positionRealizedPnlUsd: float | None
-    positionValueUsd: float | None
-    previewReplies: list[Any]
-    profileImage: str
-    repostCount: int
-    rootMessageId: str | None
-    threadReplyCount: int | None
-    tombstone: bool
-    userId: str
-    userName: str
+    positionAvgEntryMcapUsd: float | None
+    isQuote: bool
     viewCount: int | None = None
-    viewerFollowsAuthor: None
-    walletAddress: str
 
 
 class ReplyLikersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
-    """
-    Maximum profiles to return.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
-    """
-    Rows to skip. pump.fun stops at 10,000.
-    """
     reply_id: Annotated[
         str,
         Field(
@@ -5437,18 +5344,18 @@ class ReplyLikersParams(BaseModel):
     ]
     """
     Callout reply UUID.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    """
+    Maximum profiles to return.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
+    """
+    Rows to skip. pump.fun stops at 10,000.
     """
 
 
 class ReplyRepostersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
-    """
-    Maximum profiles to return.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
-    """
-    Rows to skip. pump.fun stops at 10,000.
-    """
     reply_id: Annotated[
         str,
         Field(
@@ -5458,6 +5365,14 @@ class ReplyRepostersParams(BaseModel):
     ]
     """
     Callout reply UUID.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    """
+    Maximum profiles to return.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
+    """
+    Rows to skip. pump.fun stops at 10,000.
     """
 
 
@@ -5475,70 +5390,70 @@ class ReplyThreadParams(BaseModel):
 
 
 class Repost(BaseModel):
-    callout: RepostCallout | None
-    createdAt: str
     id: str
     kind: str
-    quote: PositionQuote | None
-    reply: Quote | None
+    createdAt: str
     reposter: RepostReposter | None
+    callout: RepostCallout | None
+    reply: Quote | None
+    quote: PositionQuote | None
 
 
 class RepostCallout(BaseModel):
-    accountKind: str
-    callout: PositionCallout
-    coinImage: str
     coinMint: str
-    coinName: str
-    isVerified: bool
-    marketCap: float
-    mediaUrl: str | None
-    position: Position
-    profileImage: str
-    symbol: str
+    walletAddress: str
     userId: str
     userName: str
+    profileImage: str
+    isVerified: bool
     verifiedBadgeVisible: bool
-    walletAddress: str
-    xFollowerCount: int
     xUsername: str | None
+    xFollowerCount: int
+    accountKind: str
+    mediaUrl: str | None
+    callout: PositionCallout
+    coinName: str
+    coinImage: str
+    symbol: str
+    marketCap: float
+    position: Position
 
 
 class RepostReposter(BaseModel):
+    userId: str
+    userName: str
+    profileImage: str
+    walletAddress: str
+    isVerified: bool
+    verifiedBadgeVisible: bool
     accountKind: str
     followerCount: int
     followingCount: int
-    isVerified: bool
-    profileImage: str
-    userId: str
-    userName: str
-    verifiedBadgeVisible: bool
-    walletAddress: str
 
 
 class Reposter(BaseModel):
-    activeCompetitionEntry: Annotated[None, Field(None)] = None
+    userId: str
+    username: str
     bio: str
-    createdAt: str
+    profileImageUrl: str
+    headerImageUrl: str
     followerCount: int
     followingCount: int
-    generatedMedia: None
-    groupBadges: list[Any]
-    headerImageUrl: str
-    isPumpUser: bool | None = None
+    createdAt: str
+    updatedAt: str
+    walletAddress: str
+    socials: list[Social]
     isVerified: bool
+    verifiedBadgeVisible: bool
     kind: str
     memberCount: int
     membershipPolicy: None
+    groupBadges: list[Any]
+    generatedMedia: None
     position: Position
-    profileImageUrl: str
+    isPumpUser: bool | None = None
     resolvedAvatarDecoration: str | None = None
-    socials: list[Social]
-    updatedAt: str
-    userId: str
-    username: str
-    verifiedBadgeVisible: bool
-    walletAddress: str
+    activeCompetitionEntry: Annotated[None, Field(None)] = None
 
 
 class ResolveIdentifiersParams(BaseModel):
@@ -5561,78 +5476,102 @@ class ResolveIdentifiersParams(BaseModel):
 
 
 class ResolveIdentifiersResponse(BaseModel):
-    degraded: list[Any]
     results: list[Result]
+    degraded: list[Any]
 
 
 class Result(BaseModel):
-    chain: str
-    coin: ResultCoin | None
-    definitive: bool
     identifier: str
     kind: str
-    resolvedVia: str
+    chain: str
+    coin: ResultCoin | None
     user: GetUserResponse | None
+    resolvedVia: str
+    definitive: bool
 
 
 class ResultCoin(BaseModel):
+    mint: str
+    initialized: bool
+    name: str
+    symbol: str
+    image_uri: str
+    metadata_uri: str
+    twitter: str
+    bonding_curve: str
     associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
+    virtual_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    virtual_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    total_supply: int
+    website: str
+    show_name: bool
+    last_trade_timestamp: int
+    market_cap: float | None = None
+    nsfw: bool
+    inverted: bool | None = None
+    is_banned: bool
+    pump_swap_pool: str
+    real_sol_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_token_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    updated_at: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    is_currently_live: bool
     ath_market_cap: float
     ath_market_cap_timestamp: int
-    base_decimals: int
-    bonding_curve: str
-    boost_mode: str
-    chain_id: str
-    complete: bool
-    created_timestamp: int
-    creator: str
-    depth: int
     hide_banner: bool
-    image_uri: str
-    initialized: bool
-    inverted: bool
-    is_banned: bool
-    is_cashback_enabled: bool
-    is_currently_live: bool
-    is_holder_reward: bool
-    last_trade_timestamp: int
-    livestream_ban_expiry: int
-    market_cap: float
-    market_cap_quote: float
-    market_cap_usd: float
-    metadata_uri: str
-    mint: str
-    multichain_family: int
-    name: str
-    nsfw: bool
-    pool_address: str
     program: str
-    protocol: str
-    pump_swap_pool: str
-    quote_decimals: int
-    quote_mint: str
-    quote_token_program: str | None = None
-    real_quote_reserves: int
-    real_sol_reserves: int
-    real_token_reserves: int
-    reply_count: int
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    symbol: str
-    telegram: str | None = None
     token_program: str
-    total_supply: int
+    quote_mint: str
+    base_decimals: int
+    quote_decimals: int
+    pool_address: str
+    is_cashback_enabled: bool
+    chain_id: str
+    multichain_family: int
+    protocol: str
     total_supply_str: str
+    market_cap_usd: float
+    virtual_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    real_quote_reserves: int | None = None
+    """
+    pump.fun stopped sending this in October 2026; absent from current answers.
+    """
+    market_cap_quote: float
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool
     transfer_fee_bps: int | None = None
     transfer_hook_program: str | None = None
-    twitter: str
-    updated_at: int
+    depth: int
+    security_verdict: SecurityVerdict | None = None
     usd_market_cap: float
-    verified: bool
-    virtual_quote_reserves: int
-    virtual_sol_reserves: int
-    virtual_token_reserves: int
-    website: str
+    telegram: str | None = None
 
 
 class RewardMint(RootModel[str]):
@@ -5640,50 +5579,70 @@ class RewardMint(RootModel[str]):
 
 
 class Rewarddistribution(BaseModel):
-    firstXValidSubmissionsCount: int | None = None
     type: str
+    firstXValidSubmissionsCount: int | None = None
 
 
 class Rewardleg(BaseModel):
+    mintAddress: str
+    rewardVaultAddress: str
+    remainingAmountAtomic: str
     amountAtomic: str
     decimalsSnapshot: int
-    mintAddress: str
-    remainingAmountAtomic: str
-    rewardVaultAddress: str
     tokenProgramId: str
 
 
 class Rewardlegsusd(BaseModel):
     mintAddress: str
+    usdValue: float
     priceUsd: float
     priced: bool
-    usdValue: float
 
 
 class Row(BaseModel):
-    buySpendUsd: float
-    chainId: int
     entryId: str
-    imageUri: str | None
-    isVerified: bool
-    mint: str
-    name: str
-    pnlUsd: float
-    profileImageUrl: str
     rank: int
-    realizedPnlUsd: float
-    symbol: str
-    unrealizedPnlUsd: float
     userId: str
-    username: str
-    verifiedBadgeVisible: bool
     walletAddress: str
+    mint: str
+    chainId: int
+    pnlUsd: float
+    realizedPnlUsd: float
+    unrealizedPnlUsd: float
+    buySpendUsd: float
+    symbol: str
+    name: str
+    imageUri: str | None
+    username: str
+    profileImageUrl: str
+    isVerified: bool
+    verifiedBadgeVisible: bool
 
 
 class SearchCoinsParams(BaseModel):
-    complete: bool | None = None
+    search_term: Annotated[str, Field(examples=["pepe"], max_length=50)]
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Free-text search term.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
+    """
+    Rows to skip.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Maximum coins to return.
+    """
+    sort: Annotated[CoinSort | None, Field(deprecated=True)] = CoinSort.MARKET_CAP
+    """
+    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    """
+    order: Annotated[CoinSortDirection | None, Field(deprecated=True)] = CoinSortDirection.DESC
+    """
+    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -5691,37 +5650,17 @@ class SearchCoinsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
+    complete: bool | None = None
     """
-    Include coins flagged not-safe-for-work.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Maximum coins to return.
-    """
-    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
-    """
-    Only coins at most this many seconds old.
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
     """
     min_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
     Only coins at least this many seconds old.
     """
-    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
+    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
-    Rows to skip.
-    """
-    order: Annotated[CoinSortDirection | None, Field(deprecated=True)] = CoinSortDirection.DESC
-    """
-    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
-    """
-    search_term: Annotated[str, Field(examples=["pepe"], max_length=50)]
-    """
-    Free-text search term.
-    """
-    sort: Annotated[CoinSort | None, Field(deprecated=True)] = CoinSort.MARKET_CAP
-    """
-    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    Only coins at most this many seconds old.
     """
 
 
@@ -5736,6 +5675,10 @@ class SearchFollowersParams(BaseModel):
     """
     Solana wallet address or pump.fun user id (UUID). pump.fun refuses EVM wallets here.
     """
+    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
+    """
+    Search term, 2 to 50 characters.
+    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum profiles to return.
@@ -5743,10 +5686,6 @@ class SearchFollowersParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
-    """
-    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
-    """
-    Search term, 2 to 50 characters.
     """
 
 
@@ -5761,6 +5700,10 @@ class SearchFollowingParams(BaseModel):
     """
     Solana wallet address or pump.fun user id (UUID). pump.fun refuses EVM wallets here.
     """
+    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
+    """
+    Search term, 2 to 50 characters.
+    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum profiles to return.
@@ -5769,16 +5712,12 @@ class SearchFollowingParams(BaseModel):
     """
     Rows to skip.
     """
-    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
-    """
-    Search term, 2 to 50 characters.
-    """
 
 
 class SearchQuoteFacetsParams(BaseModel):
-    complete: bool | None = None
+    search_term: Annotated[str | None, Field(max_length=50)] = None
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Free-text search term.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -5786,164 +5725,164 @@ class SearchQuoteFacetsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
+    complete: bool | None = None
+    """
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    """
     include_nsfw: bool | None = False
     """
     Include coins flagged not-safe-for-work.
-    """
-    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
-    """
-    Only coins at most this many seconds old.
     """
     min_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
     Only coins at least this many seconds old.
     """
-    search_term: Annotated[str | None, Field(max_length=50)] = None
+    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
-    Free-text search term.
+    Only coins at most this many seconds old.
     """
 
 
 class SearchUsersParams(BaseModel):
-    include_labelled_wallets: bool | None = True
+    search_term: Annotated[str, Field(examples=["pepe"])]
     """
-    Include wallets pump.fun has labelled but that have no profile.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum profiles to return.
+    Free-text search term.
     """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
     """
-    search_term: Annotated[str, Field(examples=["pepe"])]
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
-    Free-text search term.
+    Maximum profiles to return.
+    """
+    include_labelled_wallets: bool | None = True
+    """
+    Include wallets pump.fun has labelled but that have no profile.
     """
 
 
 class SearchedCoin(BaseModel):
-    associated_bonding_curve: str | None = None
+    mint: str
+    initialized: bool | None = None
+    name: str | None = None
+    symbol: str | None = None
+    image_uri: str | None = None
+    creator: str | None = None
+    created_timestamp: int | None = None
+    hidden: bool | None = None
+    show_name: bool | None = None
+    market_cap: float | None = None
+    nsfw: bool | None = None
+    is_banned: bool | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int | None = None
+    reply_count: int | None = None
+    is_currently_live: bool | None = None
     ath_market_cap: float | None = None
     ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
-    base_decimals: int | None = None
-    bonding_curve: str | None = None
-    boost_mode: str | None = None
-    canonical_pool_liquidity_usd: float | None = None
-    chain: str | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool | None = None
-    created_timestamp: int | None = None
-    creator: str | None = None
-    cto_address: str | None = None
-    depth: int | None = None
-    description: str | None = None
-    exact_match: bool | None = None
-    fdv_usd: float | None = None
-    graduated_pool: str | None = None
-    hidden: bool | None = None
     hide_banner: bool | None = None
-    image_uri: str | None = None
-    indexed_by_pump: bool | None = None
-    initialized: bool | None = None
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool | None = None
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool | None = None
-    is_holder_reward: bool | None = None
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int | None = None
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float | None = None
-    market_id: str | None = None
-    mayhem: Mayhem | None = None
-    mayhem_state: str | None = None
-    metadata_uri: str | None = None
-    mint: str
-    multichain_family: int | None = None
-    name: str | None = None
-    nsfw: bool | None = None
-    platform: str | None = None
-    pool_address: str | None = None
-    preview: bool | None = None
-    price_usd: float | None = None
-    program: str | None = None
-    protocol: str | None = None
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
     quote_mint: str | None = None
-    quote_token_program: str | None = None
-    raydium_pool: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
+    base_decimals: int | None = None
+    quote_decimals: int | None = None
+    pool_address: str | None = None
+    chain_id: str
+    multichain_family: int | None = None
+    protocol: str | None = None
+    circulating_supply_str: str | None = None
+    total_supply_str: str | None = None
+    market_cap_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    verified: bool | None = None
+    is_holder_reward: bool | None = None
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float | None = None
+    volume_1h_usd: float | None = None
     recommendation_id: str | None = None
     recommendation_rank: int | None = None
-    reply_count: int | None = None
     search_priority: bool | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool | None = None
-    source: str | None = None
-    symbol: str | None = None
-    telegram: str | None = None
-    token_program: str | None = None
-    tokenized_agent: bool | None = None
-    total_supply: int | None = None
-    total_supply_str: str | None = None
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool | None = None
-    video_uri: str | None = None
-    virtual_quote_reserves: int | None = None
+    description: str | None = None
+    metadata_uri: str | None = None
+    bonding_curve: str | None = None
+    associated_bonding_curve: str | None = None
+    complete: bool | None = None
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int | None = None
     website: str | None = None
+    last_trade_timestamp: int | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    program: str | None = None
+    token_program: str | None = None
+    is_cashback_enabled: bool | None = None
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str | None = None
+    depth: int | None = None
+    twitter: str | None = None
+    telegram: str | None = None
+    last_reply: int | None = None
+    indexed_by_pump: bool | None = None
+    raydium_pool: str | None = None
+    king_of_the_hill_timestamp: int | None = None
+    market_id: str | None = None
+    platform: str | None = None
+    quote_token_program: str | None = None
+    transfer_fee_bps: int | None = None
+    graduated_pool: str | None = None
+    transfer_hook_program: str | None = None
+    is_backfill: bool | None = None
+    mayhem: Mayhem | None = None
+    mayhem_state: str | None = None
+    video_uri: str | None = None
+    cto_address: str | None = None
+    banner_uri: str | None = None
+    chain: str | None = None
+    exact_match: bool | None = None
+    is_charity: bool | None = None
+    tokenized_agent: bool | None = None
+    fdv_usd: float | None = None
+    price_usd: float | None = None
+    source: str | None = None
+    preview: bool | None = None
 
 
 class SecurityVerdict(BaseModel):
+    verdict: str
+    scope: str
+    reasons: list[str]
     decided_by: str
     provider: str
-    reasons: list[str]
-    scope: str
-    source: str
-    updated_at: int
-    verdict: str
     version: int
+    updated_at: int
+    source: str
 
 
 class Series(BaseModel):
     bucketStart: int
-    byQuote: list[Earned]
     earned: SeriesEarned
+    byQuote: list[Earned]
 
 
 class SeriesEarned(BaseModel):
+    usd: str
     native: str | None = None
     nativeAsset: Nativeasset | None = None
-    usd: str
 
 
 class Served(BaseModel):
-    measure: str
     res: str
+    measure: str
 
 
 class Shareholder(BaseModel):
     address: str
-    isAdmin: bool
     shareBps: int
+    isAdmin: bool
 
 
 class ShareholderFeesParams(BaseModel):
@@ -5964,95 +5903,87 @@ class ShareholderFeesParams(BaseModel):
 
 
 class Sharing(BaseModel):
+    configAddress: str
     admin: str
     adminRevoked: bool
-    asOf: int
-    configAddress: str
     shareholders: list[Shareholder]
+    asOf: int
 
 
 class SimilarCoinResult(BaseModel):
-    associated_bonding_curve: str
-    ath_market_cap: float | None = None
-    ath_market_cap_timestamp: int | None = None
-    base_decimals: int
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool
-    created_timestamp: int
-    creator: str
-    depth: int | None = None
-    description: str | None = None
-    graduated_pool: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float | None = None
-    metadata_uri: str
     mint: str
-    multichain_family: int
+    initialized: bool
     name: str
-    nsfw: bool
-    platform: str | None = None
-    pool_address: str
-    program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int
-    quote_mint: str
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    recommendation_id: str | None = None
-    recommendation_rank: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
     symbol: str
-    telegram: str | None = None
-    token_program: str
-    tokenized_agent: bool | None = None
-    total_supply: int | str
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
+    image_uri: str
+    metadata_uri: str
     twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float
-    verified: bool
-    virtual_quote_reserves: int | None = None
+    telegram: str | None = None
+    bonding_curve: str
+    associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
+    total_supply: int | str
     website: str | None = None
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    is_currently_live: bool
+    ath_market_cap: float | None = None
+    ath_market_cap_timestamp: int | None = None
+    hide_banner: bool
+    program: str
+    platform: str | None = None
+    token_program: str | None = None
+    quote_mint: str | None = None
+    base_decimals: int
+    quote_decimals: int | None = None
+    pool_address: str
+    chain_id: str
+    multichain_family: int
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float | None = None
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    graduated_pool: str | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float
+    is_cashback_enabled: bool | None = None
+    description: str | None = None
+    inverted: bool | None = None
+    pump_swap_pool: str | None = None
+    volume_1h_usd: float | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    hidden: bool | None = None
+    indexed_by_pump: bool | None = None
+    is_backfill: bool | None = None
+    is_charity: bool | None = None
+    tokenized_agent: bool | None = None
+    recommendation_id: str | None = None
+    recommendation_rank: int | None = None
 
 
 class SimilarCoinsParams(BaseModel):
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Maximum coins to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -6063,63 +5994,71 @@ class SimilarCoinsParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Maximum coins to return.
+    """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
     """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
+    """
 
 
 class Social(BaseModel):
-    linkedAt: str
     provider: str
     username: str
+    linkedAt: str
 
 
 class Solana(BaseModel):
-    dust_count: int | None = None
-    dust_value_usd: float | None = None
+    wallet_address: str | None
+    total_value: float
+    token_count: int
     hidden_count: int | None = None
     hidden_value_usd: float | None = None
-    token_count: int
-    total_value: float
-    wallet_address: str | None
+    dust_count: int | None = None
+    dust_value_usd: float | None = None
 
 
 class Status(BaseModel):
-    count: int
     key: str
+    count: int
 
 
 class Submission(BaseModel):
-    attachments: list[SubmissionAttachment] | None = None
-    banInfo: SubmissionBaninfo | None = None
-    bodyMarkdown: str
-    createdAt: str
-    editedAt: str | None = None
-    isNsfw: bool
-    likeCount: int
-    links: list[str] | None = None
-    publishedAt: str
-    requesterAddress: str
-    requesterXFollowerCount: int
-    requesterXVerified: bool | None = None
     submissionId: str
     taskId: str
-    unbanInfo: SubmissionBaninfo | None = None
+    requesterAddress: str
+    createdAt: str
     updatedAt: str
+    publishedAt: str
+    editedAt: str | None = None
+    bodyMarkdown: str
+    links: list[str] | None = None
+    attachments: list[SubmissionAttachment] | None = None
+    likeCount: int
+    isNsfw: bool
+    requesterXFollowerCount: int
+    requesterXVerified: bool | None = None
+    banInfo: SubmissionBaninfo | None = None
+    unbanInfo: SubmissionBaninfo | None = None
 
 
 class SubmissionAttachment(BaseModel):
-    contentType: str
-    externalAssetId: str | None = None
     filename: str
-    key: str
+    size: int
     kind: str
-    playback: Playback | None = None
+    contentType: str
+    key: str
+    url: str
     processingStatus: str | None = None
     provider: str | None = None
-    size: int
-    url: str
+    externalAssetId: str | None = None
+    playback: Playback | None = None
 
 
 class SubmissionBaninfo(BaseModel):
@@ -6129,10 +6068,10 @@ class SubmissionBaninfo(BaseModel):
 
 
 class Summary(BaseModel):
-    hlAccount: str | None = None
     positionCount: int
-    totalPnlPercentage: float | None = None
+    hlAccount: str | None = None
     totalPnlUsd: float | None = None
+    totalPnlPercentage: float | None = None
     totalValueUsd: float | None = None
 
 
@@ -6142,8 +6081,8 @@ class TailHistogram(BaseModel):
 
 
 class TailHistogramBucket(BaseModel):
-    max: int | None
     min: int | None
+    max: int | None
     pnlUsd: float
     tailers: int
 
@@ -6152,30 +6091,30 @@ class TailRanks(BaseModel):
     generatedAt: int
     population: int
     tailAth1hUsd: float | None
-    tailAth24hUsd: float | None
     tailAth4hUsd: float | None
+    tailAth24hUsd: float | None
     tailBuyers: float | None
     tailCohort1h: float | None
-    tailCohort24h: float | None
     tailCohort4h: float | None
+    tailCohort24h: float | None
     tailPnl1hUsd: float | None
-    tailPnl24hUsd: float | None
     tailPnl4hUsd: float | None
+    tailPnl24hUsd: float | None
     tailUniqueBuyers: float | None
     tailVolumeUsd: float | None
 
 
 class Token(BaseModel):
-    buySpendUsd: float
-    chainId: int
-    imageUri: str | None
-    members: list[TokenMember]
     mint: str
-    name: str
+    chainId: int
     pnlUsd: float
     realizedPnlUsd: float
-    symbol: str
     unrealizedPnlUsd: float
+    buySpendUsd: float
+    members: list[TokenMember]
+    symbol: str
+    name: str
+    imageUri: str | None
 
 
 class TokenHolderCountParams(BaseModel):
@@ -6192,58 +6131,58 @@ class TokenHolderCountParams(BaseModel):
 
 
 class TokenIn(BaseModel):
+    mint: str
     amount: str
     metadata: Metadata | None = None
-    mint: str
 
 
 class TokenMember(BaseModel):
-    buySpendUsd: float
+    userId: str
+    walletAddress: str
     pnlUsd: float
     realizedPnlUsd: float
     unrealizedPnlUsd: float
-    userId: str
-    walletAddress: str
+    buySpendUsd: float
 
 
 class Tokenpnl(BaseModel):
-    cost_basis_sol: float | None
     cost_basis_usd: float | None
-    percentage: float | None
-    percentage_sol: float | None
+    unrealized_usd: float | None
     percentage_usd: float | None
+    cost_basis_sol: float | None
+    unrealized_sol: float | None
+    percentage_sol: float | None
+    percentage: float | None
     realized_pnl_sol: float | None
     realized_pnl_usd: float | None
-    unrealized_sol: float | None
-    unrealized_usd: float | None
 
 
 class Top(BaseModel):
-    buySpendSol: float
     entryId: str
-    isVerified: bool
+    participantId: str
     kind: str
-    lastRefreshedAtMs: int
+    rank: int
+    pnlUsd: float
+    realizedPnlUsd: float
+    unrealizedPnlUsd: float
+    buySpendSol: float
     memberCount: int
     membersFresh: int
-    participantId: str
-    pnlUsd: float
-    positionsCount: int
-    profileImageUrl: str | None
-    rank: int
-    realizedPnlUsd: float
     struck: bool
+    lastRefreshedAtMs: int
+    positionsCount: int
     topPositions: list[Topposition]
-    unrealizedPnlUsd: float
-    username: str | None
-    verifiedBadgeVisible: bool
     walletAddress: str | None
+    username: str | None
+    profileImageUrl: str | None
+    isVerified: bool
+    verifiedBadgeVisible: bool
 
 
 class TopClipsParams(BaseModel):
-    clip_type: ClipType | None = ClipType.HIGHLIGHT
+    period: VodPeriod | None = VodPeriod.WEEKLY
     """
-    Clip category as pump.fun labels it.
+    Ranking window.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 72
     """
@@ -6253,26 +6192,13 @@ class TopClipsParams(BaseModel):
     """
     Candidate pool size the ranking samples from.
     """
-    period: VodPeriod | None = VodPeriod.WEEKLY
+    clip_type: ClipType | None = ClipType.HIGHLIGHT
     """
-    Ranking window.
+    Clip category as pump.fun labels it.
     """
     timestamp: int | None = None
     """
     Unix seconds to rank as of. Defaults to now.
-    """
-
-
-class TopHoldersParams(BaseModel):
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
     """
 
 
@@ -6291,18 +6217,6 @@ class TopTokenMintsParams(BaseModel):
 
 
 class TopTraderTradesParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of an EVM coin. Omit for Solana, or to let pump.fun infer it.
-    """
-    cursor: Annotated[str | None, Field(max_length=200)] = None
-    """
-    `page.nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=500)] = 500
-    """
-    Maximum trades to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -6313,76 +6227,88 @@ class TopTraderTradesParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    chain: TokenChain | None = None
+    """
+    Chain of an EVM coin. Omit for Solana, or to let pump.fun infer it.
+    """
     to: Annotated[int | None, Field(ge=0)] = None
     """
     Unix time in ms of the newest trade. pump.fun honours it only while it pages the answer.
     """
+    cursor: Annotated[str | None, Field(max_length=200)] = None
+    """
+    `page.nextCursor` from the previous page; omit for the first page.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=500)] = 500
+    """
+    Maximum trades to return.
+    """
 
 
 class TopVod(BaseModel):
-    roomName: str
-    viewsTotal: int
     vodId: str
+    viewsTotal: int
+    roomName: str
 
 
 class Topholder(BaseModel):
     address: str
     amount: float
-    enteredAt: int | None
-    isBundler: bool
     isDev: bool
     isSniper: bool
+    isBundler: bool
+    enteredAt: int | None
 
 
 class Topposition(BaseModel):
-    chainId: int
-    imageUri: str | None
     mint: str
-    name: str | None
+    chainId: int
     symbol: str | None
+    name: str | None
+    imageUri: str | None
 
 
 class Total(BaseModel):
-    accruedUsdAtTrade: str
-    accruedUsdNow: str
     coinCount: int
     payingCount: int
-    payoutCount: int
+    accruedUsdAtTrade: str
+    accruedUsdNow: str
     unpricedCoinCount: int
     walletsRewarded: int
     walletsRewardedDistinct: int
+    payoutCount: int
 
 
 class Trade(BaseModel):
-    baseAmount: Baseamount
-    blockId: str
-    blockTimeMs: int
-    eventIndex: int
-    isBackfill: bool
-    kind: str
-    late: bool
-    legIndex: int
     ordinalKey: str
-    perp: Perp | None = None
-    pool: Pool | None
-    priceQuote: str | None
-    priceUsd: str | None
-    quote: TradeQuote
-    quoteAmount: Baseamount
-    quotePriceUsd: str | None
-    side: str
-    surface: str | None = None
-    trader: Trader | None
-    txId: str
+    blockId: str
     txIndex: int
-    valueNative: str | None
-    valueUsd: str | None
+    eventIndex: int
+    blockTimeMs: int
+    txId: str
+    legIndex: int
+    late: bool
+    isBackfill: bool
+    side: str
+    kind: str
     venue: str
+    pool: Pool | None
+    trader: Trader | None
+    baseAmount: Baseamount
+    quoteAmount: Baseamount
+    quote: TradeQuote
+    priceUsd: str | None
+    priceQuote: str | None
+    quotePriceUsd: str | None
+    valueUsd: str | None
+    valueNative: str | None
+    perp: Perp | None = None
+    surface: str | None = None
 
 
 class TradeQuote(BaseModel):
-    decimals: int | None = None
     id: str
+    decimals: int | None = None
 
 
 class Trader(BaseModel):
@@ -6390,18 +6316,18 @@ class Trader(BaseModel):
 
 
 class TradesBatchEntry(BaseModel):
-    amountSOL: str
-    amountUSD: str
-    baseAmount: str
-    isBondingCurve: bool
-    priceSOL: str
-    priceUSD: str
-    quoteAmount: str
     slotIndexId: str
-    timestamp: str
     tx: str
-    type: str
+    timestamp: str
     userAddress: str
+    type: str
+    isBondingCurve: bool
+    priceUSD: str
+    priceSOL: str
+    amountUSD: str
+    amountSOL: str
+    baseAmount: str
+    quoteAmount: str
 
 
 class GetTradesBatchResponse(RootModel[dict[str, list[TradesBatchEntry]]]):
@@ -6422,10 +6348,6 @@ class TradesBatchParams(BaseModel):
 
 
 class TradesBatchRequest(BaseModel):
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds.
-    """
     user_addresses: Annotated[
         list[UserAddress],
         Field(
@@ -6437,143 +6359,122 @@ class TradesBatchRequest(BaseModel):
     """
     Wallet addresses (Solana or EVM) to fetch trades for, 1 to 30.
     """
-
-
-class TradesParams(BaseModel):
-    cursor: str | None = None
+    created_ts: Annotated[int, Field(examples=[1788122643000])]
     """
-    Cursor from a previous page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
-    """
-    Maximum trades to return.
-    """
-    min_sol_amount: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Drop trades below this SOL size.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
+    Coin creation timestamp in milliseconds.
     """
 
 
 class Transaction(BaseModel):
+    tx_hash: str
     block_time: int
-    chain: str | None = None
-    direction: str | None = None
     fee: float
-    from_address: str | None = None
-    network_id: int | None = None
-    sol_value: float | None = None
-    to_address: str | None = None
+    type: str
+    transaction_type: str
     token_in: TokenIn | None = None
     token_out: TokenIn | None = None
+    sol_value: float | None = None
+    direction: str | None = None
     token_transferred: TokenIn | None = None
-    transaction_type: str
-    tx_hash: str
-    type: str
+    from_address: str | None = None
+    to_address: str | None = None
+    chain: str | None = None
+    network_id: int | None = None
 
 
 class TrendingBoardParams(BaseModel):
-    chains: list[NonMonadChain] | None = None
-    """
-    Keep only coins on these chains. Repeat the parameter for several.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum board entries to return. pump.fun serves at most 150.
     """
+    chains: list[NonMonadChain] | None = None
+    """
+    Keep only coins on these chains. Repeat the parameter for several.
+    """
 
 
 class TrendingCoin(BaseModel):
-    associated_bonding_curve: str | None = None
-    ath_market_cap: float | None = None
-    ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
-    base_decimals: int
-    bonding_curve: str | None = None
-    boost_mode: str | None = None
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    circulating_supply_str: str | None = None
-    complete: bool | None = None
-    created_timestamp: int
-    creator: str
-    cto_address: str | None = None
-    depth: int | None = None
-    description: str | None = None
-    fdv_usd: float | None = None
-    graduated_pool: str | None = None
-    hidden: bool | None = None
-    hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
-    is_cashback_enabled: bool | None = None
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool | None = None
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float
-    metadata_uri: str | None = None
     mint: str
-    multichain_family: int
+    initialized: bool | None = None
     name: str
+    symbol: str
+    image_uri: str
+    metadata_uri: str | None = None
+    twitter: str | None = None
+    bonding_curve: str | None = None
+    associated_bonding_curve: str | None = None
+    creator: str | None = None
+    created_timestamp: int
+    complete: bool | None = None
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
+    total_supply: int | str | None = None
+    website: str | None = None
+    show_name: bool | None = None
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
     nsfw: bool
-    num_participants: int | None = None
-    platform: str | None = None
-    pool_address: str | None = None
-    price_usd: float | None = None
-    program: str | None = None
-    protocol: str | None = None
+    inverted: bool | None = None
+    is_banned: bool
     pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
     real_sol_reserves: int | None = None
     real_token_reserves: int | None = None
-    recommendation_id: str | None = None
-    recommendation_rank: int | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int | None = None
     reply_count: int | None = None
+    is_currently_live: bool | None = None
+    ath_market_cap: float | None = None
+    ath_market_cap_timestamp: int | None = None
+    hide_banner: bool | None = None
+    program: str | None = None
+    token_program: str | None = None
+    quote_mint: str | None = None
+    base_decimals: int
+    quote_decimals: int | None = None
+    pool_address: str | None = None
+    is_cashback_enabled: bool | None = None
+    chain_id: str
+    multichain_family: int | None = None
+    protocol: str | None = None
+    total_supply_str: str
+    market_cap_usd: float
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str | None = None
+    verified: bool | None = None
+    quote_token_program: str | None = None
+    is_holder_reward: bool | None = None
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int | None = None
     security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    source: str | None = None
-    symbol: str
+    usd_market_cap: float
+    canonical_pool_liquidity_usd: float | None = None
+    circulating_supply_str: str | None = None
+    description: str | None = None
+    volume_1h_usd: float | None = None
     telegram: str | None = None
     thumbnail: str | None = None
     thumbnail_updated_at: int | None = None
-    token_program: str | None = None
-    tokenized_agent: bool | None = None
-    total_supply: int | str | None = None
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float
-    verified: bool
+    num_participants: int | None = None
+    hidden: bool | None = None
+    last_reply: int | None = None
+    platform: str | None = None
+    indexed_by_pump: bool | None = None
+    graduated_pool: str | None = None
+    is_backfill: bool | None = None
+    is_charity: bool | None = None
+    banner_uri: str | None = None
     video_uri: str | None = None
-    virtual_quote_reserves: int | None = None
-    virtual_sol_reserves: int | None = None
-    virtual_token_reserves: int | None = None
-    volume_1h_usd: float | None = None
-    website: str | None = None
+    cto_address: str | None = None
+    tokenized_agent: bool | None = None
+    king_of_the_hill_timestamp: int | None = None
+    fdv_usd: float | None = None
+    price_usd: float | None = None
+    source: str | None = None
+    recommendation_id: str | None = None
+    recommendation_rank: int | None = None
 
 
 class TrendingCoinsParams(BaseModel):
@@ -6584,25 +6485,25 @@ class TrendingCoinsParams(BaseModel):
 
 
 class Unbanrequest(BaseModel):
+    status: str
     changesSummaryMarkdown: str
     requestedAt: str
-    reviewReason: str
     reviewedAt: str
-    status: str
+    reviewReason: str
 
 
 class Unrealized(BaseModel):
-    amount_held: float
     cost_basis: CostBasis
-    percentage: CostBasis
     pnl: CostBasis
     pnl_mark: CostBasis | None = None
+    percentage: CostBasis
+    amount_held: float
 
 
 class Update(BaseModel):
+    id: str
     content: str
     createdAt: str
-    id: str
     likeCount: int
     mediaUrl: str | None
     parentMessageId: str | None
@@ -6611,23 +6512,23 @@ class Update(BaseModel):
 
 
 class User(BaseModel):
-    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
+    userId: str
+    is_pump_user: bool
+    is_banned: bool | None = None
+    username: str
+    profile_image: str
     avatar_decoration: str | None = None
     bio: str | None
-    canonical_evm_wallet: str | None = None
-    canonical_svm_wallet: str | None = None
     followers: int
     following: int
-    group_badges: list[Any]
-    is_banned: bool | None = None
-    is_pump_user: bool
-    kind: str | None = None
-    profile_image: str
-    resolved_avatar_decoration: str | None = None
-    userId: str
-    username: str
     x_username: str | None
+    group_badges: list[Any]
+    kind: str | None = None
+    resolved_avatar_decoration: str | None = None
+    active_competition_entry: Annotated[None, Field(None)] = None
+    canonical_evm_wallet: str | None = None
+    canonical_svm_wallet: str | None = None
 
 
 class UserAchievementsParams(BaseModel):
@@ -6658,6 +6559,10 @@ class UserCalloutRepliesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 30
+    """
+    Maximum replies to return.
+    """
     before_id: Annotated[
         str | None,
         Field(
@@ -6670,10 +6575,6 @@ class UserCalloutRepliesParams(BaseModel):
     filter: UserReplyFilter | None = None
     """
     Plain replies, quote posts, or both.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 30
-    """
-    Maximum replies to return.
     """
 
 
@@ -6692,10 +6593,6 @@ class UserCalloutsParams(BaseModel):
     """
     Maximum callouts to return. pump.fun serves 100 at most.
     """
-    page_token: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
-    """
-    `nextPageToken` from the previous page.
-    """
     sort_by: CalloutSort | None = CalloutSort.TIMESTAMP
     """
     Ranking column.
@@ -6703,6 +6600,10 @@ class UserCalloutsParams(BaseModel):
     sort_order: CoinSortDirection | None = CoinSortDirection.DESC
     """
     Sort direction.
+    """
+    page_token: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
+    """
+    `nextPageToken` from the previous page.
     """
     window: CalloutWindow | None = None
     """
@@ -6742,10 +6643,6 @@ class UserCreatedCoinsParams(BaseModel):
     """
     Wallet address, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 10
     """
     Maximum coins to return. pump.fun serves 50 at most.
@@ -6753,6 +6650,10 @@ class UserCreatedCoinsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -6787,17 +6688,9 @@ class UserPortfolioParams(BaseModel):
     """
     Wallet address (Solana or EVM), pump.fun user id or squad id (UUIDs).
     """
-    chain: NonMonadChain | None = None
-    """
-    Only positions on this chain. pump.fun keeps no Monad portfolio.
-    """
     filter: PortfolioFilter | None = PortfolioFilter.OPEN
     """
     Which positions to return.
-    """
-    filter_spam: bool | None = None
-    """
-    Drop positions pump.fun groups as spam before paging.
     """
     page: Annotated[int | None, Field(ge=0)] = 0
     """
@@ -6811,13 +6704,21 @@ class UserPortfolioParams(BaseModel):
     """
     Ranking column.
     """
+    total_only: bool | None = None
+    """
+    Return the summary only (position count), without positions.
+    """
+    filter_spam: bool | None = None
+    """
+    Drop positions pump.fun groups as spam before paging.
+    """
     spam_only: bool | None = None
     """
     Return only the spam group. Cannot be combined with `filter_spam`.
     """
-    total_only: bool | None = None
+    chain: NonMonadChain | None = None
     """
-    Return the summary only (position count), without positions.
+    Only positions on this chain. pump.fun keeps no Monad portfolio.
     """
 
 
@@ -6856,6 +6757,10 @@ class UserRepostsParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum reposts to return.
+    """
     cursor: str | None = None
     """
     `nextCursor` from the previous page; omit for the first page.
@@ -6863,10 +6768,6 @@ class UserRepostsParams(BaseModel):
     include_quotes: bool | None = False
     """
     Interleave the wallet's quote posts.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum reposts to return.
     """
 
 
@@ -6881,6 +6782,12 @@ class UserTradesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    mint: Annotated[
+        str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
+    ] = None
+    """
+    Only trades in this coin (Solana mint or EVM token).
+    """
     chain: NonMonadChain | None = None
     """
     Only trades on this chain. pump.fun serves no Monad trades here.
@@ -6892,12 +6799,6 @@ class UserTradesParams(BaseModel):
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum trades to return.
-    """
-    mint: Annotated[
-        str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
-    ] = None
-    """
-    Only trades in this coin (Solana mint or EVM token).
     """
     types: Annotated[list[UserTradeType] | None, Field(max_length=2)] = None
     """
@@ -6913,32 +6814,32 @@ class UsernameExistsParams(BaseModel):
 
 
 class UsersBatch(BaseModel):
-    active_competition_entry: Annotated[None, Field(None)] = None
     address: str
+    userId: str
+    is_pump_user: bool
+    is_banned: bool | None = None
+    username: str
+    profile_image: str
     avatar_decoration: str | None = None
     bio: str | None
-    canonical_evm_wallet: str | None = None
-    canonical_svm_wallet: str | None = None
     followers: int
     following: int
-    group_badges: list[GroupBadge]
-    is_banned: bool | None = None
-    is_pump_user: bool
-    profile_image: str
-    resolved_avatar_decoration: str | None = None
-    userId: str
-    username: str
     x_username: str | None
+    group_badges: list[GroupBadge]
+    resolved_avatar_decoration: str | None = None
+    active_competition_entry: Annotated[None, Field(None)] = None
+    canonical_evm_wallet: str | None = None
+    canonical_svm_wallet: str | None = None
 
 
 class UsersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum profiles to return.
-    """
     offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
     """
     Rows to skip. pump.fun stops at 10,000.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum profiles to return.
     """
 
 
@@ -6956,98 +6857,98 @@ class VanityCheckParams(BaseModel):
 
 
 class Verification(BaseModel):
-    qr: Qr
     required: bool
+    qr: Qr
 
 
 class VideoFeed(BaseModel):
+    feedItemType: str
     clip: ClipsById | None = None
     coin: VideoFeedCoin
-    feedItemType: str
 
 
 class VideoFeedCoin(BaseModel):
+    mint: str
+    initialized: bool
+    name: str
+    symbol: str
+    image_uri: str
+    metadata_uri: str
+    twitter: str | None = None
+    bonding_curve: str
     associated_bonding_curve: str
+    creator: str
+    created_timestamp: int
+    complete: bool
+    virtual_sol_reserves: int | None = None
+    virtual_token_reserves: int | None = None
+    total_supply: int
+    website: str | None = None
+    show_name: bool
+    last_trade_timestamp: int | None = None
+    market_cap: float | None = None
+    nsfw: bool
+    is_banned: bool
+    real_sol_reserves: int | None = None
+    real_token_reserves: int | None = None
+    updated_at: int | None = None
+    livestream_ban_expiry: int
+    reply_count: int | None = None
+    is_currently_live: bool
     ath_market_cap: float | None = None
     ath_market_cap_timestamp: int | None = None
-    banner_uri: str | None = None
-    base_decimals: int | None = None
-    bonding_curve: str
-    boost_mode: str
-    canonical_pool_liquidity_usd: float | None = None
-    chain_id: str
-    complete: bool
-    created_timestamp: int
-    creator: str
-    cto_address: str | None = None
-    depth: int
-    description: str | None = None
-    downrank_score: int | None = None
-    hidden: bool | None = None
     hide_banner: bool
-    image_uri: str
-    indexed_by_pump: bool | None = None
-    initialized: bool
-    inverted: bool | None = None
-    is_backfill: bool | None = None
-    is_banned: bool
+    program: str
+    token_program: str | None = None
+    quote_mint: str | None = None
+    base_decimals: int | None = None
+    quote_decimals: int | None = None
+    pool_address: str | None = None
     is_cashback_enabled: bool
-    is_charity: bool | None = None
-    is_currently_live: bool
-    is_holder_reward: bool
-    king_of_the_hill_timestamp: int | None = None
-    last_reply: int | None = None
-    last_trade_timestamp: int | None = None
-    livestream_ban_expiry: int
-    livestream_title: str | None = None
-    market_cap: float | None = None
-    market_cap_quote: float | None = None
-    market_cap_usd: float | None = None
-    mayhem: Mayhem | None = None
-    mayhem_state: str | None = None
-    metadata_uri: str
-    mint: str
+    chain_id: str
     multichain_family: int
-    name: str
-    nsfw: bool
+    protocol: str
+    total_supply_str: str
+    market_cap_usd: float | None = None
+    virtual_quote_reserves: int | None = None
+    real_quote_reserves: int | None = None
+    market_cap_quote: float | None = None
+    boost_mode: str
+    verified: bool
+    quote_token_program: str | None = None
+    is_holder_reward: bool
+    transfer_fee_bps: int | None = None
+    transfer_hook_program: str | None = None
+    depth: int
+    security_verdict: SecurityVerdict | None = None
+    usd_market_cap: float | None = None
+    description: str | None = None
+    thumbnail: str | None = None
+    thumbnail_updated_at: int | None = None
     num_participants: int | None = None
-    playlist_status: str | None = None
-    playlist_updated_at: str | None = None
+    livestream_title: str | None = None
+    downrank_score: int | None = None
     playlist_url: str | None = None
     playlist_url_high: str | None = None
     playlist_url_low: str | None = None
-    pool_address: str | None = None
-    program: str
-    protocol: str
-    pump_swap_pool: str | None = None
-    quote_decimals: int | None = None
-    quote_mint: str | None = None
-    quote_token_program: str | None = None
-    real_quote_reserves: int | None = None
-    real_sol_reserves: int | None = None
-    real_token_reserves: int | None = None
-    reply_count: int | None = None
-    security_verdict: SecurityVerdict | None = None
-    show_name: bool
-    symbol: str
-    telegram: str | None = None
-    thumbnail: str | None = None
-    thumbnail_updated_at: int | None = None
-    token_program: str | None = None
-    tokenized_agent: bool | None = None
-    total_supply: int
-    total_supply_str: str
-    transfer_fee_bps: int | None = None
-    transfer_hook_program: str | None = None
-    twitter: str | None = None
-    updated_at: int | None = None
-    usd_market_cap: float | None = None
-    verified: bool
-    virtual_quote_reserves: int | None = None
-    virtual_sol_reserves: int | None = None
-    virtual_token_reserves: int | None = None
     vod_playlist_url: str | None = None
-    website: str | None = None
+    playlist_status: str | None = None
+    playlist_updated_at: str | None = None
+    telegram: str | None = None
+    king_of_the_hill_timestamp: int | None = None
+    inverted: bool | None = None
+    banner_uri: str | None = None
+    pump_swap_pool: str | None = None
+    last_reply: int | None = None
+    cto_address: str | None = None
+    mayhem_state: str | None = None
+    mayhem: Mayhem | None = None
+    is_charity: bool | None = None
+    canonical_pool_liquidity_usd: float | None = None
+    hidden: bool | None = None
+    indexed_by_pump: bool | None = None
+    is_backfill: bool | None = None
+    tokenized_agent: bool | None = None
 
 
 class Wallet(RootModel[str]):
@@ -7096,10 +6997,6 @@ class WalletBalancesParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    chain: BalanceChain | None = None
-    """
-    Restrict to one chain, or `all` for every chain. Omit for Solana tokens only. pump.fun spells HyperEVM `hype`.
-    """
     page: Annotated[int | None, Field(ge=1)] = 1
     """
     One-based page index.
@@ -7108,15 +7005,19 @@ class WalletBalancesParams(BaseModel):
     """
     Balances per page.
     """
+    chain: BalanceChain | None = None
+    """
+    Restrict to one chain, or `all` for every chain. Omit for Solana tokens only. pump.fun spells HyperEVM `hype`.
+    """
 
 
 class WalletEntry(BaseModel):
-    first_tx_timestamp: int
-    native_balance_sol: float | None = None
-    sol_price_usd: float | None = None
     total_value_usd: float
-    truncated: bool | None = None
+    sol_price_usd: float | None = None
+    native_balance_sol: float | None = None
     unavailable_chains: list[Any] | None = None
+    truncated: bool | None = None
+    first_tx_timestamp: int
 
 
 class WalletListRequest(BaseModel):
@@ -7207,18 +7108,6 @@ class WalletTradesParams(BaseModel):
     """
     Wallet address, Solana or EVM (0x).
     """
-    chain: TokenChain | None = None
-    """
-    Chain of an EVM coin. Omit for Solana. When set, the wallet and the coin must both be addresses on that chain.
-    """
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 200
-    """
-    Maximum trades to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -7228,6 +7117,18 @@ class WalletTradesParams(BaseModel):
     ]
     """
     Coin address: a Solana mint, or an EVM token for an EVM wallet.
+    """
+    chain: TokenChain | None = None
+    """
+    Chain of an EVM coin. Omit for Solana. When set, the wallet and the coin must both be addresses on that chain.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 200
+    """
+    Maximum trades to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
     """
 
 
@@ -7242,10 +7143,6 @@ class WalletTransactionsParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    cursor: str | None = None
-    """
-    Cursor from a previous page.
-    """
     dust_filter: bool | None = True
     """
     Drop dust-sized transactions.
@@ -7253,6 +7150,10 @@ class WalletTransactionsParams(BaseModel):
     include_evm: bool | None = True
     """
     Include EVM chains alongside Solana.
+    """
+    cursor: str | None = None
+    """
+    Cursor from a previous page.
     """
 
 
@@ -7263,13 +7164,13 @@ class Weekly(BaseModel):
 
 
 class Winner(BaseModel):
-    address: str
-    amountToPayAtomic: str
-    claimAmountAtomic: str | None = None
-    claimSignature: str | None = None
-    claimedAt: str | None = None
-    mintAddress: str
     submissionId: str
+    address: str
+    mintAddress: str
+    amountToPayAtomic: str
+    claimedAt: str | None = None
+    claimSignature: str | None = None
+    claimAmountAtomic: str | None = None
 
 
 Reply.model_rebuild()
@@ -7299,16 +7200,8 @@ BountySortParam: TypeAlias = (
 )
 CalloutSortParam: TypeAlias = CalloutSort | Literal["TIMESTAMP", "MULTIPLE"]
 CalloutWindowParam: TypeAlias = CalloutWindow | Literal["daily", "weekly", "monthly", "alltime"]
-CandleIntervalParam: TypeAlias = (
-    CandleInterval
-    | Literal["1s", "15s", "30s", "1m", "5m", "15m", "30m", "1h", "4h", "6h", "12h", "24h"]
-)
 CandleResolutionParam: TypeAlias = (
     CandleResolution | Literal["1s", "15s", "30s", "1m", "5m", "15m", "1h", "4h", "1d"]
-)
-ChartTimeframeParam: TypeAlias = (
-    ChartTimeframe
-    | Literal["1m", "5m", "15m", "30m", "1h", "6h", "12h", "24h", "1w", "1mo", "3mo", "1y"]
 )
 ClipTypeParam: TypeAlias = ClipType | Literal["COMPLETE", "HIGHLIGHT", "PREVIEW"]
 CoinBoardParam: TypeAlias = (
