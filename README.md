@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Zillow, Expedia, Brave Search, Indeed, Facebook Ad Library, Facebook Marketplace, and Facebook in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Pinterest v2, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Zillow, Expedia, Brave Search, Indeed, Facebook Ad Library, Facebook Marketplace, and Facebook in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)

@@ -48,7 +48,7 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 | Method | Key inputs | Returns |
 | --- | --- | --- |
-| `subtitles` | `video_id`; optional `language`, `subtitle_format`, `source`, `country` | `SubtitleResponse` in SRT, VTT, JSON3, TTML, or plain text |
+| `subtitles` | `video_id`; optional `language`, `fallback_languages`, `subtitle_format`, `source`, `country` | `SubtitleResponse` in SRT, VTT, JSON3, TTML, or plain text |
 | `subtitle_tracks` | `video_id`; optional `country` | `SubtitleTracksResponse` with manual and automatic tracks |
 | `comments` | `video_id`; optional `sort`, `cursor` | `CommentsResponse` page of top-level threads |
 | `comment_replies` | `video_id`, `comment_id`, required `cursor` | `RepliesResponse` page and next cursor |

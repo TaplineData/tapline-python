@@ -29,18 +29,18 @@ The async `TaplineClient` accepts the same `api_key=` argument. If you omit it, 
 
 Every method except `get_salaries` takes `country`, the Indeed site to read (`us` by default, `gb` for the UK).
 
-| Method | Key inputs | Returns | Credits |
+| Method | Key inputs | Credits | Returns |
 | --- | --- | --- | --- |
-| `search_jobs` | `query`, `location`, the filters, `cursor` | up to 25 jobs per page, each with its full record, plus the total and facets | 10 |
-| `get_job` | `job_key` | one job: description as text and HTML, pay, the hiring company's profile, location, attributes, apply details and applicant count | 2 |
-| `list_company_jobs` | `company_key`, the filters, `cursor` | up to 25 of a company's jobs per page | 10 |
-| `get_company` | `company_key` | profile, employee ratings, happiness scores, CEO approval, average pay, similar companies and links to its reviews and salaries pages | 2 |
-| `search_companies` | `query` | companies matching a name, with their keys | 2 |
-| `list_company_directory` | `query`, `location` | companies by name, industry or the titles they hire for, with ratings | 2 |
-| `get_salaries` | `location`, `job_title`, `company_key` | average reported pay per year, month, week, day and hour | 2 |
-| `list_job_title_suggestions` | `query` | job searches for partly typed text | 2 |
-| `list_location_suggestions` | `query` | places for partly typed text | 2 |
-| `list_popular_searches` | | the searches run most on a country site | 2 |
+| `search_jobs` | `query`, `location`, the filters, `cursor` | 10 | up to 25 jobs per page, each with its full record, plus the total and facets |
+| `get_job` | `job_key` | 2 | one job: description as text and HTML, pay, the hiring company's profile, location, attributes, apply details and applicant count |
+| `list_company_jobs` | `company_key`, the filters, `cursor` | 10 | up to 25 of a company's jobs per page |
+| `get_company` | `company_key` | 2 | profile, employee ratings, happiness scores, CEO approval, average pay, similar companies and links to its reviews and salaries pages |
+| `search_companies` | `query` | 2 | companies matching a name, with their keys |
+| `list_company_directory` | `query`, `location` | 2 | companies by name, industry or the titles they hire for, with ratings |
+| `get_salaries` | `location`, `job_title`, `company_key` | 2 | average reported pay per year, month, week, day and hour |
+| `list_job_title_suggestions` | `query` | 2 | job searches for partly typed text |
+| `list_location_suggestions` | `query` | 2 | places for partly typed text |
+| `list_popular_searches` | | 2 | the searches run most on a country site |
 
 Paged methods cost their credits per page.
 
