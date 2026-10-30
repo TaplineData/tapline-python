@@ -191,8 +191,10 @@ class PinterestV2CollectionItem(BaseModel):
     pin_id: str | None = None
     title: str | None = None
     link: str | None = None
+    price_value: float | None = None
     is_active: bool | None = None
     rich_content: PinterestV2RichContent | None = None
+    currency_symbol: str | None = None
     dominant_color: str | None = None
     image_signature: str | None = None
     images: list[PinterestV2Image] | None = None
@@ -514,6 +516,7 @@ class PinterestV2Story(BaseModel):
     pages: list[PinterestV2StoryPage] | None = None
     has_affiliate_products: bool | None = None
     has_product_pins: bool | None = None
+    canvas_aspect_ratio: float | None = None
 
 
 class PinterestV2StoryBlock(BaseModel):
@@ -521,10 +524,26 @@ class PinterestV2StoryBlock(BaseModel):
     pin_id: str | None = None
     text: str | None = None
     is_removed: bool | None = None
+    user: PinterestV2User | None = None
     type: str | None = None
+    text_style: PinterestV2StoryTextStyle | None = None
+    position: PinterestV2StoryBlockPosition | None = None
     images: list[PinterestV2Image] | None = None
     videos: list[PinterestV2Video] | None = None
     audio: PinterestV2AudioData | None = None
+
+
+class PinterestV2StoryBlockPosition(BaseModel):
+    x: float | None = None
+    y: float | None = None
+    width: float | None = None
+    height: float | None = None
+    rotation: float | None = None
+
+
+class PinterestV2StoryFont(BaseModel):
+    name: str | None = None
+    url: str | None = None
 
 
 class PinterestV2StoryPage(BaseModel):
@@ -536,6 +555,15 @@ class PinterestV2StoryPage(BaseModel):
     should_mute: bool | None = None
     image_signature: str | None = None
     images: list[PinterestV2Image] | None = None
+
+
+class PinterestV2StoryTextStyle(BaseModel):
+    color: str | None = None
+    highlight_color: str | None = None
+    font_size: int | None = None
+    alignment: int | None = None
+    vertical_alignment: int | None = None
+    font: PinterestV2StoryFont | None = None
 
 
 class PinterestV2TextEntity(BaseModel):
