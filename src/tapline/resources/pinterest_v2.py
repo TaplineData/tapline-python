@@ -85,7 +85,7 @@ class PinterestV2(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestV2BoardResponse:
-        """Returns the board's details and its normalized pins in board order, including media, story and carousel content, creator and pinner identities, attribution, rich content, and engagement. Board details and counts can be up to 24 hours old. Pass `cursor` back until it is `null`. `trim` is accepted but does not change the response. Costs 1 credit.
+        """A board's details and its pins in board order. Board details and counts can be up to 24 hours old. Pass `cursor` back until it is `null`. `trim` is accepted but does not change the response. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -198,7 +198,7 @@ class SyncPinterestV2(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestV2BoardResponse:
-        """Returns the board's details and its normalized pins in board order, including media, story and carousel content, creator and pinner identities, attribution, rich content, and engagement. Board details and counts can be up to 24 hours old. Pass `cursor` back until it is `null`. `trim` is accepted but does not change the response. Costs 1 credit.
+        """A board's details and its pins in board order. Board details and counts can be up to 24 hours old. Pass `cursor` back until it is `null`. `trim` is accepted but does not change the response. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
