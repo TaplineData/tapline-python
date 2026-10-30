@@ -67,21 +67,6 @@ class CalloutWindow(str, Enum):
     ALLTIME = "alltime"
 
 
-class CandleInterval(str, Enum):
-    FIELD_1S = "1s"
-    FIELD_15S = "15s"
-    FIELD_30S = "30s"
-    FIELD_1M = "1m"
-    FIELD_5M = "5m"
-    FIELD_15M = "15m"
-    FIELD_30M = "30m"
-    FIELD_1H = "1h"
-    FIELD_4H = "4h"
-    FIELD_6H = "6h"
-    FIELD_12H = "12h"
-    FIELD_24H = "24h"
-
-
 class CandleResolution(str, Enum):
     FIELD_1S = "1s"
     FIELD_15S = "15s"
@@ -92,21 +77,6 @@ class CandleResolution(str, Enum):
     FIELD_1H = "1h"
     FIELD_4H = "4h"
     FIELD_1D = "1d"
-
-
-class ChartTimeframe(str, Enum):
-    FIELD_1M = "1m"
-    FIELD_5M = "5m"
-    FIELD_15M = "15m"
-    FIELD_30M = "30m"
-    FIELD_1H = "1h"
-    FIELD_6H = "6h"
-    FIELD_12H = "12h"
-    FIELD_24H = "24h"
-    FIELD_1W = "1w"
-    FIELD_1MO = "1mo"
-    FIELD_3MO = "3mo"
-    FIELD_1Y = "1y"
 
 
 class ClipType(str, Enum):
@@ -323,6 +293,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -458,14 +429,6 @@ class AthBatchRequest(BaseModel):
 
 
 class AthParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
-    currency: AthCurrency | None = AthCurrency.USD
-    """
-    Quote currency.
-    """
     mint: Annotated[
         str,
         Field(
@@ -475,6 +438,14 @@ class AthParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
+    """
+    currency: AthCurrency | None = AthCurrency.USD
+    """
+    Quote currency.
+    """
+    chain: TokenChain | None = None
+    """
+    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
     """
 
 
@@ -571,13 +542,13 @@ class BountyDraftResolution(BaseModel):
 
 
 class BountyFeedRecentParams(BaseModel):
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=50)] = 24
     """
     Maximum feed entries to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
     """
 
 
@@ -623,14 +594,6 @@ class BountyResolutionHistoryWinner(BaseModel):
 
 
 class BountySubmissionsParams(BaseModel):
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=50)] = 24
-    """
-    Maximum submissions to return.
-    """
     requester_address: Annotated[
         str,
         Field(
@@ -641,20 +604,64 @@ class BountySubmissionsParams(BaseModel):
     """
     Solana wallet that made the submissions.
     """
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 24
+    """
+    Maximum submissions to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
 
 
 class BountyTasksParams(BaseModel):
+    phase: list[BountyPhase] | None = [BountyPhase.OPEN]
+    """
+    Lifecycle phases to return. Repeat for several. A phase is pump.fun's grouping of task states, not the task's `status`: an `OPEN` task can carry status `PENDING_RESOLUTION`. Tasks carry no `phase` field.
+    """
+    sort: BountySort | None = BountySort.REWARD_TOTAL_USD
+    """
+    Ranking column.
+    """
+    order: OrderDirection | None = OrderDirection.DESC
+    """
+    Sort direction.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 24
+    """
+    Maximum tasks to return.
+    """
+    facets: bool | None = True
+    """
+    Include aggregate facet counts alongside the tasks.
+    """
     coin_address: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Restrict to bounties on one Solana coin.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
+    q: Annotated[str | None, Field(max_length=256)] = None
+    """
+    Free-text search.
     """
     creator_address: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Bounties posted by this Solana wallet.
     """
-    cursor: str | None = None
+    reward_mints: list[RewardMint] | None = None
     """
-    `nextCursor` from the previous page; omit for the first page.
+    Bounties paying in these Solana token mints. Repeat for several.
+    """
+    reward_total_usd_gte: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Minimum reward in USD.
+    """
+    reward_total_usd_lte: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Maximum reward in USD.
     """
     expires_at_gte: Annotated[
         str | None,
@@ -674,9 +681,13 @@ class BountyTasksParams(BaseModel):
     """
     Expiring at or before this ISO 8601 date or time, such as `2026-11-01`.
     """
-    facets: bool | None = True
+    like_count_gte: Annotated[int | None, Field(ge=0)] = None
     """
-    Include aggregate facet counts alongside the tasks.
+    Minimum likes.
+    """
+    submission_count_gte: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum submissions.
     """
     include_banned: bool | None = None
     """
@@ -686,53 +697,13 @@ class BountyTasksParams(BaseModel):
     """
     Latitude for a distance search.
     """
-    like_count_gte: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum likes.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 24
-    """
-    Maximum tasks to return.
-    """
     lng: Annotated[float | None, Field(ge=-180.0, le=180.0)] = None
     """
     Longitude for a distance search.
     """
-    order: OrderDirection | None = OrderDirection.DESC
-    """
-    Sort direction.
-    """
-    phase: list[BountyPhase] | None = [BountyPhase.OPEN]
-    """
-    Lifecycle phases to return. Repeat for several. A phase is pump.fun's grouping of task states, not the task's `status`: an `OPEN` task can carry status `PENDING_RESOLUTION`. Tasks carry no `phase` field.
-    """
-    q: Annotated[str | None, Field(max_length=256)] = None
-    """
-    Free-text search.
-    """
     radius_km: Annotated[float | None, Field(gt=0.0)] = None
     """
     Radius in km for a distance search.
-    """
-    reward_mints: list[RewardMint] | None = None
-    """
-    Bounties paying in these Solana token mints. Repeat for several.
-    """
-    reward_total_usd_gte: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Minimum reward in USD.
-    """
-    reward_total_usd_lte: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Maximum reward in USD.
-    """
-    sort: BountySort | None = BountySort.REWARD_TOTAL_USD
-    """
-    Ranking column.
-    """
-    submission_count_gte: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum submissions.
     """
 
 
@@ -874,15 +845,6 @@ class CalloutQuotesParams(BaseModel):
 
 
 class CalloutRepliesParams(BaseModel):
-    before_id: Annotated[
-        str | None,
-        Field(
-            pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        ),
-    ] = None
-    """
-    Replies older than this reply id. Recency order only, so not with `sort=POSITION` or `PNL`.
-    """
     callout_id: Annotated[
         str,
         Field(
@@ -893,21 +855,30 @@ class CalloutRepliesParams(BaseModel):
     """
     Callout UUID.
     """
-    filter: ReplyFilter | None = ReplyFilter.ALL
-    """
-    Restrict to a reply audience.
-    """
     limit: Annotated[int | None, Field(ge=1, le=500)] = 200
     """
     Maximum replies to return.
     """
-    nested_limit: Annotated[int | None, Field(ge=0, le=10)] = None
+    filter: ReplyFilter | None = ReplyFilter.ALL
     """
-    Newest child replies to inline per reply.
+    Restrict to a reply audience.
+    """
+    before_id: Annotated[
+        str | None,
+        Field(
+            pattern="^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        ),
+    ] = None
+    """
+    Replies older than this reply id. Recency order only, so not with `sort=POSITION` or `PNL`.
     """
     page: Annotated[int | None, Field(ge=0)] = None
     """
     Page number for `sort=POSITION`.
+    """
+    sort: ReplySort | None = None
+    """
+    Reply order.
     """
     parent_reply_id: Annotated[
         str | None,
@@ -918,9 +889,9 @@ class CalloutRepliesParams(BaseModel):
     """
     List this reply's direct children instead of top-level replies.
     """
-    sort: ReplySort | None = None
+    nested_limit: Annotated[int | None, Field(ge=0, le=10)] = None
     """
-    Reply order.
+    Newest child replies to inline per reply.
     """
 
 
@@ -958,87 +929,57 @@ class CalloutStatsParams(BaseModel):
     """
 
 
-class Candle(BaseModel):
-    close: str
-    high: str
-    low: str
-    open: str
-    timestamp: int
-    volume: str
-
-
-class CandlesParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds, as returned by the coin endpoints. pump.fun does not use it to pick the window: any value returns the same series.
-    """
-    currency: AthCurrency | None = AthCurrency.USD
-    """
-    Quote currency for the candle values.
-    """
-    interval: CandleInterval | None = CandleInterval.FIELD_1M
-    """
-    Candle width.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 300
-    """
-    Maximum candles to return.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
 class ChainCandlesParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
-    """
     chain: Annotated[MarketChain, Field(examples=["base"])]
     """
     Chain the coin trades on; `hypercore` for HyperCore perps.
     """
-    count: Annotated[int | None, Field(ge=1, le=300)] = 200
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
-    Bars ending at `to`.
-    """
-    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
-    """
-    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
-    """
-    pool: str | None = None
-    """
-    One pool of the coin. Omit to stitch curve and AMM bars together.
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
     resolution: Annotated[CandleResolution, Field(examples=["1h"])]
     """
     Bar width.
     """
+    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
+    """
+    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
+    """
     to: Annotated[int | None, Field(ge=0)] = None
     """
     Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
     """
+    count: Annotated[int | None, Field(ge=1, le=300)] = 200
+    """
+    Bars ending at `to`.
+    """
+    pool: str | None = None
+    """
+    One pool of the coin. Omit to stitch curve and AMM bars together.
+    """
 
 
 class ChainPriceLineParams(BaseModel):
+    chain: Annotated[MarketChain, Field(examples=["base"])]
+    """
+    Chain the coin trades on; `hypercore` for HyperCore perps.
+    """
     address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
     Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
-    chain: Annotated[MarketChain, Field(examples=["base"])]
+    resolution: Annotated[CandleResolution, Field(examples=["1h"])]
     """
-    Chain the coin trades on; `hypercore` for HyperCore perps.
+    Bar width.
+    """
+    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
+    """
+    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
+    """
+    to: Annotated[int | None, Field(ge=0)] = None
+    """
+    Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
     """
     count: Annotated[int | None, Field(ge=1, le=300)] = 200
     """
@@ -1048,59 +989,47 @@ class ChainPriceLineParams(BaseModel):
     """
     Most points returned; at or above `count` keeps every bar.
     """
-    measure: PriceMeasure | None = PriceMeasure.PRICE_USD
-    """
-    What each bar measures. `market_cap_usd` multiplies the USD price by the current circulating supply.
-    """
-    resolution: Annotated[CandleResolution, Field(examples=["1h"])]
-    """
-    Bar width.
-    """
-    to: Annotated[int | None, Field(ge=0)] = None
-    """
-    Unix time in milliseconds of the newest bar. Omit for now, forming bar included.
-    """
 
 
 class ChainTopHoldersParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
-    """
     chain: Annotated[TokenChain, Field(examples=["base"])]
     """
     Chain the coin lives on.
     """
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
+    """
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
+    """
 
 
 class ChainTradesParams(BaseModel):
+    chain: Annotated[MarketChain, Field(examples=["base"])]
+    """
+    Chain the coin trades on; `hypercore` for HyperCore perps.
+    """
     address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
     """
     Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain, or the coin name (such as BTC) on hypercore.
     """
-    after: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
     """
-    Trades newer than this `ordinalKey`.
-    """
-    before: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
-    """
-    Trades older than this `ordinalKey`.
-    """
-    chain: Annotated[MarketChain, Field(examples=["base"])]
-    """
-    Chain the coin trades on; `hypercore` for HyperCore perps.
+    Maximum trades to return.
     """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
     `nextCursor` from the previous page; omit for the first page.
     """
+    before: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    """
+    Trades older than this `ordinalKey`.
+    """
+    after: Annotated[str | None, Field(pattern="^\\d{1,20}-\\d{1,10}-\\d{1,10}-\\d{1,15}$")] = None
+    """
+    Trades newer than this `ordinalKey`.
+    """
     kinds: list[TradeKind] | None = None
     """
     Trade kinds to keep. HyperCore coins default to `perp_fill`.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum trades to return.
     """
     min_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
@@ -1268,10 +1197,6 @@ class CoinBoardParams(BaseModel):
     """
     Which ranked board to read.
     """
-    chains: Annotated[list[TokenChain] | None, Field(max_length=8)] = None
-    """
-    Keep only coins on these chains, at most 8: pump.fun refuses all nine at once. Repeat the parameter for several; omit it for every chain.
-    """
     limit: Annotated[int | None, Field(ge=1, le=150)] = 30
     """
     Maximum coins to return.
@@ -1280,35 +1205,39 @@ class CoinBoardParams(BaseModel):
     """
     Rows to skip.
     """
+    chains: Annotated[list[TokenChain] | None, Field(max_length=8)] = None
+    """
+    Keep only coins on these chains, at most 8: pump.fun refuses all nine at once. Repeat the parameter for several; omit it for every chain.
+    """
 
 
 class CoinClipsParams(BaseModel):
+    mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
+    """
+    Token mint address.
+    """
     clip_type: str | None = "HIGHLIGHT"
     """
     Clip category as pump.fun labels it: `COMPLETE`, `HIGHLIGHT` or `PREVIEW`. Any other value answers an empty list.
-    """
-    cursor: Annotated[str | None, Field(max_length=1024)] = None
-    """
-    `lastEvaluatedKey` from the previous page, with the same `clip_type`; omit for the first page.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum clips to return.
     """
-    mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
+    cursor: Annotated[str | None, Field(max_length=1024)] = None
     """
-    Token mint address.
+    `lastEvaluatedKey` from the previous page, with the same `clip_type`; omit for the first page.
     """
 
 
 class CoinFeeEventsParams(BaseModel):
-    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
-    """
-    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
-    """
     chain: Annotated[TokenChain, Field(examples=["base"])]
     """
     Chain the coin lives on.
+    """
+    address: Annotated[str, Field(examples=["0x07b3D902783c3C12b077508c3B5c00113d1291D0"])]
+    """
+    Coin address on the chosen chain: a base58 mint on Solana, a 0x token on an EVM chain.
     """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
@@ -1346,33 +1275,25 @@ class CoinMayhemStateParams(BaseModel):
 
 
 class CoinNarrativesParams(BaseModel):
-    cursor: str | None = None
-    """
-    `cursor` from the previous answer; omit for the first page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum narratives to return.
     """
-    locale: Annotated[str | None, Field(max_length=16)] = None
+    cursor: str | None = None
     """
-    Language, such as `en`.
+    `cursor` from the previous answer; omit for the first page.
     """
     source: NarrativeSource | None = None
     """
     Board the narratives cover.
     """
+    locale: Annotated[str | None, Field(max_length=16)] = None
+    """
+    Language, such as `en`.
+    """
 
 
 class CoinParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Pin an EVM address that exists on several chains to one of them. A coin that is not on this chain answers 404. Omit to let pump.fun pick.
-    """
-    include_livestream_info: bool | None = False
-    """
-    Attach livestream metadata when the coin is streaming.
-    """
     mint: Annotated[
         str,
         Field(
@@ -1382,6 +1303,14 @@ class CoinParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
+    """
+    include_livestream_info: bool | None = False
+    """
+    Attach livestream metadata when the coin is streaming.
+    """
+    chain: TokenChain | None = None
+    """
+    Pin an EVM address that exists on several chains to one of them. A coin that is not on this chain answers 404. Omit to let pump.fun pick.
     """
 
 
@@ -1421,14 +1350,27 @@ class CoinSocial(BaseModel):
 
 
 class CoinTimelineParams(BaseModel):
-    cursor: str | None = None
+    mint: Annotated[
+        str,
+        Field(
+            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
+            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
+        ),
+    ]
     """
-    `nextCursor` from the previous page; omit for the first page.
+    Coin address: a Solana mint or an EVM token (0x).
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 50
     """
     Maximum timeline events to return.
     """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
+    """
+
+
+class CoinTopCalloutsParams(BaseModel):
     mint: Annotated[
         str,
         Field(
@@ -1438,27 +1380,14 @@ class CoinTimelineParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
-class CoinTopCalloutsParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin, to pin an EVM token.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum callouts to return.
     """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
+    chain: TokenChain | None = None
     """
-    Coin address: a Solana mint or an EVM token (0x).
+    Chain of the coin, to pin an EVM token.
     """
 
 
@@ -1555,13 +1484,25 @@ class CoinsCreatedByMode(BaseModel):
 
 
 class CoinsParams(BaseModel):
-    boost_modes: list[BoostMode] | None = None
+    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
-    Keep coins in these boost states. Repeat the parameter for several.
+    Rows to skip.
     """
-    complete: bool | None = None
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Maximum coins to return. pump.fun serves 70 at most.
+    """
+    sort: CoinSort | None = CoinSort.CREATED_TIMESTAMP
+    """
+    Ranking column.
+    """
+    order: CoinSortDirection | None = CoinSortDirection.DESC
+    """
+    Sort direction.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -1569,25 +1510,13 @@ class CoinsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
+    complete: bool | None = None
     """
-    Include coins flagged not-safe-for-work.
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
     """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    boost_modes: list[BoostMode] | None = None
     """
-    Maximum coins to return. pump.fun serves 70 at most.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
-    """
-    Rows to skip.
-    """
-    order: CoinSortDirection | None = CoinSortDirection.DESC
-    """
-    Sort direction.
-    """
-    sort: CoinSort | None = CoinSort.CREATED_TIMESTAMP
-    """
-    Ranking column.
+    Keep coins in these boost states. Repeat the parameter for several.
     """
 
 
@@ -1756,13 +1685,13 @@ class CreatorFeesParams(BaseModel):
     """
     Bucket width. pump.fun's `5m` series has answered 503 (not charged) for every creator tried since 2026-10-08.
     """
-    mint: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
-    """
-    Narrow the earnings to one Solana coin. A Solana creator only.
-    """
     period: FeePeriod | None = None
     """
     Window ending now. Omit for the widest window `interval` allows.
+    """
+    mint: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
+    """
+    Narrow the earnings to one Solana coin. A Solana creator only.
     """
 
 
@@ -1899,19 +1828,19 @@ class Entry(BaseModel):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -1971,13 +1900,13 @@ class FeeSharingSharesParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    cursor: str | None = ""
-    """
-    Cursor from a previous page.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum shares to return.
+    """
+    cursor: str | None = ""
+    """
+    Cursor from a previous page.
     """
 
 
@@ -2116,15 +2045,6 @@ class FollowingParams(BaseModel):
     """
     `followers` puts the most-followed profiles first; `recent` the newest follows.
     """
-
-
-class Fundingsource(BaseModel):
-    amount: float
-    funder: str
-    funderName: str | None
-    funderType: str | None
-    signature: str
-    timestamp: int | str
 
 
 class Generatedmedia(BaseModel):
@@ -3286,21 +3206,6 @@ class GetTokenHolderCountResponse(BaseModel):
     networkId: int
 
 
-class GetTopHoldersResponse(BaseModel):
-    topHolders: list[GetTopHoldersResponseTopholder]
-    totalHolders: int
-
-
-class GetTopHoldersResponseTopholder(BaseModel):
-    address: str
-    amount: float
-    enteredAt: int | None
-    fundingSource: Fundingsource | None
-    isBundler: bool
-    isDev: bool
-    isSniper: bool
-
-
 class GetTopTokenMintChainsResponse(BaseModel):
     chains: dict[str, list[str]]
     mints: list[str]
@@ -3345,28 +3250,6 @@ class GetTopTraderTradesResponseTrader(BaseModel):
     username: str
     verifiedBadgeVisible: bool
     walletAddress: str
-
-
-class GetTradesResponse(BaseModel):
-    pagination: PageCursor
-    trades: list[GetTradesResponseTrade]
-
-
-class GetTradesResponseTrade(BaseModel):
-    amountSol: str
-    amountUsd: str
-    baseAmount: str
-    fillPriceSol: str
-    fillPriceUsd: str
-    priceSol: str
-    priceUsd: str
-    program: str
-    quoteAmount: str
-    slotIndexId: str
-    timestamp: str
-    tx: str
-    type: str
-    userAddress: str
 
 
 class GetTrendingBoardResponse(BaseModel):
@@ -3895,21 +3778,21 @@ class GroupMembersPnlParams(BaseModel):
 
 
 class GroupPnlLeaderboardParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum squads to return.
-    """
     period: LeaderboardPeriod | None = LeaderboardPeriod.DAILY
     """
     Ranking window.
     """
-    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
-    """
-    Top positions shown per squad (pump.fun's default 3).
-    """
     sort: LeaderboardSort | None = None
     """
     Which PnL figure ranks squads.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
+    """
+    Maximum squads to return.
+    """
+    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
+    """
+    Top positions shown per squad (pump.fun's default 3).
     """
 
 
@@ -3939,29 +3822,29 @@ class HolderRewardsParams(BaseModel):
     """
     `nextCursor` from the previous page; omit for the first page.
     """
+    sort: HolderRewardSort | None = HolderRewardSort.ACCRUED
+    """
+    Ranking column.
+    """
     direction: OrderDirection | None = OrderDirection.DESC
     """
     Sort direction.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=2000)] = 50
-    """
-    Coins per page.
-    """
-    page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    Page number, from 1.
-    """
-    paying_only: bool | None = None
-    """
-    Only coins that paid holders.
     """
     quote: Annotated[str | None, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")] = None
     """
     Only coins quoted in this token mint.
     """
-    sort: HolderRewardSort | None = HolderRewardSort.ACCRUED
+    paying_only: bool | None = None
     """
-    Ranking column.
+    Only coins that paid holders.
+    """
+    page: Annotated[int | None, Field(ge=1)] = 1
+    """
+    Page number, from 1.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=2000)] = 50
+    """
+    Coins per page.
     """
 
 
@@ -4027,6 +3910,10 @@ class HomeFeedLegacyPosition(BaseModel):
 
 
 class HomeFeedParams(BaseModel):
+    page_size: Annotated[int | None, Field(ge=1, le=200)] = 150
+    """
+    Number of feed entries to return.
+    """
     chain: FeedChain | None = FeedChain.ALL
     """
     Restrict the feed to one chain. pump.fun's feed does not cover Monad.
@@ -4034,10 +3921,6 @@ class HomeFeedParams(BaseModel):
     page: Annotated[int | None, Field(ge=0)] = None
     """
     Page number, from 0.
-    """
-    page_size: Annotated[int | None, Field(ge=1, le=200)] = 150
-    """
-    Number of feed entries to return.
     """
     updates_limit: Annotated[int | None, Field(ge=1, le=10)] = None
     """
@@ -4185,36 +4068,6 @@ class Liker(BaseModel):
     username: str
     verifiedBadgeVisible: bool
     walletAddress: str
-
-
-class LineChart(BaseModel):
-    price: float
-    time: int
-
-
-class LineChartParams(BaseModel):
-    created_ts: Annotated[int, Field(examples=[1788122643000])]
-    """
-    Coin creation timestamp in milliseconds, as returned by the coin endpoints. pump.fun does not use it to pick the window: any value returns the same series.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-    timeframe: ChartTimeframe | None = ChartTimeframe.FIELD_24H
-    """
-    Series window.
-    """
-    width: Annotated[int | None, Field(ge=2, le=512)] = 64
-    """
-    Points pump.fun aims for. It treats this as a hint: the count it returns varies with the timeframe and can exceed `width`.
-    """
 
 
 class ListCompetitionsResponse(BaseModel):
@@ -4411,10 +4264,6 @@ class LiveCoinMayhem(BaseModel):
 
 
 class LiveCoinsParams(BaseModel):
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=70)] = 60
     """
     Maximum coins to return.
@@ -4422,6 +4271,10 @@ class LiveCoinsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -4446,13 +4299,13 @@ class GetLivestreamResponse(RootModel[Livestream | None]):
 
 
 class LivestreamHistoryParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum sessions to return.
-    """
     mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
     """
     Token mint address.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum sessions to return.
     """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
@@ -4528,10 +4381,6 @@ class MarketActivityBatchRequest(BaseModel):
 
 
 class MarketActivityParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
-    """
     mint: Annotated[
         str,
         Field(
@@ -4541,6 +4390,10 @@ class MarketActivityParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
+    """
+    chain: TokenChain | None = None
+    """
+    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
     """
 
 
@@ -4642,10 +4495,6 @@ class MayhemCoinTopTradersParams(BaseModel):
 
 
 class MayhemCoinsParams(BaseModel):
-    include_nsfw: bool | None = None
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 60
     """
     Maximum coins to return. pump.fun serves 60 at most.
@@ -4657,6 +4506,10 @@ class MayhemCoinsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=1000)] = None
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = None
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -4728,18 +4581,6 @@ class Mint4(RootModel[str]):
 
 
 class MintPositionsParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    `RANKED` only: chain of an EVM coin.
-    """
-    dust_floor_usd: Annotated[float | None, Field(ge=0.0, le=100000.0)] = None
-    """
-    Ignore positions below this USD value. Refused with `RANKED` and `CLOSED_PNL`.
-    """
-    include_profile: bool | None = None
-    """
-    Embed each holder's full profile.
-    """
     mint: Annotated[
         str,
         Field(
@@ -4750,29 +4591,41 @@ class MintPositionsParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
-    page: Annotated[int | None, Field(ge=0)] = None
-    """
-    Page number, from 0. Not with `RANKED`.
-    """
     page_size: Annotated[int | None, Field(ge=1, le=50)] = 50
     """
     Positions per page.
-    """
-    page_token: Annotated[str | None, Field(max_length=256)] = None
-    """
-    `RANKED` only: `nextPageToken` from the previous page. pump.fun answered `RANKED` in one page (`hasMore` false) with no `nextPageToken` in every probe since 2026-10-08.
     """
     sort_by: MintPositionSort | None = MintPositionSort.TOP
     """
     Ranking column.
     """
+    with_thesis: bool | None = None
+    """
+    Only positions carrying a written thesis. `RANKED` and `CLOSED_PNL` need `true`.
+    """
+    page: Annotated[int | None, Field(ge=0)] = None
+    """
+    Page number, from 0. Not with `RANKED`.
+    """
     updates_limit: Annotated[int | None, Field(ge=0, le=20)] = None
     """
     Author updates per callout (pump.fun's default 5).
     """
-    with_thesis: bool | None = None
+    include_profile: bool | None = None
     """
-    Only positions carrying a written thesis. `RANKED` and `CLOSED_PNL` need `true`.
+    Embed each holder's full profile.
+    """
+    dust_floor_usd: Annotated[float | None, Field(ge=0.0, le=100000.0)] = None
+    """
+    Ignore positions below this USD value. Refused with `RANKED` and `CLOSED_PNL`.
+    """
+    page_token: Annotated[str | None, Field(max_length=256)] = None
+    """
+    `RANKED` only: `nextPageToken` from the previous page. pump.fun answered `RANKED` in one page (`hasMore` false) with no `nextPageToken` in every probe since 2026-10-08.
+    """
+    chain: TokenChain | None = None
+    """
+    `RANKED` only: chain of an EVM coin.
     """
 
 
@@ -4787,13 +4640,13 @@ class Monad(BaseModel):
 
 
 class MoversBoardParams(BaseModel):
-    chains: list[NonMonadChain] | None = None
-    """
-    Keep only coins on these chains. Repeat the parameter for several.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum board entries to return. pump.fun serves at most 150.
+    """
+    chains: list[NonMonadChain] | None = None
+    """
+    Keep only coins on these chains. Repeat the parameter for several.
     """
 
 
@@ -4819,34 +4672,6 @@ class Nativeasset(BaseModel):
 
 
 class NewCalloutsCountParams(BaseModel):
-    chain: FeedChain | None = FeedChain.ALL
-    """
-    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
-    """
-    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at most this.
-    """
-    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at most this.
-    """
-    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at most this.
-    """
-    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at least this.
-    """
-    min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at least this.
-    """
-    min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at least this.
-    """
     since: Annotated[
         str,
         Field(
@@ -4857,37 +4682,37 @@ class NewCalloutsCountParams(BaseModel):
     """
     `headToken` from `/home-feed/new`, kept until you reload the feed.
     """
-
-
-class NewCalloutsFeedParams(BaseModel):
     chain: FeedChain | None = FeedChain.ALL
     """
     Restrict the feed to one chain. pump.fun's feed does not cover Monad.
-    """
-    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at most this.
-    """
-    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep positions whose net USD cost basis is at most this.
-    """
-    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep coins whose current market cap in USD is at most this.
-    """
-    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Keep callouts made when the coin's market cap was at least this.
     """
     min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
     Keep positions whose net USD cost basis is at least this.
     """
+    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at most this.
+    """
+    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at least this.
+    """
+    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at most this.
+    """
     min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
     Keep coins whose current market cap in USD is at least this.
     """
+    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at most this.
+    """
+
+
+class NewCalloutsFeedParams(BaseModel):
     page_size: Annotated[int | None, Field(ge=1, le=50)] = 25
     """
     Number of callouts to return.
@@ -4904,6 +4729,34 @@ class NewCalloutsFeedParams(BaseModel):
     updates_limit: Annotated[int | None, Field(ge=1, le=10)] = None
     """
     Author updates to include per callout.
+    """
+    chain: FeedChain | None = FeedChain.ALL
+    """
+    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
+    """
+    min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at least this.
+    """
+    max_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep positions whose net USD cost basis is at most this.
+    """
+    min_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at least this.
+    """
+    max_callout_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep callouts made when the coin's market cap was at most this.
+    """
+    min_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at least this.
+    """
+    max_market_cap_usd: Annotated[float | None, Field(ge=0.0)] = None
+    """
+    Keep coins whose current market cap in USD is at most this.
     """
 
 
@@ -5052,6 +4905,10 @@ class PerpTradesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
+    """
+    Maximum rows to return.
+    """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
     """
     `nextCursor` from the previous page; omit for the first page.
@@ -5060,13 +4917,13 @@ class PerpTradesParams(BaseModel):
     """
     Row kinds. pump.fun returns fills and transfers by default.
     """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 100
-    """
-    Maximum rows to return.
-    """
 
 
 class PerpsParams(BaseModel):
+    sort: PerpSort | None = PerpSort.VOLUME_24H
+    """
+    Ranking column.
+    """
     limit: Annotated[int | None, Field(ge=1, le=150)] = 30
     """
     Maximum perps to return.
@@ -5074,10 +4931,6 @@ class PerpsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=149)] = 0
     """
     Rows to skip.
-    """
-    sort: PerpSort | None = PerpSort.VOLUME_24H
-    """
-    Ranking column.
     """
 
 
@@ -5098,32 +4951,32 @@ class PlaylistMapRequest(BaseModel):
 
 
 class PnlLeaderboardParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 100
-    """
-    Maximum traders to return. pump.fun serves 100 at most.
-    """
     period: LeaderboardPeriod | None = LeaderboardPeriod.DAILY
     """
     Ranking window.
-    """
-    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
-    """
-    Top positions shown per trader (pump.fun's default 3).
     """
     sort: LeaderboardSort | None = LeaderboardSort.COMBINED
     """
     Which PnL figure ranks traders.
     """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 100
+    """
+    Maximum traders to return. pump.fun serves 100 at most.
+    """
+    positions_limit: Annotated[int | None, Field(ge=0, le=5)] = None
+    """
+    Top positions shown per trader (pump.fun's default 3).
+    """
 
 
 class PnlLeaderboardPositionsParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=25)] = None
-    """
-    Maximum positions to return.
-    """
     period: PositionsPeriod | None = PositionsPeriod.DAILY
     """
     Ranking window.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=25)] = None
+    """
+    Maximum positions to return.
     """
 
 
@@ -5420,14 +5273,6 @@ class Reply(BaseModel):
 
 
 class ReplyLikersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
-    """
-    Maximum profiles to return.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
-    """
-    Rows to skip. pump.fun stops at 10,000.
-    """
     reply_id: Annotated[
         str,
         Field(
@@ -5437,18 +5282,18 @@ class ReplyLikersParams(BaseModel):
     ]
     """
     Callout reply UUID.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    """
+    Maximum profiles to return.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
+    """
+    Rows to skip. pump.fun stops at 10,000.
     """
 
 
 class ReplyRepostersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
-    """
-    Maximum profiles to return.
-    """
-    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
-    """
-    Rows to skip. pump.fun stops at 10,000.
-    """
     reply_id: Annotated[
         str,
         Field(
@@ -5458,6 +5303,14 @@ class ReplyRepostersParams(BaseModel):
     ]
     """
     Callout reply UUID.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 50
+    """
+    Maximum profiles to return.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
+    """
+    Rows to skip. pump.fun stops at 10,000.
     """
 
 
@@ -5681,9 +5534,29 @@ class Row(BaseModel):
 
 
 class SearchCoinsParams(BaseModel):
-    complete: bool | None = None
+    search_term: Annotated[str, Field(examples=["pepe"], max_length=50)]
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Free-text search term.
+    """
+    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
+    """
+    Rows to skip.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Maximum coins to return.
+    """
+    sort: Annotated[CoinSort | None, Field(deprecated=True)] = CoinSort.MARKET_CAP
+    """
+    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    """
+    order: Annotated[CoinSortDirection | None, Field(deprecated=True)] = CoinSortDirection.DESC
+    """
+    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -5691,37 +5564,17 @@ class SearchCoinsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
+    complete: bool | None = None
     """
-    Include coins flagged not-safe-for-work.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Maximum coins to return.
-    """
-    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
-    """
-    Only coins at most this many seconds old.
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
     """
     min_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
     Only coins at least this many seconds old.
     """
-    offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
+    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
-    Rows to skip.
-    """
-    order: Annotated[CoinSortDirection | None, Field(deprecated=True)] = CoinSortDirection.DESC
-    """
-    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
-    """
-    search_term: Annotated[str, Field(examples=["pepe"], max_length=50)]
-    """
-    Free-text search term.
-    """
-    sort: Annotated[CoinSort | None, Field(deprecated=True)] = CoinSort.MARKET_CAP
-    """
-    Deprecated: pump.fun does not order search results by this column, though a value other than the default can change which coins come back.
+    Only coins at most this many seconds old.
     """
 
 
@@ -5736,6 +5589,10 @@ class SearchFollowersParams(BaseModel):
     """
     Solana wallet address or pump.fun user id (UUID). pump.fun refuses EVM wallets here.
     """
+    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
+    """
+    Search term, 2 to 50 characters.
+    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum profiles to return.
@@ -5743,10 +5600,6 @@ class SearchFollowersParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
-    """
-    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
-    """
-    Search term, 2 to 50 characters.
     """
 
 
@@ -5761,6 +5614,10 @@ class SearchFollowingParams(BaseModel):
     """
     Solana wallet address or pump.fun user id (UUID). pump.fun refuses EVM wallets here.
     """
+    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
+    """
+    Search term, 2 to 50 characters.
+    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
     Maximum profiles to return.
@@ -5769,16 +5626,12 @@ class SearchFollowingParams(BaseModel):
     """
     Rows to skip.
     """
-    search_term: Annotated[str, Field(examples=["an"], max_length=50, min_length=2)]
-    """
-    Search term, 2 to 50 characters.
-    """
 
 
 class SearchQuoteFacetsParams(BaseModel):
-    complete: bool | None = None
+    search_term: Annotated[str | None, Field(max_length=50)] = None
     """
-    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    Free-text search term.
     """
     creator: Annotated[
         str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
@@ -5786,40 +5639,40 @@ class SearchQuoteFacetsParams(BaseModel):
     """
     Only coins launched by this wallet, Solana or EVM (0x).
     """
+    complete: bool | None = None
+    """
+    `true` keeps graduated coins only, `false` bonding-curve coins only.
+    """
     include_nsfw: bool | None = False
     """
     Include coins flagged not-safe-for-work.
-    """
-    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
-    """
-    Only coins at most this many seconds old.
     """
     min_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
     Only coins at least this many seconds old.
     """
-    search_term: Annotated[str | None, Field(max_length=50)] = None
+    max_age_seconds: Annotated[int | None, Field(ge=0)] = None
     """
-    Free-text search term.
+    Only coins at most this many seconds old.
     """
 
 
 class SearchUsersParams(BaseModel):
-    include_labelled_wallets: bool | None = True
+    search_term: Annotated[str, Field(examples=["pepe"])]
     """
-    Include wallets pump.fun has labelled but that have no profile.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum profiles to return.
+    Free-text search term.
     """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
     """
-    search_term: Annotated[str, Field(examples=["pepe"])]
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
-    Free-text search term.
+    Maximum profiles to return.
+    """
+    include_labelled_wallets: bool | None = True
+    """
+    Include wallets pump.fun has labelled but that have no profile.
     """
 
 
@@ -6045,14 +5898,6 @@ class SimilarCoinResult(BaseModel):
 
 
 class SimilarCoinsParams(BaseModel):
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Maximum coins to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -6063,9 +5908,17 @@ class SimilarCoinsParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Maximum coins to return.
+    """
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -6241,9 +6094,9 @@ class Top(BaseModel):
 
 
 class TopClipsParams(BaseModel):
-    clip_type: ClipType | None = ClipType.HIGHLIGHT
+    period: VodPeriod | None = VodPeriod.WEEKLY
     """
-    Clip category as pump.fun labels it.
+    Ranking window.
     """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 72
     """
@@ -6253,26 +6106,13 @@ class TopClipsParams(BaseModel):
     """
     Candidate pool size the ranking samples from.
     """
-    period: VodPeriod | None = VodPeriod.WEEKLY
+    clip_type: ClipType | None = ClipType.HIGHLIGHT
     """
-    Ranking window.
+    Clip category as pump.fun labels it.
     """
     timestamp: int | None = None
     """
     Unix seconds to rank as of. Defaults to now.
-    """
-
-
-class TopHoldersParams(BaseModel):
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
     """
 
 
@@ -6291,18 +6131,6 @@ class TopTokenMintsParams(BaseModel):
 
 
 class TopTraderTradesParams(BaseModel):
-    chain: TokenChain | None = None
-    """
-    Chain of an EVM coin. Omit for Solana, or to let pump.fun infer it.
-    """
-    cursor: Annotated[str | None, Field(max_length=200)] = None
-    """
-    `page.nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=500)] = 500
-    """
-    Maximum trades to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -6313,9 +6141,21 @@ class TopTraderTradesParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
+    chain: TokenChain | None = None
+    """
+    Chain of an EVM coin. Omit for Solana, or to let pump.fun infer it.
+    """
     to: Annotated[int | None, Field(ge=0)] = None
     """
     Unix time in ms of the newest trade. pump.fun honours it only while it pages the answer.
+    """
+    cursor: Annotated[str | None, Field(max_length=200)] = None
+    """
+    `page.nextCursor` from the previous page; omit for the first page.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=500)] = 500
+    """
+    Maximum trades to return.
     """
 
 
@@ -6439,31 +6279,6 @@ class TradesBatchRequest(BaseModel):
     """
 
 
-class TradesParams(BaseModel):
-    cursor: str | None = None
-    """
-    Cursor from a previous page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
-    """
-    Maximum trades to return.
-    """
-    min_sol_amount: Annotated[float | None, Field(ge=0.0)] = None
-    """
-    Drop trades below this SOL size.
-    """
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
 class Transaction(BaseModel):
     block_time: int
     chain: str | None = None
@@ -6482,13 +6297,13 @@ class Transaction(BaseModel):
 
 
 class TrendingBoardParams(BaseModel):
-    chains: list[NonMonadChain] | None = None
-    """
-    Keep only coins on these chains. Repeat the parameter for several.
-    """
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum board entries to return. pump.fun serves at most 150.
+    """
+    chains: list[NonMonadChain] | None = None
+    """
+    Keep only coins on these chains. Repeat the parameter for several.
     """
 
 
@@ -6658,6 +6473,10 @@ class UserCalloutRepliesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 30
+    """
+    Maximum replies to return.
+    """
     before_id: Annotated[
         str | None,
         Field(
@@ -6670,10 +6489,6 @@ class UserCalloutRepliesParams(BaseModel):
     filter: UserReplyFilter | None = None
     """
     Plain replies, quote posts, or both.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 30
-    """
-    Maximum replies to return.
     """
 
 
@@ -6692,10 +6507,6 @@ class UserCalloutsParams(BaseModel):
     """
     Maximum callouts to return. pump.fun serves 100 at most.
     """
-    page_token: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
-    """
-    `nextPageToken` from the previous page.
-    """
     sort_by: CalloutSort | None = CalloutSort.TIMESTAMP
     """
     Ranking column.
@@ -6703,6 +6514,10 @@ class UserCalloutsParams(BaseModel):
     sort_order: CoinSortDirection | None = CoinSortDirection.DESC
     """
     Sort direction.
+    """
+    page_token: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]+$")] = None
+    """
+    `nextPageToken` from the previous page.
     """
     window: CalloutWindow | None = None
     """
@@ -6742,10 +6557,6 @@ class UserCreatedCoinsParams(BaseModel):
     """
     Wallet address, Solana or EVM (0x).
     """
-    include_nsfw: bool | None = False
-    """
-    Include coins flagged not-safe-for-work.
-    """
     limit: Annotated[int | None, Field(ge=1, le=100)] = 10
     """
     Maximum coins to return. pump.fun serves 50 at most.
@@ -6753,6 +6564,10 @@ class UserCreatedCoinsParams(BaseModel):
     offset: Annotated[int | None, Field(ge=0, le=2147483647)] = 0
     """
     Rows to skip.
+    """
+    include_nsfw: bool | None = False
+    """
+    Include coins flagged not-safe-for-work.
     """
 
 
@@ -6787,17 +6602,9 @@ class UserPortfolioParams(BaseModel):
     """
     Wallet address (Solana or EVM), pump.fun user id or squad id (UUIDs).
     """
-    chain: NonMonadChain | None = None
-    """
-    Only positions on this chain. pump.fun keeps no Monad portfolio.
-    """
     filter: PortfolioFilter | None = PortfolioFilter.OPEN
     """
     Which positions to return.
-    """
-    filter_spam: bool | None = None
-    """
-    Drop positions pump.fun groups as spam before paging.
     """
     page: Annotated[int | None, Field(ge=0)] = 0
     """
@@ -6811,13 +6618,21 @@ class UserPortfolioParams(BaseModel):
     """
     Ranking column.
     """
+    total_only: bool | None = None
+    """
+    Return the summary only (position count), without positions.
+    """
+    filter_spam: bool | None = None
+    """
+    Drop positions pump.fun groups as spam before paging.
+    """
     spam_only: bool | None = None
     """
     Return only the spam group. Cannot be combined with `filter_spam`.
     """
-    total_only: bool | None = None
+    chain: NonMonadChain | None = None
     """
-    Return the summary only (position count), without positions.
+    Only positions on this chain. pump.fun keeps no Monad portfolio.
     """
 
 
@@ -6856,6 +6671,10 @@ class UserRepostsParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum reposts to return.
+    """
     cursor: str | None = None
     """
     `nextCursor` from the previous page; omit for the first page.
@@ -6863,10 +6682,6 @@ class UserRepostsParams(BaseModel):
     include_quotes: bool | None = False
     """
     Interleave the wallet's quote posts.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum reposts to return.
     """
 
 
@@ -6881,6 +6696,12 @@ class UserTradesParams(BaseModel):
     """
     Wallet address (Solana or EVM) or pump.fun user id (UUID).
     """
+    mint: Annotated[
+        str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
+    ] = None
+    """
+    Only trades in this coin (Solana mint or EVM token).
+    """
     chain: NonMonadChain | None = None
     """
     Only trades on this chain. pump.fun serves no Monad trades here.
@@ -6892,12 +6713,6 @@ class UserTradesParams(BaseModel):
     limit: Annotated[int | None, Field(ge=1, le=200)] = 50
     """
     Maximum trades to return.
-    """
-    mint: Annotated[
-        str | None, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
-    ] = None
-    """
-    Only trades in this coin (Solana mint or EVM token).
     """
     types: Annotated[list[UserTradeType] | None, Field(max_length=2)] = None
     """
@@ -6932,13 +6747,13 @@ class UsersBatch(BaseModel):
 
 
 class UsersParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum profiles to return.
-    """
     offset: Annotated[int | None, Field(ge=0, le=10000)] = 0
     """
     Rows to skip. pump.fun stops at 10,000.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Maximum profiles to return.
     """
 
 
@@ -7096,10 +6911,6 @@ class WalletBalancesParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    chain: BalanceChain | None = None
-    """
-    Restrict to one chain, or `all` for every chain. Omit for Solana tokens only. pump.fun spells HyperEVM `hype`.
-    """
     page: Annotated[int | None, Field(ge=1)] = 1
     """
     One-based page index.
@@ -7107,6 +6918,10 @@ class WalletBalancesParams(BaseModel):
     size: Annotated[int | None, Field(ge=1, le=200)] = 100
     """
     Balances per page.
+    """
+    chain: BalanceChain | None = None
+    """
+    Restrict to one chain, or `all` for every chain. Omit for Solana tokens only. pump.fun spells HyperEVM `hype`.
     """
 
 
@@ -7207,18 +7022,6 @@ class WalletTradesParams(BaseModel):
     """
     Wallet address, Solana or EVM (0x).
     """
-    chain: TokenChain | None = None
-    """
-    Chain of an EVM coin. Omit for Solana. When set, the wallet and the coin must both be addresses on that chain.
-    """
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=200)] = 200
-    """
-    Maximum trades to return.
-    """
     mint: Annotated[
         str,
         Field(
@@ -7228,6 +7031,18 @@ class WalletTradesParams(BaseModel):
     ]
     """
     Coin address: a Solana mint, or an EVM token for an EVM wallet.
+    """
+    chain: TokenChain | None = None
+    """
+    Chain of an EVM coin. Omit for Solana. When set, the wallet and the coin must both be addresses on that chain.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=200)] = 200
+    """
+    Maximum trades to return.
+    """
+    cursor: str | None = None
+    """
+    `nextCursor` from the previous page; omit for the first page.
     """
 
 
@@ -7242,10 +7057,6 @@ class WalletTransactionsParams(BaseModel):
     """
     Solana wallet address. pump.fun refuses EVM wallets here.
     """
-    cursor: str | None = None
-    """
-    Cursor from a previous page.
-    """
     dust_filter: bool | None = True
     """
     Drop dust-sized transactions.
@@ -7253,6 +7064,10 @@ class WalletTransactionsParams(BaseModel):
     include_evm: bool | None = True
     """
     Include EVM chains alongside Solana.
+    """
+    cursor: str | None = None
+    """
+    Cursor from a previous page.
     """
 
 
@@ -7299,16 +7114,8 @@ BountySortParam: TypeAlias = (
 )
 CalloutSortParam: TypeAlias = CalloutSort | Literal["TIMESTAMP", "MULTIPLE"]
 CalloutWindowParam: TypeAlias = CalloutWindow | Literal["daily", "weekly", "monthly", "alltime"]
-CandleIntervalParam: TypeAlias = (
-    CandleInterval
-    | Literal["1s", "15s", "30s", "1m", "5m", "15m", "30m", "1h", "4h", "6h", "12h", "24h"]
-)
 CandleResolutionParam: TypeAlias = (
     CandleResolution | Literal["1s", "15s", "30s", "1m", "5m", "15m", "1h", "4h", "1d"]
-)
-ChartTimeframeParam: TypeAlias = (
-    ChartTimeframe
-    | Literal["1m", "5m", "15m", "30m", "1h", "6h", "12h", "24h", "1w", "1mo", "3mo", "1y"]
 )
 ClipTypeParam: TypeAlias = ClipType | Literal["COMPLETE", "HIGHLIGHT", "PREVIEW"]
 CoinBoardParam: TypeAlias = (
