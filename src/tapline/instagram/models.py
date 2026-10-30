@@ -230,7 +230,7 @@ class GetPostParams(BaseModel):
     """
     include_play_count: bool | None = True
     """
-    Set to false to omit `video_play_count` and skip the extra lookup it needs. Defaults to true. Only videos carry a play count.
+    Set to false to return the `metrics` play and view counts as null and skip the extra lookup they need. Defaults to true. Only videos carry a play count.
     """
     cache_max_age: GetPostParamsCacheMaxAge | None = None
     """
@@ -262,7 +262,7 @@ class GetUserPostsParams(BaseModel):
         str | None, Field(max_length=512, pattern="^[A-Za-z0-9+/=_\\-:.]{1,512}$")
     ] = None
     """
-    The `next_max_id` from the previous page (`timeline:AQHT…`), or the `end_cursor` of `/v1/instagram/profile`'s timeline (`mobile:AQHT…`). The bare `AQHT…` cursor works too. Omit it for the first page.
+    The `pagination.next_cursor` from the previous page, or `recent_posts.pagination.next_cursor` from `/v1/instagram/profile`. Omit it for the first page.
     """
     trim: bool | None = False
     """
@@ -275,7 +275,7 @@ class GetUserReelsParams1(BaseModel):
         str | None, Field(max_length=512, pattern="^[A-Za-z0-9+/=_\\-:.]{1,512}$")
     ] = None
     """
-    The `paging_info.max_id` (or trimmed `max_id`) from the previous page. Omit it for the first page. It is base64, so percent-encode `+` and `/` in a hand-built URL.
+    The `pagination.next_cursor` from the previous page. Omit it for the first page. It is base64, so percent-encode `+` and `/` in a hand-built URL.
     """
     trim: bool | None = False
     """
@@ -296,7 +296,7 @@ class GetUserReelsParams2(BaseModel):
         str | None, Field(max_length=512, pattern="^[A-Za-z0-9+/=_\\-:.]{1,512}$")
     ] = None
     """
-    The `paging_info.max_id` (or trimmed `max_id`) from the previous page. Omit it for the first page. It is base64, so percent-encode `+` and `/` in a hand-built URL.
+    The `pagination.next_cursor` from the previous page. Omit it for the first page. It is base64, so percent-encode `+` and `/` in a hand-built URL.
     """
     trim: bool | None = False
     """

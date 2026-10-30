@@ -199,7 +199,7 @@ class Tiktok(AsyncAPIResource):
     """The Tiktok endpoints, awaitable.
 
     Reached as :attr:`~tapline.TaplineClient.tiktok`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,
@@ -582,7 +582,7 @@ class SyncTiktok(SyncAPIResource):
     """The Tiktok endpoints, blocking.
 
     Reached as :attr:`~tapline.SyncTaplineClient.tiktok`. Anywhere a method takes an
-    enum it also takes that enum's value as a plain string.
+    enum it also takes the enum's raw value.
 
     Every method raises ``AuthenticationError`` when the API key is rejected,
     ``InsufficientCreditsError`` when the account cannot pay for the call,

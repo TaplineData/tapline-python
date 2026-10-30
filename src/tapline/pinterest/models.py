@@ -1267,6 +1267,8 @@ class PinterestRichMetadataProductOfferSummary(BaseModel):
     availability: int | None = None
     condition: int | None = None
     standard_price: str | None = None
+    percentage_off: str | None = None
+    percentage_off_raw: float | None = None
 
 
 class PinterestSearchPin(BaseModel):
@@ -1399,6 +1401,7 @@ class PinterestSearchResultRichSummary(BaseModel):
     display_name: str | None = None
     aggregate_rating: PinterestRichMetadataAggregateRating | None = None
     is_hard_404: bool | None = None
+    is_soft_404: bool | None = None
 
 
 class PinterestSearchResultStoryPinData(BaseModel):
@@ -1441,6 +1444,7 @@ class PinterestSearchResultStoryPinDataPage(BaseModel):
 
 
 class PinterestSearchResultStoryPinDataPageBlock(BaseModel):
+    id: str | None = None
     image_signature: str | None = None
     text: str | None = None
     tracking_id: str | None = None
@@ -1454,6 +1458,10 @@ class PinterestSearchResultStoryPinDataPageBlock(BaseModel):
     pin: PinterestLinkDomain | None = None
     pin_id: str | None = None
     is_removed: bool | None = None
+    style: PinterestStoryPinTextStyle | None = None
+    mentions: list[Any] | None = None
+    sticker_id: str | None = None
+    sticker_type: int | None = None
 
 
 class PinterestSearchResultStoryPinDataPageBlockBlockStyle(BaseModel):
@@ -1506,6 +1514,28 @@ class PinterestSearchStoryObjectImageCrop(BaseModel):
 class PinterestShippingInfo(BaseModel):
     free_shipping_value: int | None = None
     free_shipping_price: str | None = None
+
+
+class PinterestStoryPinFont(BaseModel):
+    id: str | None = None
+    name: str | None = None
+    key: str | None = None
+    url: str | None = None
+    default_size: int | None = None
+    min_size: int | None = None
+    max_size: int | None = None
+    line_height: float | None = None
+    letter_spacing: float | None = None
+    offset: float | None = None
+
+
+class PinterestStoryPinTextStyle(BaseModel):
+    hex_color: str | None = None
+    font: PinterestStoryPinFont | None = None
+    font_id: int | None = None
+    font_size: int | None = None
+    alignment: int | None = None
+    vertical_alignment: int | None = None
 
 
 class PinterestUserBoard(BaseModel):
@@ -1657,6 +1687,7 @@ class PinterestUserBoardDisplayOption(BaseModel):
     stacked_card_cover_shade_colors: Any = None
     corner_radius: Any = None
     subtitle_text_color: Any = None
+    vsa_display_configs: Any = None
 
 
 class PinterestUserBoardObject(BaseModel):

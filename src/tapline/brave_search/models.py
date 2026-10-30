@@ -715,7 +715,7 @@ class BraveSearchPlacesPageCitiesItem(BaseModel):
     name: str
     description: str
     short_description: str
-    description_ai_html: str
+    description_ai_html: str | None = None
     local_time: BraveSearchPlacesPageCitiesItemLocalTime
     pois: list[BraveSearchPlace]
     type: str
@@ -1189,7 +1189,7 @@ class BraveSearchSportsFixtureStatisticsAwayPlayer(BaseModel):
     kick_return_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerKickReturnStatsItem]
     punt_return_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerPuntReturnStatsItem]
     defense_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerDefenseStatsItem]
-    interception_stats: list[BraveSearchUnobservedObject]
+    interception_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerInterceptionStatsItem]
     own_fumble_stats: list[BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleStatsItem]
     own_fumble_recovered_stats: list[
         BraveSearchSportsFixtureStatisticsAwayPlayerOwnFumbleRecoveredStatsItem
@@ -1240,7 +1240,9 @@ class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItem(BaseModel):
     made_details: list[
         BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemMadeDetailsItem
     ]
-    missed_details: list[BraveSearchUnobservedObject]
+    missed_details: list[
+        BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMissedDetailsItem
+    ]
 
 
 class BraveSearchSportsFixtureStatisticsAwayPlayerFieldGoalStatsItemMadeDetailsItem(BaseModel):
@@ -1544,9 +1546,9 @@ class BraveSearchSportsFixtureStatisticsHomePlayer(BaseModel):
     receiving_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerReceivingStatsItem]
     punting_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPuntingStatsItem]
     kick_return_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerKickReturnStatsItem]
-    punt_return_stats: list[BraveSearchUnobservedObject]
+    punt_return_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItem]
     defense_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerDefenseStatsItem]
-    interception_stats: list[BraveSearchUnobservedObject]
+    interception_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerInterceptionStatsItem]
     own_fumble_stats: list[BraveSearchSportsFixtureStatisticsHomePlayerOwnFumbleStatsItem]
     own_fumble_recovered_stats: list[BraveSearchUnobservedObject]
     opponent_fumble_recovered_stats: list[BraveSearchUnobservedObject]
@@ -1593,12 +1595,21 @@ class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItem(BaseModel):
     made_details: list[
         BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMadeDetailsItem
     ]
-    missed_details: list[BraveSearchUnobservedObject]
+    missed_details: list[
+        BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMissedDetailsItem
+    ]
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMadeDetailsItem(BaseModel):
     distance_yards: int | None
     distance_yards_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemMissedDetailsItem(BaseModel):
+    is_blocked: bool
+    distance_yards: int | None
+    distance_yards_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
+    reason: str
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerFieldGoalStatsItemPlayer(BaseModel):
@@ -1625,6 +1636,22 @@ class BraveSearchSportsFixtureStatisticsHomePlayerInactivesItem(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerInactivesItemPlayer(BaseModel):
+    player_id: int
+    first_name: str
+    last_name: str
+    uniform: str
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerInterceptionStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsHomePlayerInterceptionStatsItemPlayer
+    number: int
+    yards: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerInterceptionStatsItemPlayer(BaseModel):
     player_id: int
     first_name: str
     last_name: str
@@ -1742,6 +1769,30 @@ class BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItem(BaseModel):
 
 
 class BraveSearchSportsFixtureStatisticsHomePlayerPenaltyStatsItemPlayer(BaseModel):
+    player_id: int
+    first_name: str
+    last_name: str
+    uniform: str
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItem(BaseModel):
+    player: BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItemPlayer
+    returns: int
+    yards: int
+    fair_catches: int
+    longest_gain: int
+    is_long_touchdown: bool
+    touchdowns: int
+    big_plays: list[BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItemBigPlaysItem]
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItemBigPlaysItem(BaseModel):
+    value: int
+    number: int
+    touchdowns: int
+
+
+class BraveSearchSportsFixtureStatisticsHomePlayerPuntReturnStatsItemPlayer(BaseModel):
     player_id: int
     first_name: str
     last_name: str
@@ -2429,6 +2480,7 @@ class BraveSearchWebPageInfoboxResultsItemData(BaseModel):
 
 class BraveSearchWebPageInfoboxResultsItemDataAnswer(BaseModel):
     text: str
+    text_html: str | None = None
     upvote_count: int
     author: str
 
@@ -2790,7 +2842,7 @@ class BraveSearchWebPageRichResultsItemNewsArticlesItem(BaseModel):
     site: BraveSearchSite
     img_small: str
     publisher_name: str
-    published_label: str
+    published_label: str | None = None
     extra_snippets: list[str]
     image_url: str
 
@@ -3302,12 +3354,15 @@ class BraveSearchWebResultOrganizationContactPointsItem(BaseModel):
 
 class BraveSearchWebResultProduct(BaseModel):
     name: str
-    description: str
+    description: str | None = None
     description_html: str | None = None
     url: str | None = None
     price: str
+    rating: BraveSearchRating | None = None
     type: str
     offers: list[BraveSearchWebResultProductOffersItem]
+    gtin12: str | None = None
+    gtin13: str | None = None
     gtin14: str | None = None
     thumbnail: BraveSearchImage
 
@@ -3321,6 +3376,8 @@ class BraveSearchWebResultProductClusterItem(BaseModel):
     rating: BraveSearchRating | None = None
     type: str
     offers: list[BraveSearchWebResultProductClusterItemOffersItem] | None = None
+    gtin13: str | None = None
+    gtin12: str | None = None
     thumbnail: BraveSearchImage
 
 
@@ -3362,7 +3419,7 @@ class BraveSearchWebResultQaAnswer(BaseModel):
 
 class BraveSearchWebResultQaSuggestedAnswersItem(BaseModel):
     text: str
-    text_html: str
+    text_html: str | None = None
     upvote_count: int
     author: str | None = None
 
@@ -3405,7 +3462,7 @@ class BraveSearchWebResultRecipeVideo(BaseModel):
 class BraveSearchWebResultReview(BaseModel):
     name: str
     description: str
-    description_html: str
+    description_html: str | None = None
     rating: BraveSearchRating
     type: str
     thumbnail: BraveSearchImage

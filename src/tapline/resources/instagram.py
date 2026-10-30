@@ -239,9 +239,9 @@ class Instagram(AsyncAPIResource):
             cache_max_age: Ignored. Every request fetches a fresh response and is
                 charged.
             download_media: Must be false. Tapline does not re-host media.
-            include_play_count: Set to false to omit `video_play_count` and skip the
-                extra lookup it needs. Defaults to true. Only videos carry a play
-                count.
+            include_play_count: Set to false to return the `metrics` play and view
+                counts as null and skip the extra lookup they need. Defaults to
+                true. Only videos carry a play count.
             region: Two-letter country code for the exit the request leaves from.
                 Defaults to US, where Instagram shows licensed music.
             trim: Set to true to return fewer fields per item.
@@ -421,10 +421,9 @@ class Instagram(AsyncAPIResource):
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page
-                (`timeline:AQHT…`), or the `end_cursor` of `/v1/instagram/profile`'s
-                timeline (`mobile:AQHT…`). The bare `AQHT…` cursor works too. Omit
-                it for the first page.
+            next_max_id: The `pagination.next_cursor` from the previous page, or
+                `recent_posts.pagination.next_cursor` from `/v1/instagram/profile`.
+                Omit it for the first page.
             trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
@@ -449,9 +448,9 @@ class Instagram(AsyncAPIResource):
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
                 `user_id`.
-            max_id: The `paging_info.max_id` (or trimmed `max_id`) from the previous
-                page. Omit it for the first page. It is base64, so percent-encode
-                `+` and `/` in a hand-built URL.
+            max_id: The `pagination.next_cursor` from the previous page. Omit it for
+                the first page. It is base64, so percent-encode `+` and `/` in a
+                hand-built URL.
             trim: Set to true to return fewer fields per item.
             user_id: Numeric Instagram user id. Send this or `handle`; when both are
                 sent, `user_id` wins.
@@ -541,9 +540,9 @@ class SyncInstagram(SyncAPIResource):
             cache_max_age: Ignored. Every request fetches a fresh response and is
                 charged.
             download_media: Must be false. Tapline does not re-host media.
-            include_play_count: Set to false to omit `video_play_count` and skip the
-                extra lookup it needs. Defaults to true. Only videos carry a play
-                count.
+            include_play_count: Set to false to return the `metrics` play and view
+                counts as null and skip the extra lookup they need. Defaults to
+                true. Only videos carry a play count.
             region: Two-letter country code for the exit the request leaves from.
                 Defaults to US, where Instagram shows licensed music.
             trim: Set to true to return fewer fields per item.
@@ -723,10 +722,9 @@ class SyncInstagram(SyncAPIResource):
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            next_max_id: The `next_max_id` from the previous page
-                (`timeline:AQHT…`), or the `end_cursor` of `/v1/instagram/profile`'s
-                timeline (`mobile:AQHT…`). The bare `AQHT…` cursor works too. Omit
-                it for the first page.
+            next_max_id: The `pagination.next_cursor` from the previous page, or
+                `recent_posts.pagination.next_cursor` from `/v1/instagram/profile`.
+                Omit it for the first page.
             trim: Set to true to return fewer fields per item.
             timeout: Overrides the client's timeout for this request.
 
@@ -751,9 +749,9 @@ class SyncInstagram(SyncAPIResource):
         Args:
             handle: Instagram handle, with or without a leading @. Send this or
                 `user_id`.
-            max_id: The `paging_info.max_id` (or trimmed `max_id`) from the previous
-                page. Omit it for the first page. It is base64, so percent-encode
-                `+` and `/` in a hand-built URL.
+            max_id: The `pagination.next_cursor` from the previous page. Omit it for
+                the first page. It is base64, so percent-encode `+` and `/` in a
+                hand-built URL.
             trim: Set to true to return fewer fields per item.
             user_id: Numeric Instagram user id. Send this or `handle`; when both are
                 sent, `user_id` wins.

@@ -729,7 +729,10 @@ def _token_trades_v2(
 
 
 def _token_trends(
-    chain: str, token_address: str, *, trends_types: Sequence[TokenTrendsTypeParam] | None = None
+    chain: str,
+    token_address: str,
+    *,
+    trends_types: Sequence[TokenTrendsTypeParam] = ("holder_count",),
 ) -> Request[GetTokenTrendsResponse]:
     return Request(
         encode_path(
@@ -1987,7 +1990,7 @@ class Gmgn(AsyncAPIResource):
         chain: str,
         token_address: str,
         *,
-        trends_types: Sequence[TokenTrendsTypeParam] | None = None,
+        trends_types: Sequence[TokenTrendsTypeParam] = ("holder_count",),
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTrendsResponse:
         """Holder-structure time series. One series is returned per requested `trends_type`. Costs 2 credits.
@@ -3326,7 +3329,7 @@ class SyncGmgn(SyncAPIResource):
         chain: str,
         token_address: str,
         *,
-        trends_types: Sequence[TokenTrendsTypeParam] | None = None,
+        trends_types: Sequence[TokenTrendsTypeParam] = ("holder_count",),
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenTrendsResponse:
         """Holder-structure time series. One series is returned per requested `trends_type`. Costs 2 credits.
