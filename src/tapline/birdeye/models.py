@@ -149,36 +149,36 @@ class PublicError(str, Enum):
 
 
 class BirdeyeCursorPagination(BaseModel):
-    completion: BirdeyeCursorCompletionValue | None
     next_cursor: str | None
+    completion: BirdeyeCursorCompletionValue | None
 
 
 class BirdeyeFirstBuyers(BaseModel):
-    buyers: list[BirdeyeFirstBuyersBuyersItem] | None = None
+    token_address: str | None = None
     flow: str | None = None
     page_summary: BirdeyeFirstBuyersPageSummary | None = None
-    token_address: str | None = None
+    buyers: list[BirdeyeFirstBuyersBuyersItem] | None = None
 
 
 class BirdeyeFirstBuyersBuyersItem(BaseModel):
+    wallet_address: str | None = None
     block_number: str | None = None
     block_unix_time: str | None = None
-    current_holding: float | None = None
     first_buy_volume: float | None = None
     first_buy_volume_usd: float | None = None
-    initial_holding: float | None = None
-    position_status: str | None = None
-    tags: list[str] | None = None
     total_buy_volume: float | None = None
     total_buy_volume_usd: float | None = None
-    wallet_address: str | None = None
+    initial_holding: float | None = None
+    current_holding: float | None = None
+    position_status: str | None = None
+    tags: list[str] | None = None
 
 
 class BirdeyeFirstBuyersPageSummary(BaseModel):
-    buy_more: str | None = None
-    sell_all: str | None = None
-    sell_partial: str | None = None
     total_wallets: str | None = None
+    buy_more: str | None = None
+    sell_partial: str | None = None
+    sell_all: str | None = None
 
 
 class BirdeyeLeaderboardPage(BaseModel):
@@ -188,46 +188,46 @@ class BirdeyeLeaderboardPage(BaseModel):
 
 class BirdeyeLeaderboardTrader(BaseModel):
     address: str | None = None
-    first_trade_unix_time: str | None = None
-    first_tx_unix_time: str | None = None
-    label: str | None = None
-    label_metadata: BirdeyeLeaderboardTraderLabelMetadata | None = None
-    last_trade_unix_time: str | None = None
-    net_worth: float | None = None
-    pfp: str | None = None
     realized_pnl: float | None = None
-    realized_pnl_percent: float | None = None
-    realized_pnl_percent_0_100: str | None = None
-    realized_pnl_percent_100_500: str | None = None
-    realized_pnl_percent_gt_500: str | None = None
-    realized_pnl_percent_lt_neg50: str | None = None
-    realized_pnl_percent_neg50_0: str | None = None
-    rug_token_percent: float | None = None
+    unrealized_pnl: float | None = None
     total_pnl: float | None = None
+    volume_usd: float | None = None
     total_token_traded: str | None = None
     total_tx_count: str | None = None
-    twitter: str | None = None
-    unrealized_pnl: float | None = None
+    rug_token_percent: float | None = None
+    realized_pnl_percent: float | None = None
     unrealized_pnl_percent: float | None = None
-    volume_buy_usd: float | None = None
-    volume_usd: float | None = None
-    wallet_platforms: list[str] | None = None
     wallet_tags: list[str] | None = None
+    first_tx_unix_time: str | None = None
+    realized_pnl_percent_100_500: str | None = None
+    realized_pnl_percent_neg50_0: str | None = None
+    net_worth: float | None = None
+    last_trade_unix_time: str | None = None
+    first_trade_unix_time: str | None = None
+    volume_buy_usd: float | None = None
+    label_metadata: BirdeyeLeaderboardTraderLabelMetadata | None = None
+    realized_pnl_percent_gt_500: str | None = None
+    realized_pnl_percent_lt_neg50: str | None = None
+    label: str | None = None
+    pfp: str | None = None
     win_rate: float | None = None
+    realized_pnl_percent_0_100: str | None = None
+    wallet_platforms: list[str] | None = None
+    twitter: str | None = None
 
 
 class BirdeyeLeaderboardTraderLabelMetadata(BaseModel):
-    label: str | None = None
     labels: dict[str, BirdeyeLeaderboardTraderLabelMetadataLabelsEntry] | None = None
+    label: str | None = None
     logoURI: str | None = None
     primary: str | None = None
     x_url: str | None = None
 
 
 class BirdeyeLeaderboardTraderLabelMetadataLabelsEntry(BaseModel):
-    entity: str | None = None
     label: str | None = None
     logoURI: str | None = None
+    entity: str | None = None
     total: int | None = None
     values: list[str] | None = None
 
@@ -241,115 +241,134 @@ class BirdeyeMarket(BaseModel):
 
 
 class BirdeyeNetWorthHistory(BaseModel):
+    wallet_address: str | None = None
     currency: str | None = None
     current_timestamp: str | None = None
-    history: list[BirdeyeNetWorthHistoryHistoryItem] | None = None
     past_timestamp: str | None = None
-    wallet_address: str | None = None
+    history: list[BirdeyeNetWorthHistoryHistoryItem] | None = None
 
 
 class BirdeyeNetWorthHistoryHistoryItem(BaseModel):
+    timestamp: str | None = None
     net_worth: float | None = None
     net_worth_change: float | None = None
     net_worth_change_percent: float | None = None
-    timestamp: str | None = None
 
 
 class BirdeyeNewListing(BaseModel):
+    name: str | None = None
+    symbol: str | None = None
     address: str | None = None
-    bundlerBalance: float | None = None
-    bundlerPercentage: float | None = None
-    bundlers: int | None = None
-    buy24h: int | None = None
     createdAt: int | None = None
+    platform: str | None = None
+    isCashbackEnabled: bool | None = None
+    isHolderReward: bool | None = None
+    isDevBuyFirst: bool | None = None
+    mc: float | None = None
+    fdmc: float | None = None
+    progress: float | None = None
+    updatedAtSlot: int | None = None
+    eventTimestamp: int | None = None
+    totalBuyFeeBps: float | None = None
+    totalSellFeeBps: float | None = None
+    feeDetail: list[BirdeyeNewListingFeeDetailItem] | None = None
+    feeTimestamp: int | None = None
+    logoURI: str | None = None
+    twitter: str | None = None
+    website: str | None = None
+    description: str | None = None
+    xHandle: str | None = None
+    updatedAt: int | None = None
+    id: str | None = None
+    network: str | None = None
+    node2_WriteVersion: int | None = None
+    quoteMints: list[BirdeyeNewListingQuoteMintsItem] | None = None
+    platformImg: str | None = None
+    platformName: str | None = None
+    similarLogoTokenCount: int | None = None
+    similarSymbolTokenCount: int | None = None
+    node1_WriteVersion: int | None = None
+    buy24h: int | None = None
+    trade24h: int | None = None
+    v24h: int | float | None = None
+    mcChange24hPercent: float | None = None
+    v24hUSD: float | None = None
+    vBuy24hUSD: float | None = None
+    liquidity: float | None = None
+    vBuy24h: float | None = None
+    vSell24hUSD: float | None = None
+    vSell24h: int | float | None = None
+    sell24h: int | None = None
     creator: str | None = None
     creatorCreatedTokens: int | None = None
     creatorMigratedTokens: int | None = None
+    smartMoneys: int | None = None
+    insiders: int | None = None
+    smartMoneyBalance: float | None = None
+    sniperBalance: float | None = None
+    insiderPercentage: float | None = None
+    sniperPercentage: float | None = None
+    insiderBalance: float | None = None
+    tagTimestamp: int | None = None
+    bundlers: int | None = None
+    smartMoneyPercentage: float | None = None
+    snipers: int | None = None
+    bundlerBalance: float | None = None
+    bundlerPercentage: float | None = None
     credit: BirdeyeNewListingCredit | None = None
-    decimals: int | None = None
-    description: str | None = None
-    devFirstFundAmount: float | None = None
-    devFirstFundAt: int | None = None
+    globalFeePaidSol: float | None = None
     devFirstFundToken: str | None = None
+    devFirstFundAt: int | None = None
     devFirstFundTokenName: str | None = None
     devFirstFundTx: str | None = None
+    devFirstFundAmount: float | None = None
     devFirstFundWallet: str | None = None
-    devWalletBalance: float | str | None = None
+    devFirstFundWalletLabel: BirdeyeNewListingDevFirstFundWalletLabel | None = None
+    decimals: int | None = None
+    holders: int | None = None
+    top10HolderPercentage: float | None = None
+    holderTimestamp: int | None = None
+    top10UserPercentage: float | None = None
+    devWalletBalance: str | float | None = None
     devWalletPercentage: float | None = None
     devWalletTimestamp: int | None = None
-    eventTimestamp: int | None = None
-    fdmc: float | None = None
-    feeDetail: list[BirdeyeNewListingFeeDetailItem] | None = None
-    globalFeePaidSol: float | None = None
     graduatedAt: str | None = None
-    holderTimestamp: int | None = None
-    holders: int | None = None
-    id: str | None = None
-    insiderBalance: float | None = None
-    insiderPercentage: float | None = None
-    insiders: int | None = None
-    instagram: str | None = None
-    isCashbackEnabled: bool | None = None
-    isCharity: bool | None = None
-    isDevBuyFirst: bool | None = None
     isGraduated: bool | None = None
-    isHolderReward: bool | None = None
-    liquidity: float | None = None
-    logoURI: str | None = None
-    mc: float | None = None
-    mcChange24hPercent: float | None = None
-    name: str | None = None
-    network: str | None = None
-    node1_WriteVersion: int | None = None
-    node2_WriteVersion: int | None = None
-    platform: str | None = None
-    platformImg: str | None = None
-    platformName: str | None = None
-    progress: float | None = None
-    quoteMints: list[str] | None = None
-    sell24h: int | None = None
-    similarLogoTokenCount: int | None = None
-    similarSymbolTokenCount: int | None = None
-    smartMoneyBalance: float | None = None
-    smartMoneyPercentage: float | None = None
-    smartMoneys: int | None = None
-    sniperBalance: float | None = None
-    sniperPercentage: float | None = None
-    snipers: int | None = None
-    symbol: str | None = None
-    tagTimestamp: int | None = None
     telegram: str | None = None
-    top10HolderPercentage: float | None = None
-    top10UserPercentage: float | None = None
-    totalBuyFeeBps: float | None = None
-    totalSellFeeBps: float | None = None
-    trade24h: int | None = None
-    twitter: str | None = None
-    updatedAt: int | None = None
-    updatedAtSlot: int | None = None
-    v24h: float | None = None
-    v24hUSD: float | None = None
-    vBuy24h: float | None = None
-    vBuy24hUSD: float | None = None
-    vSell24h: float | None = None
-    vSell24hUSD: float | None = None
-    website: str | None = None
-    xHandle: str | None = None
+    isCharity: bool | None = None
+    instagram: str | None = None
 
 
 class BirdeyeNewListingCredit(BaseModel):
-    grade: str | None = None
+    screened: bool | None = None
     pRug: float | None = None
+    grade: str | None = None
     pRugRaw: float | None = None
     points: int | None = None
-    screened: bool | None = None
+
+
+class BirdeyeNewListingDevFirstFundWalletLabel(BaseModel):
+    field_typeName: Annotated[str | None, Field(alias="$typeName")] = None
+    address: str | None = None
+    labels: dict[str, Any] | None = None
+    label: str | None = None
+    logoURI: str | None = None
+    primary: str | None = None
+    field_unknown: Annotated[list[dict[str, Any]] | None, Field(alias="$unknown")] = None
 
 
 class BirdeyeNewListingFeeDetailItem(BaseModel):
+    type: str | None = None
     displayName: str | None = None
     feeBps: float | None = None
     name: str | None = None
-    type: str | None = None
+
+
+class BirdeyeNewListingQuoteMintsItem(BaseModel):
+    address: str | None = None
+    logoURI: str | None = None
+    name: str | None = None
+    symbol: str | None = None
 
 
 class BirdeyeNewListings(BaseModel):
@@ -357,67 +376,67 @@ class BirdeyeNewListings(BaseModel):
 
 
 class BirdeyeOhlcv(BaseModel):
-    c: list[float]
+    o: list[float]
     h: list[float]
     l: list[float]
-    o: list[float]
-    t: list[int]
+    c: list[float]
     v: list[float]
+    t: list[int]
 
 
 class BirdeyePortfolioToken(BaseModel):
     address: str | None = None
-    amount: float | None = None
-    balance: str | None = None
     decimals: int | None = None
-    jup_strict: bool | None = None
-    logo_uri: str | None = None
-    name: str | None = None
-    network: str | None = None
     price: float | None = None
+    balance: str | None = None
+    amount: float | None = None
+    network: str | None = None
+    name: str | None = None
     symbol: str | None = None
+    logo_uri: str | None = None
     value: str | None = None
+    jup_strict: bool | None = None
 
 
 class BirdeyeTokenHolder(BaseModel):
     address: str | None = None
-    avgBuyPerTx: float | None = None
-    avgBuyPrice: float | None = None
-    firstTxUnixTime: str | None = None
-    funding: BirdeyeTokenHolderFunding | None = None
-    holdAvgPrice: float | None = None
+    token: str | None = None
+    solBalance: float | None = None
     holdVolume: float | None = None
     holdVolumeUSD: float | None = None
-    isOnCurve: bool | None = None
-    lastTradeUnixTime: str | None = None
-    meta: BirdeyeTokenHolderMeta | None = None
-    netValue: float | None = None
+    walletTags: list[str] | None = None
+    firstTxUnixTime: str | None = None
+    funding: BirdeyeTokenHolderFunding | None = None
     netWorth: float | None = None
-    remainVolume: float | None = None
-    solBalance: float | None = None
-    token: str | None = None
     totalPnl: float | None = None
     totalPnlPercent: float | None = None
-    txBuyCount: str | None = None
-    txCount: str | None = None
     unrealizedPnl: float | None = None
     unrealizedPnlPercent: float | None = None
+    avgBuyPrice: float | None = None
+    netValue: float | None = None
+    holdAvgPrice: float | None = None
+    avgBuyPerTx: float | None = None
     volume: float | None = None
+    volumeUSD: float | None = None
     volumeBuy: float | None = None
     volumeBuyUSD: float | None = None
-    volumeUSD: float | None = None
-    walletTags: list[str] | None = None
+    remainVolume: float | None = None
+    txCount: str | None = None
+    txBuyCount: str | None = None
+    lastTradeUnixTime: str | None = None
+    isOnCurve: bool | None = None
+    meta: BirdeyeTokenHolderMeta | None = None
 
 
 class BirdeyeTokenHolderFunding(BaseModel):
-    amount: float | None = None
     funder: str | None = None
-    meta: BirdeyeTokenHolderFundingMeta | None = None
-    timeLinked: BirdeyeTokenHolderFundingTimeLinked | None = None
-    totalFundedAmount: float | None = None
-    totalFundedHolders: str | None = None
-    txHash: str | None = None
     unixTime: int | None = None
+    amount: float | None = None
+    totalFundedHolders: str | None = None
+    totalFundedAmount: float | None = None
+    timeLinked: BirdeyeTokenHolderFundingTimeLinked | None = None
+    txHash: str | None = None
+    meta: BirdeyeTokenHolderFundingMeta | None = None
 
 
 class BirdeyeTokenHolderFundingMeta(BaseModel):
@@ -431,10 +450,10 @@ class BirdeyeTokenHolderFundingTimeLinked(BaseModel):
 
 class BirdeyeTokenHolderFundingTimeLinkedPeersItem(BaseModel):
     address: str | None = None
-    holdVolumeUSD: float | None = None
-    solBalance: float | None = None
-    txHash: str | None = None
     unixTime: int | None = None
+    solBalance: float | None = None
+    holdVolumeUSD: float | None = None
+    txHash: str | None = None
 
 
 class BirdeyeTokenHolderMeta(BaseModel):
@@ -454,14 +473,11 @@ class BirdeyeTokenMarkets(BaseModel):
 
 class BirdeyeTokenOverview(BaseModel):
     field_id: Annotated[str | None, Field(alias="_id")] = None
-    activeHours24h: int | None = None
     address: str
     buy12h: int | None = None
     buy12hChangePercent: float | None = None
     buy1h: int
     buy1hChangePercent: float
-    buy1m: int | None = None
-    buy1mChangePercent: float | None = None
     buy24h: int
     buy24hChangePercent: float
     buy2h: int
@@ -470,55 +486,34 @@ class BirdeyeTokenOverview(BaseModel):
     buy30mChangePercent: float
     buy4h: int
     buy4hChangePercent: float
-    buy5m: int | None = None
-    buy5mChangePercent: float | None = None
     buy6h: int | None = None
     buy6hChangePercent: float | None = None
     buy8h: int
     buy8hChangePercent: float
     buyHistory12h: int | None = None
     buyHistory1h: int
-    buyHistory1m: int | None = None
     buyHistory24h: int
     buyHistory2h: int
     buyHistory30m: int
     buyHistory4h: int
-    buyHistory5m: int | None = None
     buyHistory6h: int | None = None
     buyHistory8h: int
     circulatingSupply: float | None = None
     createdAt: str
-    daysOver100M: int | None = None
     decimals: int
     extensions: BirdeyeTokenOverviewExtensions
     history12hPrice: float | None = None
-    history1hLiquidity: float | None = None
     history1hPrice: float
-    history1mPrice: float | None = None
-    history24hLiquidity: float | None = None
     history24hPrice: float
-    history2hLiquidity: float | None = None
     history2hPrice: float
-    history30mLiquidity: float | None = None
     history30mPrice: float
-    history4hLiquidity: float | None = None
     history4hPrice: float
-    history5mPrice: float | None = None
     history6hPrice: float | None = None
-    history8hLiquidity: float | None = None
     history8hPrice: float
     holder: int
-    lastMcCheck: str | None = None
-    lastPriceUpdatedUnixTime: int | None = None
     lastTradeHumanTime: str
     lastTradeUnixTime: int
     liquidity: float
-    liquidityChange1hPercent: float | None = None
-    liquidityChange24hPercent: float | None = None
-    liquidityChange2hPercent: float | None = None
-    liquidityChange30mPercent: float | None = None
-    liquidityChange4hPercent: float | None = None
-    liquidityChange8hPercent: float | None = None
     logoURI: str
     mc: float
     name: str
@@ -526,12 +521,10 @@ class BirdeyeTokenOverview(BaseModel):
     price: float
     priceChange12hPercent: float | None = None
     priceChange1hPercent: float
-    priceChange1mPercent: float | None = None
     priceChange24hPercent: float
     priceChange2hPercent: float
     priceChange30mPercent: float
     priceChange4hPercent: float
-    priceChange5mPercent: float | None = None
     priceChange6hPercent: float | None = None
     priceChange8hPercent: float
     realMc: float
@@ -540,8 +533,6 @@ class BirdeyeTokenOverview(BaseModel):
     sell12hChangePercent: float | None = None
     sell1h: int
     sell1hChangePercent: float
-    sell1m: int | None = None
-    sell1mChangePercent: float | None = None
     sell24h: int
     sell24hChangePercent: float
     sell2h: int
@@ -550,20 +541,16 @@ class BirdeyeTokenOverview(BaseModel):
     sell30mChangePercent: float
     sell4h: int
     sell4hChangePercent: float
-    sell5m: int | None = None
-    sell5mChangePercent: float | None = None
     sell6h: int | None = None
     sell6hChangePercent: float | None = None
     sell8h: int
     sell8hChangePercent: float
     sellHistory12h: int | None = None
     sellHistory1h: int
-    sellHistory1m: int | None = None
     sellHistory24h: int
     sellHistory2h: int
     sellHistory30m: int
     sellHistory4h: int
-    sellHistory5m: int | None = None
     sellHistory6h: int | None = None
     sellHistory8h: int
     supply: float
@@ -572,8 +559,6 @@ class BirdeyeTokenOverview(BaseModel):
     trade12hChangePercent: float | None = None
     trade1h: int
     trade1hChangePercent: float
-    trade1m: int | None = None
-    trade1mChangePercent: float | None = None
     trade24h: int
     trade24hChangePercent: float
     trade2h: int
@@ -582,20 +567,16 @@ class BirdeyeTokenOverview(BaseModel):
     trade30mChangePercent: float
     trade4h: int
     trade4hChangePercent: float
-    trade5m: int | None = None
-    trade5mChangePercent: float | None = None
     trade6h: int | None = None
     trade6hChangePercent: float | None = None
     trade8h: int
     trade8hChangePercent: float
     tradeHistory12h: int | None = None
     tradeHistory1h: int
-    tradeHistory1m: int | None = None
     tradeHistory24h: int
     tradeHistory2h: int
     tradeHistory30m: int
     tradeHistory4h: int
-    tradeHistory5m: int | None = None
     tradeHistory6h: int | None = None
     tradeHistory8h: int
     trendNo24h: str | None = None
@@ -627,8 +608,6 @@ class BirdeyeTokenOverview(BaseModel):
     uniqueWallet12hChangePercent: float | None = None
     uniqueWallet1h: int
     uniqueWallet1hChangePercent: float
-    uniqueWallet1m: int | None = None
-    uniqueWallet1mChangePercent: float | None = None
     uniqueWallet24h: int
     uniqueWallet24hChangePercent: float
     uniqueWallet2h: int
@@ -637,20 +616,10 @@ class BirdeyeTokenOverview(BaseModel):
     uniqueWallet30mChangePercent: float
     uniqueWallet4h: int
     uniqueWallet4hChangePercent: float
-    uniqueWallet5m: int | None = None
-    uniqueWallet5mChangePercent: float | None = None
     uniqueWallet6h: int | None = None
     uniqueWallet6hChangePercent: float | None = None
     uniqueWallet8h: int
     uniqueWallet8hChangePercent: float
-    uniqueWalletHistory1h: int
-    uniqueWalletHistory1m: int | None = None
-    uniqueWalletHistory24h: int
-    uniqueWalletHistory2h: int
-    uniqueWalletHistory30m: int
-    uniqueWalletHistory4h: int
-    uniqueWalletHistory5m: int | None = None
-    uniqueWalletHistory8h: int
     updatedAt: str | None = None
     v12h: float | None = None
     v12hChangePercent: float | None = None
@@ -658,82 +627,52 @@ class BirdeyeTokenOverview(BaseModel):
     v1h: float
     v1hChangePercent: float
     v1hUSD: float
-    v1hUSDChangePercent: float | None = None
-    v1m: float | None = None
-    v1mChangePercent: float | None = None
-    v1mUSD: float | None = None
-    v1mUSDChangePercent: float | None = None
     v24h: float
     v24hChangePercent: float
     v24hUSD: float
-    v24hUSDChangePercent: float | None = None
     v2h: float
     v2hChangePercent: float
     v2hUSD: float
-    v2hUSDChangePercent: float | None = None
     v30m: float
     v30mChangePercent: float
     v30mUSD: float
-    v30mUSDChangePercent: float | None = None
     v4h: float
     v4hChangePercent: float
     v4hUSD: float
-    v4hUSDChangePercent: float | None = None
-    v5m: float | None = None
-    v5mChangePercent: float | None = None
-    v5mUSD: float | None = None
-    v5mUSDChangePercent: float | None = None
     v6h: float | None = None
     v6hChangePercent: float | None = None
     v6hUSD: float | None = None
     v8h: float
     v8hChangePercent: float
     v8hUSD: float
-    v8hUSDChangePercent: float | None = None
     vBuy12h: float | None = None
     vBuy12hChangePercent: float | None = None
     vBuy12hUSD: float | None = None
     vBuy1h: float
     vBuy1hChangePercent: float
     vBuy1hUSD: float
-    vBuy1hUSDChangePercent: float | None = None
-    vBuy1m: float | None = None
-    vBuy1mChangePercent: float | None = None
-    vBuy1mUSD: float | None = None
-    vBuy1mUSDChangePercent: float | None = None
     vBuy24h: float
     vBuy24hChangePercent: float
     vBuy24hUSD: float
-    vBuy24hUSDChangePercent: float | None = None
     vBuy2h: float
     vBuy2hChangePercent: float
     vBuy2hUSD: float
-    vBuy2hUSDChangePercent: float | None = None
     vBuy30m: float
     vBuy30mChangePercent: float
     vBuy30mUSD: float
-    vBuy30mUSDChangePercent: float | None = None
     vBuy4h: float
     vBuy4hChangePercent: float
     vBuy4hUSD: float
-    vBuy4hUSDChangePercent: float | None = None
-    vBuy5m: float | None = None
-    vBuy5mChangePercent: float | None = None
-    vBuy5mUSD: float | None = None
-    vBuy5mUSDChangePercent: float | None = None
     vBuy6h: float | None = None
     vBuy6hChangePercent: float | None = None
     vBuy6hUSD: float | None = None
     vBuy8h: float
     vBuy8hChangePercent: float
     vBuy8hUSD: float
-    vBuy8hUSDChangePercent: float | None = None
     vBuyHistory12h: float | None = None
     vBuyHistory12hUSD: float | None = None
     vBuyHistory1h: float
     vBuyHistory1hUSD: float
-    vBuyHistory1m: float | None = None
-    vBuyHistory1mUSD: float | None = None
     vBuyHistory24h: float
     vBuyHistory24hUSD: float
     vBuyHistory2h: float
@@ -742,8 +681,6 @@ class BirdeyeTokenOverview(BaseModel):
     vBuyHistory30mUSD: float
     vBuyHistory4h: float
     vBuyHistory4hUSD: float
-    vBuyHistory5m: float | None = None
-    vBuyHistory5mUSD: float | None = None
     vBuyHistory6h: float | None = None
     vBuyHistory6hUSD: float | None = None
     vBuyHistory8h: float
@@ -752,8 +689,6 @@ class BirdeyeTokenOverview(BaseModel):
     vHistory12hUSD: float | None = None
     vHistory1h: float
     vHistory1hUSD: float
-    vHistory1m: float | None = None
-    vHistory1mUSD: float | None = None
     vHistory24h: float
     vHistory24hUSD: float
     vHistory2h: float
@@ -762,8 +697,6 @@ class BirdeyeTokenOverview(BaseModel):
     vHistory30mUSD: float
     vHistory4h: float
     vHistory4hUSD: float
-    vHistory5m: float | None = None
-    vHistory5mUSD: float | None = None
     vHistory6h: float | None = None
     vHistory6hUSD: float | None = None
     vHistory8h: float
@@ -774,44 +707,28 @@ class BirdeyeTokenOverview(BaseModel):
     vSell1h: float
     vSell1hChangePercent: float
     vSell1hUSD: float
-    vSell1hUSDChangePercent: float | None = None
-    vSell1m: float | None = None
-    vSell1mChangePercent: float | None = None
-    vSell1mUSD: float | None = None
-    vSell1mUSDChangePercent: float | None = None
     vSell24h: float
     vSell24hChangePercent: float
     vSell24hUSD: float
-    vSell24hUSDChangePercent: float | None = None
     vSell2h: float
     vSell2hChangePercent: float
     vSell2hUSD: float
-    vSell2hUSDChangePercent: float | None = None
     vSell30m: float
     vSell30mChangePercent: float
     vSell30mUSD: float
-    vSell30mUSDChangePercent: float | None = None
     vSell4h: float
     vSell4hChangePercent: float
     vSell4hUSD: float
-    vSell4hUSDChangePercent: float | None = None
-    vSell5m: float | None = None
-    vSell5mChangePercent: float | None = None
-    vSell5mUSD: float | None = None
-    vSell5mUSDChangePercent: float | None = None
     vSell6h: float | None = None
     vSell6hChangePercent: float | None = None
     vSell6hUSD: float | None = None
     vSell8h: float
     vSell8hChangePercent: float
     vSell8hUSD: float
-    vSell8hUSDChangePercent: float | None = None
     vSellHistory12h: float | None = None
     vSellHistory12hUSD: float | None = None
     vSellHistory1h: float
     vSellHistory1hUSD: float
-    vSellHistory1m: float | None = None
-    vSellHistory1mUSD: float | None = None
     vSellHistory24h: float
     vSellHistory24hUSD: float
     vSellHistory2h: float
@@ -820,8 +737,6 @@ class BirdeyeTokenOverview(BaseModel):
     vSellHistory30mUSD: float
     vSellHistory4h: float
     vSellHistory4hUSD: float
-    vSellHistory5m: float | None = None
-    vSellHistory5mUSD: float | None = None
     vSellHistory6h: float | None = None
     vSellHistory6hUSD: float | None = None
     vSellHistory8h: float
@@ -851,43 +766,153 @@ class BirdeyeTokenOverview(BaseModel):
     viewHistory6h: int | None = None
     viewHistory8h: int
     watch: int | None
+    daysOver100M: int | None = None
+    lastMcCheck: str | None = None
+    buy1m: int | None = None
+    buyHistory1m: int | None = None
+    buy1mChangePercent: float | None = None
+    sell1m: int | None = None
+    sellHistory1m: int | None = None
+    sell1mChangePercent: float | None = None
+    vBuy1mUSD: float | None = None
+    vBuyHistory1mUSD: float | None = None
+    vBuy1mUSDChangePercent: float | None = None
+    vSell1mUSD: float | None = None
+    vSellHistory1mUSD: float | None = None
+    vSell1mUSDChangePercent: float | None = None
+    vBuy1m: float | None = None
+    vBuyHistory1m: float | None = None
+    vBuy1mChangePercent: float | None = None
+    vSell1m: float | None = None
+    vSellHistory1m: float | None = None
+    vSell1mChangePercent: float | None = None
+    trade1m: int | None = None
+    tradeHistory1m: int | None = None
+    trade1mChangePercent: float | None = None
+    v1mUSD: float | None = None
+    vHistory1mUSD: float | None = None
+    v1mUSDChangePercent: float | None = None
+    v1m: float | None = None
+    vHistory1m: float | None = None
+    v1mChangePercent: float | None = None
+    uniqueWallet1m: int | None = None
+    uniqueWalletHistory1m: int | None = None
+    uniqueWallet1mChangePercent: float | None = None
+    buy5m: int | None = None
+    buyHistory5m: int | None = None
+    buy5mChangePercent: float | None = None
+    sell5m: int | None = None
+    sellHistory5m: int | None = None
+    sell5mChangePercent: float | None = None
+    vBuy5mUSD: float | None = None
+    vBuyHistory5mUSD: float | None = None
+    vBuy5mUSDChangePercent: float | None = None
+    vSell5mUSD: float | None = None
+    vSellHistory5mUSD: float | None = None
+    vSell5mUSDChangePercent: float | None = None
+    vBuy5m: float | None = None
+    vBuyHistory5m: float | None = None
+    vBuy5mChangePercent: float | None = None
+    vSell5m: float | None = None
+    vSellHistory5m: float | None = None
+    vSell5mChangePercent: float | None = None
+    trade5m: int | None = None
+    tradeHistory5m: int | None = None
+    trade5mChangePercent: float | None = None
+    v5mUSD: float | None = None
+    vHistory5mUSD: float | None = None
+    v5mUSDChangePercent: float | None = None
+    v5m: float | None = None
+    vHistory5m: float | None = None
+    v5mChangePercent: float | None = None
+    uniqueWallet5m: int | None = None
+    uniqueWalletHistory5m: int | None = None
+    uniqueWallet5mChangePercent: float | None = None
+    vBuy30mUSDChangePercent: float | None = None
+    vSell30mUSDChangePercent: float | None = None
+    v30mUSDChangePercent: float | None = None
+    uniqueWalletHistory30m: int
+    vBuy1hUSDChangePercent: float | None = None
+    vSell1hUSDChangePercent: float | None = None
+    v1hUSDChangePercent: float | None = None
+    uniqueWalletHistory1h: int
+    vBuy2hUSDChangePercent: float | None = None
+    vSell2hUSDChangePercent: float | None = None
+    v2hUSDChangePercent: float | None = None
+    uniqueWalletHistory2h: int
+    vBuy4hUSDChangePercent: float | None = None
+    vSell4hUSDChangePercent: float | None = None
+    v4hUSDChangePercent: float | None = None
+    uniqueWalletHistory4h: int
+    vBuy8hUSDChangePercent: float | None = None
+    vSell8hUSDChangePercent: float | None = None
+    v8hUSDChangePercent: float | None = None
+    uniqueWalletHistory8h: int
+    vBuy24hUSDChangePercent: float | None = None
+    vSell24hUSDChangePercent: float | None = None
+    v24hUSDChangePercent: float | None = None
+    uniqueWalletHistory24h: int
+    activeHours24h: int | None = None
+    history1mPrice: float | None = None
+    priceChange1mPercent: float | None = None
+    history5mPrice: float | None = None
+    priceChange5mPercent: float | None = None
+    lastPriceUpdatedUnixTime: int | None = None
+    history30mLiquidity: float | None = None
+    liquidityChange30mPercent: float | None = None
+    history1hLiquidity: float | None = None
+    liquidityChange1hPercent: float | None = None
+    history2hLiquidity: float | None = None
+    liquidityChange2hPercent: float | None = None
+    history4hLiquidity: float | None = None
+    liquidityChange4hPercent: float | None = None
+    history24hLiquidity: float | None = None
+    liquidityChange24hPercent: float | None = None
+    history8hLiquidity: float | None = None
+    liquidityChange8hPercent: float | None = None
 
 
 class BirdeyeTokenOverviewExtensions(BaseModel):
-    bitbucket: str | None = None
-    coingeckoId: str | None = None
-    coinmarketcapId: str | None = None
-    description: str | None
+    twitter: str | None
+    website: str | None
+    telegram: str | None
+    github: str | None
     discord: str | None
     facebook: str | None = None
-    github: str | None
     instagram: str | None = None
     medium: str | None = None
-    reddit: str | None = None
-    telegram: str | None
-    twitter: str | None
+    description: str | None
+    coingeckoId: str | None = None
     updateTime: int
-    website: str | None
+    reddit: str | None = None
+    coinmarketcapId: str | None = None
     whitepaper: str | None = None
+    bitbucket: str | None = None
 
 
 class BirdeyeTokenSecurity(BaseModel):
-    birdeye: dict[str, Any] | None
-    cols: list[str]
-    goplus: BirdeyeTokenSecurityGoplus
     groups: list[BirdeyeTokenSecurityGroupsItem]
-    issuesCount: int
-    overall: str | None
     severity: BirdeyeTokenSecuritySeverity
+    birdeye: dict[str, Any] | None
+    goplus: BirdeyeTokenSecurityGoplus
+    cols: list[str]
+    overall: str | None
+    issuesCount: int
 
 
 class BirdeyeTokenSecurityBirdeyeEntry(BaseModel):
-    level: str
-    message: str
     value: bool | float | str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplus(BaseModel):
+    field_3: Annotated[BirdeyeTokenSecurityGoplusF3 | None, Field(alias="3")] = None
+    field_4: Annotated[BirdeyeTokenSecurityGoplusF4 | None, Field(alias="4")] = None
+    field_5: Annotated[BirdeyeTokenSecurityGoplusF5 | None, Field(alias="5")] = None
+    field_6: Annotated[BirdeyeTokenSecurityGoplusF6 | None, Field(alias="6")] = None
+    field_7: Annotated[BirdeyeTokenSecurityGoplusF7 | None, Field(alias="7")] = None
+    field_8: Annotated[BirdeyeTokenSecurityGoplusF8 | None, Field(alias="8")] = None
     field_10: Annotated[BirdeyeTokenSecurityGoplusF10 | None, Field(alias="10")] = None
     field_11: Annotated[BirdeyeTokenSecurityGoplusF11 | None, Field(alias="11")] = None
     field_12: Annotated[BirdeyeTokenSecurityGoplusF12 | None, Field(alias="12")] = None
@@ -900,211 +925,205 @@ class BirdeyeTokenSecurityGoplus(BaseModel):
     field_20: Annotated[BirdeyeTokenSecurityGoplusF20 | None, Field(alias="20")] = None
     field_24: Annotated[BirdeyeTokenSecurityGoplusF24 | None, Field(alias="24")] = None
     field_28: Annotated[BirdeyeTokenSecurityGoplusF28 | None, Field(alias="28")] = None
-    field_3: Annotated[BirdeyeTokenSecurityGoplusF3 | None, Field(alias="3")] = None
     field_32: Annotated[BirdeyeTokenSecurityGoplusF32 | None, Field(alias="32")] = None
     field_33: Annotated[BirdeyeTokenSecurityGoplusF33 | None, Field(alias="33")] = None
     field_36: Annotated[BirdeyeTokenSecurityGoplusF36 | None, Field(alias="36")] = None
     field_38: Annotated[BirdeyeTokenSecurityGoplusF38 | None, Field(alias="38")] = None
     field_39: Annotated[BirdeyeTokenSecurityGoplusF39 | None, Field(alias="39")] = None
-    field_4: Annotated[BirdeyeTokenSecurityGoplusF4 | None, Field(alias="4")] = None
     field_43: Annotated[BirdeyeTokenSecurityGoplusF43 | None, Field(alias="43")] = None
     field_44: Annotated[BirdeyeTokenSecurityGoplusF44 | None, Field(alias="44")] = None
-    field_5: Annotated[BirdeyeTokenSecurityGoplusF5 | None, Field(alias="5")] = None
     field_51: Annotated[BirdeyeTokenSecurityGoplusF51 | None, Field(alias="51")] = None
     field_52: Annotated[BirdeyeTokenSecurityGoplusF52 | None, Field(alias="52")] = None
     field_53: Annotated[BirdeyeTokenSecurityGoplusF53 | None, Field(alias="53")] = None
     field_54: Annotated[BirdeyeTokenSecurityGoplusF54 | None, Field(alias="54")] = None
     field_57: Annotated[BirdeyeTokenSecurityGoplusF57 | None, Field(alias="57")] = None
     field_58: Annotated[BirdeyeTokenSecurityGoplusF58 | None, Field(alias="58")] = None
-    field_6: Annotated[BirdeyeTokenSecurityGoplusF6 | None, Field(alias="6")] = None
-    field_7: Annotated[BirdeyeTokenSecurityGoplusF7 | None, Field(alias="7")] = None
-    field_8: Annotated[BirdeyeTokenSecurityGoplusF8 | None, Field(alias="8")] = None
 
 
 class BirdeyeTokenSecurityGoplusF10(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF11(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF12(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF13(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF14(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF15(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF17(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF18(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF19(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF20(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF24(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF28(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF3(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF32(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF33(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF36(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF38(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF39(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF4(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF43(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF44(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF5(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF51(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF52(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF53(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF54(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF57(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF58(BaseModel):
-    level: str
-    message: str
     value: str
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF6(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF7(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGoplusF8(BaseModel):
-    level: str
-    message: str
     value: bool
+    message: str
+    level: str
 
 
 class BirdeyeTokenSecurityGroupsItem(BaseModel):
@@ -1114,11 +1133,11 @@ class BirdeyeTokenSecurityGroupsItem(BaseModel):
 
 class BirdeyeTokenSecurityGroupsItemRowsItem(BaseModel):
     id: str
-    index: int
-    name: str
     severity: int
-    tooltip: str
+    name: str
     type: str
+    tooltip: str
+    index: int
 
 
 class BirdeyeTokenSecuritySeverity(BaseModel):
@@ -1135,48 +1154,48 @@ class BirdeyeTokenTradesPage(BaseModel):
 
 class BirdeyeTopTrader(BaseModel):
     address: str | None = None
-    avgBuyPerTx: float | None = None
-    avgBuyPrice: float | None = None
-    avgSellPrice: float | None = None
-    firstTxUnixTime: str | None = None
-    funding: BirdeyeTopTraderFunding | None = None
-    holdAvgPrice: float | None = None
-    holdVolume: float | None = None
-    holdVolumeUSD: float | None = None
-    isOnCurve: bool | None = None
-    lastTradeUnixTime: str | None = None
-    netValue: float | None = None
-    netWorth: float | None = None
-    realizedPnl: float | None = None
-    realizedPnlPercent: float | None = None
-    remainVolume: float | None = None
-    solBalance: float | None = None
     token: str | None = None
+    solBalance: float | None = None
     totalPnl: float | None = None
     totalPnlPercent: float | None = None
-    txBuyCount: str | None = None
+    realizedPnl: float | None = None
+    realizedPnlPercent: float | None = None
+    avgBuyPrice: float | None = None
+    avgSellPrice: float | None = None
+    netValue: float | None = None
+    holdVolume: float | None = None
+    holdVolumeUSD: float | None = None
+    holdAvgPrice: float | None = None
+    avgBuyPerTx: float | None = None
+    volume: float | None = None
+    volumeUSD: float | None = None
+    volumeBuy: float | None = None
+    volumeSell: float | None = None
+    volumeBuyUSD: float | None = None
+    volumeSellUSD: float | None = None
     txCount: str | None = None
+    txBuyCount: str | None = None
     txSellCount: str | None = None
+    walletTags: list[str] | None = None
+    firstTxUnixTime: str | None = None
+    lastTradeUnixTime: str | None = None
+    funding: BirdeyeTopTraderFunding | None = None
+    netWorth: float | None = None
+    isOnCurve: bool | None = None
     unrealizedPnl: float | None = None
     unrealizedPnlPercent: float | None = None
-    volume: float | None = None
-    volumeBuy: float | None = None
-    volumeBuyUSD: float | None = None
-    volumeSell: float | None = None
-    volumeSellUSD: float | None = None
-    volumeUSD: float | None = None
-    walletTags: list[str] | None = None
+    remainVolume: float | None = None
 
 
 class BirdeyeTopTraderFunding(BaseModel):
-    amount: float | None = None
     funder: str | None = None
     meta: BirdeyeTopTraderFundingMeta | None = None
-    timeLinked: BirdeyeTopTraderFundingTimeLinked | None = None
-    totalFundedAmount: float | None = None
-    totalFundedHolders: str | None = None
-    txHash: str | None = None
     unixTime: int | None = None
+    amount: float | None = None
+    totalFundedHolders: str | None = None
+    totalFundedAmount: float | None = None
+    txHash: str | None = None
+    timeLinked: BirdeyeTopTraderFundingTimeLinked | None = None
 
 
 class BirdeyeTopTraderFundingMeta(BaseModel):
@@ -1190,15 +1209,15 @@ class BirdeyeTopTraderFundingTimeLinked(BaseModel):
 
 class BirdeyeTopTraderFundingTimeLinkedPeersItem(BaseModel):
     address: str | None = None
-    holdVolumeUSD: float | None = None
-    realizedPnl: float | None = None
-    solBalance: float | None = None
-    totalPnl: float | None = None
-    txHash: str | None = None
     unixTime: int | None = None
-    unrealizedPnl: float | None = None
+    solBalance: float | None = None
     volumeBuyUSD: float | None = None
     volumeSellUSD: float | None = None
+    holdVolumeUSD: float | None = None
+    totalPnl: float | None = None
+    realizedPnl: float | None = None
+    txHash: str | None = None
+    unrealizedPnl: float | None = None
 
 
 class BirdeyeTopTradersPage(BaseModel):
@@ -1207,32 +1226,32 @@ class BirdeyeTopTradersPage(BaseModel):
 
 
 class BirdeyeTrade(BaseModel):
-    address: str
-    alias: BirdeyeTradeAlias | None = None
-    blockHumanTime: str
-    blockUnixTime: int
-    from_: Annotated[BirdeyeTradeFrom, Field(alias="from")]
     id: str
-    mc: float | None = None
-    network: str
-    owner: str
-    platform: str
-    platformAddress: str | None = None
-    pnl: str | None
-    pricePair: float | None = None
-    side: str
-    signers: list[str] | None = None
+    volumeUSD: float
+    blockUnixTime: int
     slot: int
-    soldPercentage: float | None = None
+    blockHumanTime: str
+    txType: str
+    txHash: str
+    address: str
+    owner: str
+    signers: list[str] | None = None
     source: str
-    sourceAddress: str | None = None
+    platform: str
+    walletTags: list[str] | None = None
+    txIndex: int | None = None
+    pnl: str | None
+    side: str
+    pricePair: float | None = None
+    from_: Annotated[BirdeyeTradeFrom, Field(alias="from")]
     to: BirdeyeTradeTo
     tokenPrice: float | None
-    txHash: str
-    txIndex: int | None = None
-    txType: str
-    volumeUSD: float
-    walletTags: list[str] | None = None
+    mc: float | None = None
+    network: str
+    soldPercentage: float | None = None
+    sourceAddress: str | None = None
+    platformAddress: str | None = None
+    alias: BirdeyeTradeAlias | None = None
 
 
 class BirdeyeTradeAlias(BaseModel):
@@ -1247,67 +1266,67 @@ class BirdeyeTradeAliasLabel(BaseModel):
 
 class BirdeyeTradeFrom(BaseModel):
     address: str
-    amount: int | float | str
-    decimals: int
-    icon: str | None
-    preAmount: str | None = None
-    price: float | None
     symbol: str
-    typeSwap: str | None
+    icon: str | None
+    decimals: int
+    amount: int | float | str
+    price: float | None
     uiAmount: float
     uiChangeAmount: float | None
+    typeSwap: str | None
+    preAmount: str | None = None
 
 
 class BirdeyeTradeTo(BaseModel):
     address: str
-    amount: int | float | str
-    decimals: int
-    icon: str | None
-    preAmount: str | None = None
-    price: float | None
     symbol: str
-    typeSwap: str | None
+    decimals: int
+    amount: int | float | str
+    price: float | None
     uiAmount: float
     uiChangeAmount: float | None
+    typeSwap: str | None
+    preAmount: str | None = None
+    icon: str | None
 
 
 class BirdeyeTrendingToken(BaseModel):
-    createdAt: str | None = None
+    token: str
+    price: float
     liquidity: float
     network: str
-    price: float
-    realMc: float
-    tf1h: BirdeyeTrendingTokenTf1h
-    tf24h: BirdeyeTrendingTokenTf24h
-    tf4h: BirdeyeTrendingTokenTf4h
-    token: str
     tokenData: BirdeyeTrendingTokenTokenData
+    realMc: float
+    createdAt: str | None = None
+    tf24h: BirdeyeTrendingTokenTf24h
+    tf1h: BirdeyeTrendingTokenTf1h
+    tf4h: BirdeyeTrendingTokenTf4h
     trendingScore: float
 
 
 class BirdeyeTrendingTokenTf1h(BaseModel):
-    priceChangePercent: float
+    priceChangePercent: float | None
 
 
 class BirdeyeTrendingTokenTf24h(BaseModel):
-    priceChangePercent: float
-    tradeCount: int
-    volumeChangePercent: float | None = None
+    priceChangePercent: float | None
     volumeUSD: float
+    volumeChangePercent: float | None = None
+    tradeCount: int
 
 
 class BirdeyeTrendingTokenTf4h(BaseModel):
-    priceChangePercent: float
+    priceChangePercent: float | None
 
 
 class BirdeyeTrendingTokenTokenData(BaseModel):
-    birdeyeStrict: bool | None = None
-    decimals: int
-    icon: str | None = None
-    jupStrict: bool | None = None
     name: str
     symbol: str
+    decimals: int
+    icon: str | None = None
     website: str | None
+    jupStrict: bool | None = None
+    birdeyeStrict: bool | None = None
 
 
 class BirdeyeTrendingTokens(BaseModel):
@@ -1316,41 +1335,41 @@ class BirdeyeTrendingTokens(BaseModel):
 
 
 class BirdeyeWalletPnlSummary(BaseModel):
-    average_profit_usd_per_trade: float | None = None
-    average_swap_amount_usd: float | None = None
-    avg_investment_size: float | None = None
-    avg_loss_size: float | None = None
-    avg_win_size: float | None = None
-    did_not_buy_percent: float | None = None
-    label_metadata: BirdeyeWalletPnlSummaryLabelMetadata | None = None
-    net_value: float | None = None
-    realized_pnl: float | None = None
+    wallet: str | None = None
     realized_pnl_percent: float | None = None
-    realized_pnl_percent_0_100: str | None = None
-    realized_pnl_percent_100_500: str | None = None
-    realized_pnl_percent_gt_500: str | None = None
-    realized_pnl_percent_lt_neg50: str | None = None
-    realized_pnl_percent_neg50_0: str | None = None
-    rug_token_percent: float | None = None
-    sold_gt_bought_percent: float | None = None
+    realized_pnl: float | None = None
     token_traded_count: str | None = None
-    total_pnl: float | None = None
-    tx_buy_count: str | None = None
     tx_count: str | None = None
+    tx_buy_count: str | None = None
     tx_sell_count: str | None = None
-    unrealized_pnl: float | None = None
     volume_buy_usd: float | None = None
     volume_sell_usd: float | None = None
+    net_value: float | None = None
     volume_usd: float | None = None
-    wallet: str | None = None
-    wallet_platforms: list[str] | None = None
-    wallet_tags: list[str] | None = None
+    avg_investment_size: float | None = None
+    average_swap_amount_usd: float | None = None
+    unrealized_pnl: float | None = None
+    total_pnl: float | None = None
+    average_profit_usd_per_trade: float | None = None
     win_rate: float | None = None
+    realized_pnl_percent_gt_500: str | None = None
+    realized_pnl_percent_100_500: str | None = None
+    realized_pnl_percent_0_100: str | None = None
+    realized_pnl_percent_neg50_0: str | None = None
+    realized_pnl_percent_lt_neg50: str | None = None
+    avg_win_size: float | None = None
+    avg_loss_size: float | None = None
+    sold_gt_bought_percent: float | None = None
+    rug_token_percent: float | None = None
+    label_metadata: BirdeyeWalletPnlSummaryLabelMetadata | None = None
+    wallet_tags: list[str] | None = None
+    wallet_platforms: list[str] | None = None
+    did_not_buy_percent: float | None = None
 
 
 class BirdeyeWalletPnlSummaryLabelMetadata(BaseModel):
-    label: str | None = None
     labels: dict[str, BirdeyeWalletPnlSummaryLabelMetadataLabelsEntry] | None = None
+    label: str | None = None
     logoURI: str | None = None
     primary: str | None = None
 
@@ -1360,55 +1379,55 @@ class BirdeyeWalletPnlSummaryLabelMetadataLabelsEntry(BaseModel):
 
 
 class BirdeyeWalletPortfolioPage(BaseModel):
+    wallet: str
     currency: str
+    total_value: str
     current_timestamp: str
     items: list[BirdeyePortfolioToken]
     pagination: BirdeyeCursorPagination
-    total_value: str
-    wallet: str
 
 
 class BirdeyeWalletToken(BaseModel):
-    avg_buy_per_tx: float | None = None
+    wallet: str | None = None
+    token: str | None = None
+    tx_count: str | None = None
+    tx_buy_count: str | None = None
+    tx_sell_count: str | None = None
+    volume_buy: float | None = None
+    volume_sell: float | None = None
     avg_buy_price: float | None = None
     avg_sell_price: float | None = None
-    current_price: float | None = None
-    effective_sell_volume: float | None = None
-    first_trade_unix_time: str | None = None
-    hold_volume: float | None = None
-    hold_volume_usd: float | None = None
-    init_time: str | None = None
-    is_low_liquidity: bool | None = None
-    last_trade_unix_time: str | None = None
-    market_cap: int | float | None = None
-    net_value: float | None = None
-    realized_pnl: float | None = None
-    realized_pnl_percent: float | None = None
+    avg_buy_per_tx: float | None = None
+    volume: float | None = None
+    volume_usd: float | None = None
+    volume_buy_usd: float | None = None
+    volume_sell_usd: float | None = None
     remain_volume: float | None = None
-    token: str | None = None
-    token_meta: BirdeyeWalletTokenTokenMeta | None = None
+    effective_sell_volume: float | None = None
+    net_value: float | None = None
     total_pnl: float | None = None
     total_pnl_percent: float | None = None
-    tx_buy_count: str | None = None
-    tx_count: str | None = None
-    tx_sell_count: str | None = None
+    realized_pnl: float | None = None
+    realized_pnl_percent: float | None = None
+    current_price: float | None = None
+    first_trade_unix_time: str | None = None
+    last_trade_unix_time: str | None = None
     unrealized_pnl: float | None = None
     unrealized_pnl_percent: float | None = None
-    volume: float | None = None
-    volume_buy: float | None = None
-    volume_buy_usd: float | None = None
-    volume_sell: float | None = None
-    volume_sell_usd: float | None = None
-    volume_usd: float | None = None
-    wallet: str | None = None
+    token_meta: BirdeyeWalletTokenTokenMeta | None = None
+    hold_volume: float | None = None
+    hold_volume_usd: float | None = None
+    market_cap: int | float | None = None
+    init_time: str | None = None
+    is_low_liquidity: bool | None = None
 
 
 class BirdeyeWalletTokenTokenMeta(BaseModel):
-    birdeye_strict: bool | None = None
-    jup_strict: bool | None = None
-    logo_uri: str | None = None
-    name: str | None = None
     symbol: str | None = None
+    name: str | None = None
+    logo_uri: str | None = None
+    jup_strict: bool | None = None
+    birdeye_strict: bool | None = None
 
 
 class BirdeyeWalletTokensPage(BaseModel):
@@ -1417,37 +1436,37 @@ class BirdeyeWalletTokensPage(BaseModel):
 
 
 class BirdeyeWalletTransaction(BaseModel):
-    block_unix_time: str | None = None
-    from_: Annotated[BirdeyeWalletTransactionFrom | None, Field(alias="from")] = None
-    network: str | None = None
-    to: BirdeyeWalletTransactionTo | None = None
     tx_hash: str | None = None
+    block_unix_time: str | None = None
     type: str | None = None
+    from_: Annotated[BirdeyeWalletTransactionFrom | None, Field(alias="from")] = None
+    to: BirdeyeWalletTransactionTo | None = None
+    network: str | None = None
     volume_usd: float | None = None
 
 
 class BirdeyeWalletTransactionFrom(BaseModel):
+    token: str | None = None
     amount: str | None = None
-    birdeye_strict: bool | None = None
-    jup_strict: bool | None = None
-    logo_uri: str | None = None
-    name: str | None = None
+    ui_amount: float | None = None
     price: float | None = None
     symbol: str | None = None
-    token: str | None = None
-    ui_amount: float | None = None
+    name: str | None = None
+    logo_uri: str | None = None
+    jup_strict: bool | None = None
+    birdeye_strict: bool | None = None
 
 
 class BirdeyeWalletTransactionTo(BaseModel):
+    token: str | None = None
     amount: str | None = None
-    birdeye_strict: bool | None = None
-    jup_strict: bool | None = None
-    logo_uri: str | None = None
-    name: str | None = None
+    ui_amount: float | None = None
     price: float | None = None
     symbol: str | None = None
-    token: str | None = None
-    ui_amount: float | None = None
+    name: str | None = None
+    logo_uri: str | None = None
+    jup_strict: bool | None = None
+    birdeye_strict: bool | None = None
 
 
 class BirdeyeWalletTransactionsPage(BaseModel):
@@ -1456,31 +1475,23 @@ class BirdeyeWalletTransactionsPage(BaseModel):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class GetNetWorthHistoryParams(BaseModel):
-    count: Annotated[int | None, Field(ge=1, le=90)] = 30
-    """
-    Number of points.
-    """
-    interval: BirdeyeNetWorthInterval | None = BirdeyeNetWorthInterval.FIELD_1D
-    """
-    Spacing of the points.
-    """
     wallet: Annotated[
         str,
         Field(
@@ -1491,9 +1502,21 @@ class GetNetWorthHistoryParams(BaseModel):
     """
     Solana wallet address, base58.
     """
+    interval: BirdeyeNetWorthInterval | None = BirdeyeNetWorthInterval.FIELD_1D
+    """
+    Spacing of the points.
+    """
+    count: Annotated[int | None, Field(ge=1, le=90)] = 30
+    """
+    Number of points.
+    """
 
 
 class GetTokenOhlcvParams(BaseModel):
+    chain: BirdeyeTokenChain
+    """
+    Chain the token lives on, as birdeye names it.
+    """
     address: Annotated[
         str,
         Field(
@@ -1504,17 +1527,13 @@ class GetTokenOhlcvParams(BaseModel):
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
     """
-    chain: BirdeyeTokenChain
+    interval: BirdeyeCandleInterval | None = BirdeyeCandleInterval.FIELD_15M
     """
-    Chain the token lives on, as birdeye names it.
+    Candle size.
     """
     count: Annotated[int | None, Field(ge=1, le=1000)] = 300
     """
     Number of candles.
-    """
-    interval: BirdeyeCandleInterval | None = BirdeyeCandleInterval.FIELD_15M
-    """
-    Candle size.
     """
     to: Annotated[int | None, Field(ge=0)] = None
     """
@@ -1523,6 +1542,10 @@ class GetTokenOhlcvParams(BaseModel):
 
 
 class GetTokenOverviewParams(BaseModel):
+    chain: BirdeyeTokenChain
+    """
+    Chain the token lives on, as birdeye names it.
+    """
     address: Annotated[
         str,
         Field(
@@ -1532,14 +1555,14 @@ class GetTokenOverviewParams(BaseModel):
     ]
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
-    """
-    chain: BirdeyeTokenChain
-    """
-    Chain the token lives on, as birdeye names it.
     """
 
 
 class GetTokenSecurityParams(BaseModel):
+    chain: BirdeyeTokenChain
+    """
+    Chain the token lives on, as birdeye names it.
+    """
     address: Annotated[
         str,
         Field(
@@ -1549,10 +1572,6 @@ class GetTokenSecurityParams(BaseModel):
     ]
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
-    """
-    chain: BirdeyeTokenChain
-    """
-    Chain the token lives on, as birdeye names it.
     """
 
 
@@ -1560,10 +1579,6 @@ class GetWalletPnlSummaryParams(BaseModel):
     chain: BirdeyePnlChain
     """
     Chain of the wallet PnL data. birdeye computes PnL on these chains only.
-    """
-    period: BirdeyePnlPeriod | None = BirdeyePnlPeriod.FIELD_30D
-    """
-    Window the summary covers.
     """
     wallet: Annotated[
         str,
@@ -1574,6 +1589,10 @@ class GetWalletPnlSummaryParams(BaseModel):
     ]
     """
     Wallet address on the chosen chain: base58 on Solana, 0x plus 40 hex characters on an EVM chain.
+    """
+    period: BirdeyePnlPeriod | None = BirdeyePnlPeriod.FIELD_30D
+    """
+    Window the summary covers.
     """
 
 
@@ -1595,25 +1614,25 @@ class ListLeaderboardParams(BaseModel):
     """
     Chain of the wallet PnL data. birdeye computes PnL on these chains only.
     """
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
     interval: BirdeyeLeaderboardInterval | None = BirdeyeLeaderboardInterval.FIELD_7D
     """
     Ranking period.
     """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    sort_by: BirdeyeLeaderboardSort | None = BirdeyeLeaderboardSort.TOTAL_PNL
     """
-    Traders per page.
+    Ranking field.
     """
     order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
     """
     Sort direction.
     """
-    sort_by: BirdeyeLeaderboardSort | None = BirdeyeLeaderboardSort.TOTAL_PNL
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
-    Ranking field.
+    Traders per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
     """
 
 
@@ -1642,6 +1661,10 @@ class ListTokenHoldersParams(BaseModel):
 
 
 class ListTokenMarketsParams(BaseModel):
+    chain: BirdeyeTokenChain
+    """
+    Chain the token lives on, as birdeye names it.
+    """
     address: Annotated[
         str,
         Field(
@@ -1651,22 +1674,22 @@ class ListTokenMarketsParams(BaseModel):
     ]
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
-    """
-    chain: BirdeyeTokenChain
-    """
-    Chain the token lives on, as birdeye names it.
-    """
-    order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
-    """
-    Sort direction.
     """
     sort_by: BirdeyeMarketSort | None = BirdeyeMarketSort.VOLUME_24H
     """
     Pool ordering.
     """
+    order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
+    """
+    Sort direction.
+    """
 
 
 class ListTokenTradesParams(BaseModel):
+    chain: BirdeyeTokenChain
+    """
+    Chain the token lives on, as birdeye names it.
+    """
     address: Annotated[
         str,
         Field(
@@ -1676,26 +1699,26 @@ class ListTokenTradesParams(BaseModel):
     ]
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
-    """
-    chain: BirdeyeTokenChain
-    """
-    Chain the token lives on, as birdeye names it.
-    """
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=50)] = 50
-    """
-    Trades per page.
     """
     side: BirdeyeTradeSide | None = BirdeyeTradeSide.ALL
     """
     Keep one kind of event: `buy`, `sell`, `trade` (buys and sells), `add`, `remove`, `liquidity` (adds and removes), or `all`.
     """
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 50
+    """
+    Trades per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
+    """
 
 
 class ListTopTradersParams(BaseModel):
+    chain: BirdeyePnlChain
+    """
+    Chain of the wallet PnL data. birdeye computes PnL on these chains only.
+    """
     address: Annotated[
         str,
         Field(
@@ -1706,25 +1729,21 @@ class ListTopTradersParams(BaseModel):
     """
     Token address on the chosen chain: a base58 mint on Solana, 0x plus 40 hex characters on an EVM chain.
     """
-    chain: BirdeyePnlChain
+    sort_by: BirdeyeTraderSort | None = BirdeyeTraderSort.TOTAL_PNL
     """
-    Chain of the wallet PnL data. birdeye computes PnL on these chains only.
-    """
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Traders per page.
+    Ranking field.
     """
     order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
     """
     Sort direction.
     """
-    sort_by: BirdeyeTraderSort | None = BirdeyeTraderSort.TOTAL_PNL
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
     """
-    Ranking field.
+    Traders per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
     """
 
 
@@ -1736,14 +1755,6 @@ class ListTrendingTokensParams(BaseModel):
 
 
 class ListWalletPortfolioParams(BaseModel):
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
-    """
-    Holdings per page.
-    """
     wallet: Annotated[
         str,
         Field(
@@ -1754,28 +1765,20 @@ class ListWalletPortfolioParams(BaseModel):
     """
     Solana wallet address, base58.
     """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
+    """
+    Holdings per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
+    """
 
 
 class ListWalletTokensParams(BaseModel):
     chain: BirdeyePnlChain
     """
     Chain of the wallet PnL data. birdeye computes PnL on these chains only.
-    """
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Tokens per page.
-    """
-    order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
-    """
-    Sort direction.
-    """
-    sort_by: BirdeyeWalletTokenSort | None = BirdeyeWalletTokenSort.LAST_TRADE
-    """
-    Token ordering.
     """
     wallet: Annotated[
         str,
@@ -1786,6 +1789,22 @@ class ListWalletTokensParams(BaseModel):
     ]
     """
     Wallet address on the chosen chain: base58 on Solana, 0x plus 40 hex characters on an EVM chain.
+    """
+    sort_by: BirdeyeWalletTokenSort | None = BirdeyeWalletTokenSort.LAST_TRADE
+    """
+    Token ordering.
+    """
+    order: BirdeyeSortOrder | None = BirdeyeSortOrder.DESC
+    """
+    Sort direction.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Tokens per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
     """
 
 
@@ -1794,20 +1813,6 @@ class ListWalletTransactionsParams(BaseModel):
     """
     Chain of the wallet PnL data. birdeye computes PnL on these chains only.
     """
-    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
-    """
-    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Swaps per page.
-    """
-    token: Annotated[
-        str | None, Field(pattern="^([1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
-    ] = None
-    """
-    Keep swaps of this token address only, in the chain's address format.
-    """
     wallet: Annotated[
         str,
         Field(
@@ -1817,6 +1822,20 @@ class ListWalletTransactionsParams(BaseModel):
     ]
     """
     Wallet address on the chosen chain: base58 on Solana, 0x plus 40 hex characters on an EVM chain.
+    """
+    token: Annotated[
+        str | None, Field(pattern="^([1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")
+    ] = None
+    """
+    Keep swaps of this token address only, in the chain's address format.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Swaps per page.
+    """
+    cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]*$")] = ""
+    """
+    `pagination.next_cursor` from the previous page; empty for the first page. A cursor holds only a position, so send it with the same sort and filters as the page it came from. `pagination.completion` is `exhausted` at the last page and `depth_limit` where birdeye stops serving deeper pages.
     """
 
 

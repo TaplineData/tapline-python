@@ -83,104 +83,104 @@ class PublicError(str, Enum):
 
 
 class CandlesticksParams(BaseModel):
-    currency: CandlestickCurrency | None = CandlestickCurrency.USD
+    pool_id: Annotated[str, Field(examples=["162714737"])]
     """
-    Denomination of the bar prices.
-    """
-    from_timestamp: Annotated[int, Field(ge=0)]
-    """
-    Unix timestamp for the start of the window.
-    """
-    is_inverted: bool | None = False
-    """
-    Quote bars in the other token of the pair.
+    GeckoTerminal numeric pool id, as returned in a pool resource's `id`.
     """
     pair_id: Annotated[str, Field(examples=["1770231"])]
     """
     GeckoTerminal numeric pair id, from the pool's `pairs` relationship.
     """
-    pool_id: Annotated[str, Field(examples=["162714737"])]
+    from_timestamp: Annotated[int, Field(ge=0)]
     """
-    GeckoTerminal numeric pool id, as returned in a pool resource's `id`.
-    """
-    resolution: CandlestickResolution | None = CandlestickResolution.FIELD_15
-    """
-    Bar width in minutes, or `1D`.
+    Unix timestamp for the start of the window.
     """
     to_timestamp: Annotated[int, Field(ge=0)]
     """
     Unix timestamp for the end of the window.
     """
+    resolution: CandlestickResolution | None = CandlestickResolution.FIELD_15
+    """
+    Bar width in minutes, or `1D`.
+    """
+    currency: CandlestickCurrency | None = CandlestickCurrency.USD
+    """
+    Denomination of the bar prices.
+    """
+    is_inverted: bool | None = False
+    """
+    Quote bars in the other token of the pair.
+    """
 
 
 class CandlesticksResponse(BaseModel):
-    data: list[CandlesticksResponseData]
     meta: dict[str, str]
+    data: list[CandlesticksResponseData]
 
 
 class CandlesticksResponseData(BaseModel):
-    c: float
     dt: str
+    o: float
     h: float
     l: float
-    o: float
+    c: float
     v: float
 
 
 class DexAttributes(BaseModel):
+    name: str
+    identifier: str | None = None
+    url: str | None = None
     analytics_pool_page_url: str | None = None
     analytics_token_page_url: str | None = None
-    identifier: str | None = None
-    image_url: str
-    is_bonding_curve: bool | None = None
-    is_launchpad: bool | None = None
-    name: str
     no_reserves: bool | None = None
-    url: str | None = None
+    image_url: str
+    is_launchpad: bool | None = None
+    is_bonding_curve: bool | None = None
 
 
 class DexLinkServiceAttributes(BaseModel):
-    category: str
-    image_url: str
     name: str
-    priority: int | None
+    category: str
     sub_category: str
     url: str
+    priority: int | None
+    image_url: str
 
 
 class DexLinkServiceResource(BaseModel):
-    attributes: DexLinkServiceAttributes
     id: str
     type: str
+    attributes: DexLinkServiceAttributes
 
 
 class DexMetricAttributes(BaseModel):
-    pools_count: int
-    rank_by_volume: int | None
-    reserve_in_usd: str
-    swap_count_24h: int
-    swap_volume_percent_change_24h: float | int | str
     swap_volume_usd_24h: str
+    swap_count_24h: int
     swap_volume_usd_48h_24h: str
+    swap_volume_percent_change_24h: float | int | str
+    reserve_in_usd: str
+    rank_by_volume: int | None
+    pools_count: int
     tokens_count: int
 
 
 class DexMetricResource(BaseModel):
-    attributes: DexMetricAttributes
     id: str
     type: str
+    attributes: DexMetricAttributes
 
 
 class DexRelationships(BaseModel):
-    dex_metric: ResourceLinkage | None = None
     network: ResourceLinkage
+    dex_metric: ResourceLinkage | None = None
 
 
 class DexResource(BaseModel):
-    attributes: DexAttributes
     id: str
-    relationships: DexRelationships
     type: str
+    attributes: DexAttributes
+    relationships: DexRelationships
 
 
 class DexesParams(BaseModel):
@@ -202,14 +202,14 @@ class DexesResponse(BaseModel):
 
 class DexesResponseLinks(BaseModel):
     first: str
-    last: DexesResponseLinksLast
-    next: str | None
     prev: str | None
+    next: str | None
+    last: DexesResponseLinksLast
 
 
 class DexesResponseLinksLast(BaseModel):
-    href: str
     meta: DexesResponseLinksLastMeta
+    href: str
 
 
 class DexesResponseLinksLastMeta(BaseModel):
@@ -217,67 +217,67 @@ class DexesResponseLinksLastMeta(BaseModel):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class ExplorerAttributes(BaseModel):
+    name: str
+    url: str
+    rank: int | None
     coin_url: str
     holders_url: str
-    logo_url: str
-    name: str
-    rank: int | None
     tx_url: str
-    url: str
+    logo_url: str
 
 
 class ExplorerResource(BaseModel):
-    attributes: ExplorerAttributes
     id: str
     type: str
+    attributes: ExplorerAttributes
 
 
 class GlobalStatAttributes(BaseModel):
-    dexes_count: int
-    eth_gas_oracle: GlobalStatAttributesEthGasOracle
-    fng_stats: GlobalStatAttributesFngStats
     networks_count: int
+    dexes_count: int
     pools_count: int
     tokens_count: int
+    fng_stats: GlobalStatAttributesFngStats
+    eth_gas_oracle: GlobalStatAttributesEthGasOracle
 
 
 class GlobalStatAttributesEthGasOracle(BaseModel):
+    last_block: int
+    updated_at: str
     fast_gas_price: float
     gas_used_ratio: str
-    last_block: int
-    propose_gas_price: float
     safe_gas_price: float
     suggest_base_fee: float
-    updated_at: str
+    propose_gas_price: float
 
 
 class GlobalStatAttributesFngStats(BaseModel):
-    next_update_at: str
     value: int
     value_classification: str
+    next_update_at: str
 
 
 class GlobalStatResource(BaseModel):
-    attributes: GlobalStatAttributes
     id: str
     type: str
+    attributes: GlobalStatAttributes
 
 
 class GlobalStatsResponse(BaseModel):
@@ -298,15 +298,15 @@ class LatestPoolsParams(BaseModel):
 class LatestPoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexResource | NetworkResource | PoolMetricResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: LatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class LatestPoolsResponseLinks(BaseModel):
     first: str
-    last: LatestPoolsResponseLinksLast
-    next: str | None
     prev: str | None
+    next: str | None
+    last: LatestPoolsResponseLinksLast
 
 
 class LatestPoolsResponseLinksLast(BaseModel):
@@ -322,20 +322,20 @@ class LatestPoolsResponseMeta(BaseModel):
 
 
 class NetworkAttributes(BaseModel):
-    cg_network_id: str | None = None
-    chain_id: int | None = None
-    explorer_coin_url: str | None = None
-    explorer_logo_url: str | None = None
-    explorer_tx_url: str | None = None
-    explorer_url: str | None = None
+    name: str | None = None
     identifier: str
+    chain_id: int | None = None
+    cg_network_id: str | None = None
+    native_currency_symbol: str | None = None
+    native_currency_address: str | None = None
+    pool_reserve_threshold: str | None = None
     image_url: str | None = None
     is_new: bool | None = None
-    name: str | None = None
-    native_currency_address: str | None = None
-    native_currency_symbol: str | None = None
-    pool_reserve_threshold: str | None = None
     supports_top_holders: bool | None = None
+    explorer_url: str | None = None
+    explorer_coin_url: str | None = None
+    explorer_tx_url: str | None = None
+    explorer_logo_url: str | None = None
 
 
 class NetworkLatestPoolsParams(BaseModel):
@@ -356,134 +356,134 @@ class NetworkLatestPoolsParams(BaseModel):
 class NetworkLatestPoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexResource | NetworkResource | PoolMetricResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: NetworkLatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class NetworkLatestPoolsResponseMeta(BaseModel):
-    network: str
     sort: str
+    network: str
 
 
 class NetworkLinkServiceAttributes(BaseModel):
-    category: str
-    image_url: str
     name: str
-    priority: int | None
+    category: str
     sub_category: str | None
     url: str
+    priority: int | None
+    image_url: str
 
 
 class NetworkLinkServiceResource(BaseModel):
-    attributes: NetworkLinkServiceAttributes
     id: str
     type: str
+    attributes: NetworkLinkServiceAttributes
 
 
 class NetworkMetricAttributes(BaseModel):
-    dexes_count: int | None = None
-    latest_pools_count: int
-    pools_count: int | None = None
-    rank_by_liquidity: int | None = None
-    reserve_in_usd: str | None = None
-    swap_count_24h: int | None = None
-    swap_volume_percent_change_24h: str | None = None
     swap_volume_usd_24h: str | None = None
+    swap_count_24h: int | None = None
     swap_volume_usd_48h_24h: str | None = None
-    tokens_count: int | None = None
+    swap_volume_percent_change_24h: str | float | None = None
+    latest_pools_count: int
     trending_pools_count: int | None = None
+    reserve_in_usd: str | None = None
+    rank_by_liquidity: int | None = None
+    dexes_count: int | None = None
+    pools_count: int | None = None
+    tokens_count: int | None = None
 
 
 class NetworkMetricResource(BaseModel):
-    attributes: NetworkMetricAttributes
     id: str
     type: str
+    attributes: NetworkMetricAttributes
 
 
 class NetworkPoolScreenerRequest(BaseModel):
-    buy_tax: RangeFilter | None = None
-    """
-    Buy tax percentage.
-    """
-    buys: TimeframedRangeFilter | None = None
-    """
-    Buy count over the chosen window.
-    """
-    dex: str | None = None
-    """
-    Restrict to a single DEX on this network, by identifier.
-    """
-    dexes: list[str] | None = None
-    """
-    Restrict to these DEX identifiers.
-    """
-    fdv_in_usd: RangeFilter | None = None
-    """
-    Fully diluted valuation in USD.
-    """
-    good_gt_score: bool | None = None
-    """
-    Only pools above GeckoTerminal's GT score threshold.
-    """
-    has_social: bool | None = None
-    """
-    Only pools whose token declares social links.
-    """
-    holder_count: RangeFilter | None = None
-    """
-    Number of token holders.
-    """
-    liquidity: RangeFilter | None = None
-    """
-    Pool liquidity in USD.
-    """
-    mc_in_usd: RangeFilter | None = None
-    """
-    Market cap in USD.
-    """
-    networks: list[str] | None = None
-    """
-    Restrict to these network identifiers.
-    """
-    no_honeypot: bool | None = None
-    """
-    Exclude tokens flagged as honeypots.
-    """
-    on_coingecko: bool | None = None
-    """
-    Only pools whose token is listed on CoinGecko.
-    """
     page: Annotated[int | None, Field(ge=1)] = 1
     """
     1-based result page.
-    """
-    pool_creation_hours_ago: RangeFilter | None = None
-    """
-    Pool age in hours.
-    """
-    sell_tax: RangeFilter | None = None
-    """
-    Sell tax percentage.
-    """
-    sells: TimeframedRangeFilter | None = None
-    """
-    Sell count over the chosen window.
     """
     sort: PoolSort | None = None
     """
     Ranking applied before pagination. Omit for GeckoTerminal's default.
     """
+    volume_24h: RangeFilter | None = None
+    """
+    24h traded volume in USD.
+    """
+    liquidity: RangeFilter | None = None
+    """
+    Pool liquidity in USD.
+    """
+    fdv_in_usd: RangeFilter | None = None
+    """
+    Fully diluted valuation in USD.
+    """
+    mc_in_usd: RangeFilter | None = None
+    """
+    Market cap in USD.
+    """
+    buy_tax: RangeFilter | None = None
+    """
+    Buy tax percentage.
+    """
+    sell_tax: RangeFilter | None = None
+    """
+    Sell tax percentage.
+    """
+    pool_creation_hours_ago: RangeFilter | None = None
+    """
+    Pool age in hours.
+    """
     top_10_holders_percentage: RangeFilter | None = None
     """
     Share of supply held by the ten largest holders.
+    """
+    holder_count: RangeFilter | None = None
+    """
+    Number of token holders.
     """
     tx_count: TimeframedRangeFilter | None = None
     """
     Transaction count over the chosen window.
     """
-    volume_24h: RangeFilter | None = None
+    buys: TimeframedRangeFilter | None = None
     """
-    24h traded volume in USD.
+    Buy count over the chosen window.
+    """
+    sells: TimeframedRangeFilter | None = None
+    """
+    Sell count over the chosen window.
+    """
+    on_coingecko: bool | None = None
+    """
+    Only pools whose token is listed on CoinGecko.
+    """
+    has_social: bool | None = None
+    """
+    Only pools whose token declares social links.
+    """
+    no_honeypot: bool | None = None
+    """
+    Exclude tokens flagged as honeypots.
+    """
+    good_gt_score: bool | None = None
+    """
+    Only pools above GeckoTerminal's GT score threshold.
+    """
+    networks: list[str] | None = None
+    """
+    Restrict to these network identifiers.
+    """
+    dexes: list[str] | None = None
+    """
+    Restrict to these DEX identifiers.
+    """
+    dex: str | None = None
+    """
+    Restrict to a single DEX on this network, by identifier.
     """
 
 
@@ -497,8 +497,8 @@ class NetworkPoolsParams(BaseModel):
 class NetworkPoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexMetricResource | DexResource | NetworkResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: LatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class NetworkRankingsParams(BaseModel):
@@ -520,10 +520,10 @@ class NetworkRelationships(BaseModel):
 
 
 class NetworkResource(BaseModel):
-    attributes: NetworkAttributes
     id: str
-    relationships: NetworkRelationships
     type: str
+    attributes: NetworkAttributes
+    relationships: NetworkRelationships
 
 
 class NetworksParams(BaseModel):
@@ -538,30 +538,30 @@ class NetworksResponse(BaseModel):
 
 
 class PairAttributes(BaseModel):
-    base_address: str
-    base_name: str
-    base_price_in_currency: str
-    base_price_in_quote: str
-    base_price_in_usd: str
-    base_price_in_usd_percent_change: float
     base_symbol: str
-    base_token_id: str
-    data_24h: PairAttributesData24h
-    name: str
-    price_change_data: PairAttributesPriceChangeData
-    quote_address: str
-    quote_name: str
-    quote_price_in_base: str
-    quote_price_in_currency: str
-    quote_price_in_usd: str
-    quote_price_in_usd_percent_change: float
+    base_price_in_currency: str
+    base_price_in_usd_percent_change: float
     quote_symbol: str
-    quote_token_id: str
-    swap_count: int
-    transaction_data: PairAttributesTransactionData
-    volume_data: PairAttributesVolumeData
+    quote_price_in_currency: str
+    quote_price_in_usd_percent_change: float
+    base_price_in_quote: str
+    quote_price_in_base: str
     volume_in_currency: str
     volume_in_usd: str
+    transaction_data: PairAttributesTransactionData
+    volume_data: PairAttributesVolumeData
+    price_change_data: PairAttributesPriceChangeData
+    swap_count: int
+    name: str
+    base_address: str
+    quote_address: str
+    base_name: str
+    quote_name: str
+    base_token_id: str
+    quote_token_id: str
+    base_price_in_usd: str
+    quote_price_in_usd: str
+    data_24h: PairAttributesData24h
 
 
 class PairAttributesData24h(BaseModel):
@@ -571,50 +571,50 @@ class PairAttributesData24h(BaseModel):
 
 
 class PairAttributesPriceChangeData(BaseModel):
-    last_172800_s: PairAttributesPriceChangeDataEntry
-    last_1800_s: PairAttributesPriceChangeDataEntry
-    last_21600_s: PairAttributesPriceChangeDataEntry
     last_300_s: PairAttributesPriceChangeDataEntry
-    last_3600_s: PairAttributesPriceChangeDataEntry
-    last_43200_s: PairAttributesPriceChangeDataEntry
-    last_7200_s: PairAttributesPriceChangeDataEntry
-    last_86400_s: PairAttributesPriceChangeDataEntry
     last_900_s: PairAttributesPriceChangeDataEntry
+    last_1800_s: PairAttributesPriceChangeDataEntry
+    last_3600_s: PairAttributesPriceChangeDataEntry
+    last_7200_s: PairAttributesPriceChangeDataEntry
+    last_21600_s: PairAttributesPriceChangeDataEntry
+    last_43200_s: PairAttributesPriceChangeDataEntry
+    last_86400_s: PairAttributesPriceChangeDataEntry
+    last_172800_s: PairAttributesPriceChangeDataEntry
 
 
 class PairAttributesPriceChangeDataEntry(BaseModel):
-    base_token_percentage: float
-    base_token_usd: float
     prices: PairAttributesPriceChangeDataEntryPrices
-    quote_token_percentage: float
+    base_token_usd: float
     quote_token_usd: float
+    base_token_percentage: float
+    quote_token_percentage: float
 
 
 class PairAttributesPriceChangeDataEntryPrices(BaseModel):
-    base_token_high_price_in_usd: float | None = None
-    base_token_high_price_timestamp: str | None = None
-    base_token_last_price_in_usd: float | None = None
     base_token_low_price_in_usd: float | None = None
-    base_token_low_price_timestamp: str | None = None
+    base_token_high_price_in_usd: float | None = None
+    base_token_last_price_in_usd: float | None = None
+    quote_token_low_price_in_usd: float | None = None
     base_token_start_price_in_usd: float | None = None
     quote_token_high_price_in_usd: float | None = None
-    quote_token_high_price_timestamp: str | None = None
     quote_token_last_price_in_usd: float | None = None
-    quote_token_low_price_in_usd: float | None = None
-    quote_token_low_price_timestamp: str | None = None
+    base_token_low_price_timestamp: str | None = None
     quote_token_start_price_in_usd: float | None = None
+    base_token_high_price_timestamp: str | None = None
+    quote_token_low_price_timestamp: str | None = None
+    quote_token_high_price_timestamp: str | None = None
 
 
 class PairAttributesTransactionData(BaseModel):
-    last_172800_s: PairAttributesTransactionDataEntry
-    last_1800_s: PairAttributesTransactionDataEntry
-    last_21600_s: PairAttributesTransactionDataEntry
     last_300_s: PairAttributesTransactionDataEntry
-    last_3600_s: PairAttributesTransactionDataEntry
-    last_43200_s: PairAttributesTransactionDataEntry
-    last_7200_s: PairAttributesTransactionDataEntry
-    last_86400_s: PairAttributesTransactionDataEntry
     last_900_s: PairAttributesTransactionDataEntry
+    last_1800_s: PairAttributesTransactionDataEntry
+    last_3600_s: PairAttributesTransactionDataEntry
+    last_7200_s: PairAttributesTransactionDataEntry
+    last_21600_s: PairAttributesTransactionDataEntry
+    last_43200_s: PairAttributesTransactionDataEntry
+    last_86400_s: PairAttributesTransactionDataEntry
+    last_172800_s: PairAttributesTransactionDataEntry
 
 
 class PairAttributesTransactionDataEntry(BaseModel):
@@ -623,26 +623,26 @@ class PairAttributesTransactionDataEntry(BaseModel):
 
 
 class PairAttributesVolumeData(BaseModel):
-    last_172800_s: PairAttributesVolumeDataEntry
-    last_1800_s: PairAttributesVolumeDataEntry
-    last_21600_s: PairAttributesVolumeDataEntry
     last_300_s: PairAttributesVolumeDataEntry
-    last_3600_s: PairAttributesVolumeDataEntry
-    last_43200_s: PairAttributesVolumeDataEntry
-    last_7200_s: PairAttributesVolumeDataEntry
-    last_86400_s: PairAttributesVolumeDataEntry
     last_900_s: PairAttributesVolumeDataEntry
+    last_1800_s: PairAttributesVolumeDataEntry
+    last_3600_s: PairAttributesVolumeDataEntry
+    last_7200_s: PairAttributesVolumeDataEntry
+    last_21600_s: PairAttributesVolumeDataEntry
+    last_43200_s: PairAttributesVolumeDataEntry
+    last_86400_s: PairAttributesVolumeDataEntry
+    last_172800_s: PairAttributesVolumeDataEntry
 
 
 class PairAttributesVolumeDataEntry(BaseModel):
-    buys_in_currency_token: float
     buys_in_usd: float
-    sells_in_currency_token: float
     sells_in_usd: float
-    total_in_base_token: float
-    total_in_currency_token: float
-    total_in_quote_token: float
     total_in_usd: float
+    total_in_base_token: float
+    total_in_quote_token: float
+    buys_in_currency_token: float
+    sells_in_currency_token: float
+    total_in_currency_token: float
 
 
 class PairRelationships(BaseModel):
@@ -650,95 +650,95 @@ class PairRelationships(BaseModel):
 
 
 class PairResource(BaseModel):
-    attributes: PairAttributes
     id: str
-    relationships: PairRelationships
     type: str
+    attributes: PairAttributes
+    relationships: PairRelationships
 
 
 class PastTokensDeveloperDetailAttributes(BaseModel):
-    past_tokens: list[PastTokensDeveloperDetailAttributesPastTokens] | list[str]
     past_tokens_count: int
+    past_tokens: list[PastTokensDeveloperDetailAttributesPastTokens] | list[str]
 
 
 class PastTokensDeveloperDetailAttributesPastTokens(BaseModel):
-    address: str
-    fdv_in_usd: float
-    market_cap_in_usd: float | None
-    name: str
     symbol: str
+    name: str
+    address: str
     token_image_url: str
+    market_cap_in_usd: float | None
+    fdv_in_usd: float
     top_pool_address: str
 
 
 class PastTokensDeveloperDetailResource(BaseModel):
-    attributes: PastTokensDeveloperDetailAttributes
     id: str
     type: str
+    attributes: PastTokensDeveloperDetailAttributes
 
 
 class PoolAttributes(BaseModel):
     address: str
-    aggregated_network_metrics: PoolAttributesAggregatedNetworkMetrics | None = None
-    api_address: str | None = None
-    balancer_pool_id: str | None = None
-    base_token_id: str
+    name: str | None = None
     from_volume_in_usd: str | None = None
-    fully_diluted_valuation: str | None = None
-    graduated_pool_address: str | None = None
+    to_volume_in_usd: str | None = None
+    api_address: str | None = None
+    swap_count_24h: int | None = None
+    price_percent_change: str | None
+    price_percent_changes: PoolAttributesPricePercentChanges | None = None
+    pool_fee: str | None = None
+    base_token_id: str
+    token_value_data: dict[str, PoolAttributesTokenValueDataEntry] | None = None
+    price_in_usd: str | None = None
+    reserve_in_usd: str | None = None
+    pool_created_at: str
+    net_volume_data_24h: PoolAttributesNetVolumeData24h | None = None
     graduation_percentage: float | None = None
+    graduated_pool_address: str | None = None
+    holder_count: int | None = None
+    security_indicators_data: PoolAttributesSecurityIndicatorsData | None = None
+    aggregated_network_metrics: PoolAttributesAggregatedNetworkMetrics | None = None
+    fully_diluted_valuation: str | None = None
+    price_in_target_token: str | None = None
+    reserve_threshold_met: bool | None = None
+    is_suspicious_chart: bool | None = None
+    token_weightages: dict[str, Any] | None = None
+    token_reserves: dict[str, PoolAttributesTokenReservesEntry] | None = None
+    balancer_pool_id: str | None = None
+    swap_url: str | None = None
+    sentiment_votes: PoolAttributesSentimentVotes | None = None
+    trending_narrative: str | None = None
+    historical_data: PoolAttributesHistoricalData | None = None
+    security_indicators: list[str] | None = None
     gt_score: float | None = None
     gt_score_details: PoolAttributesGtScoreDetails | None = None
+    pool_reports_count: int | None = None
+    latest_swap_timestamp: str | None = None
     high_low_price_data_by_token_id: (
         dict[str, PoolAttributesHighLowPriceDataByTokenIdEntry] | None
     ) = None
-    historical_data: PoolAttributesHistoricalData | None = None
-    holder_count: int | None = None
     is_nsfw: bool | None = None
-    is_pool_address_explorable: bool | None = None
     is_stale_pool: bool | None = None
-    is_suspicious_chart: bool | None = None
-    latest_swap_timestamp: str | None = None
-    name: str | None = None
-    net_volume_data_24h: PoolAttributesNetVolumeData24h | None = None
-    pool_created_at: str
-    pool_fee: str | None = None
-    pool_reports_count: int | None = None
-    price_in_target_token: str | None = None
-    price_in_usd: str | None = None
-    price_percent_change: str | None
-    price_percent_changes: PoolAttributesPricePercentChanges | None = None
-    price_sparkline_7d: list[float] | None = None
-    reserve_in_usd: str | None = None
-    reserve_threshold_met: bool | None = None
+    is_pool_address_explorable: bool | None = None
     risk_flags: list[str] | None = None
-    security_indicators: list[str] | None = None
-    security_indicators_data: PoolAttributesSecurityIndicatorsData | None = None
-    sentiment_votes: PoolAttributesSentimentVotes | None = None
-    suggested_pools_by_liquidity: PoolAttributesSuggestedPoolsByLiquidity | None = None
-    swap_count_24h: int | None = None
-    swap_url: str | None = None
+    price_sparkline_7d: list[float] | None = None
     tagged_token_id: str | None = None
-    to_volume_in_usd: str | None = None
-    token_reserves: dict[str, PoolAttributesTokenReservesEntry] | None = None
-    token_value_data: dict[str, PoolAttributesTokenValueDataEntry] | None = None
-    token_weightages: dict[str, Any] | None = None
-    trending_narrative: str | None = None
+    suggested_pools_by_liquidity: PoolAttributesSuggestedPoolsByLiquidity | None = None
 
 
 class PoolAttributesAggregatedNetworkMetrics(BaseModel):
-    total_swap_count_24h: int
-    total_swap_volume_percent_change_24h: str
     total_swap_volume_usd_24h: str
     total_swap_volume_usd_48h_24h: str
+    total_swap_count_24h: int
+    total_swap_volume_percent_change_24h: str
 
 
 class PoolAttributesGtScoreDetails(BaseModel):
-    creation: float
-    holders: float
     info: float
     pool: float
     transactions: float
+    holders: float
+    creation: float
 
 
 class PoolAttributesHighLowPriceDataByTokenIdEntry(BaseModel):
@@ -749,63 +749,63 @@ class PoolAttributesHighLowPriceDataByTokenIdEntry(BaseModel):
 
 
 class PoolAttributesHistoricalData(BaseModel):
-    last_15m: PoolAttributesHistoricalDataEntry
-    last_1h: PoolAttributesHistoricalDataEntry
-    last_24h: PoolAttributesHistoricalDataEntry
-    last_30m: PoolAttributesHistoricalDataEntry
     last_5m: PoolAttributesHistoricalDataEntry
+    last_15m: PoolAttributesHistoricalDataEntry
+    last_30m: PoolAttributesHistoricalDataEntry
+    last_1h: PoolAttributesHistoricalDataEntry
     last_6h: PoolAttributesHistoricalDataEntry
+    last_24h: PoolAttributesHistoricalDataEntry
 
 
 class PoolAttributesHistoricalDataEntry(BaseModel):
-    buy_swaps_count: int
-    buy_volume_in_usd: str | None = None
-    buyers_count: int
-    net_volume_in_usd: str | None = None
-    price_in_usd: str | None
-    sell_swaps_count: int
-    sell_volume_in_usd: str | None = None
-    sellers_count: int
     swaps_count: int
+    buyers_count: int
+    price_in_usd: str | None
+    sellers_count: int
     volume_in_usd: str
+    buy_volume_in_usd: str | None = None
+    sell_volume_in_usd: str | None = None
+    net_volume_in_usd: str | None = None
+    buy_swaps_count: int
+    sell_swaps_count: int
 
 
 class PoolAttributesNetVolumeData24h(BaseModel):
     buy_volume_in_usd: str
-    net_volume_in_usd: str
     sell_volume_in_usd: str
+    net_volume_in_usd: str
 
 
 class PoolAttributesPricePercentChanges(BaseModel):
-    last_15m: str | None
-    last_1h: str | None
-    last_24h: str | None
-    last_30m: str | None
     last_5m: str | None
+    last_15m: str | None
+    last_30m: str | None
+    last_1h: str | None
     last_6h: str | None
+    last_24h: str | None
 
 
 class PoolAttributesSecurityIndicatorsData(BaseModel):
-    bundler_percentage: float | None
-    buy_tax: float | None
-    cluster_percentage: float | None
-    developer_holding_percentage: float | None
-    early_buyers_percentage: float | None
-    freezable: bool | None
     gt_score: float | None
+    pool_created_at: str
+    developer_holding_percentage: float | None
+    top_10_holders_percentage: float | None
     holder_count: int | None
     honeypot: bool | None
-    is_liquidity_locked: bool | None
     mintable: bool | None
-    pool_created_at: str
+    freezable: bool | None
+    buy_tax: float | None
     sell_tax: float | None
-    top_10_holders_percentage: float | None
+    is_liquidity_locked: bool | None
+    early_buyers_percentage: float | None
+    bundler_percentage: float | None
+    cluster_percentage: float | None
 
 
 class PoolAttributesSentimentVotes(BaseModel):
-    down_percentage: float
     total: float
     up_percentage: float
+    down_percentage: float
 
 
 class PoolAttributesSuggestedPoolsByLiquidity(BaseModel):
@@ -814,10 +814,10 @@ class PoolAttributesSuggestedPoolsByLiquidity(BaseModel):
 
 
 class PoolAttributesSuggestedPoolsByLiquidityByBaseTokenSymbol(BaseModel):
+    name: str
     address: str
     dex_identifier: str
     dex_name: str
-    name: str
     network_identifier: str
 
 
@@ -833,78 +833,82 @@ class PoolAttributesTokenValueDataEntry(BaseModel):
 
 
 class PoolLockedLiquidityAttributes(BaseModel):
-    final_unlock_timestamp: str | None
-    locked_percent: float
-    next_unlock_percent: float | None
     next_unlock_timestamp: str | None
+    final_unlock_timestamp: str | None
     source: str
     url: str
+    locked_percent: float
+    next_unlock_percent: float | None
 
 
 class PoolLockedLiquidityResource(BaseModel):
-    attributes: PoolLockedLiquidityAttributes
     id: str
     type: str
+    attributes: PoolLockedLiquidityAttributes
 
 
 class PoolMetricAttributes(BaseModel):
-    currency_token_id: int
-    currency_token_symbol: str
     dex_id: int
-    from_token_address: str
+    pool_id: int
     from_token_id: int
+    to_token_id: int
+    currency_token_id: int
     from_token_name: str
     from_token_symbol: str
-    from_volume: str
-    from_volume_in_currency_token: str
-    from_volume_in_usd: str
-    historical_data: dict[str, PoolMetricAttributesHistoricalDataEntry]
-    pool_id: int
-    price: str
-    reserve_in_currency_token: str
-    reserve_in_usd: str
-    swap_count_24h: int
-    to_token_address: str
-    to_token_id: int
+    from_token_address: str
     to_token_name: str
     to_token_symbol: str
+    to_token_address: str
+    currency_token_symbol: str
+    price: str
+    from_volume: str
     to_volume: str
+    reserve_in_usd: str
+    reserve_in_currency_token: str
+    from_volume_in_currency_token: str
+    from_volume_in_usd: str
     to_volume_in_currency_token: str
     to_volume_in_usd: str
+    swap_count_24h: int
+    historical_data: dict[str, PoolMetricAttributesHistoricalDataEntry]
 
 
 class PoolMetricAttributesHistoricalDataEntry(BaseModel):
-    last_172800_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_1800_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_21600_s: PoolMetricAttributesHistoricalDataEntryEntry
     last_300_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_3600_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_43200_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_7200_s: PoolMetricAttributesHistoricalDataEntryEntry
-    last_86400_s: PoolMetricAttributesHistoricalDataEntryEntry
     last_900_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_1800_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_3600_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_7200_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_21600_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_43200_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_86400_s: PoolMetricAttributesHistoricalDataEntryEntry
+    last_172800_s: PoolMetricAttributesHistoricalDataEntryEntry
 
 
 class PoolMetricAttributesHistoricalDataEntryEntry(BaseModel):
-    buy_swaps_count: int
-    buy_volume_in_usd: str
-    buyers_count: int
-    net_volume_in_usd: str
-    price_in_usd: str | None
-    sell_swaps_count: int
-    sell_volume_in_usd: str
-    sellers_count: int
     swaps_count: int
+    buyers_count: int
+    price_in_usd: str | None
+    sellers_count: int
     volume_in_usd: str
+    buy_swaps_count: int
+    sell_swaps_count: int
+    buy_volume_in_usd: str
+    net_volume_in_usd: str
+    sell_volume_in_usd: str
 
 
 class PoolMetricResource(BaseModel):
-    attributes: PoolMetricAttributes
     id: str
     type: str
+    attributes: PoolMetricAttributes
 
 
 class PoolParams(BaseModel):
+    network: Annotated[str, Field(examples=["solana"])]
+    """
+    GeckoTerminal network identifier.
+    """
     address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
     """
     On-chain pool address.
@@ -913,20 +917,16 @@ class PoolParams(BaseModel):
     """
     Index of the token to quote the pool in.
     """
-    network: Annotated[str, Field(examples=["solana"])]
-    """
-    GeckoTerminal network identifier.
-    """
 
 
 class PoolRelatedPoolsParams(BaseModel):
-    address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
-    """
-    On-chain pool address.
-    """
     network: Annotated[str, Field(examples=["solana"])]
     """
     GeckoTerminal network identifier.
+    """
+    address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
+    """
+    On-chain pool address.
     """
 
 
@@ -937,16 +937,16 @@ class PoolRelatedPoolsResponse(BaseModel):
 
 class PoolRelationships(BaseModel):
     dex: ResourceLinkage | None = None
-    pairs: ResourceLinkageList | None = None
-    pool_metric: ResourceLinkage | None = None
     tokens: ResourceLinkageList
+    pool_metric: ResourceLinkage | None = None
+    pairs: ResourceLinkageList | None = None
 
 
 class PoolResource(BaseModel):
-    attributes: PoolAttributes
     id: str
-    relationships: PoolRelationships
     type: str
+    attributes: PoolAttributes
+    relationships: PoolRelationships
 
 
 class PoolResponse(BaseModel):
@@ -967,89 +967,93 @@ class PoolResponse(BaseModel):
 
 
 class PoolScreenerRequest(BaseModel):
-    buy_tax: RangeFilter | None = None
-    """
-    Buy tax percentage.
-    """
-    buys: TimeframedRangeFilter | None = None
-    """
-    Buy count over the chosen window.
-    """
-    dexes: list[str] | None = None
-    """
-    Restrict to these DEX identifiers.
-    """
-    fdv_in_usd: RangeFilter | None = None
-    """
-    Fully diluted valuation in USD.
-    """
-    good_gt_score: bool | None = None
-    """
-    Only pools above GeckoTerminal's GT score threshold.
-    """
-    has_social: bool | None = None
-    """
-    Only pools whose token declares social links.
-    """
-    holder_count: RangeFilter | None = None
-    """
-    Number of token holders.
-    """
-    liquidity: RangeFilter | None = None
-    """
-    Pool liquidity in USD.
-    """
-    mc_in_usd: RangeFilter | None = None
-    """
-    Market cap in USD.
-    """
-    networks: list[str] | None = None
-    """
-    Restrict to these network identifiers.
-    """
-    no_honeypot: bool | None = None
-    """
-    Exclude tokens flagged as honeypots.
-    """
-    on_coingecko: bool | None = None
-    """
-    Only pools whose token is listed on CoinGecko.
-    """
     page: Annotated[int | None, Field(ge=1)] = 1
     """
     1-based result page.
-    """
-    pool_creation_hours_ago: RangeFilter | None = None
-    """
-    Pool age in hours.
-    """
-    sell_tax: RangeFilter | None = None
-    """
-    Sell tax percentage.
-    """
-    sells: TimeframedRangeFilter | None = None
-    """
-    Sell count over the chosen window.
     """
     sort: PoolSort | None = None
     """
     Ranking applied before pagination. Omit for GeckoTerminal's default.
     """
+    volume_24h: RangeFilter | None = None
+    """
+    24h traded volume in USD.
+    """
+    liquidity: RangeFilter | None = None
+    """
+    Pool liquidity in USD.
+    """
+    fdv_in_usd: RangeFilter | None = None
+    """
+    Fully diluted valuation in USD.
+    """
+    mc_in_usd: RangeFilter | None = None
+    """
+    Market cap in USD.
+    """
+    buy_tax: RangeFilter | None = None
+    """
+    Buy tax percentage.
+    """
+    sell_tax: RangeFilter | None = None
+    """
+    Sell tax percentage.
+    """
+    pool_creation_hours_ago: RangeFilter | None = None
+    """
+    Pool age in hours.
+    """
     top_10_holders_percentage: RangeFilter | None = None
     """
     Share of supply held by the ten largest holders.
+    """
+    holder_count: RangeFilter | None = None
+    """
+    Number of token holders.
     """
     tx_count: TimeframedRangeFilter | None = None
     """
     Transaction count over the chosen window.
     """
-    volume_24h: RangeFilter | None = None
+    buys: TimeframedRangeFilter | None = None
     """
-    24h traded volume in USD.
+    Buy count over the chosen window.
+    """
+    sells: TimeframedRangeFilter | None = None
+    """
+    Sell count over the chosen window.
+    """
+    on_coingecko: bool | None = None
+    """
+    Only pools whose token is listed on CoinGecko.
+    """
+    has_social: bool | None = None
+    """
+    Only pools whose token declares social links.
+    """
+    no_honeypot: bool | None = None
+    """
+    Exclude tokens flagged as honeypots.
+    """
+    good_gt_score: bool | None = None
+    """
+    Only pools above GeckoTerminal's GT score threshold.
+    """
+    networks: list[str] | None = None
+    """
+    Restrict to these network identifiers.
+    """
+    dexes: list[str] | None = None
+    """
+    Restrict to these DEX identifiers.
     """
 
 
 class PoolSenderSwapsParams(BaseModel):
+    network: Annotated[str, Field(examples=["solana"])]
+    """
+    GeckoTerminal network identifier.
+    """
     address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
     """
     On-chain pool address.
@@ -1058,17 +1062,9 @@ class PoolSenderSwapsParams(BaseModel):
     """
     Unix timestamp for the start of the window.
     """
-    include_developer: bool | None = True
+    to_timestamp: Annotated[int, Field(ge=0)]
     """
-    Tag swaps made by the token's developer wallet.
-    """
-    inverted: bool | None = False
-    """
-    Quote prices in the other token of the pair.
-    """
-    network: Annotated[str, Field(examples=["solana"])]
-    """
-    GeckoTerminal network identifier.
+    Unix timestamp for the end of the window.
     """
     pair_id: Annotated[str, Field(examples=["1770231"])]
     """
@@ -1078,9 +1074,13 @@ class PoolSenderSwapsParams(BaseModel):
     """
     Restrict swaps to one sender wallet address.
     """
-    to_timestamp: Annotated[int, Field(ge=0)]
+    include_developer: bool | None = True
     """
-    Unix timestamp for the end of the window.
+    Tag swaps made by the token's developer wallet.
+    """
+    inverted: bool | None = False
+    """
+    Quote prices in the other token of the pair.
     """
 
 
@@ -1089,17 +1089,17 @@ class PoolSenderSwapsResponse(BaseModel):
 
 
 class PoolSwapsParams(BaseModel):
+    network: Annotated[str, Field(examples=["solana"])]
+    """
+    GeckoTerminal network identifier.
+    """
     address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
     """
     On-chain pool address.
     """
-    inverted: bool | None = False
+    pair_id: Annotated[str, Field(examples=["1770231"])]
     """
-    Quote prices in the other token of the pair.
-    """
-    network: Annotated[str, Field(examples=["solana"])]
-    """
-    GeckoTerminal network identifier.
+    Pair id from the pool's `pairs` relationship.
     """
     page_after: Annotated[str | None, Field(examples=["1788131488"])] = None
     """
@@ -1109,9 +1109,9 @@ class PoolSwapsParams(BaseModel):
     """
     Return swaps newer than this cursor.
     """
-    pair_id: Annotated[str, Field(examples=["1770231"])]
+    inverted: bool | None = False
     """
-    Pair id from the pool's `pairs` relationship.
+    Quote prices in the other token of the pair.
     """
     sender: str | None = None
     """
@@ -1127,8 +1127,8 @@ class PoolSwapsResponse(BaseModel):
 
 
 class PoolSwapsResponseLinks(BaseModel):
-    next: str
     prev: str
+    next: str
 
 
 class PoolSwapsResponseMeta(BaseModel):
@@ -1136,13 +1136,13 @@ class PoolSwapsResponseMeta(BaseModel):
 
 
 class PoolTokenInfoSnapshotsParams(BaseModel):
-    address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
-    """
-    On-chain pool address.
-    """
     network: Annotated[str, Field(examples=["solana"])]
     """
     GeckoTerminal network identifier.
+    """
+    address: Annotated[str, Field(examples=["Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE"])]
+    """
+    On-chain pool address.
     """
 
 
@@ -1153,8 +1153,8 @@ class PoolTokenInfoSnapshotsResponse(BaseModel):
 class PoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexResource | NetworkResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: LatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class RangeFilter(BaseModel):
@@ -1170,22 +1170,22 @@ class RangeFilter(BaseModel):
 
 class RelatedPoolAttributes(BaseModel):
     address: str
-    liquidity: str
     pool_fee: str | None
     token_id: str
+    liquidity: str
     volume_in_usd_24h: str
 
 
 class RelatedPoolRelationships(BaseModel):
-    dex: ResourceLinkage
     tokens: ResourceLinkageList
+    dex: ResourceLinkage
 
 
 class RelatedPoolResource(BaseModel):
-    attributes: RelatedPoolAttributes
     id: str
-    relationships: RelatedPoolRelationships
     type: str
+    attributes: RelatedPoolAttributes
+    relationships: RelatedPoolRelationships
 
 
 class ResourceIdentifier(BaseModel):
@@ -1212,77 +1212,77 @@ class RevivalRadarPoolsResponseMeta(BaseModel):
 
 
 class RevivalRadarPoolsResponseMetaSections(BaseModel):
-    revived: list[str]
     reviving: list[str]
+    revived: list[str]
     sunsetting: list[str]
 
 
 class SearchAttributes(BaseModel):
-    dexes: list[SearchAttributesDexes] | list[str]
     networks: list[SearchAttributesNetworks] | list[str]
-    pairs: list[str]
+    dexes: list[SearchAttributesDexes] | list[str]
     pools: list[SearchAttributesPools] | list[str]
+    pairs: list[str]
     tags: list[SearchAttributesTags] | list[str]
 
 
 class SearchAttributesDexes(BaseModel):
+    type: str
+    name: str
     identifier: str
     image_url: str
-    name: str
-    network: TrendAttributesNewPoolsNetwork
-    pools_count: int
-    rank_by_volume_usd_24h: int
-    swap_count_24h: int
     swap_volume_usd_24h: str
-    type: str
+    swap_count_24h: int
+    rank_by_volume_usd_24h: int
+    pools_count: int
+    network: TrendAttributesNewPoolsNetwork
 
 
 class SearchAttributesNetworks(BaseModel):
+    type: str
+    name: str
     identifier: str
     image_url: str
-    name: str
-    pools_count: int
-    rank_by_volume_usd_24h: int
-    swap_count_24h: int
     swap_volume_usd_24h: str
-    type: str
+    swap_count_24h: int
+    rank_by_volume_usd_24h: int
+    pools_count: int
 
 
 class SearchAttributesPools(BaseModel):
+    type: str
     address: str
     api_address: str
-    dex: TrendAttributesNewPoolsDex
-    fdv_in_usd: str | None
-    from_volume_in_usd: str
-    gt_score: float
-    market_cap_in_usd: str | None
-    network: TrendAttributesNewPoolsNetwork
-    on_coingecko: bool
-    pool_creation_date: str
-    pool_id: int
     price_in_usd: str
-    price_percent_change: str
     reserve_in_usd: str
+    from_volume_in_usd: str
     to_volume_in_usd: str
+    price_percent_change: str
+    on_coingecko: bool
+    market_cap_in_usd: str | None
+    fdv_in_usd: str | None
+    pool_id: int
+    network: TrendAttributesNewPoolsNetwork
+    dex: TrendAttributesNewPoolsDex
     tokens: list[SearchAttributesPoolsTokens]
-    type: str
     volume_percent_change_24h: str
+    pool_creation_date: str
+    gt_score: float
 
 
 class SearchAttributesPoolsTokens(BaseModel):
+    name: str
+    symbol: str
     address: str
-    holder_count: int | None
     image_url: str
     is_base_token: bool
     is_verified: bool
-    name: str
-    symbol: str
+    holder_count: int | None
 
 
 class SearchAttributesTags(BaseModel):
-    identifier: str
-    name: str
     type: str
+    name: str
+    identifier: str
 
 
 class SearchParams(BaseModel):
@@ -1293,9 +1293,9 @@ class SearchParams(BaseModel):
 
 
 class SearchResource(BaseModel):
-    attributes: SearchAttributes
     id: str
     type: str
+    attributes: SearchAttributes
 
 
 class SearchResponse(BaseModel):
@@ -1307,28 +1307,28 @@ class SearchTrendAttributes(BaseModel):
 
 
 class SearchTrendAttributesSearchItems(BaseModel):
-    base_token_image_url: str
-    base_token_name: str
-    base_token_symbol: str
-    dex_identifier: str
-    dex_image_url: str
-    is_verified: bool
+    type: str
     name: str
     network_identifier: str
+    dex_identifier: str
     network_image_url: str
-    on_coingecko: bool
+    dex_image_url: str
     pool_address: str
     pool_api_address: str
+    base_token_name: str
+    base_token_symbol: str
+    base_token_image_url: str
     price_percent_change: str
-    reserve_in_usd: str
-    type: str
+    on_coingecko: bool
+    is_verified: bool
     volume_in_usd_24h: str
+    reserve_in_usd: str
 
 
 class SearchTrendResource(BaseModel):
-    attributes: SearchTrendAttributes
     id: str
     type: str
+    attributes: SearchTrendAttributes
 
 
 class SearchTrendsResponse(BaseModel):
@@ -1336,32 +1336,32 @@ class SearchTrendsResponse(BaseModel):
 
 
 class SenderSwapAttributes(BaseModel):
+    timestamp: str
+    swap_total_in_usd: str
     action: str
     by: str
-    swap_total_in_usd: str
-    timestamp: str
 
 
 class SenderSwapResource(BaseModel):
-    attributes: SenderSwapAttributes
     id: str
     type: str
+    attributes: SenderSwapAttributes
 
 
 class SwapAttributes(BaseModel):
+    timestamp: str
+    tx_hash: str
+    tx_from_address: str
     from_token_amount: str
-    from_token_total_in_usd: str
     price_from: str
     price_from_in_currency_token: str
     price_from_in_usd: str
+    from_token_total_in_usd: str
+    to_token_amount: str
     price_to: str
     price_to_in_currency_token: str
     price_to_in_usd: str
-    timestamp: str
-    to_token_amount: str
     to_token_total_in_usd: str
-    tx_from_address: str
-    tx_hash: str
 
 
 class SwapRelationships(BaseModel):
@@ -1370,35 +1370,39 @@ class SwapRelationships(BaseModel):
 
 
 class SwapResource(BaseModel):
-    attributes: SwapAttributes
     id: str
-    relationships: SwapRelationships
     type: str
+    attributes: SwapAttributes
+    relationships: SwapRelationships
 
 
 class TagAttributes(BaseModel):
-    buy_count_24h: int | None = None
-    description: str | None = None
-    fdv_in_usd: str | None = None
-    icon_url: str | None
-    identifier: str
     name: str
+    identifier: str
+    icon_url: str | None
     pool_trend_rank: int | None
-    reserve_in_usd: str | None = None
+    description: str | None = None
+    buy_count_24h: int | None = None
     sell_count_24h: int | None = None
-    swap_count_24h: int | None = None
-    swap_volume_usd_24h: float | None = None
     volume_percent_changes: TagAttributesVolumePercentChanges | None = None
+    reserve_in_usd: str | None = None
+    fdv_in_usd: str | None = None
+    swap_volume_usd_24h: float | None = None
+    swap_count_24h: int | None = None
 
 
 class TagAttributesVolumePercentChanges(BaseModel):
-    last_12h: str
     last_1h: str
-    last_24h: str
     last_6h: str
+    last_12h: str
+    last_24h: str
 
 
 class TagNetworkPoolsParams(BaseModel):
+    tag: Annotated[str, Field(examples=["meme"])]
+    """
+    Category slug, as returned by the tags endpoint.
+    """
     network: Annotated[str, Field(examples=["solana"])]
     """
     GeckoTerminal network identifier.
@@ -1407,35 +1411,31 @@ class TagNetworkPoolsParams(BaseModel):
     """
     1-based result page.
     """
-    tag: Annotated[str, Field(examples=["meme"])]
-    """
-    Category slug, as returned by the tags endpoint.
-    """
 
 
 class TagNetworkPoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexResource | NetworkResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: LatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class TagPoolsParams(BaseModel):
-    page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    1-based result page.
-    """
     tag: Annotated[str, Field(examples=["meme"])]
     """
     Category slug, as returned by the tags endpoint.
+    """
+    page: Annotated[int | None, Field(ge=1)] = 1
+    """
+    1-based result page.
     """
 
 
 class TagPoolsResponse(BaseModel):
     data: list[PoolResource]
     included: list[DexResource | NetworkResource | TokenResource]
-    links: LatestPoolsResponseLinks
     meta: LatestPoolsResponseMeta
+    links: LatestPoolsResponseLinks
 
 
 class TagRelationships(BaseModel):
@@ -1443,10 +1443,10 @@ class TagRelationships(BaseModel):
 
 
 class TagResource(BaseModel):
-    attributes: TagAttributes
     id: str
-    relationships: TagRelationships
     type: str
+    attributes: TagAttributes
+    relationships: TagRelationships
 
 
 class TagsParams(BaseModel):
@@ -1464,49 +1464,49 @@ class TagsResponse(BaseModel):
 
 class TagsResponseLinks(BaseModel):
     first: str
-    last: TagsResponseLinksLast
-    next: str
     prev: str | None
+    next: str
+    last: TagsResponseLinksLast
 
 
 class TagsResponseLinksLast(BaseModel):
-    href: str
     meta: LatestPoolsResponseLinksLastMeta
+    href: str
 
 
 class ThemeAttributes(BaseModel):
-    pools: list[ThemeAttributesPools]
     pools_count: int
     tag: ThemeAttributesTag
+    pools: list[ThemeAttributesPools]
 
 
 class ThemeAttributesPools(BaseModel):
-    base_token_id: str
     network_identifier: str
     pool_address: str
+    base_token_id: str
     tagged_token_id: str
     tokens: list[ThemeAttributesPoolsTokens]
 
 
 class ThemeAttributesPoolsTokens(BaseModel):
     id: str
-    image_url: str
     symbol: str
+    image_url: str
 
 
 class ThemeAttributesTag(BaseModel):
-    description: str | None = None
     id: str
-    identifier: str
     name: str
+    identifier: str
     swap_count_24h: int
+    description: str | None = None
     swap_volume_usd_24h: float | None = None
 
 
 class ThemeResource(BaseModel):
-    attributes: ThemeAttributes
     id: str
     type: str
+    attributes: ThemeAttributes
 
 
 class TimeframedRangeFilter(BaseModel):
@@ -1525,27 +1525,27 @@ class TimeframedRangeFilter(BaseModel):
 
 
 class TokenAttributes(BaseModel):
+    name: str | None = None
+    symbol: str | None = None
     address: str | None = None
-    banner_image_url: str | None = None
-    cg_coin_id: str | None = None
-    circulating_supply: float | None = None
-    cto: str | None = None
-    decimals: int | None = None
-    description: TokenAttributesDescription | None = None
     image_url: str | None = None
     is_verified: bool | None = None
-    links: TokenAttributesLinks | None = None
-    market_cap_in_usd: float | None = None
-    metadata_updated_at: str | None = None
-    name: str | None = None
     on_coingecko: bool | None = None
+    decimals: int | None = None
     on_pump_fun: bool | None = None
+    cg_coin_id: str | None = None
+    market_cap_in_usd: float | None = None
+    links: TokenAttributesLinks | None = None
+    description: TokenAttributesDescription | None = None
+    metadata_updated_at: str | None = None
+    circulating_supply: float | None = None
     supports_bubblemaps: bool | None = None
     supports_bubblemaps_v2: bool | None = None
-    symbol: str | None = None
-    token_info_snapshots: list[TokenAttributesTokenInfoSnapshots] | None = None
+    banner_image_url: str | None = None
+    cto: str | None = None
     top_traders_enabled: bool | None = None
     verified_at: str | None = None
+    token_info_snapshots: list[TokenAttributesTokenInfoSnapshots] | None = None
 
 
 class TokenAttributesDescription(BaseModel):
@@ -1553,19 +1553,19 @@ class TokenAttributesDescription(BaseModel):
 
 
 class TokenAttributesLinks(BaseModel):
+    websites: list[str] | None = None
+    zora_url: str | None = None
     discord_url: str | None = None
-    facebook_handle: str | None = None
-    github_repo_name: str | None = None
-    instagram_handle: str | None = None
+    warpcast_url: str | None = None
     medium_handle: str | None = None
-    subreddit_handle: str | None = None
-    telegram_handle: str | None = None
     tiktok_handle: str | None = None
     twitter_handle: str | None = None
-    warpcast_url: str | None = None
-    websites: list[str] | None = None
     youtube_handle: str | None = None
-    zora_url: str | None = None
+    facebook_handle: str | None = None
+    telegram_handle: str | None = None
+    github_repo_name: str | None = None
+    instagram_handle: str | None = None
+    subreddit_handle: str | None = None
 
 
 class TokenAttributesTokenInfoSnapshots(BaseModel):
@@ -1576,26 +1576,26 @@ class TokenAttributesTokenInfoSnapshots(BaseModel):
 
 
 class TokenAttributesTokenInfoSnapshotsLinks(BaseModel):
+    websites: list[str] | None = None
+    zora_url: str | None = None
     discord_url: str | None = None
-    facebook_handle: str | None = None
-    github_repo_name: str | None = None
-    instagram_handle: str | None = None
+    warpcast_url: str | None = None
     medium_handle: str | None = None
-    subreddit_handle: str | None = None
-    telegram_handle: str | None = None
     tiktok_handle: str | None = None
     twitter_handle: str | None = None
-    warpcast_url: str | None = None
-    websites: list[str] | None = None
     youtube_handle: str | None = None
-    zora_url: str | None = None
+    facebook_handle: str | None = None
+    telegram_handle: str | None = None
+    github_repo_name: str | None = None
+    instagram_handle: str | None = None
+    subreddit_handle: str | None = None
 
 
 class TokenDeveloperDetailAttributes(BaseModel):
     address: str
+    label: str | None
     holding_amount: str
     holding_percentage: float
-    label: str | None
     realized_pnl_amount: str | None
     realized_pnl_percentage: float | None
     unrealized_pnl_amount: str | None
@@ -1603,10 +1603,10 @@ class TokenDeveloperDetailAttributes(BaseModel):
 
 
 class TokenDeveloperDetailResource(BaseModel):
-    attributes: TokenDeveloperDetailAttributes
     id: str
-    relationships: TokenSecurityMetricRelationships
     type: str
+    attributes: TokenDeveloperDetailAttributes
+    relationships: TokenSecurityMetricRelationships
 
 
 class TokenDeveloperPastTokensParams(BaseModel):
@@ -1625,13 +1625,13 @@ class TokenHistoricalHoldersParams(BaseModel):
     """
     GeckoTerminal network identifier.
     """
-    period: HolderHistoryPeriod | None = HolderHistoryPeriod.FIELD_1_W
-    """
-    Look-back window for the snapshot series.
-    """
     token_address: Annotated[str, Field(examples=["AfGdjAp9djSaqJxzYo3t6jy8tJA3o2aDPHoZ57Egpump"])]
     """
     On-chain token address.
+    """
+    period: HolderHistoryPeriod | None = HolderHistoryPeriod.FIELD_1_W
+    """
+    Look-back window for the snapshot series.
     """
 
 
@@ -1640,34 +1640,34 @@ class TokenHistoricalHoldersResponse(BaseModel):
 
 
 class TokenHoldersDetailAttributes(BaseModel):
+    source: str | None
     explorer_coin_url: str
     explorer_holder_url: str
-    source: str | None
     top_holders: list[TokenHoldersDetailAttributesTopHolders]
 
 
 class TokenHoldersDetailAttributesTopHolders(BaseModel):
+    wallet_address: str
     amount: float
-    average_buy_in_usd: float | None
+    owner_percent: float
+    value_in_usd: float
+    is_liquidity_pool: bool | None
     entity_name: str | None
     entity_type: str | None
-    is_liquidity_pool: bool | None
     label: str | None
-    owner_percent: float
-    realized_pnl: float | None
-    realized_pnl_percentage: float | None
+    average_buy_in_usd: float | None
     total_buy_count: int | None
     total_sell_count: int | None
+    realized_pnl: float | None
     unrealized_pnl: float | None
+    realized_pnl_percentage: float | None
     unrealized_pnl_percentage: float | None
-    value_in_usd: float
-    wallet_address: str
 
 
 class TokenHoldersDetailResource(BaseModel):
-    attributes: TokenHoldersDetailAttributes
     id: str
     type: str
+    attributes: TokenHoldersDetailAttributes
 
 
 class TokenHoldersSnapshotAttributes(BaseModel):
@@ -1676,9 +1676,9 @@ class TokenHoldersSnapshotAttributes(BaseModel):
 
 
 class TokenHoldersSnapshotResource(BaseModel):
-    attributes: TokenHoldersSnapshotAttributes
     id: str
     type: str
+    attributes: TokenHoldersSnapshotAttributes
 
 
 class TokenRelationships(BaseModel):
@@ -1686,58 +1686,58 @@ class TokenRelationships(BaseModel):
 
 
 class TokenResource(BaseModel):
-    attributes: TokenAttributes
     id: str
-    relationships: TokenRelationships
     type: str
+    attributes: TokenAttributes
+    relationships: TokenRelationships
 
 
 class TokenSecurityMetricAttributes(BaseModel):
-    defi_scanner_data: dict[str, str | None]
-    defi_scanner_updated_at: str | None
-    go_plus_token_security_data: TokenSecurityMetricAttributesGoPlusTokenSecurityData
-    go_plus_token_security_updated_at: str | None
-    holder_count: int
-    honeypot_scanner_data: TokenSecurityMetricAttributesHoneypotScannerData
-    honeypot_scanner_updated_at: str | None
     insightx_security_data: TokenSecurityMetricAttributesInsightxSecurityData
-    insightx_updated_at: str | None
-    soul_scanner_data: TokenSecurityMetricAttributesSoulScannerData
+    holder_count: int
+    go_plus_token_security_updated_at: str | None
+    defi_scanner_updated_at: str | None
     soul_scanner_updated_at: str | None
+    honeypot_scanner_updated_at: str | None
+    insightx_updated_at: str | None
+    go_plus_token_security_data: TokenSecurityMetricAttributesGoPlusTokenSecurityData
+    defi_scanner_data: dict[str, str | None]
+    soul_scanner_data: TokenSecurityMetricAttributesSoulScannerData
+    honeypot_scanner_data: TokenSecurityMetricAttributesHoneypotScannerData
 
 
 class TokenSecurityMetricAttributesGoPlusTokenSecurityData(BaseModel):
-    anti_whale_modifiable: str | None = None
+    top_10_holders_percent: str | None = None
     buy_tax: str | None = None
-    can_take_back_ownership: str | None = None
+    sell_tax: str | None = None
+    is_proxy: str | None = None
+    is_open_source: str | None = None
     cannot_buy: str | None = None
     cannot_sell_all: str | None = None
+    is_in_dex: str | None = None
     creator_address: str | None = None
     creator_balance: str | None = None
     creator_percent: str | None = None
-    external_call: str | None = None
-    hidden_owner: str | None = None
     holder_count: str | None = None
-    is_anti_whale: str | None = None
-    is_blacklisted: str | None = None
     is_honeypot: str | None = None
-    is_in_dex: str | None = None
-    is_mintable: str | None = None
-    is_open_source: str | None = None
-    is_proxy: str | None = None
-    is_whitelisted: str | None = None
-    owner_address: str | None = None
-    owner_balance: str | None = None
-    owner_change_balance: str | None = None
-    owner_percent: str | None = None
-    personal_slippage_modifiable: str | None = None
-    selfdestruct: str | None = None
-    sell_tax: str | None = None
-    slippage_modifiable: str | None = None
-    top_10_holders_percent: str | None = None
-    trading_cooldown: str | None = None
-    transfer_pausable: str | None = None
     trust_list: str | None = None
+    is_mintable: str | None = None
+    can_take_back_ownership: str | None = None
+    owner_change_balance: str | None = None
+    hidden_owner: str | None = None
+    selfdestruct: str | None = None
+    external_call: str | None = None
+    slippage_modifiable: str | None = None
+    transfer_pausable: str | None = None
+    is_blacklisted: str | None = None
+    is_whitelisted: str | None = None
+    is_anti_whale: str | None = None
+    anti_whale_modifiable: str | None = None
+    trading_cooldown: str | None = None
+    personal_slippage_modifiable: str | None = None
+    owner_balance: str | None = None
+    owner_percent: str | None = None
+    owner_address: str | None = None
 
 
 class TokenSecurityMetricAttributesHoneypotScannerData(BaseModel):
@@ -1746,17 +1746,17 @@ class TokenSecurityMetricAttributesHoneypotScannerData(BaseModel):
 
 
 class TokenSecurityMetricAttributesInsightxSecurityData(BaseModel):
-    bundlers_pct: float | None = None
-    cluster_pct: float | None = None
     dev_pct: float | None = None
-    insiders_pct: float | None = None
-    snipers_pct: float | None = None
     top10_pct: float | None = None
+    cluster_pct: float | None = None
+    snipers_pct: float | None = None
+    bundlers_pct: float | None = None
+    insiders_pct: float | None = None
 
 
 class TokenSecurityMetricAttributesSoulScannerData(BaseModel):
-    freezeable: str | None = None
     mintable: str | None = None
+    freezeable: str | None = None
 
 
 class TokenSecurityMetricRelationships(BaseModel):
@@ -1764,10 +1764,10 @@ class TokenSecurityMetricRelationships(BaseModel):
 
 
 class TokenSecurityMetricResource(BaseModel):
-    attributes: TokenSecurityMetricAttributes
     id: str
-    relationships: TokenSecurityMetricRelationships
     type: str
+    attributes: TokenSecurityMetricAttributes
+    relationships: TokenSecurityMetricRelationships
 
 
 class TokenTopHoldersParams(BaseModel):
@@ -1803,31 +1803,31 @@ class TrendAttributes(BaseModel):
 
 
 class TrendAttributesNewPools(BaseModel):
+    type: str
     address: str
     api_address: str
-    dex: TrendAttributesNewPoolsDex
-    network: TrendAttributesNewPoolsNetwork
-    pair_id: str | None
-    pool: TrendAttributesNewPoolsPool
-    pool_created_at: str
-    price_change: str
     price_in_usd: str
+    price_change: str
     price_percent_change: str
-    token_id: str | None
+    network: TrendAttributesNewPoolsNetwork
+    dex: TrendAttributesNewPoolsDex
+    pool: TrendAttributesNewPoolsPool
     tokens: list[TrendAttributesNewPoolsTokens]
-    type: str
+    pair_id: str | None
+    token_id: str | None
+    pool_created_at: str
 
 
 class TrendAttributesNewPoolsDex(BaseModel):
+    name: str
     identifier: str
     image_url: str
-    name: str
 
 
 class TrendAttributesNewPoolsNetwork(BaseModel):
-    identifier: str
-    image_url: str
     name: str
+    image_url: str
+    identifier: str
 
 
 class TrendAttributesNewPoolsPool(BaseModel):
@@ -1835,31 +1835,31 @@ class TrendAttributesNewPoolsPool(BaseModel):
 
 
 class TrendAttributesNewPoolsTokens(BaseModel):
-    image_url: str
-    is_base_token: bool
     name: str
     symbol: str
+    image_url: str
+    is_base_token: bool
 
 
 class TrendAttributesTopGainersPairs(BaseModel):
+    type: str
     address: str
     api_address: str
-    dex: TrendAttributesNewPoolsDex
-    network: TrendAttributesNewPoolsNetwork
-    pair_id: int
-    pool: TrendAttributesNewPoolsPool
-    price_change: float
     price_in_usd: str
+    price_change: float
     price_percent_change: float
-    token_id: str | None
+    network: TrendAttributesNewPoolsNetwork
+    dex: TrendAttributesNewPoolsDex
+    pool: TrendAttributesNewPoolsPool
     tokens: list[TrendAttributesNewPoolsTokens]
-    type: str
+    pair_id: int
+    token_id: str | None
 
 
 class TrendResource(BaseModel):
-    attributes: TrendAttributes
     id: str
     type: str
+    attributes: TrendAttributes
 
 
 class TrendingLinkAttributes(BaseModel):
@@ -1868,9 +1868,9 @@ class TrendingLinkAttributes(BaseModel):
 
 
 class TrendingLinkResource(BaseModel):
-    attributes: TrendingLinkAttributes
     id: str
     type: str
+    attributes: TrendingLinkAttributes
 
 
 class TrendingLinksResponse(BaseModel):
@@ -1878,6 +1878,10 @@ class TrendingLinksResponse(BaseModel):
 
 
 class TrendingThemesParams(BaseModel):
+    network: Annotated[str | None, Field(examples=["solana"])] = None
+    """
+    Restrict results to one network identifier.
+    """
     dex: Annotated[str | None, Field(examples=["pumpswap"])] = None
     """
     Restrict results to one DEX identifier.
@@ -1886,10 +1890,6 @@ class TrendingThemesParams(BaseModel):
     """
     Return GeckoTerminal's extended theme list rather than the top few.
     """
-    network: Annotated[str | None, Field(examples=["solana"])] = None
-    """
-    Restrict results to one network identifier.
-    """
 
 
 class TrendingThemesResponse(BaseModel):
@@ -1897,13 +1897,13 @@ class TrendingThemesResponse(BaseModel):
 
 
 class TrendsParams(BaseModel):
-    dex: Annotated[str | None, Field(examples=["pumpswap"])] = None
-    """
-    Restrict results to one DEX identifier.
-    """
     network: Annotated[str | None, Field(examples=["solana"])] = None
     """
     Restrict results to one network identifier.
+    """
+    dex: Annotated[str | None, Field(examples=["pumpswap"])] = None
+    """
+    Restrict results to one DEX identifier.
     """
 
 
@@ -1912,23 +1912,23 @@ class TrendsResponse(BaseModel):
 
 
 class WalletTokenAttributes(BaseModel):
+    wallet_address: str
+    total_buys: int
+    total_sells: int
+    realized_pnl: str
+    total_buy_count: int
+    total_sell_count: int
+    total_buy_amount: str
+    total_sell_amount: str
+    total_buy_in_usd: str
+    total_sell_in_usd: str
     average_buy_in_usd: str
     average_sell_in_usd: str
     balance: str | None
-    explorer_holder_url: str
-    realized_pnl: str
-    realized_pnl_percentage: float | None
-    total_buy_amount: str
-    total_buy_count: int
-    total_buy_in_usd: str
-    total_buys: int
-    total_sell_amount: str
-    total_sell_count: int
-    total_sell_in_usd: str
-    total_sells: int
     unrealized_pnl: str | None
+    explorer_holder_url: str
+    realized_pnl_percentage: float | None
     unrealized_pnl_percentage: float | None
-    wallet_address: str
 
 
 class WalletTokenParams(BaseModel):
@@ -1947,10 +1947,10 @@ class WalletTokenRelationships(BaseModel):
 
 
 class WalletTokenResource(BaseModel):
-    attributes: WalletTokenAttributes
     id: str
-    relationships: WalletTokenRelationships
     type: str
+    attributes: WalletTokenAttributes
+    relationships: WalletTokenRelationships
 
 
 class WalletTokenResponse(BaseModel):

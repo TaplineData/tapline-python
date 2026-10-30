@@ -1628,7 +1628,7 @@ class PinterestUserBoardCoverPin(BaseModel):
     timestamp: int | None = None
     crop: list[int] | None = None
     size: list[int] | None = None
-    scale: int | None = None
+    scale: float | None = None
     image_url: str | None = None
     custom_cover: bool | None = None
     image_size: list[int | None] | None = None
