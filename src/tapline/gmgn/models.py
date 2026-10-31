@@ -97,6 +97,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -205,6 +206,7 @@ class AddressListRequest(BaseModel):
 
 class AggedTokenTradesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     period: AggedTradePeriod | None = AggedTradePeriod.FIELD_1H
     """
     Bucket size.
@@ -213,53 +215,52 @@ class AggedTokenTradesParams(BaseModel):
     """
     Wallet cohort to filter on. Omit for all wallets.
     """
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
 
 
 class AggedTokenTransfersParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    period: AggedTradePeriod | None = AggedTradePeriod.FIELD_1H
-    """
-    Bucket size.
-    """
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     wallet_address: Annotated[str, Field(examples=["354zHMonLVarpvVHXvPgtJwkNXriana7RdEsBq7bCxGN"])]
     """
     Wallet whose transfers are aggregated.
     """
+    period: AggedTradePeriod | None = AggedTradePeriod.FIELD_1H
+    """
+    Bucket size.
+    """
 
 
 class AggedTrade(BaseModel):
-    avatar: str
-    buy_amount: str
-    buy_count: int
-    buy_quote_address: str
-    buy_quote_amount: str
-    buy_usd_amount: str
-    claim_count: int
-    claim_quote_address: str
-    claim_quote_amount: str
-    ens: str
-    is_boost: bool
-    is_close: bool
-    is_open: bool
-    max_seq_index: str
+    wallet_address: str
     name: str
     nickname: str
-    platform: str
-    platform_avatar: str
-    platform_username: str
-    pump_social_claim_count: int
-    pump_social_claim_quote_address: str
-    pump_social_claim_quote_amount: str
-    sell_amount: str
-    sell_count: int
-    sell_quote_address: str
-    sell_quote_amount: str
-    sell_usd_amount: str
-    twitter_name: str
     twitter_username: str
-    wallet_address: str
+    twitter_name: str
+    avatar: str
+    platform: str
+    platform_username: str
+    platform_avatar: str
+    ens: str
+    buy_count: int
+    sell_count: int
+    claim_count: int
+    pump_social_claim_count: int
+    is_boost: bool
+    is_open: bool
+    is_close: bool
+    buy_amount: str
+    sell_amount: str
+    buy_usd_amount: str
+    sell_usd_amount: str
+    buy_quote_amount: str
+    buy_quote_address: str
+    sell_quote_amount: str
+    sell_quote_address: str
+    claim_quote_amount: str
+    claim_quote_address: str
+    pump_social_claim_quote_amount: str
+    pump_social_claim_quote_address: str
+    max_seq_index: str
 
 
 class AggedTradeBucket(BaseModel):
@@ -268,16 +269,16 @@ class AggedTradeBucket(BaseModel):
 
 
 class AggedTransfer(BaseModel):
-    max_seq_index: str
-    transfer_in_amount: str
-    transfer_in_avg_price: str
-    transfer_in_count: int
-    transfer_in_usd_amount: str
-    transfer_out_amount: str
-    transfer_out_avg_price: str
-    transfer_out_count: int
-    transfer_out_usd_amount: str
     wallet_address: str
+    transfer_in_count: int
+    transfer_out_count: int
+    transfer_in_amount: str
+    transfer_out_amount: str
+    transfer_in_usd_amount: str
+    transfer_out_usd_amount: str
+    transfer_in_avg_price: str
+    transfer_out_avg_price: str
+    max_seq_index: str
 
 
 class AggedTransferBucket(BaseModel):
@@ -287,10 +288,6 @@ class AggedTransferBucket(BaseModel):
 
 class BluechipRankParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    filters: list[TokenFilter] | None = None
-    """
-    Security screens applied before ranking.
-    """
     interval: TrendingInterval | None = TrendingInterval.FIELD_1H
     """
     Ranking window.
@@ -299,123 +296,127 @@ class BluechipRankParams(BaseModel):
     """
     Maximum tokens to return.
     """
+    filters: list[TokenFilter] | None = None
+    """
+    Security screens applied before ranking.
+    """
 
 
 class BluechipSecurityInfo(BaseModel):
+    is_show_alert: bool
+    top_10_holder_rate: str
+    renounced_mint: int | None = None
+    renounced_freeze_account: int | None = None
     burn_ratio: str
     burn_status: str
     dev_token_burn_amount: str
     dev_token_burn_ratio: str
-    is_show_alert: bool
-    renounced_freeze_account: int | None = None
-    renounced_mint: int | None = None
-    top_10_holder_rate: str
 
 
 class BluechipToken(BaseModel):
-    address: str
-    at_least_one_link: bool
-    bluechip_rate: str
-    bot_degen_count: int
-    bot_degen_rate: float
-    bundler_rate: str
-    buys: int
     chain: str
+    address: str
+    symbol: str
     creator: str
     creator_token_status: str
+    launchpad_platform: str
+    price: str
+    price_change_percent_1m: str
+    price_change_percent_5m: str
+    price_change_percent_1h: str
     cto_flag: int
-    dev_team_hold_rate: float
     dexscr_ad: int
-    dexscr_ad_ts: int
-    dexscr_boost_fee: int
-    dexscr_boost_ts: int
-    dexscr_trending_bar: int
-    dexscr_trending_bar_ts: int
     dexscr_update_link: int
-    dexscr_update_link_ts: int
-    entrapment_ratio: str
-    history_highest_market_cap: int
     holder_count: int
     hot_level: int
-    image_dup: str
     is_show_alert: bool
-    is_wash_trading: bool
     launchpad: str
-    launchpad_platform: str
     launchpad_status: int
     liquidity: str
     logo: str
+    at_least_one_link: bool
+    token_links: BluechipTokenLinks
     market_cap: str
     open_timestamp: int
-    price: str
-    price_change_percent_1h: str
-    price_change_percent_1m: str
-    price_change_percent_5m: str
-    rat_trader_amount_rate: str
-    security_info: BluechipSecurityInfo
-    sells: int
+    bluechip_rate: str
+    buys: int
     smart_buys_24h: int
     smart_sells_24h: int
+    sells: int
     swaps: int
-    symbol: str
-    telegram_dup: int
-    token_links: BluechipTokenLinks
-    top70_sniper_hold_rate: float
-    twitter_change_flag: int
-    twitter_dup: int
-    twitter_rename_count: int
     volume: str
+    rat_trader_amount_rate: str
+    bundler_rate: str
+    entrapment_ratio: str
+    security_info: BluechipSecurityInfo
+    twitter_change_flag: int
+    twitter_rename_count: int
+    is_wash_trading: bool
+    image_dup: str
+    dev_team_hold_rate: float
+    history_highest_market_cap: int
+    top70_sniper_hold_rate: float
+    bot_degen_count: int
+    bot_degen_rate: float
+    dexscr_trending_bar: int
+    dexscr_boost_fee: int
+    dexscr_ad_ts: int
+    dexscr_update_link_ts: int
+    dexscr_trending_bar_ts: int
+    dexscr_boost_ts: int
+    twitter_dup: int
+    telegram_dup: int
     website_dup: int
 
 
 class BluechipTokenLinks(BaseModel):
     address: str
-    bitbucket: str
-    description: str
-    discord: str
-    facebook: str
-    fracaster: Any
-    geckoterminal: str
-    github: str
     gmgn: str
+    geckoterminal: str
+    twitter_username: str
+    website: str
+    telegram: str
+    bitbucket: str
+    discord: str
+    description: str
+    facebook: str
+    github: str
     instagram: str
     linkedin: str
     medium: str
     reddit: str
-    telegram: str
     tiktok: str
-    twitter_username: str
-    verify_status: int
-    website: str
     youtube: str
+    verify_status: int
+    fracaster: Any
 
 
 class DevCreatedToken(BaseModel):
-    biggest_pool: str
-    bundler_rate: float
+    token_address: str
+    symbol: str
     chain: str
-    coin_creator_fee: float
-    coin_creator_fee_token_address: str
     create_timestamp: int
-    cto_flag: bool
-    dexscr_ad: bool
-    dexscr_update_link: bool
-    holders: int
     is_open: bool
-    is_pump: bool
-    launchpad_platform: str
-    liquidity_less_4k: bool
-    logo: str
     marcket_cap: str
     market_cap: str
+    biggest_pool: str
     pool_liquidity: str
+    holders: int
     swap_1h: int
-    symbol: str
-    token_address: str
-    token_ath_mc: str
-    total_fee: str
-    twitter_name_change_history: list[str]
     volume_1h: str
+    logo: str
+    bundler_rate: float
+    liquidity_less_4k: bool
+    cto_flag: bool
+    twitter_name_change_history: list[str]
+    dexscr_ad: bool
+    dexscr_update_link: bool
+    is_pump: bool
+    launchpad_platform: str
+    token_ath_mc: str
+    coin_creator_fee: float
+    coin_creator_fee_token_address: str
+    total_fee: str
 
 
 class DevCreatedTokensParams(BaseModel):
@@ -424,35 +425,35 @@ class DevCreatedTokensParams(BaseModel):
 
 
 class DevCreatorAthInfo(BaseModel):
-    ath_mc: str
-    ath_token: str
     creator: str
+    ath_token: str
+    ath_mc: str
+    token_symbol: str
     token_logo: str
     token_name: str
-    token_symbol: str
 
 
 class DexAggregationResult(BaseModel):
-    buyCount: int
-    buyCountChangeRate: float
-    buyVolume: float
-    buyVolumeChangeRate: float
-    chain: str
     dexName: str
-    sellCount: int
-    sellCountChangeRate: float
-    sellVolume: float
-    sellVolumeChangeRate: float
-    tokenStatsCreated: int
-    tokenStatsCreatedChangeRate: float
-    tokenStatsMigrations: int
-    tokenStatsMigrationsChangeRate: float
+    chain: str
     tradeCount: int
     tradeCountChangeRate: float
     tradeVolume: float
     tradeVolumeChangeRate: float
     traderCount: int
     traderCountChangeRate: float
+    buyVolume: float
+    buyVolumeChangeRate: float
+    buyCount: int
+    buyCountChangeRate: float
+    sellVolume: float
+    sellVolumeChangeRate: float
+    sellCount: int
+    sellCountChangeRate: float
+    tokenStatsCreated: int
+    tokenStatsCreatedChangeRate: float
+    tokenStatsMigrations: int
+    tokenStatsMigrationsChangeRate: float
 
 
 class DexTradesPollingParams(BaseModel):
@@ -461,27 +462,27 @@ class DexTradesPollingParams(BaseModel):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class FeeDistributionCharity(BaseModel):
     id: str
-    logo: str
-    name: str
     slug: str
+    name: str
+    logo: str
     website: str
     weight: str
 
@@ -496,7 +497,6 @@ class FeeDistributionPlatform(BaseModel):
 
 
 class FeeDistributionRecipient(BaseModel):
-    charities: list[FeeDistributionCharity] | None = None
     has_claimed_fee: bool
     is_charity: bool
     is_creator: bool
@@ -505,134 +505,136 @@ class FeeDistributionRecipient(BaseModel):
     twitter_username: str
     username: str
     wallet: str
+    charities: list[FeeDistributionCharity] | None = None
 
 
 class FullTokenAthInfo(BaseModel):
-    ath_mc: str | None = None
     ath_token: str | None = None
+    ath_mc: str | None = None
     token: FullTokenAthToken
 
 
 class FullTokenAthToken(BaseModel):
     address: str | None = None
     avatar: str | None = None
-    name: str | None = None
     symbol: str | None = None
+    name: str | None = None
 
 
 class FullTokenCreatorStat(BaseModel):
-    amount: str
-    follow_count: int
-    from_address: str
-    fund_from: str
-    fund_tx_hash: str
-    inner_token_count: int
-    nickname: str
-    open_token_count: int
     remark_count: int
+    follow_count: int
+    fund_from: str
+    from_address: str
+    amount: str
     transfer_ts: int
+    fund_tx_hash: str
     twitter_username: str
+    nickname: str
+    inner_token_count: int
+    open_token_count: int
     wallet_create_at: int
 
 
 class FullTokenInfo(BaseModel):
-    address: str
-    ath_info: FullTokenAthInfo
-    ath_market_cap: str
-    ath_price: float
-    ath_ts: int
-    banner: str
-    biggest_pool_address: str
-    bluechip_owner_count: int
-    bluechip_owner_percentage: str
-    bot_degen_count: int
-    bot_degen_rate: str
-    callout_declaration: bool
     chain: str
+    address: str
+    symbol: str
+    name: str
+    logo: str
+    total_supply: float
+    locked_ratio: int
     creation_timestamp: int
-    creation_tool: str | None = None
-    creator_address: str
-    creator_created_count: int
-    creator_hold_rate: str
-    creator_open_count: int | None = None
-    creator_stat: FullTokenCreatorStat | None = None
-    creator_token_balance: str
-    creator_token_status: str
-    cto_flag: int
-    decimals: int
-    dev_team_hold_rate: str
-    dexscr_boost_fee: int | None = None
-    dexscr_update_link: int
-    dexscr_update_link_ts: int
-    fresh_wallet_rate: str
+    migrated_timestamp: int
+    biggest_pool_address: str
     holder_count: int
-    image_dup_count: int | None = None
-    is_hidden: bool
-    launch_quote_address: str
+    liquidity: float
+    decimals: int
+    tpool: Tpool
+    standard: str
     launchpad: str
-    launchpad_platform: str
     launchpad_progress: int
     launchpad_status: int
-    link: FullTokenLinks
-    liquidity: float
-    live_preview: FullTokenLivePreview | None = None
-    locked_ratio: int
-    logo: str
-    migrated_pool: str
-    migrated_pool_exchange: str
-    migrated_timestamp: int
+    launchpad_platform: str
     migration_market_cap: float
     migration_market_cap_quote: str
-    name: str
-    og: bool | None = None
+    creator_address: str
+    trans_symbol: str
+    trans_name: str
+    trans_symbol_zhcn: str
+    trans_name_zhcn: str
+    migrated_pool: str
+    migrated_pool_exchange: str
+    launch_quote_address: str
+    banner: str
     open_timestamp: int | None = None
+    creator_token_status: str
+    dexscr_update_link: int
+    cto_flag: int
+    dexscr_boost_fee: int | None = None
+    dexscr_update_link_ts: int
+    twitter_rename_count: int | None = None
+    creator_open_count: int | None = None
     priority_fee: str
-    private_vault_hold_rate: str
-    rug: FullTokenRug
-    rug_ratio: str
-    security: FullTokenSecurity
-    standard: str
-    symbol: str
-    tcid: str | None = None
     tip_fee: str
-    top70_sniper_hold_rate: str
-    top_10_holder_rate: str
-    top_bot_degen_percentage: str
+    trade_fee: str
+    total_fee: str
+    creation_tool: str | None = None
+    tcid: str | None = None
+    visiting_count: int | None = None
+    rug_ratio: str
+    bluechip_owner_count: int
+    bluechip_owner_percentage: str
+    top_rat_trader_percentage: str
     top_bundler_trader_percentage: str
     top_entrapment_trader_percentage: str
-    top_rat_trader_percentage: str
-    total_fee: str
-    total_supply: int
-    tpool: Tpool
-    trade_fee: str
+    top_bot_degen_percentage: str
+    creator_created_count: int
+    bot_degen_count: int
+    bot_degen_rate: str
+    fresh_wallet_rate: str
+    top_10_holder_rate: str
+    dev_team_hold_rate: str
+    creator_hold_rate: str
+    creator_token_balance: str
+    private_vault_hold_rate: str
+    top70_sniper_hold_rate: str
+    ath_price: float
+    ath_ts: int
+    ath_market_cap: str
+    link: FullTokenLinks
+    rug: FullTokenRug
+    creator_stat: FullTokenCreatorStat | None = None
     trade_stat: FullTokenTradeStat
-    trans_name: str
-    trans_name_zhcn: str
-    trans_symbol: str
-    trans_symbol_zhcn: str
+    live_preview: FullTokenLivePreview | None = None
+    security: FullTokenSecurity
+    ath_info: FullTokenAthInfo
+    is_hidden: bool
+    callout_declaration: bool
+    migration_market_cap_quote_address: str | None = None
     twitter_create_token_count: int | None = None
     twitter_created_count: int | None = None
+    image_dup_count: int | None = None
+    og: bool | None = None
     twitter_del_post_count: int | None = None
     twitter_del_post_token_count: int | None = None
-    twitter_rename_count: int | None = None
-    visiting_count: int | None = None
 
 
 class FullTokenLinks(BaseModel):
-    geckoterminal: str
     gmgn: str
-    telegram: str | None = None
+    geckoterminal: str
     twitter_username: str
     website: str
+    telegram: str | None = None
 
 
 class FullTokenLivePreview(BaseModel):
-    detail_url_pump: str
-    end_live_timestamp: int
-    is_token_live: bool
-    reply_count: int
-    start_live_timestamp: int
     thumbnail: str
+    detail_url_pump: str
+    reply_count: int
+    is_token_live: bool
+    start_live_timestamp: int
+    end_live_timestamp: int
 
 
 class FullTokenRug(BaseModel):
@@ -640,90 +642,90 @@ class FullTokenRug(BaseModel):
 
 
 class FullTokenSecurity(BaseModel):
-    average_tax: str
+    is_show_alert: bool
+    renounced_mint: bool
+    renounced_freeze_account: bool
     burn_ratio: str
     burn_status: str
-    buy_tax: str
-    can_not_sell: int
-    can_sell: int
     dev_token_burn_amount: str
     dev_token_burn_ratio: str
-    flags: list[str]
     hide_risk: bool
-    high_tax: str
-    is_blacklist: bool | None
-    is_honeypot: bool | None
-    is_open_source: bool | None
-    is_renounced: bool | None
-    is_show_alert: bool
-    lock_info: Any
-    lock_summary: TokenFeeLockSummary
-    privileges: list[str]
-    renounced_freeze_account: bool
-    renounced_mint: bool
+    buy_tax: str
     sell_tax: str
-    top_10_holder_rate: str
     total_buy_tax: str
     total_sell_tax: str
+    is_open_source: bool | None
+    is_blacklist: bool | None
+    is_honeypot: bool | None
+    is_renounced: bool | None
+    can_sell: int
+    can_not_sell: int
+    average_tax: str
+    high_tax: str
+    flags: list[str]
+    lock_info: Any
+    lock_summary: TokenFeeLockSummary
+    top_10_holder_rate: str
+    privileges: list[str]
 
 
 class FullTokenTradeStat(BaseModel):
-    bundler_wallets: int
-    creator_wallets: int
-    following_wallets: int
-    fresh_wallets: int
-    rat_trader_wallets: int
-    renowned_wallets: int
     smart_wallets: int
+    fresh_wallets: int
+    renowned_wallets: int
+    creator_wallets: int
     sniper_wallets: int
-    top_wallets: int
-    updated_at: int
+    rat_trader_wallets: int
     whale_wallets: int
+    top_wallets: int
+    following_wallets: int
+    bundler_wallets: int
+    updated_at: int
 
 
 class GasPrice(BaseModel):
+    chain: str
+    prio: str
+    tip: str
+    prio_mev: str
+    tip_mev: str
     auto: str
     auto_mev: str
-    average: str
-    average_estimate_time: int
-    average_orign: str
-    average_prio_fee: str
-    average_prio_fee_mixed: str
-    base_fee: str | None = None
+    last_block: int
     block_number: int | None = None
     block_timestamp: int | None = None
-    chain: str
-    eth_usd_price: float
+    base_fee: str | None = None
     high: str
-    high_estimate_time: int
-    high_orign: str
-    high_prio_fee: str
-    high_prio_fee_mixed: str
-    last_block: int
+    average: str
     low: str
-    low_estimate_time: int
-    low_orign: str
+    suggest_base_fee: str
+    high_prio_fee: str
+    average_prio_fee: str
     low_prio_fee: str
+    high_prio_fee_mixed: str
+    average_prio_fee_mixed: str
     low_prio_fee_mixed: str
     native_token_usd_price: float
-    prio: str
-    prio_mev: str
-    suggest_base_fee: str
-    tip: str
-    tip_mev: str
+    eth_usd_price: float
+    high_estimate_time: int
+    average_estimate_time: int
+    low_estimate_time: int
+    high_orign: str
+    average_orign: str
+    low_orign: str
 
 
 class GetActivityRankInfoData(BaseModel):
+    list_: Annotated[list[Any], Field(alias="list")]
     activity_begin: int
     activity_end: int
-    list_: Annotated[list[Any], Field(alias="list")]
 
 
 class GetActivityRankInfoResponse(BaseModel):
     code: int
-    data: GetActivityRankInfoData
-    message: str
     reason: str
+    message: str
+    data: GetActivityRankInfoData
 
 
 class GetAggedTokenTradesData(BaseModel):
@@ -732,9 +734,9 @@ class GetAggedTokenTradesData(BaseModel):
 
 class GetAggedTokenTradesResponse(BaseModel):
     code: int
-    data: GetAggedTokenTradesData
-    message: str
     reason: str
+    message: str
+    data: GetAggedTokenTradesData
 
 
 class GetAggedTokenTransfersData(BaseModel):
@@ -743,46 +745,46 @@ class GetAggedTokenTransfersData(BaseModel):
 
 class GetAggedTokenTransfersResponse(BaseModel):
     code: int
-    data: GetAggedTokenTransfersData
-    message: str
     reason: str
+    message: str
+    data: GetAggedTokenTransfersData
 
 
 class GetBluechipRankResponse(BaseModel):
     code: int
-    data: list[BluechipToken]
-    message: str
     reason: str
+    message: str
+    data: list[BluechipToken]
 
 
 class GetDevCreatedTokensData(BaseModel):
-    creator_ath_info: DevCreatorAthInfo
-    inner_count: int
     last_create_timestamp: int
+    inner_count: int
     open_count: int
     open_ratio: str
+    creator_ath_info: DevCreatorAthInfo
     tokens: list[DevCreatedToken]
 
 
 class GetDevCreatedTokensResponse(BaseModel):
     code: int
-    data: GetDevCreatedTokensData
-    message: str
     reason: str
+    message: str
+    data: GetDevCreatedTokensData
 
 
 class GetDexTradesPollingData(BaseModel):
     allAggregationResult: DexAggregationResult
-    source: str
     topLaunchpads: list[DexAggregationResult]
     topProtocols: list[DexAggregationResult]
+    source: str
 
 
 class GetDexTradesPollingResponse(BaseModel):
     code: int
-    data: GetDexTradesPollingData
-    message: str
     reason: str
+    message: str
+    data: GetDexTradesPollingData
 
 
 class GetGasPriceListData(BaseModel):
@@ -791,57 +793,57 @@ class GetGasPriceListData(BaseModel):
 
 class GetGasPriceListResponse(BaseModel):
     code: int
-    data: GetGasPriceListData
-    message: str
     reason: str
+    message: str
+    data: GetGasPriceListData
 
 
 class GetHotSearchesResponse(BaseModel):
     code: int
-    data: list[TrendingChainBucket]
     message: str
+    data: list[TrendingChainBucket]
 
 
 class GetLaunchpadTaxPolicyData(BaseModel):
-    platforms: dict[str, LaunchpadTaxPlatform]
     revision: str
     tipsConfigs: LaunchpadTaxTipsConfigs
+    platforms: dict[str, LaunchpadTaxPlatform]
 
 
 class GetLaunchpadTaxPolicyResponse(BaseModel):
     code: int
-    data: GetLaunchpadTaxPolicyData
-    message: str
     reason: str
+    message: str
+    data: GetLaunchpadTaxPolicyData
 
 
 class GetLiveTokenPreviewData(BaseModel):
     address: str
-    create_timestamp: int
-    creator: str
+    thumbnail: str
+    logo: str
+    name: str
+    symbol: str
+    mc: str
     description: str
     detail_url_gmgn: str
     detail_url_pump: str
-    end_live_timestamp: int | None
-    is_token_live: bool
-    logo: str
-    mc: str
-    name: str
-    price_24_change: str
-    reply_count: int
-    start_live_timestamp: int
-    symbol: str
-    telegram: str
-    thumbnail: str
     twitter: str
     website: str
+    telegram: str
+    price_24_change: str
+    create_timestamp: int
+    reply_count: int
+    creator: str
+    is_token_live: bool
+    start_live_timestamp: int
+    end_live_timestamp: int | None
 
 
 class GetLiveTokenPreviewResponse(BaseModel):
     code: int
-    data: GetLiveTokenPreviewData
-    message: str
     reason: str
+    message: str
+    data: GetLiveTokenPreviewData
 
 
 class GetLiveTwitchKolData(BaseModel):
@@ -852,9 +854,9 @@ class GetLiveTwitchKolData(BaseModel):
 
 class GetLiveTwitchKolResponse(BaseModel):
     code: int
-    data: GetLiveTwitchKolData
-    message: str
     reason: str
+    message: str
+    data: GetLiveTwitchKolData
 
 
 class GetMajorCoinPricesData(BaseModel):
@@ -863,47 +865,47 @@ class GetMajorCoinPricesData(BaseModel):
 
 class GetMajorCoinPricesResponse(BaseModel):
     code: int
-    data: GetMajorCoinPricesData
-    message: str
     reason: str
+    message: str
+    data: GetMajorCoinPricesData
 
 
 class GetMultiTokenFullInfoResponse(BaseModel):
     code: int
-    data: list[FullTokenInfo]
-    message: str
     reason: str
+    message: str
+    data: list[FullTokenInfo]
 
 
 class GetMultiTokenInfoResponse(BaseModel):
     code: int
-    data: list[MultiTokenInfo]
-    message: str
     reason: str
+    message: str
+    data: list[MultiTokenInfo]
 
 
 class GetMultiWindowTokenInfoResponse(BaseModel):
     code: int
-    data: list[MultiWindowTokenInfo]
-    message: str
     reason: str
+    message: str
+    data: list[MultiWindowTokenInfo]
 
 
 class GetNativeTransferData(BaseModel):
     address: str
-    amount: str
     from_address: str
-    fund_tx_hash: str
-    nickname: str
+    amount: str
     transfer_ts: int
     twitter_username: str
+    nickname: str
+    fund_tx_hash: str
 
 
 class GetNativeTransferResponse(BaseModel):
     code: int
-    data: GetNativeTransferData
-    message: str
     reason: str
+    message: str
+    data: GetNativeTransferData
 
 
 class GetNewPairsData(BaseModel):
@@ -912,169 +914,169 @@ class GetNewPairsData(BaseModel):
 
 class GetNewPairsResponse(BaseModel):
     code: int
-    data: GetNewPairsData
-    message: str
     reason: str
+    message: str
+    data: GetNewPairsData
 
 
 class GetRecommendSlippageData(BaseModel):
-    display_slippage: str
-    has_tax: bool
-    recommend_sell_slippage: str
     recommend_slippage: str
+    recommend_sell_slippage: str
+    has_tax: bool
+    display_slippage: str
     volatility: int
 
 
 class GetRecommendSlippageResponse(BaseModel):
     code: int
-    data: GetRecommendSlippageData
-    message: str
     reason: str
+    message: str
+    data: GetRecommendSlippageData
 
 
 class GetSimilarCoinExtremesData(BaseModel):
-    earliest: SimilarCoinExtreme | None
     max_mcp: SimilarCoinExtreme | None
+    earliest: SimilarCoinExtreme | None
 
 
 class GetSimilarCoinExtremesResponse(BaseModel):
     code: int
-    data: GetSimilarCoinExtremesData
-    message: str
     reason: str
+    message: str
+    data: GetSimilarCoinExtremesData
 
 
 class GetSimilarCoinsResponse(BaseModel):
     code: int
-    data: list[SimilarCoin]
-    message: str
     reason: str
+    message: str
+    data: list[SimilarCoin]
 
 
 class GetSmartMoneyWalletData(BaseModel):
-    all_pnl: float
-    avatar: str | None
-    avg_holding_peroid: Any
-    balance: str
-    bnb_balance: str
-    buy: int
-    buy_1d: int
-    buy_30d: int
-    buy_7d: int
-    ens: Any = None
-    eth_balance: str
-    followers_count: int
-    history_bought_cost: Any
-    is_contract: bool
-    last_active_timestamp: int
-    name: str | None
-    pnl: float
-    pnl_1d: int
-    pnl_2x_5x_num: Any
-    pnl_30d: float
-    pnl_7d: float
-    pnl_gt_5x_num: Any
-    pnl_lt_2x_num: Any
-    pnl_lt_minus_dot5_num: Any
-    pnl_minus_dot5_0x_num: Any
-    profit_num: Any
-    realized_profit: float
-    realized_profit_1d: int
-    realized_profit_30d: float
-    realized_profit_7d: float
-    refresh_requested_at: Any
-    risk: WalletRiskProfile | None = None
-    sell: int
-    sell_1d: int
-    sell_30d: int
-    sell_7d: int
-    sol_balance: str
-    tag_rank: WalletTagRank
-    tags: list[str]
-    token_avg_cost: Any
-    token_num: Any
-    token_sold_avg_profit: Any
-    total_profit: float
-    total_profit_pnl: float
-    total_value: int
-    trx_balance: str
     twitter_bind: bool
     twitter_fans_num: int
-    twitter_name: str | None
     twitter_username: str | None = None
-    unrealized_pnl: int
+    twitter_name: str | None
+    ens: Any = None
+    avatar: str | None
+    name: str | None
+    eth_balance: str
+    sol_balance: str
+    trx_balance: str
+    bnb_balance: str
+    balance: str
+    total_value: int
     unrealized_profit: int
-    updated_at: int | None
+    unrealized_pnl: int
+    realized_profit: float
+    pnl: float
+    pnl_1d: int
+    pnl_7d: float
+    pnl_30d: float
+    realized_profit_1d: int
+    realized_profit_7d: float
+    realized_profit_30d: float
     winrate: Any
+    all_pnl: float
+    total_profit: float
+    total_profit_pnl: float
+    buy_1d: int
+    sell_1d: int
+    buy_30d: int
+    sell_30d: int
+    buy_7d: int
+    sell_7d: int
+    buy: int
+    sell: int
+    history_bought_cost: Any
+    token_avg_cost: Any
+    token_sold_avg_profit: Any
+    token_num: Any
+    profit_num: Any
+    pnl_lt_minus_dot5_num: Any
+    pnl_minus_dot5_0x_num: Any
+    pnl_lt_2x_num: Any
+    pnl_2x_5x_num: Any
+    pnl_gt_5x_num: Any
+    last_active_timestamp: int
+    tags: list[str]
+    tag_rank: WalletTagRank
+    followers_count: int
+    is_contract: bool
+    updated_at: int | None
+    refresh_requested_at: Any
+    avg_holding_peroid: Any
+    risk: WalletRiskProfile | None = None
 
 
 class GetSmartMoneyWalletInfoData(BaseModel):
-    all_pnl: float
-    avatar: str | None
-    avg_holding_peroid: float | None
-    balance: str
-    bnb_balance: str
-    buy: int
-    buy_1d: int
-    buy_30d: int
-    buy_7d: int
-    ens: str | None
-    eth_balance: str
-    followers_count: int
-    history_bought_cost: float | None
-    is_contract: bool
-    last_active_timestamp: int
-    name: str | None
-    pnl: float
-    pnl_1d: float
-    pnl_2x_5x_num: int | None
-    pnl_30d: float
-    pnl_7d: float
-    pnl_gt_5x_num: int | None
-    pnl_lt_2x_num: int | None
-    pnl_lt_minus_dot5_num: int | None
-    pnl_minus_dot5_0x_num: int | None
-    profit_num: int | None
-    realized_profit: float
-    realized_profit_1d: float
-    realized_profit_30d: float
-    realized_profit_7d: float
-    refresh_requested_at: int | None
-    risk: SmartMoneyRisk
-    sell: int
-    sell_1d: int
-    sell_30d: int
-    sell_7d: int
-    sol_balance: str
-    tag_rank: dict[str, int | None]
-    tags: list[str]
-    token_avg_cost: float | None
-    token_num: int | None
-    token_sold_avg_profit: float | None
-    total_profit: float
-    total_profit_pnl: float
-    total_value: float
-    trx_balance: str
     twitter_bind: bool
     twitter_fans_num: int
-    twitter_name: str | None
     twitter_username: str | None
-    unrealized_pnl: float
+    twitter_name: str | None
+    ens: str | None
+    avatar: str | None
+    name: str | None
+    eth_balance: str
+    sol_balance: str
+    trx_balance: str
+    bnb_balance: str
+    balance: str
+    total_value: float
     unrealized_profit: float
-    updated_at: int
+    unrealized_pnl: float
+    realized_profit: float
+    pnl: float
+    pnl_1d: float
+    pnl_7d: float
+    pnl_30d: float
+    realized_profit_1d: float
+    realized_profit_7d: float
+    realized_profit_30d: float
     winrate: float | None
+    all_pnl: float
+    total_profit: float
+    total_profit_pnl: float
+    buy_1d: int
+    sell_1d: int
+    buy_30d: int
+    sell_30d: int
+    buy_7d: int
+    sell_7d: int
+    buy: int
+    sell: int
+    history_bought_cost: float | None
+    token_avg_cost: float | None
+    token_sold_avg_profit: float | None
+    token_num: int | None
+    profit_num: int | None
+    pnl_lt_minus_dot5_num: int | None
+    pnl_minus_dot5_0x_num: int | None
+    pnl_lt_2x_num: int | None
+    pnl_2x_5x_num: int | None
+    pnl_gt_5x_num: int | None
+    last_active_timestamp: int
+    tags: list[str]
+    tag_rank: dict[str, int | None]
+    followers_count: int
+    is_contract: bool
+    updated_at: int
+    refresh_requested_at: int | None
+    avg_holding_peroid: float | None
+    risk: SmartMoneyRisk
 
 
 class GetSmartMoneyWalletInfoResponse(BaseModel):
     code: int
-    data: GetSmartMoneyWalletInfoData
     msg: str
+    data: GetSmartMoneyWalletInfoData
 
 
 class GetSmartMoneyWalletResponse(BaseModel):
     code: int
-    data: GetSmartMoneyWalletData
     msg: str
+    data: GetSmartMoneyWalletData
 
 
 class GetSwapRankingsData(BaseModel):
@@ -1083,39 +1085,39 @@ class GetSwapRankingsData(BaseModel):
 
 class GetSwapRankingsResponse(BaseModel):
     code: int
-    data: GetSwapRankingsData
-    message: str
     reason: str
+    message: str
+    data: GetSwapRankingsData
 
 
 class GetTokenAiNarrativeData(BaseModel):
     en: str
-    source: int
     zh_cn: str
     zh_tw: str
+    source: int
 
 
 class GetTokenAiNarrativeResponse(BaseModel):
     code: int
-    data: GetTokenAiNarrativeData
-    message: str
     reason: str
+    message: str
+    data: GetTokenAiNarrativeData
 
 
 class GetTokenBundlerStatData(BaseModel):
     bundler_count: int
+    bundler_swaps: int
     bundler_hold_ratio: str
     bundler_max_hold_ratio: str
-    bundler_swap_quote_amount: str
     bundler_swap_ratio: str
-    bundler_swaps: int
+    bundler_swap_quote_amount: str
 
 
 class GetTokenBundlerStatResponse(BaseModel):
     code: int
-    data: GetTokenBundlerStatData
-    message: str
     reason: str
+    message: str
+    data: GetTokenBundlerStatData
 
 
 class GetTokenCandlesData(BaseModel):
@@ -1126,60 +1128,60 @@ class GetTokenCandlesData(BaseModel):
 
 class GetTokenCandlesResponse(BaseModel):
     code: int
-    data: GetTokenCandlesData
-    message: str
     reason: str
+    message: str
+    data: GetTokenCandlesData
 
 
 class GetTokenCommunityMessagesData(BaseModel):
     chain: str
     community: TokenCommunity
-    declaration_level: str
-    has_more: bool
     messages: list[TokenCommunityMessage]
+    has_more: bool
     top_message: TokenCommunityMessage | None = None
+    declaration_level: str
 
 
 class GetTokenCommunityMessagesResponse(BaseModel):
     code: int
-    data: GetTokenCommunityMessagesData
-    message: str
     reason: str
+    message: str
+    data: GetTokenCommunityMessagesData
 
 
 class GetTokenDevInfoData(BaseModel):
     address: str
     creator_address: str
-    creator_open_count: int
     creator_token_balance: str
     creator_token_status: str
-    cto_flag: int
+    twitter_name_change_history: list[Any]
+    top_10_holder_rate: str
     dexscr_ad: int
-    dexscr_ad_ts: int
-    dexscr_boost_fee: int
-    dexscr_boost_ts: int
-    dexscr_trending_bar: int
-    dexscr_trending_bar_ts: int
     dexscr_update_link: int
+    cto_flag: int
+    dexscr_boost_fee: int
+    dexscr_trending_bar: int
+    dexscr_ad_ts: int
     dexscr_update_link_ts: int
+    dexscr_boost_ts: int
+    dexscr_trending_bar_ts: int
+    twitter_del_post_token_count: int
+    twitter_create_token_count: int
     fund_from: str
     fund_from_ts: int
+    creator_open_count: int
     offchain: bool
-    top_10_holder_rate: str
     twitter_change_flag: bool
-    twitter_create_token_count: int
     twitter_created_count: int
     twitter_del_post_count: int
-    twitter_del_post_token_count: int
-    twitter_name_change_history: list[Any]
     twitter_rename_count: int
 
 
 class GetTokenDevInfoResponse(BaseModel):
     code: int
-    data: GetTokenDevInfoData
-    message: str
     reason: str
+    message: str
+    data: GetTokenDevInfoData
 
 
 class GetTokenFeeDistributionData(BaseModel):
@@ -1189,23 +1191,23 @@ class GetTokenFeeDistributionData(BaseModel):
 
 class GetTokenFeeDistributionResponse(BaseModel):
     code: int
-    data: GetTokenFeeDistributionData
-    message: str
     reason: str
+    message: str
+    data: GetTokenFeeDistributionData
 
 
 class GetTokenFeeInfoData(BaseModel):
     address: str
-    launchpad: TokenLaunchpad
     pool_fee_info_list: list[TokenFeePool]
     security: TokenFeeSecurity
+    launchpad: TokenLaunchpad
 
 
 class GetTokenFeeInfoResponse(BaseModel):
     code: int
-    data: GetTokenFeeInfoData
-    message: str
     reason: str
+    message: str
+    data: GetTokenFeeInfoData
 
 
 class GetTokenHolderExtraInfoData(BaseModel):
@@ -1214,16 +1216,16 @@ class GetTokenHolderExtraInfoData(BaseModel):
 
 class GetTokenHolderExtraInfoResponse(BaseModel):
     code: int
-    data: GetTokenHolderExtraInfoData
-    message: str
     reason: str
+    message: str
+    data: GetTokenHolderExtraInfoData
 
 
 class GetTokenHolderStatResponse(BaseModel):
     code: int
-    data: TagCounts
-    message: str
     reason: str
+    message: str
+    data: TagCounts
 
 
 class GetTokenHoldersData(BaseModel):
@@ -1233,9 +1235,9 @@ class GetTokenHoldersData(BaseModel):
 
 class GetTokenHoldersResponse(BaseModel):
     code: int
-    data: GetTokenHoldersData
-    message: str
     reason: str
+    message: str
+    data: GetTokenHoldersData
 
 
 class GetTokenInfoBriefData(BaseModel):
@@ -1244,9 +1246,9 @@ class GetTokenInfoBriefData(BaseModel):
 
 class GetTokenInfoBriefResponse(BaseModel):
     code: int
-    data: GetTokenInfoBriefData
-    message: str
     reason: str
+    message: str
+    data: GetTokenInfoBriefData
 
 
 class GetTokenLiquidityData(BaseModel):
@@ -1256,31 +1258,31 @@ class GetTokenLiquidityData(BaseModel):
 
 class GetTokenLiquidityResponse(BaseModel):
     code: int
-    data: GetTokenLiquidityData
-    message: str
     reason: str
+    message: str
+    data: GetTokenLiquidityData
 
 
 class GetTokenLiquidityStatsData(BaseModel):
-    bundler_wallets: int
     chain: str
-    creator_wallets: int
-    following_wallets: int
-    fresh_wallets: int
-    rat_trader_wallets: int
-    renowned_wallets: int
-    smart_wallets: int
-    sniper_wallets: int
     token_address: str
-    top_wallets: int
+    smart_wallets: int
+    fresh_wallets: int
+    renowned_wallets: int
+    creator_wallets: int
+    sniper_wallets: int
+    rat_trader_wallets: int
     whale_wallets: int
+    top_wallets: int
+    following_wallets: int
+    bundler_wallets: int
 
 
 class GetTokenLiquidityStatsResponse(BaseModel):
     code: int
-    data: GetTokenLiquidityStatsData
-    message: str
     reason: str
+    message: str
+    data: GetTokenLiquidityStatsData
 
 
 class GetTokenLiquidityTrendData(BaseModel):
@@ -1290,16 +1292,16 @@ class GetTokenLiquidityTrendData(BaseModel):
 
 class GetTokenLiquidityTrendResponse(BaseModel):
     code: int
-    data: GetTokenLiquidityTrendData
-    message: str
     reason: str
+    message: str
+    data: GetTokenLiquidityTrendData
 
 
 class GetTokenLogoHistoryResponse(BaseModel):
     code: int
-    data: list[TokenLogoHistoryEntry]
-    message: str
     reason: str
+    message: str
+    data: list[TokenLogoHistoryEntry]
 
 
 class GetTokenMcapCandlesData(BaseModel):
@@ -1309,9 +1311,9 @@ class GetTokenMcapCandlesData(BaseModel):
 
 class GetTokenMcapCandlesResponse(BaseModel):
     code: int
-    data: GetTokenMcapCandlesData
-    message: str
     reason: str
+    message: str
+    data: GetTokenMcapCandlesData
 
 
 class GetTokenPoolFeeInfoData(BaseModel):
@@ -1320,9 +1322,9 @@ class GetTokenPoolFeeInfoData(BaseModel):
 
 class GetTokenPoolFeeInfoResponse(BaseModel):
     code: int
-    data: GetTokenPoolFeeInfoData
-    message: str
     reason: str
+    message: str
+    data: GetTokenPoolFeeInfoData
 
 
 class GetTokenPricesData(BaseModel):
@@ -1331,29 +1333,29 @@ class GetTokenPricesData(BaseModel):
 
 class GetTokenPricesResponse(BaseModel):
     code: int
-    data: GetTokenPricesData
-    message: str
     reason: str
+    message: str
+    data: GetTokenPricesData
 
 
 class GetTokenSecurityData(BaseModel):
     address: str
-    launchpad: TokenLaunchpad
     security: TokenSecurity
+    launchpad: TokenLaunchpad
 
 
 class GetTokenSecurityResponse(BaseModel):
     code: int
-    data: GetTokenSecurityData
-    message: str
     reason: str
+    message: str
+    data: GetTokenSecurityData
 
 
 class GetTokenSignalsResponse(BaseModel):
     code: int
-    data: list[TokenSignal]
-    message: str
     reason: str
+    message: str
+    data: list[TokenSignal]
 
 
 class GetTokenSocialsData(BaseModel):
@@ -1365,45 +1367,45 @@ class GetTokenSocialsData(BaseModel):
 
 class GetTokenSocialsResponse(BaseModel):
     code: int
-    data: GetTokenSocialsData
-    message: str
     reason: str
+    message: str
+    data: GetTokenSocialsData
 
 
 class GetTokenStatsData(BaseModel):
+    holder_count: int
     bluechip_owner_count: int
     bluechip_owner_percentage: str
-    bot_degen_count: int
-    bot_degen_rate: str
-    creator_created_count: int
-    creator_hold_rate: str
-    creator_token_balance: str
-    degen_call_count: int
-    dev_team_hold_rate: str
-    fresh_wallet_rate: str
-    holder_count: int
-    private_vault_hold_rate: str
     signal_count: int
-    top70_sniper_hold_rate: str
-    top_10_holder_rate: str
-    top_bot_degen_percentage: str
+    degen_call_count: int
+    top_rat_trader_percentage: str
     top_bundler_trader_percentage: str
     top_entrapment_trader_percentage: str
-    top_rat_trader_percentage: str
+    top_bot_degen_percentage: str
+    creator_created_count: int
+    bot_degen_count: int
+    bot_degen_rate: str
+    fresh_wallet_rate: str
+    top_10_holder_rate: str
+    dev_team_hold_rate: str
+    creator_hold_rate: str
+    creator_token_balance: str
+    private_vault_hold_rate: str
+    top70_sniper_hold_rate: str
 
 
 class GetTokenStatsResponse(BaseModel):
     code: int
-    data: GetTokenStatsData
-    message: str
     reason: str
+    message: str
+    data: GetTokenStatsData
 
 
 class GetTokenTraderStatResponse(BaseModel):
     code: int
-    data: TagCounts
-    message: str
     reason: str
+    message: str
+    data: TagCounts
 
 
 class GetTokenTradersData(BaseModel):
@@ -1413,9 +1415,9 @@ class GetTokenTradersData(BaseModel):
 
 class GetTokenTradersResponse(BaseModel):
     code: int
-    data: GetTokenTradersData
-    message: str
     reason: str
+    message: str
+    data: GetTokenTradersData
 
 
 class GetTokenTradesData(BaseModel):
@@ -1425,9 +1427,9 @@ class GetTokenTradesData(BaseModel):
 
 class GetTokenTradesResponse(BaseModel):
     code: int
-    data: GetTokenTradesData
-    message: str
     reason: str
+    message: str
+    data: GetTokenTradesData
 
 
 class GetTokenTradesV2Data(BaseModel):
@@ -1437,9 +1439,9 @@ class GetTokenTradesV2Data(BaseModel):
 
 class GetTokenTradesV2Response(BaseModel):
     code: int
-    data: GetTokenTradesV2Data
-    message: str
     reason: str
+    message: str
+    data: GetTokenTradesV2Data
 
 
 class GetTokenTrendsData(BaseModel):
@@ -1448,31 +1450,31 @@ class GetTokenTrendsData(BaseModel):
 
 class GetTokenTrendsResponse(BaseModel):
     code: int
-    data: GetTokenTrendsData
-    message: str
     reason: str
+    message: str
+    data: GetTokenTrendsData
 
 
 class GetTokenWalletTagsStatData(BaseModel):
-    bundler_wallets: int
     chain: str
-    creator_wallets: int
-    following_wallets: int
-    fresh_wallets: int
-    rat_trader_wallets: int
-    renowned_wallets: int
-    smart_wallets: int
-    sniper_wallets: int
     token_address: str
-    top_wallets: int
+    smart_wallets: int
+    fresh_wallets: int
+    renowned_wallets: int
+    creator_wallets: int
+    sniper_wallets: int
+    rat_trader_wallets: int
     whale_wallets: int
+    top_wallets: int
+    following_wallets: int
+    bundler_wallets: int
 
 
 class GetTokenWalletTagsStatResponse(BaseModel):
     code: int
-    data: GetTokenWalletTagsStatData
-    message: str
     reason: str
+    message: str
+    data: GetTokenWalletTagsStatData
 
 
 class GetTopBuyersData(BaseModel):
@@ -1481,26 +1483,26 @@ class GetTopBuyersData(BaseModel):
 
 class GetTopBuyersResponse(BaseModel):
     code: int
-    data: GetTopBuyersData
     msg: str
+    data: GetTopBuyersData
 
 
 class GetTopCallersData(BaseModel):
-    current_user: TopCaller | None
     list_: Annotated[list[TopCaller], Field(alias="list")]
+    current_user: TopCaller | None
 
 
 class GetTopCallersResponse(BaseModel):
     code: int
-    data: GetTopCallersData
-    message: str
     reason: str
+    message: str
+    data: GetTopCallersData
 
 
 class GetTrendingTokensResponse(BaseModel):
     code: int
-    data: list[TrendingChainBucket]
     message: str
+    data: list[TrendingChainBucket]
 
 
 class GetWalletActivityData(BaseModel):
@@ -1510,53 +1512,53 @@ class GetWalletActivityData(BaseModel):
 
 class GetWalletActivityResponse(BaseModel):
     code: int
-    data: GetWalletActivityData
-    message: str
     reason: str
+    message: str
+    data: GetWalletActivityData
 
 
 class GetWalletChainBalancesResponse(BaseModel):
     code: int
-    data: list[WalletChainBalance]
-    message: str
     reason: str
+    message: str
+    data: list[WalletChainBalance]
 
 
 class GetWalletCommonStatData(BaseModel):
     avatar: str
-    bind_status: str
-    created_at: int
-    created_token_count: int
-    ens: str
-    follow_count: int
-    followers_count: int
-    fund_amount: str
-    fund_from: str
-    fund_from_address: str
-    fund_from_ts: int
-    fund_tx_hash: str
-    is_blue_verified: bool
     name: str
-    nick_name: str
-    remark_count: int
+    ens: str
     tag: str
-    tag_rank: WalletTagRank
     tags: list[str]
-    twitter_bind: bool
-    twitter_description: str
-    twitter_fans_num: int
-    twitter_id: str
+    tag_rank: WalletTagRank
+    nick_name: str
+    created_at: int
     twitter_name: str
     twitter_username: str
+    is_blue_verified: bool
+    twitter_bind: bool
+    twitter_fans_num: int
+    twitter_description: str
+    followers_count: int
+    twitter_id: str
+    bind_status: str
     verified: bool
+    follow_count: int
+    remark_count: int
+    created_token_count: int
+    fund_from: str
+    fund_from_ts: int
+    fund_tx_hash: str
     wallet_address: str
+    fund_from_address: str
+    fund_amount: str
 
 
 class GetWalletCommonStatResponse(BaseModel):
     code: int
-    data: GetWalletCommonStatData
-    message: str
     reason: str
+    message: str
+    data: GetWalletCommonStatData
 
 
 class GetWalletRankingsData(BaseModel):
@@ -1565,183 +1567,183 @@ class GetWalletRankingsData(BaseModel):
 
 class GetWalletRankingsResponse(BaseModel):
     code: int
-    data: GetWalletRankingsData
-    message: str
     reason: str
+    message: str
+    data: GetWalletRankingsData
 
 
 class GetWalletStatData(BaseModel):
-    bought_cost: str
-    buy: int
-    last_timestamp: int
-    native_balance: str
-    pnl_stat: WalletPnlStat
+    wallet_address: str
     realized_profit: str
     realized_profit_pnl: str
+    buy: int
     sell: int
-    sold_fee: str
-    sold_income: str
     total_cost: str
-    wallet_address: str
+    bought_cost: str
+    sold_income: str
+    sold_fee: str
+    last_timestamp: int
+    pnl_stat: WalletPnlStat
+    native_balance: str
 
 
 class GetWalletStatResponse(BaseModel):
     code: int
-    data: GetWalletStatData
-    message: str
     reason: str
+    message: str
+    data: GetWalletStatData
 
 
 class GetWebsiteInfoData(BaseModel):
     address: str
-    created_at: int
-    ip: str
     website: str
+    ip: str
+    created_at: int
 
 
 class GetWebsiteInfoResponse(BaseModel):
     code: int
-    data: GetWebsiteInfoData
-    message: str
     reason: str
+    message: str
+    data: GetWebsiteInfoData
 
 
 class GmgnSearchCoin(BaseModel):
-    address: str
-    ath_market_cap: str
-    buy_tax: str
     chain: str
+    address: str
+    name: str
+    symbol: str
+    trans_name: str
+    trans_symbol: str
+    trans_name_zhcn: str
+    trans_symbol_zhcn: str
+    remark_name: str
+    logo: str
     created_at: int
-    creation_tool: str
-    creator: str
-    cto_flag: int
+    price: str
+    price_24h: str
+    volume_1h: float
+    volume_24h: float
+    mcp: str
+    liquidity: str
+    follow_state: bool
+    quote_address: str
+    launch_quote_address: str
+    standard: str
+    hot_level: int
+    swaps_5m: int
+    swaps_1h: int
+    swaps_6h: int
+    swaps_24h: int
+    is_show_alert: bool
+    is_honeypot: bool | None
+    renounced_freeze_account: bool | None
+    buy_tax: str
+    sell_tax: str
+    total_buy_tax: float
+    total_sell_tax: float
+    token_link: GmgnSearchTokenLink
     dexscr_ad: int
+    dexscr_update_link: int
     dexscr_boost_fee: int
     dexscr_trending_bar_ts: int
-    dexscr_update_link: int
-    exchange: str
-    follow_state: bool
-    holder_count: int
-    hot_level: int
-    is_honeypot: bool | None
-    is_og: bool
-    is_show_alert: bool
-    kol_count: int
-    launch_quote_address: str
+    cto_flag: int
     launchpad: str
     launchpad_platform: str
     launchpad_status: int
-    liquidity: str
-    logo: str
-    mcp: str
+    exchange: str
     migrated_pool_exchange: str
-    name: str
-    offchain: bool
-    price: str
-    price_24h: str
-    progress: float
-    quote_address: str
-    remark_name: str
-    renounced_freeze_account: bool | None
-    sell_tax: str
-    standard: str
-    swaps_1h: int
-    swaps_24h: int
-    swaps_5m: int
-    swaps_6h: int
-    symbol: str
-    tax_allocation: dict[str, Any] | None = None
-    token_link: GmgnSearchTokenLink
-    total_buy_tax: float
-    total_fee: str
-    total_sell_tax: float
-    trans_name: str
-    trans_name_zhcn: str
-    trans_symbol: str
-    trans_symbol_zhcn: str
     twitter_change_flag: int
     twitter_rename_count: int
+    creator: str
+    progress: float
+    is_og: bool
+    holder_count: int
+    offchain: bool
+    creation_tool: str
     visiting_count: int
-    volume_1h: float
-    volume_24h: float
+    ath_market_cap: str
+    total_fee: str
+    kol_count: int
+    tax_allocation: dict[str, Any] | None = None
 
 
 class GmgnSearchTokenLink(BaseModel):
     address: str
-    bitbucket: str
-    description: str
-    discord: str
-    facebook: str
-    fracaster: Any
-    geckoterminal: str
-    github: str
     gmgn: str
+    geckoterminal: str
+    twitter_username: str
+    website: str
+    telegram: str
+    bitbucket: str
+    discord: str
+    description: str
+    facebook: str
+    github: str
     instagram: str
     linkedin: str
     medium: str
     reddit: str
-    telegram: str
     tiktok: str
-    twitter_username: str
-    verify_status: int
-    website: str
     youtube: str
+    verify_status: int
+    fracaster: Any
 
 
 class GmgnSearchWallet(BaseModel):
-    address: str
-    avatar: str
-    balance: str
     chain: str
+    address: str
+    remark_name: str
+    twitter_username: str
+    twitter_name: str
+    twitter_fans_num: int
     ens: str
-    follow_count: int
+    avatar: str
+    wallet_tags: list[str]
     follow_state: bool
     fund_from: str
     fund_from_ts: int
+    balance: str
+    follow_count: int
+    remark_count: int
     last_active_time: int
     pnl_7d: str
     realized_profit_7d: str
-    remark_count: int
-    remark_name: str
-    twitter_fans_num: int
-    twitter_name: str
-    twitter_username: str
-    wallet_tags: list[str]
     win_rate_7d: float
 
 
 class HolderExtraInfo(BaseModel):
-    addr_type: int
     address: str
+    name: str | None
     avatar: str | None
+    twitter_username: str | None
+    twitter_name: str | None
     created_at: int
+    native_balance: str
+    native_transfer: HolderNativeTransfer | None
+    token_transfer_in: HolderExtraTokenTransfer | None
+    token_transfer_out: HolderTokenTransfer | None
+    addr_type: int
     exchange: str
     is_new: bool
     is_on_curve: bool
-    maker_token_tags: list[str] | None
-    name: str | None
-    native_balance: str
-    native_transfer: HolderNativeTransfer | None
-    tags: list[str] | None
-    token_transfer_in: HolderExtraTokenTransfer | None
-    token_transfer_out: HolderTokenTransfer | None
     transfer_in: bool
-    twitter_name: str | None
-    twitter_username: str | None
+    tags: list[str] | None
+    maker_token_tags: list[str] | None
 
 
 class HolderExtraTokenTransfer(BaseModel):
-    address: str
     name: str | None
+    address: str
     timestamp: int
     tx_hash: str
     type: str
 
 
 class HolderNativeTransfer(BaseModel):
-    amount: str
-    from_address: str
     name: str | None
+    from_address: str
+    amount: str
     timestamp: int
     tx_hash: str
 
@@ -1752,8 +1754,8 @@ class HolderStatParams(BaseModel):
 
 
 class HolderTokenTransfer(BaseModel):
-    address: str
     name: str | None
+    address: str
     timestamp: int
     tx_hash: str
     type: str
@@ -1761,13 +1763,13 @@ class HolderTokenTransfer(BaseModel):
 
 class HoldersParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    cost: Annotated[int | None, Field(ge=1, le=1000)] = 20
-    cursor: str | None = None
-    direction: SortDirection | None = SortDirection.DESC
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 100
-    order_by: HolderOrderBy | None = HolderOrderBy.AMOUNT_PERCENTAGE
-    tag: HolderTag | None = None
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    limit: Annotated[int | None, Field(ge=1, le=1000)] = 100
+    cost: Annotated[int | None, Field(ge=1, le=1000)] = 20
+    order_by: HolderOrderBy | None = HolderOrderBy.AMOUNT_PERCENTAGE
+    direction: SortDirection | None = SortDirection.DESC
+    tag: HolderTag | None = None
+    cursor: str | None = None
 
 
 class LaunchpadTaxPlatform(BaseModel):
@@ -1779,57 +1781,57 @@ class LaunchpadTaxPolicyParams(BaseModel):
 
 
 class LaunchpadTaxTip(BaseModel):
-    en: str
     zhCN: str
     zhTW: str
+    en: str
 
 
 class LaunchpadTaxTipsConfigs(BaseModel):
-    icons: list[Any]
     tips: list[LaunchpadTaxTip]
+    icons: list[Any]
 
 
 class LiquidityHistory(BaseModel):
-    amount_usd: str
-    balance: str
+    maker: str
     base_amount: str
-    contract_address: str
+    quote_amount: str
+    amount_usd: str
+    timestamp: int
     event: str
-    history_base: str
-    history_bought_amount: str
-    history_quote: str
-    history_sold_amount: str
-    history_sold_income: str
+    tx_hash: str
+    price_usd: str
     id: str
     is_open_or_close: int
-    is_single: bool
-    maker: str
-    maker_avatar: str
-    maker_ens: str
-    maker_name: str
+    token_address: str
     maker_tags: list[str]
     maker_token_tags: list[str]
-    maker_twitter_name: str
+    quote_address: str
+    quote_symbol: str
+    total_trade: int
+    balance: str
+    history_bought_amount: str
+    history_sold_income: str
+    history_sold_amount: str
+    realized_profit: str
+    unrealized_profit: str
+    maker_name: str
     maker_twitter_username: str
+    maker_twitter_name: str
+    maker_avatar: str
+    maker_ens: str
     max_price: str
     min_price: str
-    price_usd: str
-    quote_address: str
-    quote_amount: str
-    quote_symbol: str
-    realized_profit: str
-    timestamp: int
-    token_address: str
-    total_trade: int
-    tx_hash: str
-    unrealized_profit: str
+    history_base: str
+    history_quote: str
+    contract_address: str
+    is_single: bool
 
 
 class LiquidityParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    cursor: str | None = None
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 100
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    limit: Annotated[int | None, Field(ge=1, le=1000)] = 100
+    cursor: str | None = None
 
 
 class LivePreviewParams(BaseModel):
@@ -1839,33 +1841,33 @@ class LivePreviewParams(BaseModel):
 
 class LockSummary(BaseModel):
     is_locked: bool
-    left_lock_percent: str
     lock_detail: Any
-    lock_percent: str
     lock_tags: list[str] | None
+    lock_percent: str
+    left_lock_percent: str
 
 
 class MajorCoinPrice(BaseModel):
-    price: str
     symbol: str
+    price: str
 
 
 class McapCandle(BaseModel):
-    amount: str
+    time: int
+    open: str
     close: str
     high: str
     low: str
-    open: str
-    source: str
-    time: int
     volume: str
+    source: str
+    amount: str
 
 
 class McapCandlesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 501
-    resolution: Resolution | None = Resolution.FIELD_1D
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    resolution: Resolution | None = Resolution.FIELD_1D
+    limit: Annotated[int | None, Field(ge=1, le=1000)] = 501
 
 
 class MultiTokenFullInfoParams(BaseModel):
@@ -1873,36 +1875,37 @@ class MultiTokenFullInfoParams(BaseModel):
 
 
 class MultiTokenInfo(BaseModel):
-    address: str
-    ath_price: float
-    biggest_pool_address: str
     chain: str
+    address: str
+    symbol: str
+    name: str
+    logo: str
+    total_supply: float
+    locked_ratio: float
     creation_timestamp: int
-    creator_address: str
-    decimals: int
+    migrated_timestamp: int
+    biggest_pool_address: str
     holder_count: int
-    is_hidden: bool | None = None
+    liquidity: float
+    decimals: int
+    tpool: Tpool
+    standard: str
     launchpad: str
-    launchpad_platform: str
     launchpad_progress: float
     launchpad_status: int
-    liquidity: float
-    locked_ratio: float
-    logo: str
-    migrated_pool: str
-    migrated_timestamp: int
+    launchpad_platform: str
     migration_market_cap: float
     migration_market_cap_quote: str
-    name: str
-    route_info_init: dict[str, RouteInfoInitMember] | None = None
-    standard: str
-    symbol: str
-    total_supply: int
-    tpool: Tpool
-    trans_name: str
-    trans_name_zhcn: str
+    creator_address: str
     trans_symbol: str
+    trans_name: str
     trans_symbol_zhcn: str
+    trans_name_zhcn: str
+    ath_price: float
+    migrated_pool: str
+    route_info_init: dict[str, RouteInfoInitMember] | None = None
+    is_hidden: bool | None = None
+    migration_market_cap_quote_address: str | None = None
 
 
 class MultiTokenInfoParams(BaseModel):
@@ -1912,68 +1915,68 @@ class MultiTokenInfoParams(BaseModel):
 class MultiWindowTokenDev(BaseModel):
     address: str
     creator_address: str
-    creator_open_count: int
     creator_token_balance: str
     creator_token_status: str
-    cto_flag: int
+    twitter_name_change_history: list[Any]
+    top_10_holder_rate: str
     dexscr_ad: int
-    dexscr_ad_ts: int
-    dexscr_boost_fee: int
-    dexscr_boost_ts: int
-    dexscr_trending_bar: int
-    dexscr_trending_bar_ts: int
     dexscr_update_link: int
+    cto_flag: int
+    dexscr_boost_fee: int
+    dexscr_trending_bar: int
+    dexscr_ad_ts: int
     dexscr_update_link_ts: int
+    dexscr_boost_ts: int
+    dexscr_trending_bar_ts: int
+    twitter_del_post_token_count: int
+    twitter_create_token_count: int
     fund_from: str
     fund_from_ts: int
+    creator_open_count: int
     offchain: bool
-    top_10_holder_rate: str
     twitter_change_flag: bool
-    twitter_create_token_count: int
     twitter_created_count: int
     twitter_del_post_count: int
-    twitter_del_post_token_count: int
-    twitter_name_change_history: list[Any]
     twitter_rename_count: int
 
 
 class MultiWindowTokenInfo(BaseModel):
     address: str
+    symbol: str
+    name: str
+    decimals: int
+    logo: str
     banner: str
     biggest_pool_address: str
-    callout_declaration: bool | None = None
-    circulating_supply: str
-    creation_timestamp: int
-    creation_tool: str
-    decimals: int
-    dev: MultiWindowTokenDev
-    holder_count: int
-    image_dup_count: int
-    is_hidden: bool | None = None
-    liquidity: str
-    logo: str
-    max_supply: str
-    migrated_timestamp: int
-    name: str
-    offchain: bool
-    og: bool
     open_timestamp: int
-    pool: MultiWindowTokenPool
-    price: MultiWindowTokenPrice
-    priority_fee: str
-    standard: str
-    symbol: str
-    tcid: str
-    tip_fee: str
-    total_fee: str
+    migrated_timestamp: int
+    holder_count: int
+    circulating_supply: str
     total_supply: str
+    max_supply: str
+    liquidity: str
+    creation_timestamp: int
+    pool: MultiWindowTokenPool
     tpool: Tpool
+    dev: MultiWindowTokenDev
+    price: MultiWindowTokenPrice
+    standard: str
+    priority_fee: str
+    tip_fee: str
     trade_fee: str
-    trans_name: str
-    trans_name_zhcn: str
+    total_fee: str
+    og: bool
+    image_dup_count: int
+    creation_tool: str
     trans_symbol: str
+    trans_name: str
     trans_symbol_zhcn: str
+    trans_name_zhcn: str
+    offchain: bool
+    tcid: str
     visiting_count: int
+    callout_declaration: bool | None = None
+    is_hidden: bool | None = None
 
 
 class MultiWindowTokenInfoParams(BaseModel):
@@ -1982,69 +1985,69 @@ class MultiWindowTokenInfoParams(BaseModel):
 
 class MultiWindowTokenPool(BaseModel):
     address: str
-    base_address: str
-    base_reserve: str
-    base_reserve_value: str
-    base_symbol: str | None = None
-    base_vault_address: str
-    creation_timestamp: int
-    creator: str
-    exchange: str
-    factory: str | None = None
-    fee_ratio: str
-    initial_base_reserve: str
-    initial_liquidity: str
-    initial_quote_reserve: str
-    liquidity: str
     pool_address: str
     quote_address: str
-    quote_reserve: str
-    quote_reserve_value: str
     quote_symbol: str
+    liquidity: str
+    base_reserve: str
+    quote_reserve: str
+    initial_liquidity: str
+    initial_base_reserve: str
+    initial_quote_reserve: str
+    creation_timestamp: int
+    base_reserve_value: str
+    quote_reserve_value: str
     quote_vault_address: str
+    base_vault_address: str
+    creator: str
+    exchange: str
     token0_address: str
     token1_address: str
+    base_address: str
+    fee_ratio: str
+    factory: str | None = None
+    base_symbol: str | None = None
 
 
 class MultiWindowTokenPrice(BaseModel):
     address: str
-    buy_volume_1h: str
-    buy_volume_1m: str
-    buy_volume_24h: str
-    buy_volume_5m: str
-    buy_volume_6h: str
-    buys_1h: int
-    buys_1m: int
-    buys_24h: int
-    buys_5m: int
-    buys_6h: int
-    hot_level: int
     price: str
-    price_1h: str
     price_1m: str
-    price_24h: str
     price_5m: str
+    price_1h: str
     price_6h: str
-    sell_volume_1h: str
-    sell_volume_1m: str
-    sell_volume_24h: str
-    sell_volume_5m: str
-    sell_volume_6h: str
-    sells_1h: int
+    price_24h: str
+    buys_1m: int
+    buys_5m: int
+    buys_1h: int
+    buys_6h: int
+    buys_24h: int
     sells_1m: int
-    sells_24h: int
     sells_5m: int
+    sells_1h: int
     sells_6h: int
-    swaps_1h: int
-    swaps_1m: int
-    swaps_24h: int
-    swaps_5m: int
-    swaps_6h: int
-    volume_1h: str
+    sells_24h: int
     volume_1m: str
-    volume_24h: str
     volume_5m: str
+    volume_1h: str
     volume_6h: str
+    volume_24h: str
+    buy_volume_1m: str
+    buy_volume_5m: str
+    buy_volume_1h: str
+    buy_volume_6h: str
+    buy_volume_24h: str
+    sell_volume_1m: str
+    sell_volume_5m: str
+    sell_volume_1h: str
+    sell_volume_6h: str
+    sell_volume_24h: str
+    swaps_1m: int
+    swaps_5m: int
+    swaps_1h: int
+    swaps_6h: int
+    swaps_24h: int
+    hot_level: int
 
 
 class NativeTransferParams(BaseModel):
@@ -2054,132 +2057,124 @@ class NativeTransferParams(BaseModel):
 
 class NewPair(BaseModel):
     address: str
+    chain: str
     base_address: str
+    quote_address: str
+    quote_reserve: str | None = None
+    initial_liquidity: str
+    initial_quote_reserve: str
+    quote_reserve_usd: str | None = None
+    exchange: str
+    launchpad: str | None = None
+    launchpad_platform: str | None = None
+    open_timestamp: int
+    quote_symbol: str
     base_token_info: NewPairBaseToken
+    seq_index: str
+    image_dup: str
+    dev_team_hold_rate: float | None = None
     bot_degen_count: int | None = None
     bot_degen_rate: float | None = None
-    chain: str
-    dev_team_hold_rate: float | None = None
+    launch_quote_address: str | None = None
+    total_fee: float | None = None
+    history_highest_market_cap: float | None = None
+    top70_sniper_hold_rate: float | None = None
+    visiting_count: int | None = None
+    twitter_dup: int | None = None
+    migrated_pool_exchange: str | None = None
+    website_dup: int | None = None
     dexscr_ad_ts: int | None = None
     dexscr_boost_fee: int | None = None
     dexscr_boost_ts: int | None = None
     dexscr_update_link_ts: int | None = None
-    exchange: str
-    history_highest_market_cap: float | None = None
-    image_dup: str
-    initial_liquidity: str
-    initial_quote_reserve: str
-    launch_quote_address: str | None = None
-    launchpad: str | None = None
-    launchpad_platform: str | None = None
-    migrated_pool_exchange: str | None = None
-    open_timestamp: int
-    quote_address: str
-    quote_reserve: str | None = None
-    quote_reserve_usd: str | None = None
-    quote_symbol: str
-    seq_index: str
     telegram_dup: int | None = None
-    top70_sniper_hold_rate: float | None = None
-    total_fee: float | None = None
-    twitter_dup: int | None = None
-    visiting_count: int | None = None
-    website_dup: int | None = None
 
 
 class NewPairBaseToken(BaseModel):
     address: str
-    bundler_rate: float | None = None
-    bundler_trader_amount_rate: str | None = None
-    burn_ratio: str | None = None
-    burn_status: str
-    buy_tax: str | None = None
-    buy_volume_1h: str
-    buy_volume_1m: str
-    buy_volume_24h: str
-    buy_volume_5m: str
-    buy_volume_6h: str
-    buys: int | None = None
-    creation_timestamp: int
-    creator: str
-    creator_balance_rate: str | None = None
-    creator_created_inner_count: int | None = None
-    creator_created_open_ratio: float | None = None
-    creator_token_status: str | None = None
-    cto_flag: int
-    dev_token_burn_ratio: float | None = None
-    dexscr_ad: int
-    dexscr_update_link: int
-    entrapment_ratio: str | None = None
-    fund_from_address: str | None = None
-    holder_count: int | None = None
-    hot_level: int | None = None
-    insider_ratio: float | None = None
-    is_honeypot: str
-    is_og: bool | None = None
-    is_token_live: bool | None = None
-    launchpad_status: int
-    liquidity: str
-    logo: str
-    market_cap: str
+    symbol: str
     name: str
+    logo: str
+    total_supply: int
+    standard: str | None = None
+    creation_timestamp: int
+    liquidity: str
     price: str
-    price_1h: str
     price_1m: str
-    price_24h: str
     price_5m: str
+    price_1h: str
     price_6h: str
-    price_change_percent1h: str
+    price_24h: str
+    buy_volume_1m: str
+    buy_volume_5m: str
+    buy_volume_1h: str
+    buy_volume_6h: str
+    buy_volume_24h: str
+    sell_volume_1m: str
+    sell_volume_5m: str
+    sell_volume_1h: str
+    sell_volume_6h: str
+    sell_volume_24h: str
     price_change_percent1m: str
     price_change_percent5m: str
-    progress: float
-    rat_trader_amount_rate: float | None = None
-    renounced: int
-    renounced_freeze_account: int
-    renounced_mint: int
-    renowned_count: int | None = None
-    rug_ratio: float | None = None
-    sell_tax: str | None = None
-    sell_volume_1h: str
-    sell_volume_1m: str
-    sell_volume_24h: str
-    sell_volume_5m: str
-    sell_volume_6h: str
-    sells: int | None = None
-    smart_degen_count: int | None = None
-    sniper_count: int | None = None
-    social_links: NewPairSocialLinks
-    standard: str | None = None
-    swaps: int | None = None
-    symbol: str
+    price_change_percent1h: str
+    launchpad_status: int
+    creator: str
+    fund_from_address: str | None = None
+    creator_balance_rate: str | None = None
+    creator_token_status: str | None = None
     top_10_holder_rate: float | None = None
-    total_supply: int
-    twitter_change_flag: int
-    twitter_create_token_count: int | None = None
-    twitter_del_post_token_count: int | None = None
-    twitter_rename_count: int | None = None
+    market_cap: str
+    social_links: NewPairSocialLinks
+    renounced_mint: int
+    renounced_freeze_account: int
+    renounced: int
     volume: str
+    burn_status: str
+    burn_ratio: str | None = None
+    is_honeypot: str
+    dexscr_ad: int
+    dexscr_update_link: int
+    cto_flag: int
+    twitter_change_flag: int
+    progress: float
+    entrapment_ratio: str | None = None
+    is_og: bool | None = None
+    holder_count: int | None = None
+    swaps: int | None = None
+    buys: int | None = None
+    sells: int | None = None
+    sniper_count: int | None = None
+    creator_created_inner_count: int | None = None
+    creator_created_open_ratio: float | None = None
+    rug_ratio: float | None = None
+    twitter_create_token_count: int | None = None
+    twitter_rename_count: int | None = None
+    bundler_trader_amount_rate: str | None = None
+    bundler_rate: float | None = None
+    insider_ratio: float | None = None
+    rat_trader_amount_rate: float | None = None
+    twitter_del_post_token_count: int | None = None
+    smart_degen_count: int | None = None
+    renowned_count: int | None = None
+    buy_tax: str | None = None
+    dev_token_burn_ratio: float | None = None
+    hot_level: int | None = None
+    is_token_live: bool | None = None
+    sell_tax: str | None = None
 
 
 class NewPairSocialLinks(BaseModel):
-    telegram: str | None = None
     twitter_username: str | None = None
     website: str | None = None
+    telegram: str | None = None
 
 
 class NewPairsParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    filters: list[TokenFilter] | None = None
-    """
-    Security screens applied before sorting.
-    """
     interval: TrendingInterval | None = TrendingInterval.FIELD_1H
     """
     Age window — only pairs opened inside it are returned.
-    """
-    launchpad_platforms: list[str] | None = None
-    """
-    Restrict to these launchpads, e.g. `Pump.fun`, `letsbonk`, `fourmeme`.
     """
     limit: Annotated[int | None, Field(ge=1, le=500)] = 100
     """
@@ -2189,18 +2184,26 @@ class NewPairsParams(BaseModel):
     """
     Column to sort on.
     """
+    filters: list[TokenFilter] | None = None
+    """
+    Security screens applied before sorting.
+    """
+    launchpad_platforms: list[str] | None = None
+    """
+    Restrict to these launchpads, e.g. `Pump.fun`, `letsbonk`, `fourmeme`.
+    """
 
 
 class PoolFeeInfo(BaseModel):
     address: str
     exchange: str
-    fee_params: Any
+    liquidity: float
     fee_ratio: float
     is_dynamic_fee: bool
-    liquidity: float
-    meteora_damm_v2_base_fee_config: Any
-    meteora_virtual_curve_fee_config: Any
     pool_type: str
+    meteora_virtual_curve_fee_config: Any
+    meteora_damm_v2_base_fee_config: Any
+    fee_params: Any
 
 
 class PoolFeeInfoParams(BaseModel):
@@ -2285,21 +2288,21 @@ class RouteInfoInitMember(BaseModel):
     mb: str | None = None
     mba: str | None = None
     p: str | None = None
+    s: dict[str, str] | None = None
     p_c: Annotated[str | None, Field(alias="p:c")] = None
     p_fc: Annotated[str | None, Field(alias="p:fc")] = None
     pa_c: Annotated[str | None, Field(alias="pa:c")] = None
     pa_fc: Annotated[str | None, Field(alias="pa:fc")] = None
     rbh: str | None = None
     rs: str | None = None
-    s: dict[str, str] | None = None
     sc: str | None = None
 
 
 class RuggedToken(BaseModel):
     address: str
-    logo: str
-    name: str
     symbol: str
+    name: str
+    logo: str
 
 
 class SearchParams(BaseModel):
@@ -2317,9 +2320,9 @@ class SearchTokensData(BaseModel):
 
 class SearchTokensResponse(BaseModel):
     code: int
-    data: SearchTokensData
-    message: str
     reason: str
+    message: str
+    data: SearchTokensData
 
 
 class SecurityParams(BaseModel):
@@ -2328,56 +2331,56 @@ class SecurityParams(BaseModel):
 
 
 class SimilarCoin(BaseModel):
-    address: str
     chain: str
-    is_og: bool
-    last_trade_time: int
-    liquidity: float
-    logo: str
-    mcp: float
+    address: str
+    symbol: str
     name: str
     open_or_create_time: int
-    symbol: str
+    last_trade_time: int
+    mcp: float
+    liquidity: float
+    logo: str
+    is_og: bool
 
 
 class SimilarCoinExtreme(BaseModel):
-    address: str
     chain: str
-    is_og: bool
-    last_trade_time: int
-    liquidity: float
-    logo: str
-    mcp: float
+    address: str
+    symbol: str
     name: str
     open_or_create_time: int
-    symbol: str
+    last_trade_time: int
+    mcp: float
+    liquidity: float
+    logo: str
+    is_og: bool
 
 
 class SimilarCoinExtremesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    name: Annotated[str, Field(examples=["Bonk"])]
     symbol: Annotated[str, Field(examples=["Bonk"])]
+    name: Annotated[str, Field(examples=["Bonk"])]
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
 
 
 class SimilarCoinsParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    name: Annotated[str, Field(examples=["Bonk"])]
-    order_by: SimilarCoinsOrderBy | None = SimilarCoinsOrderBy.MCP
     symbol: Annotated[str, Field(examples=["Bonk"])]
+    name: Annotated[str, Field(examples=["Bonk"])]
     token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    order_by: SimilarCoinsOrderBy | None = SimilarCoinsOrderBy.MCP
 
 
 class SmartMoneyRisk(BaseModel):
-    fast_tx: str
-    fast_tx_ratio: float
+    token_active: str
+    token_honeypot: str
+    token_honeypot_ratio: float
     no_buy_hold: str
     no_buy_hold_ratio: float
     sell_pass_buy: str
     sell_pass_buy_ratio: float
-    token_active: str
-    token_honeypot: str
-    token_honeypot_ratio: float
+    fast_tx: str
+    fast_tx_ratio: float
 
 
 class SmartMoneyWalletInfoParams(BaseModel):
@@ -2396,114 +2399,114 @@ class StatsParams(BaseModel):
 
 
 class SwapRankToken(BaseModel):
-    address: str
-    bluechip_owner_percentage: float
-    bot_degen_count: int
-    bot_degen_rate: float
-    bundler_rate: float
-    burn_ratio: float
-    burn_status: str
-    buy_tax: str
-    buys: int
-    chain: str
-    creation_timestamp: int
-    creator: str
-    creator_close: bool
-    creator_token_status: str
-    cto_flag: int
-    dev_team_hold_rate: float
-    dev_token_burn_amount: float
-    dev_token_burn_ratio: float
-    dexscr_ad: int
-    dexscr_ad_ts: int
-    dexscr_boost_fee: int
-    dexscr_boost_ts: int
-    dexscr_trending_bar: int
-    dexscr_trending_bar_ts: int
-    dexscr_update_link: int
-    dexscr_update_link_ts: int
-    end_live_timestamp: int
-    entrapment_ratio: float
-    exchange: str
-    fund_from_address: str | None = None
-    gas_fee: float
-    history_highest_market_cap: int
-    holder_count: int
-    hot_level: int
     id: int
-    image_dup: str
+    chain: str
+    address: str
+    name: str
+    symbol: str
+    logo: str
+    price: float
+    price_change_percent: float
+    price_change_percent1m: float
+    price_change_percent5m: float
+    price_change_percent1h: float
+    volume: float
+    liquidity: float
+    market_cap: float
+    total_supply: int
     initial_liquidity: float
-    is_honeypot: int
-    is_og: bool
-    is_open_source: int
-    is_renounced: int
-    is_show_alert: bool
-    is_token_live: bool
-    is_wash_trading: bool
-    launch_quote_address: str
+    history_highest_market_cap: int
+    swaps: int
+    buys: int
+    sells: int
+    holder_count: int
+    top_10_holder_rate: float
+    open_timestamp: int
+    creation_timestamp: int
+    pool_type: int
+    pool_type_str: str
     launchpad: str
     launchpad_platform: str
     launchpad_status: str
-    liquidity: float
-    lock_percent: int
-    logo: str
-    market_cap: float
-    migrated_pool_exchange: str
-    name: str
-    open_timestamp: int
-    pool_type: int
-    pool_type_str: str
-    price: float
-    price_change_percent: float
-    price_change_percent1h: float
-    price_change_percent1m: float
-    price_change_percent5m: float
-    rank: int
-    rat_trader_amount_rate: float
-    renounced_freeze_account: int
-    renounced_mint: int
-    renowned_count: int
-    rug_ratio: float
-    score: float
-    sell_tax: str
-    sells: int
-    smart_degen_count: int
-    sniper_count: int
-    square_mentions: int
-    start_live_timestamp: int
-    swaps: int
-    symbol: str
-    tcid: str
-    telegram: str
-    telegram_dup: int
-    top70_sniper_hold_rate: float
-    top_10_holder_rate: float
-    total_supply: int
-    trans_name: str
-    trans_name_zhcn: str
-    trans_symbol: str
-    trans_symbol_zhcn: str
-    twitter_change_flag: int
-    twitter_create_token_count: int
-    twitter_del_post_token_count: int
-    twitter_dup: int
-    twitter_rename_count: int
+    exchange: str
     twitter_username: str
-    visiting_count: int
-    volume: float
     website: str
+    telegram: str
+    renounced_mint: int
+    renounced_freeze_account: int
+    burn_ratio: float
+    burn_status: str
+    dev_token_burn_amount: float
+    dev_token_burn_ratio: float
+    creator: str
+    creator_token_status: str
+    creator_close: bool
+    fund_from_address: str | None = None
+    hot_level: int
+    is_show_alert: bool
+    is_wash_trading: bool
+    image_dup: str
+    dexscr_ad: int
+    dexscr_update_link: int
+    cto_flag: int
+    twitter_change_flag: int
+    twitter_rename_count: int
+    twitter_del_post_token_count: int
+    twitter_create_token_count: int
+    rat_trader_amount_rate: float
+    bluechip_owner_percentage: float
+    rug_ratio: float
+    sniper_count: int
+    smart_degen_count: int
+    renowned_count: int
+    bundler_rate: float
+    entrapment_ratio: float
+    dexscr_trending_bar: int
+    dexscr_boost_fee: int
+    is_og: bool
+    gas_fee: float
+    is_token_live: bool
+    start_live_timestamp: int
+    end_live_timestamp: int
+    tcid: str
+    dev_team_hold_rate: float
+    top70_sniper_hold_rate: float
+    bot_degen_count: int
+    buy_tax: str
+    sell_tax: str
+    is_honeypot: int
+    is_renounced: int
+    is_open_source: int
+    lock_percent: int
+    bot_degen_rate: float
+    dexscr_ad_ts: int
+    dexscr_update_link_ts: int
+    dexscr_boost_ts: int
+    dexscr_trending_bar_ts: int
+    twitter_dup: int
+    telegram_dup: int
     website_dup: int
+    score: float
+    rank: int
+    square_mentions: int
+    visiting_count: int
+    trans_name: str
+    trans_symbol: str
+    trans_name_zhcn: str
+    trans_symbol_zhcn: str
+    launch_quote_address: str
+    migrated_pool_exchange: str
 
 
 class SwapRankingsParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    platforms: list[str] | None = None
-    """
-    Restrict to these exchanges/launchpads, e.g. `pump`, `raydium`, `meteora`.
-    """
     timeframe: TimeWindow | None = TimeWindow.FIELD_24H
     """
     Activity window to rank over.
+    """
+    platforms: list[str] | None = None
+    """
+    Restrict to these exchanges/launchpads, e.g. `pump`, `raydium`, `meteora`.
     """
 
 
@@ -2512,15 +2515,15 @@ class SymbolListRequest(BaseModel):
 
 
 class TagCounts(BaseModel):
+    smart_degen_count: int
+    renowned_count: int
+    fresh_wallet_count: int
+    dex_bot_count: int
+    insider_count: int
+    following_count: int
+    dev_count: int
     bluechip_owner_count: int
     bundler_count: int
-    dev_count: int
-    dex_bot_count: int
-    following_count: int
-    fresh_wallet_count: int
-    insider_count: int
-    renowned_count: int
-    smart_degen_count: int
     sniper_count: int
 
 
@@ -2532,16 +2535,16 @@ class TokenAiNarrativeParams(BaseModel):
 class TokenBrief(BaseModel):
     address: str
     chain: str
+    symbol: str
+    logo: str
+    is_show_alert: bool
+    liqudity: str
     decimals: int
     is_honeypot: bool
-    is_show_alert: bool
     launchpad: str
     launchpad_platform: str
-    liqudity: str
-    logo: str
     migrated_pool_exchange: str
     renounced_freeze_account: bool | None
-    symbol: str
     total_supply: str | None = None
 
 
@@ -2552,23 +2555,23 @@ class TokenBundlerStatParams(BaseModel):
 
 class TokenCandlesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    from_timestamp: Annotated[int | None, Field(ge=0)] = 0
-    """
-    Unix milliseconds lower bound, inclusive.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=1000)] = 1000
-    """
-    Maximum candles.
-    """
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     resolution: Resolution | None = Resolution.FIELD_1H
     """
     Candle width.
+    """
+    from_timestamp: Annotated[int | None, Field(ge=0)] = 0
+    """
+    Unix milliseconds lower bound, inclusive.
     """
     to_timestamp: Annotated[int | None, Field(ge=0)] = None
     """
     Unix milliseconds upper bound. Defaults to now.
     """
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    limit: Annotated[int | None, Field(ge=1, le=1000)] = 1000
+    """
+    Maximum candles.
+    """
 
 
 class TokenCommunity(BaseModel):
@@ -2576,39 +2579,59 @@ class TokenCommunity(BaseModel):
 
 
 class TokenCommunityMessage(BaseModel):
-    accu_cost: str
-    accu_fee: str
-    balance: str
-    content: str
-    created_at: str
-    current_holding_usd: str
-    current_pnl_usd: str
-    display_content: str | None = None
-    display_name: str
-    follower_count: int
     id: str
+    content: str
+    media_url: str | None
+    username: str
+    display_name: str
+    profile_image_url: str | None
+    wallet_address: str
+    user_twitter_url: str
+    follower_count: int
+    like_count: int
+    reply_count: int
+    created_at: str
+    source: str
+    multiplier: str
+    ulid: str
     is_blue_verified: bool
     is_kol: bool
     is_safe: str
-    like_count: int
-    media_url: str | None
-    multiplier: str
-    profile_image_url: str
-    reply_count: int
-    source: str
-    ulid: str
-    user_twitter_url: str
-    username: str
-    wallet_address: str
+    balance: str
+    accu_cost: str
+    accu_fee: str
+    current_holding_usd: str
+    current_pnl_usd: str
+    profile_username: str | None = None
+    encrypted_user_id: str | None = None
+    open_id: str | None = None
+    bought_amount: str | None = None
+    sold_amount: str | None = None
+    transfer_out_amount: str | None = None
+    accu_amount: str | None = None
+    swap_accu_amount: str | None = None
+    swap_accu_fee: str | None = None
+    swap_accu_cost: str | None = None
+    unrealized_profit: str | None = None
+    unrealized_profit_pnl: str | None = None
+    realized_profit: str | None = None
+    history_sold_income: str | None = None
+    history_transfer_out_income: str | None = None
+    history_bought_cost: str | None = None
+    history_transfer_in_cost: str | None = None
+    history_bought_fee: str | None = None
+    history_sold_fee: str | None = None
+    history_transfer_out_fee: str | None = None
+    display_content: str | None = None
 
 
 class TokenCommunityMessagesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     limit: Annotated[int | None, Field(ge=1, le=100)] = 50
     """
     Maximum messages.
     """
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
 
 
 class TokenDevInfoParams(BaseModel):
@@ -2627,63 +2650,63 @@ class TokenFeeInfoParams(BaseModel):
 
 
 class TokenFeeLockDetail(BaseModel):
-    is_blackhole: bool
     percent: str
     pool: str
+    is_blackhole: bool
 
 
 class TokenFeeLockSummary(BaseModel):
     is_locked: bool
-    left_lock_percent: str
     lock_detail: list[TokenFeeLockDetail] | None
-    lock_percent: str
     lock_tags: Any
+    lock_percent: str
+    left_lock_percent: str
 
 
 class TokenFeePool(BaseModel):
     address: str
     exchange: str
-    fee_params: list[str] | None
+    liquidity: float
     fee_ratio: float
     is_dynamic_fee: bool
-    liquidity: float
-    meteora_damm_v2_base_fee_config: Any
-    meteora_virtual_curve_fee_config: Any
     pool_type: str
+    meteora_virtual_curve_fee_config: Any
+    meteora_damm_v2_base_fee_config: Any
+    fee_params: list[str] | None
 
 
 class TokenFeeSecurity(BaseModel):
     address: str
-    audit: TokenFeeSecurityAudit | None = None
-    average_tax: str
-    blacklist: int
+    is_show_alert: bool
+    top_10_holder_rate: str
+    renounced_mint: bool | None = None
+    renounced_freeze_account: bool | None = None
     burn_ratio: str
     burn_status: str
-    buy_tax: str
-    can_not_sell: int
-    can_sell: int
     dev_token_burn_amount: str
     dev_token_burn_ratio: str
-    flags: list[str]
-    hide_risk: bool
-    high_tax: str
-    honeypot: int
-    is_blacklist: bool | None
-    is_honeypot: bool | None
     is_open_source: bool | None
-    is_renounced: bool | None
-    is_show_alert: bool
-    lockInfo: Any
-    lock_summary: TokenFeeLockSummary
     open_source: int
-    privileges: Any
+    is_blacklist: bool | None
+    blacklist: int
+    is_honeypot: bool | None
+    honeypot: int
+    is_renounced: bool | None
     renounced: int | None
-    renounced_freeze_account: bool | None = None
-    renounced_mint: bool | None = None
+    can_sell: int
+    can_not_sell: int
+    buy_tax: str
     sell_tax: str
-    top_10_holder_rate: str
+    average_tax: str
+    high_tax: str
     total_buy_tax: str
     total_sell_tax: str
+    flags: list[str]
+    lockInfo: Any
+    lock_summary: TokenFeeLockSummary
+    hide_risk: bool
+    privileges: Any
+    audit: TokenFeeSecurityAudit | None = None
 
 
 class TokenFeeSecurityAudit(BaseModel):
@@ -2693,74 +2716,74 @@ class TokenFeeSecurityAudit(BaseModel):
 
 
 class TokenHolder(BaseModel):
+    address: str
     account_address: str
+    addr_type: int
+    exchange: str
+    native_balance: str
+    balance: float
+    amount_cur: float
+    usd_value: float
+    amount_percentage: float
     accu_amount: float
     accu_cost: float
-    addr_type: int
-    address: str
-    amount_cur: float
-    amount_percentage: float
-    avatar: str | None
-    avg_cost: float | None
-    avg_sold: float | None
-    balance: float
-    bluechip_holding_info: list[TokenHolderBluechipHolding] | None = None
-    buy_amount_cur: float
-    buy_tx_count_cur: int
-    buy_volume_cur: float
     cost: float
     cost_cur: float
-    created_at: int
+    sell_amount_cur: float
+    sell_amount_percentage: float
+    sell_volume_cur: float
+    buy_volume_cur: float
+    buy_amount_cur: float
+    netflow_usd: float
+    netflow_amount: float
+    buy_tx_count_cur: int
+    sell_tx_count_cur: int
     current_buy_amount: float
     current_sell_amount: float
     current_transfer_in_amount: float
     current_transfer_out_amount: float
-    end_holding_at: int | None
-    exchange: str
     history_bought_cost: float
     history_bought_fee: float
-    history_sold_fee: float
     history_sold_income: float
+    history_sold_fee: float
     history_transfer_in_amount: float
     history_transfer_in_cost: float
     history_transfer_out_amount: float
-    history_transfer_out_fee: float
     history_transfer_out_income: float
-    is_new: bool
-    is_on_curve: bool
-    is_suspicious: bool
-    last_active_timestamp: int
-    last_block: int
-    maker_token_tags: list[str]
-    name: str | None
-    native_balance: str
-    native_transfer: HolderNativeTransfer | None
-    netflow_amount: float
-    netflow_usd: float
+    history_transfer_out_fee: float
+    transfer_in_count: int
+    transfer_out_count: int
+    wallet_tag_v2: str
     profit: float
+    total_cost: float
     profit_change: float | None
-    realized_pnl: float | None
     realized_profit: float
-    sell_amount_cur: float
-    sell_amount_percentage: float
-    sell_tx_count_cur: int
-    sell_volume_cur: float
+    realized_pnl: float | None
+    unrealized_profit: float
+    unrealized_pnl: float | None
+    avg_cost: float | None
+    avg_sold: float | None
+    transfer_in: bool
+    is_new: bool
+    is_suspicious: bool
+    is_on_curve: bool
     start_holding_at: int | None
-    tags: list[str]
+    end_holding_at: int | None
+    last_block: int
+    last_active_timestamp: int
+    native_transfer: HolderNativeTransfer | None
     token_transfer: HolderTokenTransfer
     token_transfer_in: HolderTokenTransfer
     token_transfer_out: HolderTokenTransfer
-    total_bc_value: float | None = None
-    total_cost: float
-    transfer_in: bool
-    transfer_in_count: int
-    transfer_out_count: int
-    twitter_name: str | None
+    tags: list[str]
+    maker_token_tags: list[str]
+    name: str | None
+    avatar: str | None
     twitter_username: str | None
-    unrealized_pnl: float | None
-    unrealized_profit: float
-    usd_value: float
-    wallet_tag_v2: str
+    twitter_name: str | None
+    created_at: int
+    bluechip_holding_info: list[TokenHolderBluechipHolding] | None = None
+    total_bc_value: float | None = None
 
 
 class TokenHolderBluechipHolding(BaseModel):
@@ -2789,13 +2812,13 @@ class TokenInfoBriefParams(BaseModel):
 
 class TokenLaunchpad(BaseModel):
     address: str
-    description: str
-    launch_quote_address: str
     launchpad: str
-    launchpad_platform: str
-    launchpad_progress: str
     launchpad_status: int
+    launchpad_progress: str
+    description: str
+    launchpad_platform: str
     migrated_pool_exchange: str
+    launch_quote_address: str
 
 
 class TokenLiquidityStatsParams(BaseModel):
@@ -2829,71 +2852,67 @@ class TokenPricesParams(BaseModel):
 
 class TokenRug(BaseModel):
     address: str
+    rug_ratio: str
     holder_rugged_num: int
     holder_token_num: int
-    rug_ratio: str
     rugged_tokens: list[RuggedToken] | None
 
 
 class TokenSecurity(BaseModel):
     address: str
-    average_tax: str
-    blacklist: int
+    is_show_alert: bool
+    top_10_holder_rate: str
+    renounced_mint: bool | None = None
+    renounced_freeze_account: bool | None = None
     burn_ratio: str
     burn_status: str
-    buy_tax: str
-    can_not_sell: int
-    can_sell: int
     dev_token_burn_amount: str
     dev_token_burn_ratio: str
-    flags: list[str]
-    hide_risk: bool
-    high_tax: str
-    honeypot: int
-    is_blacklist: bool | None
-    is_honeypot: bool | None
     is_open_source: bool | None
+    open_source: int
+    is_blacklist: bool | None
+    blacklist: int
+    is_honeypot: bool | None
+    honeypot: int
     is_renounced: bool | None
-    is_show_alert: bool
+    renounced: int | None
+    can_sell: int
+    can_not_sell: int
+    buy_tax: str
+    sell_tax: str
+    average_tax: str
+    high_tax: str
+    flags: list[str]
     lockInfo: Any
     lock_summary: LockSummary
-    open_source: int
+    hide_risk: bool
     privileges: Any
-    renounced: int | None
-    renounced_freeze_account: bool | None = None
-    renounced_mint: bool | None = None
-    sell_tax: str
-    top_10_holder_rate: str
     total_buy_tax: str | None = None
     total_sell_tax: str | None = None
 
 
 class TokenSignal(BaseModel):
-    ath: float
-    cur_data: TokenSignalCurrentStats
-    data: TokenSignalTokenInfo
-    first_trigger_mc: float
     id: str
-    market_cap: float
-    signal_times: int
-    signal_times_by_type: dict[str, int]
-    signal_type: int
     token_address: str
+    signal_type: int
+    ath: float
+    market_cap: float
     trigger_at: int
     trigger_mc: float
+    first_trigger_mc: float
+    signal_times: int
+    signal_times_by_type: dict[str, int]
+    data: TokenSignalTokenInfo
+    cur_data: TokenSignalCurrentStats
 
 
 class TokenSignalCurrentStats(BaseModel):
+    top_10_holder_rate: float
     holder_count: int
     liquidity: float
-    top_10_holder_rate: float
 
 
 class TokenSignalGroupRequest(BaseModel):
-    launchpad_platforms: list[str] | None = None
-    """
-    Restrict to tokens launched on these platforms.
-    """
     signal_types: Annotated[list[int], Field(min_length=1)]
     """
     GMGN signal ids to match, e.g. `1` for a surge.
@@ -2902,162 +2921,166 @@ class TokenSignalGroupRequest(BaseModel):
     """
     Drop tokens whose lifetime launchpad fees are below this.
     """
+    launchpad_platforms: list[str] | None = None
+    """
+    Restrict to tokens launched on these platforms.
+    """
 
 
 class TokenSignalTokenInfo(BaseModel):
-    address: str
-    binance_charity_tax: int
-    bonus_category: Any
-    bot_degen_count: int
-    bot_degen_rate: float
-    bundler_mhr: int
-    bundler_trader_amount_rate: float
-    burn_status: str
-    burn_tax: int
-    buy_tax: int
-    buys_1h: int
-    buys_1m: int
-    buys_24h: int
-    buys_6h: int
-    callout_count: int
-    callout_declaration: bool
     chain: str
-    claim_avatar: str
-    claim_fee_is_first: bool
-    claim_fee_sol_amount: str
-    claim_platform: str
-    claim_platform_avatar: str
-    claim_platform_username: str
-    claim_twitter_user_name: str
-    claim_wallet_address: str
-    complete_cost_time: int
-    complete_timestamp: int
-    created_timestamp: int
-    created_timestamp_us: int
-    creation_tool: str
-    creator: str
-    creator_balance_rate: float
-    creator_created_count: int
-    creator_created_open_count: int
-    creator_created_open_ratio: float
-    creator_token_status: str
-    cto_flag: bool
-    decimals: int
-    dev_tax: int
-    dev_team_hold_rate: float
-    dev_token_burn_amount: int
-    dev_token_burn_ratio: int
-    dexscr_ad: bool
-    dexscr_boost_fee: int
-    dexscr_trending_bar: bool
-    dexscr_update_link: bool
-    dividend_tax: int
-    end_live_timestamp: int
-    entrapment_ratio: float
-    exchange: str
-    fee_params: Any
-    fracaster: Any
-    fresh_wallet_rate: float
-    fund_from: str
-    fund_from_address: str
-    fund_from_ts: int
-    giggle_charity_tax: int
-    has_at_least_one_social: bool
-    holder_count: int
-    image_dup: int
-    instagram: str
-    is_honeypot: str
-    is_og: bool
-    is_token_live: bool
-    is_wash_trading: bool
+    address: str
+    pool_address: str
+    quote_address: str
+    logo: str
+    symbol: str
+    name: str
+    trans_symbol: str
+    trans_name: str
+    trans_symbol_zhcn: str
+    trans_name_zhcn: str
     launchpad: str
     launchpad_platform: str
-    liquidity: float
-    liquidity_tax: int
-    logo: str
+    creation_tool: str
+    exchange: str
+    creator_token_status: str
+    dev_token_burn_amount: int
+    dev_token_burn_ratio: int
+    progress: float
+    total_supply: int
+    usd_market_cap: float
     market_cap: float
-    max_amount: int
-    migrated_pool_exchange: str | None = None
-    min_amount: int
-    name: str
+    swaps_1h: int
+    volume_1h: int
+    buys_1h: int
+    sells_1h: int
     net_buy_1h: int
+    swaps_1m: int
+    buys_1m: int
+    sells_1m: int
     net_buy_1m: int
-    net_buy_24h: int
+    volume_1m: int
+    swaps_6h: int
+    volume_6h: int
+    buys_6h: int
+    sells_6h: int
     net_buy_6h: int
-    offchain: bool
-    open_source: str
+    swaps_24h: int
+    volume_24h: int
+    buys_24h: int
+    sells_24h: int
+    net_buy_24h: int
+    top_10_holder_rate: float
+    creator_balance_rate: float
+    rat_trader_amount_rate: float
+    bundler_trader_amount_rate: float
+    bundler_mhr: int
+    renowned_count: int
+    bot_degen_rate: float
+    start_live_timestamp: int
+    end_live_timestamp: int
+    sniper_count: int
+    bot_degen_count: int
+    smart_degen_count: int
+    holder_count: int
+    liquidity: float
+    creator: str
+    creator_created_open_count: int
+    creator_created_open_ratio: float
+    creator_created_count: int
+    fund_from: str
+    fund_from_ts: int
+    fund_from_address: str
+    rug_ratio: float
+    created_timestamp: int
+    created_timestamp_us: int
     open_timestamp: int
     open_timestamp_us: int
-    other_tax: int
-    owner_renounced: str
-    pool_address: str
-    priority_fee: float
-    private_vault_hold_rate: int
-    progress: float
-    quote_address: str
-    rat_trader_amount_rate: float
-    renounced_freeze_account: bool
-    renounced_mint: bool
-    renowned_count: int
-    rug_ratio: float
-    sell_tax: int
-    sells_1h: int
-    sells_1m: int
-    sells_24h: int
-    sells_6h: int
-    seq_index: str
-    show_sharing_fee: bool
-    smart_degen_count: int
-    sniper_count: int
-    standard: str
-    start_live_timestamp: int
-    status: int
-    suspected_insider_hold_rate: float
-    swaps_1h: int
-    swaps_1m: int
-    swaps_24h: int
-    swaps_6h: int
-    symbol: str
-    tc_name: str
-    tcid: str
-    telegram: str
-    telegram_dup: int
-    tg_call_count: int
-    tiktok: str
-    tip_fee: float
-    top70_sniper_hold_rate: float
-    top_10_holder_rate: float
-    top_10_holder_rate_snp: float
-    total_buy_tax: int
     total_fee: float
+    priority_fee: float
+    tip_fee: float
+    fee_params: Any
+    show_sharing_fee: bool
+    buy_tax: int
+    sell_tax: int
+    total_buy_tax: int
     total_sell_tax: int
-    total_supply: int
-    trade_fee: float
-    trans_name: str
-    trans_name_zhcn: str
-    trans_symbol: str
-    trans_symbol_zhcn: str
-    trigger_count: int
-    tweet_publish_time: int
-    twitter: str
-    twitter_create_token_count: int
-    twitter_del_post_token_count: int
-    twitter_dup: int
-    twitter_handle: str
-    twitter_is_tweet: bool
-    twitter_rename_count: int
-    usd_market_cap: float
+    dev_tax: int
+    burn_tax: int
+    dividend_tax: int
+    liquidity_tax: int
     vault_tax: int
+    other_tax: int
+    giggle_charity_tax: int
+    binance_charity_tax: int
+    entrapment_ratio: float
+    is_wash_trading: bool
+    renounced_mint: bool
+    renounced_freeze_account: bool
+    burn_status: str
+    is_honeypot: str
+    open_source: str
+    owner_renounced: str
+    dev_team_hold_rate: float
+    suspected_insider_hold_rate: float
+    is_token_live: bool
+    top70_sniper_hold_rate: float
+    private_vault_hold_rate: int
     visiting_count: int
-    volume_1h: int
-    volume_1m: int
-    volume_24h: int
-    volume_6h: int
+    seq_index: str
+    has_at_least_one_social: bool
+    twitter_is_tweet: bool
+    twitter: str
     website: str
-    website_dup: int
-    x_user_follower: int
-    x_user_following: int
+    telegram: str
+    instagram: str
+    tiktok: str
+    fracaster: Any
     zora_social_info: Any
+    dexscr_ad: bool
+    dexscr_update_link: bool
+    dexscr_trending_bar: bool
+    dexscr_boost_fee: int
+    cto_flag: bool
+    offchain: bool
+    twitter_rename_count: int
+    twitter_del_post_token_count: int
+    twitter_create_token_count: int
+    twitter_handle: str
+    tc_name: str
+    x_user_following: int
+    x_user_follower: int
+    tcid: str
+    image_dup: int
+    status: int
+    tg_call_count: int
+    callout_count: int
+    callout_declaration: bool
+    fresh_wallet_rate: float
+    trade_fee: float
+    twitter_dup: int
+    telegram_dup: int
+    website_dup: int
+    complete_timestamp: int
+    complete_cost_time: int
+    bonus_category: Any
+    standard: str
+    decimals: int
+    tweet_publish_time: int
+    is_og: bool
+    top_10_holder_rate_snp: float
+    trigger_count: int
+    min_amount: int
+    max_amount: int
+    claim_fee_is_first: bool
+    claim_fee_sol_amount: str
+    claim_twitter_user_name: str
+    claim_avatar: str
+    claim_wallet_address: str
+    claim_platform: str
+    claim_platform_username: str
+    claim_platform_avatar: str
+    migrated_pool_exchange: str | None = None
 
 
 class TokenSignalsParams(BaseModel):
@@ -3073,37 +3096,37 @@ class TokenSignalsRequest(BaseModel):
 
 class TokenSocialLink(BaseModel):
     address: str
-    bitbucket: str
-    description: str
-    discord: str
-    facebook: str
-    fracaster: str | None
-    geckoterminal: str
-    github: str
     gmgn: str
+    geckoterminal: str
+    twitter_username: str
+    website: str
+    telegram: str
+    bitbucket: str
+    discord: str
+    description: str
+    facebook: str
+    github: str
     instagram: str
     linkedin: str
     medium: str
     reddit: str
-    telegram: str
     tiktok: str
-    twitter_username: str
-    verify_status: int
-    website: str
     youtube: str
+    verify_status: int
+    fracaster: str | None
 
 
 class TokenTradesV2Params(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    cursor: str | None = None
-    """
-    Pagination token from the previous page's `data.next`.
-    """
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     maker: str | None = ""
     """
     Restrict to a single maker wallet.
     """
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    cursor: str | None = None
+    """
+    Pagination token from the previous page's `data.next`.
+    """
 
 
 class TokenTrendPoint(BaseModel):
@@ -3112,10 +3135,10 @@ class TokenTrendPoint(BaseModel):
 
 
 class TokenTrendSeries(BaseModel):
+    entrapment_percent: list[TokenTrendPoint] | None = None
     avg_holding_balance: list[TokenTrendPoint] | None = None
     bot_degen_percent: list[TokenTrendPoint] | None = None
     bundler_percent: list[TokenTrendPoint] | None = None
-    entrapment_percent: list[TokenTrendPoint] | None = None
     holder_count: list[TokenTrendPoint] | None = None
     insider_percent: list[TokenTrendPoint] | None = None
     top100_holder_percent: list[TokenTrendPoint] | None = None
@@ -3137,39 +3160,39 @@ class TokenVote(BaseModel):
 
 
 class TopBuyerHolderInfo(BaseModel):
+    wallet_address: str
+    tags: list[str] | None
     maker_token_tags: list[str]
     status: str | None = None
-    tags: list[str] | None
-    wallet_address: str
 
 
 class TopBuyerHolders(BaseModel):
-    bought_more: int
     chain: str
-    hold_diff: int
-    holderInfo: list[TopBuyerHolderInfo]
     holder_count: int
+    top70_sniper_hold_rate: str
+    statusNow: TopBuyerStatusNow
     sold_diff: int
     sold_part_diff: int
-    statusNow: TopBuyerStatusNow
-    top70_sniper_hold_rate: str
+    hold_diff: int
+    bought_more: int
+    holderInfo: list[TopBuyerHolderInfo]
 
 
 class TopBuyerStatusNow(BaseModel):
-    bought_more: int
-    bought_rate: str
     hold: int
-    holding_rate: str
-    smart_count_bought_more: int | None
-    smart_count_hold: int | None
-    smart_count_sold: int | None
-    smart_count_sold_part: int | None
-    smart_count_transfered: int | None
-    smart_pos: list[int]
-    sold: int
+    bought_more: int
     sold_part: int
-    top_10_holder_rate: float
+    sold: int
     transfered: int
+    bought_rate: str
+    holding_rate: str
+    smart_pos: list[int]
+    smart_count_hold: int | None
+    smart_count_bought_more: int | None
+    smart_count_sold_part: int | None
+    smart_count_sold: int | None
+    smart_count_transfered: int | None
+    top_10_holder_rate: float
 
 
 class TopBuyersParams(BaseModel):
@@ -3178,86 +3201,83 @@ class TopBuyersParams(BaseModel):
 
 
 class TopCaller(BaseModel):
+    rank: int
+    wallet: str
+    twitter_username: str
+    twitter_name: str
+    twitter_avatar: str
+    is_blue: bool
     avg_multiplier: str
+    total_calls: int
+    hit_2x_count: int
+    top_tokens: list[TopCallerToken]
+    prev_rank: int
+    tier: str
+    follower_count: int
     display_name: str | None = None
     encrypted_user_id: str | None = None
-    follower_count: int
-    hit_2x_count: int
-    is_blue: bool
-    prev_rank: int
     profile_image_url: str | None = None
-    rank: int
-    tier: str
-    top_tokens: list[TopCallerToken]
-    total_calls: int
-    twitter_avatar: str
-    twitter_name: str
-    twitter_username: str
     username: str | None = None
-    wallet: str
+    profile_username: str | None = None
 
 
 class TopCallerToken(BaseModel):
     chain: str
+    token: str
+    token_symbol: str
+    token_logo: str
+    multiplier: str
     launchpad: str
     launchpad_platform: str
-    multiplier: str
-    token: str
-    token_logo: str
-    token_symbol: str
 
 
 class TopCallersParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    window: TimeWindow | None = TimeWindow.FIELD_24H
-    """
-    Window the call multiples are scored over.
-    """
 
 
 class Tpool(BaseModel):
-    base_address: str
     exchange: str
-    launch_type: str
     pool_address: str
+    base_address: str
     quote_address: str
+    launch_type: str
 
 
 class TradeHistory(BaseModel):
-    amount_usd: str
-    balance: str
+    maker: str
     base_amount: str
-    dex_native: str
-    dex_usd: str
+    quote_amount: str
+    amount_usd: str
+    timestamp: int
     event: str
-    gas_native: str
-    gas_usd: str
-    history_bought_amount: str
-    history_sold_amount: str
-    history_sold_income: str
+    tx_hash: str
+    price_usd: str
     id: str
     is_open_or_close: int
-    maker: str
-    maker_avatar: str
-    maker_ens: str
-    maker_event_tags: list[str]
-    maker_name: str
+    token_address: str
     maker_tags: list[str]
     maker_token_tags: list[str]
-    maker_twitter_name: str
-    maker_twitter_username: str
-    price_usd: str
-    priority_fee: str
+    maker_event_tags: list[str]
     quote_address: str
-    quote_amount: str
     quote_symbol: str
-    realized_profit: str
-    timestamp: int
-    tip_fee: str
-    token_address: str
     total_trade: int
-    tx_hash: str
+    balance: str
+    history_bought_amount: str
+    history_sold_income: str
+    history_sold_amount: str
+    realized_profit: str
     unrealized_profit: str
+    maker_name: str
+    maker_twitter_username: str
+    maker_twitter_name: str
+    maker_avatar: str
+    maker_ens: str
+    priority_fee: str
+    tip_fee: str
+    gas_usd: str
+    gas_native: str
+    dex_usd: str
+    dex_native: str
 
 
 class TraderStatParams(BaseModel):
@@ -3267,33 +3287,33 @@ class TraderStatParams(BaseModel):
 
 class TradersParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    cursor: str | None = None
-    direction: SortDirection | None = SortDirection.DESC
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
     limit: Annotated[int | None, Field(ge=1, le=1000)] = 100
     order_by: TraderOrderBy | None = TraderOrderBy.PROFIT
+    direction: SortDirection | None = SortDirection.DESC
     tag: HolderTag | None = None
     """
     Wallet cohort to filter on. Omit for all traders.
     """
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    cursor: str | None = None
 
 
 class TradesParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
+    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
+    maker: str | None = ""
     cursor: str | None = None
     """
     Opaque pagination token. trades returns a fixed page (~50) with no page-size control; paginate by passing the previous response's `data.next` token here.
     """
-    maker: str | None = ""
-    token_address: Annotated[str, Field(examples=["DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"])]
 
 
 class TrendingChainBucket(BaseModel):
+    interval: str
     chain: str
     filter_id: str
-    interval: str
-    tokens: list[TrendingToken]
     version: str
+    tokens: list[TrendingToken]
 
 
 class TrendingChainRequest(BaseModel):
@@ -3301,123 +3321,123 @@ class TrendingChainRequest(BaseModel):
     """
     Chain to rank tokens on.
     """
-    filters: list[TokenFilter] | None = None
-    """
-    Security screens applied before ranking.
-    """
     interval: TrendingInterval | None = None
     """
     Ranking window — GMGN recomputes the leaderboard per window.
-    """
-    launchpad_platforms: list[str] | None = None
-    """
-    Restrict to tokens launched on these platforms, e.g. `Pump.fun`, `letsbonk`, `fourmeme`.
     """
     limit: Annotated[int | None, Field(ge=1, le=500)] = None
     """
     Maximum tokens in this chain's bucket. Omit to take GMGN's own default, which is the whole leaderboard it has for that chain.
     """
+    filters: list[TokenFilter] | None = None
+    """
+    Security screens applied before ranking.
+    """
+    launchpad_platforms: list[str] | None = None
+    """
+    Restrict to tokens launched on these platforms, e.g. `Pump.fun`, `letsbonk`, `fourmeme`.
+    """
 
 
 class TrendingToken(BaseModel):
     a: str
-    bdc: int
-    bdr: float
-    bdrr: float
-    bop: float
-    br: float
-    btax: str
-    bu: int
-    c: str
-    cc: bool
-    co_d: bool
-    ct: int
-    cto: int
-    d_br: float
-    d_ct: str
-    d_ffa: str | None = None
-    d_ts: str
-    dhr: float
-    dtba: float
-    dtbr: float
-    dx_ad: int
-    dx_adts: int
-    dx_bf: int
-    dx_bts: int
-    dx_tb: int
-    dx_tbts: int
-    dx_ul: int
-    dx_ults: int
-    elt: int
-    etpr: float
-    ex: str
-    gf: float
-    hd: int
-    hhmc: int
-    hl: int
-    ilq: float
-    img_dup: str
-    isa: bool
-    isog: bool
-    itl: bool
     itv: str
-    iwt: bool
-    kol: int
+    c: str
+    nm: str
+    s: str
     l: str
-    lkp: float | None = None
+    ts_n: str
+    ts_s: str
+    ts_nzh: str
+    ts_szh: str
+    p: float
+    pcp: float
+    pcp1m: float
+    pcp5m: float
+    pcp1h: float
+    v: float
+    lq: float
+    mc: float
+    tsp: int
+    ilq: float
+    hhmc: int
+    t10: float
+    sw: int
+    bu: int
+    se: int
+    hd: int
+    sc: float
+    ot: int
+    ct: int
     lp: str
     lpp: str
     lpst: str
-    lq: float
+    ex: str
     lqa: str
-    m_t: str
-    m_w: str
-    m_x: str
-    m_xctc: int
-    m_xdpc: int
-    mc: float
     mpe: str
-    nm: str
+    m_x: str
+    m_w: str
+    m_t: str
+    tcid: str
+    s_nm: int | None = None
+    s_blk: int | None = None
+    br: float
+    s_brs: str
+    dtba: float
+    dtbr: float
+    d_ct: str
+    d_ts: str
+    cc: bool
+    d_ffa: str | None = None
+    img_dup: str
     nt: int
     ntg: int
     nws: int
-    ot: int
-    p: float
-    pcp: float
-    pcp1h: float
-    pcp1m: float
-    pcp5m: float
-    rat: float
-    rug: float
-    s: str
-    s_blk: int | None = None
-    s_brs: str
-    s_ihp: int | None
-    s_nm: int | None = None
-    s_or: int | None = None
-    s_os: int
-    s_qsafe: str | None = None
-    sc: float
-    se: int
-    slt: int
-    smt: int
-    snp: int
-    ssf: bool
-    stax: str
-    std: str | None = None
-    sw: int
-    t10: float
-    t70_shr: float
-    tcid: str
-    ts_n: str
-    ts_nzh: str
-    ts_s: str
-    ts_szh: str
-    tsp: int
-    v: float
-    v_c: int
-    xcc: int
+    dx_ad: int
+    dx_ul: int
+    dx_bf: int
+    dx_adts: int
+    dx_ults: int
+    dx_bts: int
+    dx_tbts: int
+    cto: int
     xcf: int
+    xcc: int
+    m_xdpc: int
+    m_xctc: int
+    rug: float
+    etpr: float
+    bdrr: float
+    snp: int
+    smt: int
+    kol: int
+    bdc: int
+    dhr: float
+    d_br: float
+    t70_shr: float
+    bdr: float
+    itl: bool
+    slt: int
+    elt: int
+    v_c: int
+    btax: str
+    stax: str
+    s_ihp: int | None
+    s_os: int
+    isa: bool
+    iwt: bool
+    isog: bool
+    bop: float
+    rat: float
+    hl: int
+    gf: float
+    dx_tb: int
+    ssf: bool
+    std: str | None = None
+    co_d: bool
+    s_or: int | None = None
+    lkp: float | None = None
+    s_qsafe: str | None = None
 
 
 class TrendingTokensRequest(BaseModel):
@@ -3432,68 +3452,68 @@ class TwitchKolChannel(BaseModel):
 
 
 class WalletActivityEvent(BaseModel):
-    buy_cost_usd: str | None
+    wallet: str
     chain: str
-    cost_usd: str
-    dex_native: str
-    dex_usd: str
-    event_type: str
-    from_address: str
-    gas_native: str
-    gas_usd: str
-    is_open_or_close: int
-    launchpad: str
-    launchpad_platform: str
-    price: str
-    price_usd: str
-    priority_fee: str
-    quote_address: str
-    quote_amount: str
-    quote_token: WalletActivityQuoteToken
+    tx_hash: str
     timestamp: int
-    tip_fee: str
-    to_address: str
+    event_type: str
     token: WalletActivityToken
     token_amount: str
-    tx_hash: str
-    wallet: str
+    quote_amount: str
+    cost_usd: str
+    buy_cost_usd: str | None
+    price_usd: str
+    price: str
+    is_open_or_close: int
+    quote_token: WalletActivityQuoteToken
+    quote_address: str
+    from_address: str
+    to_address: str
+    gas_native: str
+    gas_usd: str
+    dex_native: str
+    dex_usd: str
+    priority_fee: str
+    tip_fee: str
+    launchpad: str
+    launchpad_platform: str
 
 
 class WalletActivityParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    cursor: str | None = None
-    """
-    Opaque cursor from a previous `next`.
-    """
+    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
     limit: Annotated[int | None, Field(ge=1, le=100)] = 10
     type: list[str] | None = None
     """
     Event types to include; defaults to buy and sell.
     """
-    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
+    cursor: str | None = None
+    """
+    Opaque cursor from a previous `next`.
+    """
 
 
 class WalletActivityQuoteToken(BaseModel):
-    decimals: int
-    logo: str
+    token_address: str
     name: str
     symbol: str
-    token_address: str
+    decimals: int
+    logo: str
 
 
 class WalletActivityToken(BaseModel):
     address: str
-    logo: str
     symbol: str
+    logo: str
     total_supply: str
 
 
 class WalletChainBalance(BaseModel):
-    address: str
-    balance: str
     chain: str
-    token_num: int
+    address: str
     total_volume: str | None
+    token_num: int
+    balance: str
 
 
 class WalletChainBalancesParams(BaseModel):
@@ -3507,72 +3527,72 @@ class WalletCommonStatParams(BaseModel):
 
 
 class WalletDailyProfit(BaseModel):
-    profit: str
     timestamp: int
+    profit: str
 
 
 class WalletPnlParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
+    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
     period: WalletRankPeriod | None = WalletRankPeriod.FIELD_7D
     """
     Window the P&L is computed over.
     """
-    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
 
 
 class WalletPnlStat(BaseModel):
-    avg_holding_period: float | None
+    token_num: int
+    winrate: float | None
+    pnl_lt_nd5_num: int
+    pnl_nd5_0x_num: int
     pnl_0x_2x_num: int
     pnl_2x_5x_num: int
     pnl_gt_5x_num: int
-    pnl_lt_nd5_num: int
-    pnl_nd5_0x_num: int
-    token_num: int
-    winrate: float | None
+    avg_holding_period: float | None
 
 
 class WalletRankingsParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
-    order_by: WalletRankOrderBy | None = WalletRankOrderBy.PNL_7D
-    """
-    Metric to sort on. Its window is independent of `period`.
-    """
     period: WalletRankPeriod | None = WalletRankPeriod.FIELD_7D
     """
     Leaderboard window GMGN computes the rank over.
     """
+    order_by: WalletRankOrderBy | None = WalletRankOrderBy.PNL_7D
+    """
+    Metric to sort on. Its window is independent of `period`.
+    """
 
 
 class WalletRiskProfile(BaseModel):
-    fast_tx: str
-    fast_tx_ratio: int
+    token_active: str
+    token_honeypot: str
+    token_honeypot_ratio: int
     no_buy_hold: str
     no_buy_hold_ratio: float
     sell_pass_buy: str
     sell_pass_buy_ratio: int
-    token_active: str
-    token_honeypot: str
-    token_honeypot_ratio: int
+    fast_tx: str
+    fast_tx_ratio: int
 
 
 class WalletStatParams(BaseModel):
     chain: Annotated[Chain, Field(examples=["sol"])]
+    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
     period: WalletStatPeriod | None = None
     """
     P&L window. Omit for all-time.
     """
-    wallet_address: Annotated[str, Field(examples=["suqh5sHtr8HyJ7q8scBimULPkPpA557prMG47xCHQfK"])]
 
 
 class WalletTagRank(BaseModel):
-    arbitrager: int | None = None
+    trojan: int | None = None
     axiom: int | None = None
     kol: int | None = None
     photon: int | None = None
     top_followed: int | None = None
     top_renamed: int | None = None
-    trojan: int | None = None
     wash_trader: int | None = None
+    arbitrager: int | None = None
 
 
 class WalletTagsStatParams(BaseModel):

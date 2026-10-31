@@ -38,6 +38,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -1628,7 +1629,7 @@ class PinterestUserBoardCoverPin(BaseModel):
     timestamp: int | None = None
     crop: list[int] | None = None
     size: list[int] | None = None
-    scale: int | None = None
+    scale: float | None = None
     image_url: str | None = None
     custom_cover: bool | None = None
     image_size: list[int | None] | None = None

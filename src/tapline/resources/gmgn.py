@@ -767,11 +767,9 @@ def _website_info(chain: str, token_address: str) -> Request[GetWebsiteInfoRespo
     )
 
 
-def _top_callers(chain: str, *, window: TimeWindowParam = "24h") -> Request[GetTopCallersResponse]:
+def _top_callers(chain: str) -> Request[GetTopCallersResponse]:
     return Request(
-        encode_path(_PREFIX + "/{chain}/top-callers", chain=chain),
-        GetTopCallersResponse,
-        {"window": window},
+        encode_path(_PREFIX + "/{chain}/top-callers", chain=chain), GetTopCallersResponse
     )
 
 
@@ -2050,20 +2048,18 @@ class Gmgn(AsyncAPIResource):
         self,
         chain: str,
         *,
-        window: TimeWindowParam = "24h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopCallersResponse:
-        """Wallets ranked by the multiple their public token calls returned, with the tokens they called. Costs 2 credits.
+        """Wallets ranked by the multiple their public token calls returned over the last 24 hours, with the tokens they called. Costs 2 credits.
 
         Args:
             chain: See the API reference.
-            window: Window the call multiples are scored over.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.gmgn.GetTopCallersResponse`.
         """
-        return await self._send(_top_callers(chain, window=window), timeout=timeout)
+        return await self._send(_top_callers(chain), timeout=timeout)
 
     async def wallet_activity(
         self,
@@ -3389,20 +3385,18 @@ class SyncGmgn(SyncAPIResource):
         self,
         chain: str,
         *,
-        window: TimeWindowParam = "24h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopCallersResponse:
-        """Wallets ranked by the multiple their public token calls returned, with the tokens they called. Costs 2 credits.
+        """Wallets ranked by the multiple their public token calls returned over the last 24 hours, with the tokens they called. Costs 2 credits.
 
         Args:
             chain: See the API reference.
-            window: Window the call multiples are scored over.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.gmgn.GetTopCallersResponse`.
         """
-        return self._send(_top_callers(chain, window=window), timeout=timeout)
+        return self._send(_top_callers(chain), timeout=timeout)
 
     def wallet_activity(
         self,

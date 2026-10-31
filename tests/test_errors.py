@@ -46,6 +46,7 @@ STATUS_ERRORS = [
     (403, "forbidden", PermissionDeniedError),
     (403, "resource_forbidden", PermissionDeniedError),
     (404, "not_found", NotFoundError),
+    (410, "endpoint_retired", APIStatusError),
     (422, "invalid_request", UnprocessableEntityError),
     (429, "rate_limited", RateLimitError),
     (500, "internal_error", InternalServerError),

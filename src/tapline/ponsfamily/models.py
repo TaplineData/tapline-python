@@ -79,6 +79,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
@@ -87,55 +88,55 @@ class PublicError(str, Enum):
 
 
 class AnalyticsDay(BaseModel):
-    curveUsd: float | None = None
-    feesUsd: float | None = None
+    timestamp: int | None = None
+    volumeUsd: float | None = None
     launches: int | None = None
-    otherPoolsUsd: float | None = None
-    ponsPoolsUsd: float | None = None
-    ponsStockTradingUsd: float | None = None
-    quoteEthUsd: float | None = None
-    quoteOtherUsd: float | None = None
-    quoteStableUsd: float | None = None
-    quoteStockUsd: float | None = None
+    stockLaunches: int | None = None
+    trades: int | None = None
+    feesUsd: float | None = None
     revenueUsd: float | None = None
     rwaUsd: float | None = None
-    stockLaunches: int | None = None
+    curveUsd: float | None = None
+    ponsPoolsUsd: float | None = None
+    otherPoolsUsd: float | None = None
+    quoteEthUsd: float | None = None
+    quoteStableUsd: float | None = None
+    quoteStockUsd: float | None = None
+    quoteOtherUsd: float | None = None
     stockTradingUsd: float | None = None
-    timestamp: int | None = None
-    trades: int | None = None
-    volumeUsd: float | None = None
+    ponsStockTradingUsd: float | None = None
 
 
 class AnalyticsEarnings(BaseModel):
-    creatorUsd: float | None = None
     protocolUsd: float | None = None
+    creatorUsd: float | None = None
     v1: AnalyticsVersionEarnings | None = None
     v2: AnalyticsVersionEarnings | None = None
 
 
 class AnalyticsFeeFlow(BaseModel):
-    sink: str | None = None
     source: str | None = None
+    sink: str | None = None
     usd: float | None = None
 
 
 class AnalyticsIndexer(BaseModel):
-    feeClaims: int | None = None
-    launchedTokens: int | None = None
-    lockedPositions: int | None = None
     totalTokens: int | None = None
+    launchedTokens: int | None = None
     uniqueDeployers: int | None = None
+    feeClaims: int | None = None
+    lockedPositions: int | None = None
 
 
 class AnalyticsLeader(BaseModel):
     address: str | None = None
-    logo: str | None = None
+    symbol: str | None = None
     name: str | None = None
+    logo: str | None = None
     quote: str | None = None
     quoteSymbol: str | None = None
-    symbol: str | None = None
-    trades: int | None = None
     usd: float | None = None
+    trades: int | None = None
 
 
 class AnalyticsLeaders(BaseModel):
@@ -145,33 +146,33 @@ class AnalyticsLeaders(BaseModel):
 
 
 class AnalyticsMilestone(BaseModel):
-    dayNumber: int | None = None
-    timestamp: int | None = None
     usd: float | None = None
+    timestamp: int | None = None
+    dayNumber: int | None = None
 
 
 class AnalyticsMonth(BaseModel):
-    feesUsd: float | None = None
-    flows: list[AnalyticsFeeFlow] | None = None
     month: str | None = None
-    revenueUsd: float | None = None
-    toBuybacksUsd: float | None = None
+    feesUsd: float | None = None
     toCreatorsUsd: float | None = None
+    toBuybacksUsd: float | None = None
     toUniswapUsd: float | None = None
+    revenueUsd: float | None = None
+    flows: list[AnalyticsFeeFlow] | None = None
 
 
 class AnalyticsStock(BaseModel):
     address: str | None = None
-    coins: int | None = None
-    ponsShare: float | None = None
-    ponsShare30d: float | None = None
     symbol: str | None = None
     totalUsd: float | None = None
+    ponsShare: float | None = None
+    ponsShare30d: float | None = None
+    coins: int | None = None
 
 
 class AnalyticsVersionEarnings(BaseModel):
-    creatorUsd: float | None = None
     protocolUsd: float | None = None
+    creatorUsd: float | None = None
 
 
 class CommunityMarketCap(BaseModel):
@@ -181,19 +182,19 @@ class CommunityMarketCap(BaseModel):
 
 
 class CreatorHolding(BaseModel):
+    token: str | None = None
     deployer: str | None = None
     fraction: float | None = None
-    token: str | None = None
 
 
 class CreatorHoldingPair(BaseModel):
-    deployer: Annotated[str, Field(examples=["0xB9F5f4Ea1AF1F5d3678470eb98e8FBdcadEb24b0"])]
-    """
-    Deployer wallet that launched the token.
-    """
     token: Annotated[str, Field(examples=["0x39dBED3a2bd333467115dE45665cC57F813C4571"])]
     """
     Token contract address.
+    """
+    deployer: Annotated[str, Field(examples=["0xB9F5f4Ea1AF1F5d3678470eb98e8FBdcadEb24b0"])]
+    """
+    Deployer wallet that launched the token.
     """
 
 
@@ -205,207 +206,214 @@ class CreatorHoldingsRequest(BaseModel):
 
 
 class CtoMigration(BaseModel):
-    creditPot: str | None = None
-    decimals: int | None = None
-    epochCaps: list[str] | None = None
-    epochDeposits: list[str] | None = None
-    feeDestination: str | None = None
-    fillOrTime: bool | None = None
-    logoUrl: str | None = None
     migrator: str | None = None
-    name: str | None = None
+    oldToken: str | None = None
     newToken: str | None = None
     official: bool | None = None
-    oldToken: str | None = None
-    recoveredQuote: str | None = None
+    symbol: str | None = None
+    name: str | None = None
+    decimals: int | None = None
     schedule: MigrationSchedule | None = None
+    totalDeposits: str | None = None
+    totalCredits: str | None = None
     seeded: bool | None = None
     seededAt: int | None = None
+    recoveredQuote: str | None = None
     soldOldTokens: str | None = None
     surplusQuote: str | None = None
-    symbol: str | None = None
-    totalCredits: str | None = None
-    totalDeposits: str | None = None
+    fillOrTime: bool | None = None
+    epochCaps: list[str] | None = None
+    epochDeposits: list[str] | None = None
     windowClosedAt: int | None = None
+    logoUrl: str | None = None
+    feeDestination: str | None = None
+    creditPot: str | None = None
 
 
 class DeveloperTradeEvent(BaseModel):
-    blockNumber: int | None = None
-    priceUsd: float | None = None
+    type: str | None = None
     timestamp: int | None = None
-    toAddress: str | None = None
+    blockNumber: int | None = None
+    transactionHash: str | None = None
+    priceUsd: float | None = None
     tokenAmount: str | None = None
     tokenAmountDecimal: float | None = None
-    transactionHash: str | None = None
-    type: str | None = None
     valueUsd: float | None = None
+    toAddress: str | None = None
 
 
 class DistributorEpoch(BaseModel):
-    coinClaimed: str | None = None
-    coinTotal: str | None = None
-    expiresAt: int | None = None
     id: int | None = None
-    quoteClaimed: str | None = None
     quoteTotal: str | None = None
+    coinTotal: str | None = None
+    quoteClaimed: str | None = None
+    coinClaimed: str | None = None
+    expiresAt: int | None = None
     rolledOver: bool | None = None
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class FeeSharingEntry(BaseModel):
-    active: bool | None = None
     token: str | None = None
+    active: bool | None = None
+
+
+class ForumBell(BaseModel):
+    wallet: str | None = None
+    token: str | None = None
+    rangAtMs: int | None = None
+    symbol: str | None = None
 
 
 class ForumBoardRow(BaseModel):
     communityId: str | None = None
+    name: str | None = None
+    symbol: str | None = None
+    token: str | None = None
     logo: str | None = None
     marketCap: CommunityMarketCap | None = None
     move: float | None = None
-    name: str | None = None
-    symbol: str | None = None
     tag: str | None = None
-    token: str | None = None
 
 
 class ForumComment(BaseModel):
-    body: str | None = None
-    createdAtMs: int | None = None
-    depth: int | None = None
-    downvotes: int | None = None
-    editedAtMs: int | None = None
     id: str | None = None
-    parentId: str | None = None
     postId: str | None = None
-    removed: bool | None = None
-    replies: list[ForumComment] | None = None
+    parentId: str | None = None
+    wallet: str | None = None
+    body: str | None = None
     score: int | None = None
     upvotes: int | None = None
+    downvotes: int | None = None
+    removed: bool | None = None
+    editedAtMs: int | None = None
+    createdAtMs: int | None = None
     viewerVote: int | None = None
-    wallet: str | None = None
+    depth: int | None = None
+    replies: list[ForumComment] | None = None
 
 
 class ForumCommunity(BaseModel):
-    bannerKey: str | None = None
-    burnedSupply: str | None = None
-    buybackLockedSupply: str | None = None
-    createdAtMs: int | None = None
-    description: str | None = None
-    graduated: bool | None = None
     id: str | None = None
-    kind: str | None = None
-    latestBuyAt: int | None = None
-    latestBuyBlock: int | None = None
-    launchVersion: str | None = None
-    logo: str | None = None
-    marketCap: CommunityMarketCap | None = None
-    modWallet: str | None = None
-    pairToken: str | None = None
-    postCount: int | None = None
-    realMcapUsd: float | None = None
+    tokenAddress: str | None = None
     symbol: str | None = None
     title: str | None = None
-    tokenAddress: str | None = None
+    description: str | None = None
+    bannerKey: str | None = None
+    logo: str | None = None
+    modWallet: str | None = None
+    kind: str | None = None
+    postCount: int | None = None
+    createdAtMs: int | None = None
+    pairToken: str | None = None
     tokenDecimals: int | None = None
     totalSupply: str | None = None
+    launchVersion: str | None = None
+    marketCap: CommunityMarketCap | None = None
+    burnedSupply: str | None = None
+    buybackLockedSupply: str | None = None
+    realMcapUsd: float | None = None
     volume24hUsd: float | None = None
+    latestBuyAt: int | None = None
+    latestBuyBlock: int | None = None
+    graduated: bool | None = None
 
 
 class ForumEquity(BaseModel):
     address: str | None = None
-    assetClass: str | None = None
-    logo: str | None = None
-    move: float | None = None
+    symbol: str | None = None
     name: str | None = None
     priceUsd: float | None = None
-    symbol: str | None = None
+    logo: str | None = None
+    move: float | None = None
+    assetClass: str | None = None
 
 
 class ForumHolding(BaseModel):
+    token: str | None = None
+    wallet: str | None = None
     balance: str | None = None
     decimals: int | None = None
+    totalSupply: str | None = None
     supplyShare: float | None = None
     tier: str | None = None
-    token: str | None = None
-    totalSupply: str | None = None
-    wallet: str | None = None
 
 
 class ForumPosition(BaseModel):
+    token: str | None = None
+    symbol: str | None = None
     balance: str | None = None
-    capturedAtMs: int | None = None
     decimals: int | None = None
+    capturedAtMs: int | None = None
     entryPriceQuote: float | None = None
     quoteToken: str | None = None
-    symbol: str | None = None
-    token: str | None = None
 
 
 class ForumPost(BaseModel):
-    body: str | None = None
-    commentCount: int | None = None
+    id: str | None = None
     communityId: str | None = None
-    communityLogo: str | None = None
     communitySymbol: str | None = None
     communityToken: str | None = None
     communityTokenDecimals: int | None = None
-    createdAtMs: int | None = None
-    downvotes: int | None = None
-    editedAtMs: int | None = None
-    id: str | None = None
-    imageKey: str | None = None
-    kind: str | None = None
-    locked: bool | None = None
-    pinned: bool | None = None
-    position: ForumPosition | None = None
-    removed: bool | None = None
-    score: int | None = None
-    title: str | None = None
-    upvotes: int | None = None
-    viewerVote: int | None = None
+    communityLogo: str | None = None
     wallet: str | None = None
+    kind: str | None = None
+    title: str | None = None
+    body: str | None = None
+    imageKey: str | None = None
+    position: ForumPosition | None = None
+    score: int | None = None
+    upvotes: int | None = None
+    downvotes: int | None = None
+    commentCount: int | None = None
+    pinned: bool | None = None
+    locked: bool | None = None
+    removed: bool | None = None
+    editedAtMs: int | None = None
+    createdAtMs: int | None = None
+    viewerVote: int | None = None
 
 
 class ForumSession(BaseModel):
-    closeAtMs: int | None = None
-    isEarlyClose: bool | None = None
-    isTradingDay: bool | None = None
-    nextTransitionAtMs: int | None = None
-    openAtMs: int | None = None
     phase: str | None = None
+    nextTransitionAtMs: int | None = None
     sessionDayKey: str | None = None
+    isTradingDay: bool | None = None
+    isEarlyClose: bool | None = None
+    openAtMs: int | None = None
+    closeAtMs: int | None = None
 
 
 class GetAnalyticsResponse(BaseModel):
-    allPools: bool | None = None
-    earnings: AnalyticsEarnings | None = None
     generatedAt: int | None = None
-    indexer: AnalyticsIndexer | None = None
     latestDay: int | None = None
+    series: list[AnalyticsDay] | None = None
+    today: AnalyticsDay | None = None
+    indexer: AnalyticsIndexer | None = None
+    earnings: AnalyticsEarnings | None = None
+    sourceUrl: str | None = None
+    source: str | None = None
+    months: list[AnalyticsMonth] | None = None
+    stocks: list[AnalyticsStock] | None = None
     leaders: AnalyticsLeaders | None = None
     milestones: list[AnalyticsMilestone] | None = None
-    months: list[AnalyticsMonth] | None = None
-    series: list[AnalyticsDay] | None = None
-    source: str | None = None
-    sourceUrl: str | None = None
-    stocks: list[AnalyticsStock] | None = None
-    today: AnalyticsDay | None = None
+    allPools: bool | None = None
 
 
 class GetCreatorHoldingsResponse(BaseModel):
@@ -413,34 +421,34 @@ class GetCreatorHoldingsResponse(BaseModel):
 
 
 class GetDeveloperTradesParams(BaseModel):
-    deployer: Annotated[str, Field(examples=["0xB9F5f4Ea1AF1F5d3678470eb98e8FBdcadEb24b0"])]
-    """
-    Deployer wallet that launched the token.
-    """
     token: Annotated[str, Field(examples=["0x39dBED3a2bd333467115dE45665cC57F813C4571"])]
     """
     Token contract address on Robinhood Chain.
     """
+    deployer: Annotated[str, Field(examples=["0xB9F5f4Ea1AF1F5d3678470eb98e8FBdcadEb24b0"])]
+    """
+    Deployer wallet that launched the token.
+    """
 
 
 class GetDeveloperTradesResponse(BaseModel):
-    burnCount: int | None = None
-    burned: bool | None = None
-    buyCount: int | None = None
     deployer: str | None = None
-    dumped: bool | None = None
     events: list[DeveloperTradeEvent] | None = None
-    moveCount: int | None = None
-    movedFunds: bool | None = None
+    buyCount: int | None = None
     sellCount: int | None = None
-    totalBurnedTokens: float | None = None
-    totalMovedTokens: float | None = None
+    moveCount: int | None = None
+    burnCount: int | None = None
     totalSoldUsd: float | None = None
+    totalMovedTokens: float | None = None
+    totalBurnedTokens: float | None = None
+    dumped: bool | None = None
+    movedFunds: bool | None = None
+    burned: bool | None = None
 
 
 class GetEthPriceResponse(BaseModel):
-    updatedAt: int | None = None
     usd: float | None = None
+    updatedAt: int | None = None
 
 
 class GetFeeSharingParams(BaseModel):
@@ -485,10 +493,10 @@ class GetForumHoldingResponse(BaseModel):
 
 
 class GetForumMarketResponse(BaseModel):
-    bell: str | None = None
-    markets: list[ForumEquity] | None = None
-    rows: list[ForumBoardRow] | None = None
     session: ForumSession | None = None
+    rows: list[ForumBoardRow] | None = None
+    markets: list[ForumEquity] | None = None
+    bell: ForumBell | None = None
 
 
 class GetForumPostCommentsParams(BaseModel):
@@ -525,11 +533,11 @@ class GetMarketAthParams(BaseModel):
 
 
 class GetMarketAthResponse(BaseModel):
-    blockNumber: int | None = None
+    token: str | None = None
     pool: str | None = None
     priceEth: float | None = None
+    blockNumber: int | None = None
     timestamp: str | None = None
-    token: str | None = None
     updatedAt: int | None = None
 
 
@@ -541,28 +549,28 @@ class GetMarketBurnedParams(BaseModel):
 
 
 class GetMarketBurnedResponse(BaseModel):
-    burnedWei: str | None = None
     token: str | None = None
+    burnedWei: str | None = None
 
 
 class GetMarketChartParams(BaseModel):
-    range: ChartRange | None = ChartRange.FIELD_1H
-    """
-    Chart window.
-    """
     token: Annotated[str, Field(examples=["0x39dBED3a2bd333467115dE45665cC57F813C4571"])]
     """
     Token contract address on Robinhood Chain.
     """
+    range: ChartRange | None = ChartRange.FIELD_1H
+    """
+    Chart window.
+    """
 
 
 class GetMarketChartResponse(BaseModel):
+    token: str | None = None
+    range: str | None = None
     intervalSeconds: int | None = None
     points: list[MarketChartPoint] | None = None
-    range: str | None = None
-    source: str | None = None
-    token: str | None = None
     updatedAt: int | None = None
+    source: str | None = None
 
 
 class GetMarketHoldersParams(BaseModel):
@@ -585,40 +593,40 @@ class GetMarketOrderDepthParams(BaseModel):
 
 
 class GetMarketOrderDepthResponse(BaseModel):
+    token: str | None = None
+    pool: str | None = None
+    currentPriceEth: float | None = None
+    observedBlockNumber: int | None = None
     activeOrderCount: int | None = None
     bands: list[OrderDepthBand] | None = None
-    currentPriceEth: float | None = None
     generatedAt: int | None = None
-    observedBlockNumber: int | None = None
-    pool: str | None = None
-    token: str | None = None
 
 
 class GetMarketParams(BaseModel):
-    include_holders: bool | None = False
-    """
-    Include the holder list in the snapshot.
-    """
     token: Annotated[str, Field(examples=["0x39dBED3a2bd333467115dE45665cC57F813C4571"])]
     """
     Token contract address on Robinhood Chain.
     """
+    include_holders: bool | None = False
+    """
+    Include the holder list in the snapshot.
+    """
 
 
 class GetMarketResponse(BaseModel):
-    changePct: float | None = None
-    holders: list[MarketHolder] | None = None
-    holdersCount: int | None = None
-    liquidityUsd: float | None = None
-    marketCapUsd: float | None = None
-    points: list[MarketPricePoint] | None = None
+    token: str | None = None
     pool: str | None = None
     priceEth: float | None = None
     priceUsd: float | None = None
-    token: str | None = None
-    trades: list[MarketTrade] | None = None
-    updatedAt: int | None = None
+    marketCapUsd: float | None = None
+    liquidityUsd: float | None = None
     volume24hUsd: float | None = None
+    changePct: float | None = None
+    points: list[MarketPricePoint] | None = None
+    trades: list[MarketTrade] | None = None
+    holdersCount: int | None = None
+    holders: list[MarketHolder] | None = None
+    updatedAt: int | None = None
 
 
 class GetMarketTipParams(BaseModel):
@@ -629,9 +637,9 @@ class GetMarketTipParams(BaseModel):
 
 
 class GetMarketTipResponse(BaseModel):
+    token: str | None = None
     pool: str | None = None
     priceEth: float | None = None
-    token: str | None = None
     updatedAt: int | None = None
 
 
@@ -655,11 +663,11 @@ class GetPortfolioChartParams(BaseModel):
 
 class GetPortfolioChartResponse(BaseModel):
     address: str | None = None
-    changePct: float | None = None
-    changeUsd: float | None = None
-    currentValueUsd: float | None = None
-    points: list[PortfolioChartPoint] | None = None
     range: str | None = None
+    points: list[PortfolioChartPoint] | None = None
+    currentValueUsd: float | None = None
+    changeUsd: float | None = None
+    changePct: float | None = None
     tokenCount: int | None = None
     updatedAt: int | None = None
 
@@ -702,26 +710,26 @@ class GetTokenParams(BaseModel):
 
 
 class GetTokenResponse(BaseModel):
-    deployer: str | None = None
-    description: str | None = None
-    initialBuyWei: str | None = None
-    isToken0: bool | None = None
-    locker: str | None = None
-    logo: str | None = None
-    name: str | None = None
-    pairToken: str | None = None
-    pool: str | None = None
-    poolFee: int | None = None
-    positionId: str | None = None
-    positionManager: str | None = None
-    restrictionEndBlock: str | None = None
-    router: str | None = None
-    routerRequiresDeadline: bool | None = None
-    socials: TokenSocials | None = None
-    symbol: str | None = None
-    tickSpacing: int | None = None
     token: str | None = None
+    name: str | None = None
+    symbol: str | None = None
     totalSupplyWei: str | None = None
+    logo: str | None = None
+    description: str | None = None
+    socials: TokenSocials | None = None
+    pool: str | None = None
+    pairToken: str | None = None
+    router: str | None = None
+    poolFee: int | None = None
+    tickSpacing: int | None = None
+    routerRequiresDeadline: bool | None = None
+    deployer: str | None = None
+    locker: str | None = None
+    positionManager: str | None = None
+    positionId: str | None = None
+    isToken0: bool | None = None
+    restrictionEndBlock: str | None = None
+    initialBuyWei: str | None = None
 
 
 class GetV2CreatorFeesParams(BaseModel):
@@ -732,14 +740,14 @@ class GetV2CreatorFeesParams(BaseModel):
 
 
 class GetV2CreatorFeesResponse(BaseModel):
-    claimableForWallet: str | None = None
-    earnedForToken: str | None = None
-    feeEscrow: str | None = None
-    nothingToClaim: bool | None = None
-    quoteAsset: QuoteAsset | None = None
-    recipient: str | None = None
-    sweepCount: int | None = None
     token: str | None = None
+    feeEscrow: str | None = None
+    recipient: str | None = None
+    quoteAsset: QuoteAsset | None = None
+    earnedForToken: str | None = None
+    claimableForWallet: str | None = None
+    sweepCount: int | None = None
+    nothingToClaim: bool | None = None
 
 
 class GetV2DistributorParams(BaseModel):
@@ -750,35 +758,35 @@ class GetV2DistributorParams(BaseModel):
 
 
 class GetV2DistributorResponse(BaseModel):
-    distributedCoin: str | None = None
-    distributedQuote: str | None = None
-    distributor: str | None = None
-    epochCount: int | None = None
-    latestEpoch: DistributorEpoch | None = None
     state: str | None = None
-    unallocatedCoin: str | None = None
+    distributor: str | None = None
     unallocatedQuote: str | None = None
+    unallocatedCoin: str | None = None
+    epochCount: int | None = None
+    distributedQuote: str | None = None
+    distributedCoin: str | None = None
+    latestEpoch: DistributorEpoch | None = None
 
 
 class GetV2MarketChartParams(BaseModel):
-    range: ChartRange | None = ChartRange.FIELD_1H
-    """
-    Chart window.
-    """
     token: Annotated[str, Field(examples=["0xD5f1afEA47b1A9eab414D2ee740cF1d6d039E725"])]
     """
     Token contract address of a v2 (curve) launch.
     """
+    range: ChartRange | None = ChartRange.FIELD_1H
+    """
+    Chart window.
+    """
 
 
 class GetV2MarketChartResponse(BaseModel):
+    token: str | None = None
+    range: str | None = None
     intervalSeconds: int | None = None
     points: list[V2ChartPoint] | None = None
+    updatedAt: int | None = None
     quoteSymbol: str | None = None
     quoteUsd: float | None = None
-    range: str | None = None
-    token: str | None = None
-    updatedAt: int | None = None
 
 
 class GetV2MarketHoldersParams(BaseModel):
@@ -826,51 +834,51 @@ class GetWalletPositionsParams(BaseModel):
 
 
 class GetWalletPositionsResponse(BaseModel):
-    activity: list[WalletActivity] | None = None
     address: str | None = None
     positions: list[WalletPosition] | None = None
+    activity: list[WalletActivity] | None = None
     totals: WalletTotals | None = None
     updatedAt: int | None = None
 
 
 class Graduation(BaseModel):
+    token: str | None = None
     graduatedAt: str | None = None
     observedBlockNumber: int | None = None
-    token: str | None = None
 
 
 class Launch(BaseModel):
-    blockNumber: int | None = None
-    burnedPct: float | None = None
-    deployer: str | None = None
-    description: str | None = None
+    version: str | None = None
     factory: str | None = None
+    token: str | None = None
+    deployer: str | None = None
+    pool: str | None = None
+    pairToken: str | None = None
+    transactionHash: str | None = None
+    blockNumber: int | None = None
+    launchedAt: str | None = None
+    initialBuyWei: str | None = None
+    name: str | None = None
+    symbol: str | None = None
+    logo: str | None = None
+    description: str | None = None
+    priceUsd: float | None = None
+    marketCapUsd: float | None = None
+    liquidityUsd: float | None = None
+    volume24hUsd: float | None = None
     graduated: bool | None = None
     graduatedAt: str | None = None
     graduatedBlockNumber: int | None = None
     graduationProgressPct: float | None = None
+    pairedPrincipalEth: float | None = None
     graduationThresholdEth: float | None = None
-    initialBuyWei: str | None = None
-    isOriginal: bool | None = None
     latestBuyAt: str | None = None
     latestBuyBlockNumber: int | None = None
-    launchedAt: str | None = None
-    liquidityUsd: float | None = None
-    logo: str | None = None
-    marketCapUsd: float | None = None
-    name: str | None = None
-    pairToken: str | None = None
-    pairedPrincipalEth: float | None = None
-    pool: str | None = None
-    priceUsd: float | None = None
-    quoteAsset: QuoteAsset | None = None
     realMcapUsd: float | None = None
-    symbol: str | None = None
-    token: str | None = None
-    transactionHash: str | None = None
+    burnedPct: float | None = None
+    quoteAsset: QuoteAsset | None = None
     venue: str | None = None
-    version: str | None = None
-    volume24hUsd: float | None = None
+    isOriginal: bool | None = None
 
 
 class LaunchPage(BaseModel):
@@ -885,13 +893,13 @@ class ListCtoMigrationsResponse(BaseModel):
 
 
 class ListForumCommunitiesParams(BaseModel):
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Number of communities to return.
-    """
     rank: CommunityRank | None = CommunityRank.MARKET_CAP
     """
     Ranking column.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Number of communities to return.
     """
 
 
@@ -900,13 +908,13 @@ class ListForumCommunitiesResponse(BaseModel):
 
 
 class ListForumPostsParams(BaseModel):
-    community: Annotated[str | None, Field(examples=["pons-39db"])] = None
-    """
-    Restrict the feed to one community slug.
-    """
     sort: PostSort | None = PostSort.HOT
     """
     Feed ranking.
+    """
+    community: Annotated[str | None, Field(examples=["pons-39db"])] = None
+    """
+    Restrict the feed to one community slug.
     """
 
 
@@ -915,21 +923,17 @@ class ListForumPostsResponse(BaseModel):
 
 
 class ListLaunchesParams(BaseModel):
+    sort: LaunchSort | None = LaunchSort.RECENT_BUYS
+    """
+    Ranking column for the active board.
+    """
     age: LaunchAge | None = LaunchAge.ALL
     """
     Only include launches from this window.
     """
-    graduated_page: Annotated[int | None, Field(ge=1)] = 1
+    version: LaunchVersion | None = LaunchVersion.ALL
     """
-    Page number echoed in the graduated block.
-    """
-    graduated_page_size: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Page size echoed in the graduated block.
-    """
-    include_graduated: bool | None = True
-    """
-    Include the graduated block (counts only; pons sends no graduated items).
+    Restrict to a launchpad version.
     """
     page: Annotated[int | None, Field(ge=1)] = 1
     """
@@ -939,21 +943,25 @@ class ListLaunchesParams(BaseModel):
     """
     Active launches per page.
     """
-    sort: LaunchSort | None = LaunchSort.RECENT_BUYS
+    include_graduated: bool | None = True
     """
-    Ranking column for the active board.
+    Include the graduated block (counts only; pons sends no graduated items).
     """
-    version: LaunchVersion | None = LaunchVersion.ALL
+    graduated_page: Annotated[int | None, Field(ge=1)] = 1
     """
-    Restrict to a launchpad version.
+    Page number echoed in the graduated block.
+    """
+    graduated_page_size: Annotated[int | None, Field(ge=1, le=100)] = 10
+    """
+    Page size echoed in the graduated block.
     """
 
 
 class ListLaunchesResponse(BaseModel):
-    active: LaunchPage | None = None
-    activeTotal: int | None = None
     generatedAt: int | None = None
+    active: LaunchPage | None = None
     graduated: LaunchPage | None = None
+    activeTotal: int | None = None
     graduatedTotal: int | None = None
     launchTotal: int | None = None
 
@@ -969,81 +977,81 @@ class ListLiveMarketsParams(BaseModel):
 
 
 class LiveMarket(BaseModel):
-    graduated: bool | None = None
-    graduationProgressPct: float | None = None
-    graduationThresholdEth: float | None = None
+    token: str | None = None
+    pool: str | None = None
     latestBuyAt: str | None = None
     latestBuyBlockNumber: int | None = None
     latestMarketBlockNumber: int | None = None
-    marketCapUsd: float | None = None
-    pairedPrincipalEth: float | None = None
-    pool: str | None = None
     priceUsd: float | None = None
-    token: str | None = None
+    marketCapUsd: float | None = None
+    graduated: bool | None = None
+    graduationProgressPct: float | None = None
+    pairedPrincipalEth: float | None = None
+    graduationThresholdEth: float | None = None
 
 
 class MarketChartPoint(BaseModel):
-    blockNumber: int | None = None
-    priceEth: float | None = None
     t: int | None = None
-    tradeCount: int | None = None
+    priceEth: float | None = None
+    blockNumber: int | None = None
     volumeEth: float | None = None
+    tradeCount: int | None = None
 
 
 class MarketHolder(BaseModel):
     address: str | None = None
     balance: str | None = None
-    entryMcapUsd: float | None = None
     percentage: float | None = None
-    pnlPct: float | None = None
+    entryMcapUsd: float | None = None
     pnlUsd: float | None = None
+    pnlPct: float | None = None
 
 
 class MarketPricePoint(BaseModel):
-    blockNumber: int | None = None
-    priceUsd: float | None = None
     t: int | None = None
+    priceUsd: float | None = None
+    blockNumber: int | None = None
 
 
 class MarketTrade(BaseModel):
-    blockNumber: int | None = None
-    ethAmount: str | None = None
-    priceUsd: float | None = None
-    recipient: str | None = None
     side: str | None = None
     timestamp: int | None = None
-    tokenAmount: str | None = None
+    blockNumber: int | None = None
     transactionHash: str | None = None
+    recipient: str | None = None
+    tokenAmount: str | None = None
+    ethAmount: str | None = None
+    priceUsd: float | None = None
     valueUsd: float | None = None
 
 
 class MigrationSchedule(BaseModel):
-    claimEnd: int | None = None
-    claimStart: int | None = None
-    claimVest: int | None = None
-    decayStepBps: int | None = None
-    depositEnd: int | None = None
     depositStart: int | None = None
+    depositEnd: int | None = None
+    claimStart: int | None = None
+    claimEnd: int | None = None
     epochCount: int | None = None
-    epochCursor: int | None = None
     epochDuration: int | None = None
-    epochOpenedAt: int | None = None
     launchAt: int | None = None
-    minDeposits: str | None = None
-    seedDeadline: int | None = None
-    sellEnd: int | None = None
     sellStart: int | None = None
+    sellEnd: int | None = None
     settleAt: int | None = None
     windowSeconds: int | None = None
+    claimVest: int | None = None
+    decayStepBps: int | None = None
+    epochCursor: int | None = None
+    epochOpenedAt: int | None = None
+    minDeposits: str | None = None
+    seedDeadline: int | None = None
 
 
 class OrderDepthBand(BaseModel):
+    side: str | None = None
+    targetTick: int | None = None
+    priceEth: float | None = None
     depthUsd: float | None = None
     inputRemaining: str | None = None
     orderCount: int | None = None
-    priceEth: float | None = None
-    side: str | None = None
-    targetTick: int | None = None
 
 
 class PortfolioChartPoint(BaseModel):
@@ -1052,38 +1060,30 @@ class PortfolioChartPoint(BaseModel):
 
 
 class ProfileLaunch(BaseModel):
+    token: str | None = None
+    name: str | None = None
+    symbol: str | None = None
+    logo: str | None = None
+    locker: str | None = None
+    isDeployer: bool | None = None
+    isFeeRecipient: bool | None = None
     claimable: bool | None = None
     claimableTokenWei: str | None = None
     claimableWethWei: str | None = None
     claimedTokenWei: str | None = None
     claimedWethWei: str | None = None
-    isDeployer: bool | None = None
-    isFeeRecipient: bool | None = None
-    locker: str | None = None
-    logo: str | None = None
-    name: str | None = None
-    symbol: str | None = None
-    token: str | None = None
 
 
 class QuoteAsset(BaseModel):
     address: str | None = None
-    assetClass: str | None = None
+    symbol: str | None = None
+    name: str | None = None
     decimals: int | None = None
     isNative: bool | None = None
-    name: str | None = None
-    symbol: str | None = None
+    assetClass: str | None = None
 
 
 class SearchLaunchesParams(BaseModel):
-    age: LaunchAge | None = LaunchAge.ALL
-    """
-    Only include launches from this window.
-    """
-    page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    Result page.
-    """
     q: Annotated[str | None, Field(examples=["pons"])] = ""
     """
     Free-text query matched against token name, symbol and address.
@@ -1091,6 +1091,14 @@ class SearchLaunchesParams(BaseModel):
     sort: LaunchSearchSort | None = LaunchSearchSort.RELEVANCE
     """
     Ranking column for the result set.
+    """
+    age: LaunchAge | None = LaunchAge.ALL
+    """
+    Only include launches from this window.
+    """
+    page: Annotated[int | None, Field(ge=1)] = 1
+    """
+    Result page.
     """
 
 
@@ -1102,18 +1110,18 @@ class SearchLaunchesResponse(BaseModel):
 
 
 class TokenSocials(BaseModel):
+    twitter: str | None = None
+    telegram: str | None = None
     discord: str | None = None
     farcaster: str | None = None
-    telegram: str | None = None
-    twitter: str | None = None
 
 
 class V2ChartPoint(BaseModel):
-    blockNumber: int | None = None
-    price: float | None = None
     t: int | None = None
-    tradeCount: int | None = None
+    price: float | None = None
+    blockNumber: int | None = None
     volumeQuote: float | None = None
+    tradeCount: int | None = None
 
 
 class V2Holder(BaseModel):
@@ -1123,85 +1131,85 @@ class V2Holder(BaseModel):
 
 
 class V2Trade(BaseModel):
-    account: str | None = None
-    blockNumber: int | None = None
     id: str | None = None
-    quoteAmount: str | None = None
-    side: str | None = None
-    timestamp: int | None = None
-    tokenAmount: str | None = None
-    transactionHash: str | None = None
     venue: str | None = None
+    side: str | None = None
+    tokenAmount: str | None = None
+    quoteAmount: str | None = None
+    account: str | None = None
+    transactionHash: str | None = None
+    blockNumber: int | None = None
+    timestamp: int | None = None
 
 
 class WalletActivity(BaseModel):
-    blockNumber: int | None = None
-    ethAmount: str | None = None
-    logo: str | None = None
-    name: str | None = None
-    priceUsd: float | None = None
     side: str | None = None
-    symbol: str | None = None
-    timestamp: int | None = None
     token: str | None = None
-    tokenAmount: str | None = None
+    name: str | None = None
+    symbol: str | None = None
+    logo: str | None = None
+    timestamp: int | None = None
+    blockNumber: int | None = None
     transactionHash: str | None = None
+    tokenAmount: str | None = None
+    ethAmount: str | None = None
+    priceUsd: float | None = None
     valueUsd: float | None = None
 
 
 class WalletIdentity(BaseModel):
-    avatarKey: str | None = None
-    avatarUrl: str | None = None
-    bannerKey: str | None = None
-    bannerUrl: str | None = None
-    createdAtMs: int | None = None
-    description: str | None = None
-    displayName: str | None = None
-    joinedAtMs: int | None = None
-    updatedAtMs: int | None = None
-    username: str | None = None
     wallet: str | None = None
+    username: str | None = None
+    displayName: str | None = None
+    description: str | None = None
+    avatarKey: str | None = None
+    bannerKey: str | None = None
+    avatarUrl: str | None = None
+    bannerUrl: str | None = None
+    joinedAtMs: int | None = None
+    createdAtMs: int | None = None
+    updatedAtMs: int | None = None
 
 
 class WalletPosition(BaseModel):
-    amountTokens: float | None = None
-    balance: str | None = None
-    buys: int | None = None
-    currentMcapUsd: float | None = None
-    currentPriceUsd: float | None = None
-    decimals: int | None = None
-    entryMcapUsd: float | None = None
-    entryPriceUsd: float | None = None
-    firstTradeAt: int | None = None
-    investedUsd: float | None = None
-    lastTradeAt: int | None = None
-    logo: str | None = None
-    name: str | None = None
-    pnlReliable: bool | None = None
+    version: str | None = None
+    token: str | None = None
     pool: str | None = None
+    name: str | None = None
+    symbol: str | None = None
+    logo: str | None = None
+    decimals: int | None = None
+    supplyTokens: float | None = None
+    investedUsd: float | None = None
+    entryPriceUsd: float | None = None
+    entryMcapUsd: float | None = None
+    pnlReliable: bool | None = None
     realizedPnlUsd: float | None = None
+    firstTradeAt: int | None = None
+    lastTradeAt: int | None = None
+    buys: int | None = None
     sells: int | None = None
     state: str | None = None
-    supplyTokens: float | None = None
-    symbol: str | None = None
-    token: str | None = None
-    totalPnlPct: float | None = None
-    totalPnlUsd: float | None = None
-    unrealizedPnlUsd: float | None = None
+    balance: str | None = None
+    amountTokens: float | None = None
+    currentPriceUsd: float | None = None
+    currentMcapUsd: float | None = None
     valueUsd: float | None = None
-    version: str | None = None
+    unrealizedPnlUsd: float | None = None
+    totalPnlUsd: float | None = None
+    totalPnlPct: float | None = None
 
 
 class WalletTotals(BaseModel):
-    investedUsd: float | None = None
-    openPositions: int | None = None
-    pnlTrackedPositions: int | None = None
     portfolioValueUsd: float | None = None
-    realizedPnlUsd: float | None = None
-    tokensTraded: int | None = None
-    totalPnlPct: float | None = None
-    totalPnlUsd: float | None = None
+    investedUsd: float | None = None
     unrealizedPnlUsd: float | None = None
+    realizedPnlUsd: float | None = None
+    totalPnlUsd: float | None = None
+    totalPnlPct: float | None = None
+    tokensTraded: int | None = None
+    pnlTrackedPositions: int | None = None
+    openPositions: int | None = None
     winRate: float | None = None
 
 

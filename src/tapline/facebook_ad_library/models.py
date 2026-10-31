@@ -77,6 +77,7 @@ class PublicError(str, Enum):
     FORBIDDEN = "forbidden"
     RESOURCE_FORBIDDEN = "resource_forbidden"
     NOT_FOUND = "not_found"
+    ENDPOINT_RETIRED = "endpoint_retired"
     RATE_LIMITED = "rate_limited"
     INVALID_REQUEST = "invalid_request"
     INVALID_CURSOR = "invalid_cursor"
