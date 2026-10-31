@@ -168,29 +168,66 @@ class FacebookListingCard(BaseModel):
     id: str | None
     video_id: str | None
     product_item_id: str | None
-    origin_group_id: str | None
-    parent_listing_id: str | None
     feed_story_id: str | None
     title: str | None
     custom_title: str | None
     subtitles: list[str]
     share_url: str | None
-    price: FacebookMoney | None
-    inventory_count: int | None
+    price: FacebookListingCardMoney | None
     price_in_cents: int | None
-    strikethrough_price: FacebookMoney | None
-    min_price: FacebookMoney | None
-    max_price: FacebookMoney | None
-    status: FacebookListingStatus
+    strikethrough_price: FacebookListingCardMoney | None
+    status: FacebookListingCardStatus
     created_at: str | None
-    category: FacebookListingCategory
-    location: FacebookListingLocation
-    seller: FacebookProfileRef | None
+    category: FacebookListingCardCategory
+    location: FacebookListingCardLocation
+    seller: FacebookListingCardSeller | None
     delivery_types: list[FacebookCode]
-    listing_tags: list[str]
     feed_story_type: FacebookCode
-    primary_photo: FacebookPhoto | None
-    photos: list[FacebookPhoto]
+    primary_photo: FacebookListingCardPhoto | None
+    photos: list[FacebookListingCardPhoto]
+
+
+class FacebookListingCardCategory(BaseModel):
+    id: str | None
+
+
+class FacebookListingCardLocation(BaseModel):
+    city_id: str | None
+    city: str | None
+    state: str | None
+    city_name: str | None
+    latitude: float | None
+    longitude: float | None
+
+
+class FacebookListingCardMoney(BaseModel):
+    amount: float | None
+    formatted: str | None
+
+
+class FacebookListingCardPhoto(BaseModel):
+    id: str | None
+    type: str
+    image: FacebookImage | None
+    thumbnail_url: str | None
+
+
+class FacebookListingCardSeller(BaseModel):
+    id: str | None
+    pfbid: str | None
+    name: str | None
+    account_type: FacebookCode
+
+
+class FacebookListingCardStatus(BaseModel):
+    is_hidden: bool | None
+    is_live: bool | None
+    is_pending: bool | None
+    is_sold: bool | None
+    is_draft: bool | None
+    is_rejected: bool | None
+    created_with_seller_app: bool | None
+    messaging_enabled: bool | None
 
 
 class FacebookListingCategory(BaseModel):
