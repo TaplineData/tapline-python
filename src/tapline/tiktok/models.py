@@ -319,6 +319,25 @@ class SearchHashtagParams(BaseModel):
     """
 
 
+class SearchUsersParams(BaseModel):
+    query: Annotated[str, Field(examples=["nike"], max_length=200, min_length=1)]
+    """
+    What to search TikTok for.
+    """
+    region: Annotated[str | None, Field(examples=["US"], pattern="^[A-Za-z]{2}$")] = None
+    """
+    Two-letter country code TikTok searches from, `US` by default. Supported: `AR`, `AT`, `AU`, `BD`, `BR`, `CA`, `CH`, `CL`, `DE`, `ES`, `FR`, `GB`, `IE`, `IT`, `JP`, `NL`, `PL`, `PT`, `SE`, `SG`, `TR`, `US`, `ZA`.
+    """
+    cursor: Annotated[int | None, Field(ge=0, le=9007199254740991)] = None
+    """
+    The `cursor` from the previous page of the same search. It expires 30 minutes after it is issued. Omit it for the first page.
+    """
+    trim: bool | None = None
+    """
+    Retained for compatibility. Both values return the same complete cleaned response.
+    """
+
+
 class TikTokAdvertisement(BaseModel):
     id: str | None
     title: str | None = None
@@ -881,6 +900,12 @@ class TikTokUser(BaseModel):
     avatar_larger: TikTokMediaResource | None = None
     covers: list[TikTokMediaResource] | None = None
     videos: list[TikTokVideo] | None = None
+
+
+class TikTokUserSearchResponse(BaseModel):
+    users: list[TikTokUser]
+    cursor: int | None
+    has_more: bool
 
 
 class TikTokVideo(BaseModel):

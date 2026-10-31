@@ -1,6 +1,6 @@
 # TikTok with the Tapline Python SDK
 
-Use the TikTok client to read public profiles, videos, comments, followers, sounds, hashtags, collections, captions, search suggestions, and regional trending feeds. No TikTok account is needed.
+Use the TikTok client to read public profiles, videos, comments, followers, sounds, hashtags, collections, captions, account search, search suggestions, and regional trending feeds. No TikTok account is needed.
 
 [Package guide](../../../README.md) · [TikTok API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=tiktok_readme#/tiktok)
 

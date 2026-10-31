@@ -30,6 +30,7 @@ from tapline.tiktok import (
     TikTokSongVideosResponse,
     TikTokTranscriptResponse,
     TikTokTrendingFeedResponse,
+    TikTokUserSearchResponse,
     TikTokVideoResponse,
 )
 
@@ -59,6 +60,7 @@ RESPONSES: dict[str, type[Any]] = {
     "get_profile_videos": TikTokProfileVideosResponse,
     "search_hashtag": TikTokHashtagSearchResponse,
     "get_search_suggestions": TikTokSearchSuggestionsResponse,
+    "search_users": TikTokUserSearchResponse,
     "get_song": TikTokSongResponse,
     "get_song_videos": TikTokSongVideosResponse,
     "get_followers": TikTokFollowersResponse,
@@ -75,6 +77,7 @@ METHODS = [
     "get_profile_videos",
     "search_hashtag",
     "get_search_suggestions",
+    "search_users",
     "get_song",
     "get_song_videos",
     "get_followers",
