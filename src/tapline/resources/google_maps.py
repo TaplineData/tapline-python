@@ -574,7 +574,7 @@ class GoogleMaps(AsyncAPIResource):
         zoom: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GoogleMapsSearchPage:
-        """Search Google Maps places by text, optionally around a point. Google reranks between calls, so later pages leave out places earlier pages returned and can miss a few that moved. Costs 3 credits.
+        """Search Google Maps places by text, optionally around a point. Google reranks between calls, so later pages leave out places earlier pages returned and can miss a few that moved. Costs 2 credits.
 
         Args:
             query: What to search for, as typed in the Maps search box.
@@ -1084,7 +1084,7 @@ class SyncGoogleMaps(SyncAPIResource):
         zoom: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GoogleMapsSearchPage:
-        """Search Google Maps places by text, optionally around a point. Google reranks between calls, so later pages leave out places earlier pages returned and can miss a few that moved. Costs 3 credits.
+        """Search Google Maps places by text, optionally around a point. Google reranks between calls, so later pages leave out places earlier pages returned and can miss a few that moved. Costs 2 credits.
 
         Args:
             query: What to search for, as typed in the Maps search box.
