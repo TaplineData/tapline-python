@@ -1,6 +1,6 @@
 # tapline
 
-Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Pinterest v2, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Zillow, Expedia, Brave Search, Indeed, Facebook Ad Library, Facebook Marketplace, and Facebook in Python.
+Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, GoPlus Security, Pons Family, Twitter (X), Pinterest, Pinterest v2, Instagram, Pumpfun, TikTok, Birdeye, LinkedIn, imovelweb, Zillow, Expedia, Brave Search, Indeed, Facebook Ad Library, Facebook Marketplace, Facebook, and Google Maps in Python.
 
 [![PyPI](https://img.shields.io/pypi/v/tapline)](https://pypi.org/project/tapline/)
 [![Python](https://img.shields.io/pypi/pyversions/tapline)](https://pypi.org/project/tapline/)
@@ -31,6 +31,7 @@ Use `tapline` to collect live data from YouTube, Airbnb, GMGN, GeckoTerminal, Go
 | Facebook Ad Library | Search the Ad Library by keyword or advertiser, read ads with their versions and who paid for them, look up advertisers and their audiences, and read the political and issue ads report | [Facebook Ad Library guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook_ad_library/README.md) |
 | Facebook Marketplace | Find Marketplace locations, search and browse listings around a point, read a listing with its seller, photos and videos, and map rentals | [Facebook Marketplace guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook_marketplace/README.md) |
 | Facebook | Turn facebook.com URLs into ids, read pages and profiles, posts, photos, videos, reels and comments, search videos and events, and read public groups | [Facebook guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook/README.md) |
+| Google Maps | Search places, read a place with its reviews, photos, owner posts and popular times, get directions and search suggestions, find the address at a point, and read contributors, shared lists, Street View panoramas, area traffic and weather | [Google Maps guide](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/google_maps/README.md) |
 
 One API key and credit balance work across every service above.
 
@@ -233,6 +234,7 @@ Use the [Tapline API reference](https://tapline.sh/docs?utm_source=python_client
 - [Facebook Ad Library](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook_ad_library/README.md)
 - [Facebook Marketplace](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook_marketplace/README.md)
 - [Facebook](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/facebook/README.md)
+- [Google Maps](https://github.com/TaplineData/tapline-python/blob/main/src/tapline/google_maps/README.md)
 
 ## License
 

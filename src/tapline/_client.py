@@ -6,7 +6,7 @@ called: every endpoint fetches from its upstream site live, so a caller almost
 always wants several in flight at once. Each client carries one namespace per
 service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``facebook``,
 ``facebook_ad_library``, ``facebook_marketplace``, ``geckoterminal``, ``gmgn``,
-``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``, ``pinterest``,
+``google_maps``, ``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``, ``pinterest``,
 ``pinterest_v2``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
 all sharing its API key, connection pool and retry policy.
 """
@@ -30,6 +30,7 @@ from .resources import (
     FacebookMarketplace,
     Geckoterminal,
     Gmgn,
+    GoogleMaps,
     Goplus,
     Imovelweb,
     Indeed,
@@ -48,6 +49,7 @@ from .resources import (
     SyncFacebookMarketplace,
     SyncGeckoterminal,
     SyncGmgn,
+    SyncGoogleMaps,
     SyncGoplus,
     SyncImovelweb,
     SyncIndeed,
@@ -120,6 +122,9 @@ class TaplineClient(AsyncAPIClient):
 
     gmgn: Gmgn
     """The GMGN endpoints."""
+
+    google_maps: GoogleMaps
+    """The Google Maps endpoints."""
 
     goplus: Goplus
     """The GoPlus Security endpoints."""
@@ -214,6 +219,7 @@ class TaplineClient(AsyncAPIClient):
         self.facebook_ad_library = FacebookAdLibrary(self)
         self.facebook_marketplace = FacebookMarketplace(self)
         self.gmgn = Gmgn(self)
+        self.google_maps = GoogleMaps(self)
         self.goplus = Goplus(self)
         self.imovelweb = Imovelweb(self)
         self.indeed = Indeed(self)
@@ -272,6 +278,9 @@ class SyncTaplineClient(SyncAPIClient):
 
     gmgn: SyncGmgn
     """The GMGN endpoints."""
+
+    google_maps: SyncGoogleMaps
+    """The Google Maps endpoints."""
 
     goplus: SyncGoplus
     """The GoPlus Security endpoints."""
@@ -366,6 +375,7 @@ class SyncTaplineClient(SyncAPIClient):
         self.facebook_ad_library = SyncFacebookAdLibrary(self)
         self.facebook_marketplace = SyncFacebookMarketplace(self)
         self.gmgn = SyncGmgn(self)
+        self.google_maps = SyncGoogleMaps(self)
         self.goplus = SyncGoplus(self)
         self.imovelweb = SyncImovelweb(self)
         self.indeed = SyncIndeed(self)

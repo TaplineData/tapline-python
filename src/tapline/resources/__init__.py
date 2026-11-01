@@ -11,6 +11,7 @@ from .facebook_ad_library import FacebookAdLibrary, SyncFacebookAdLibrary
 from .facebook_marketplace import FacebookMarketplace, SyncFacebookMarketplace
 from .geckoterminal import Geckoterminal, SyncGeckoterminal
 from .gmgn import Gmgn, SyncGmgn
+from .google_maps import GoogleMaps, SyncGoogleMaps
 from .goplus import Goplus, SyncGoplus
 from .imovelweb import Imovelweb, SyncImovelweb
 from .indeed import Indeed, SyncIndeed
@@ -35,6 +36,7 @@ __all__ = [
     "FacebookMarketplace",
     "Geckoterminal",
     "Gmgn",
+    "GoogleMaps",
     "Goplus",
     "Imovelweb",
     "Indeed",
@@ -53,6 +55,7 @@ __all__ = [
     "SyncFacebookMarketplace",
     "SyncGeckoterminal",
     "SyncGmgn",
+    "SyncGoogleMaps",
     "SyncGoplus",
     "SyncImovelweb",
     "SyncIndeed",
