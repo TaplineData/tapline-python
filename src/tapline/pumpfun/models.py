@@ -93,6 +93,13 @@ class CoinBoard(str, Enum):
     CHARITY = "charity"
 
 
+class CoinListSort(str, Enum):
+    CREATED_TIMESTAMP = "created_timestamp"
+    MARKET_CAP = "market_cap"
+    ATH_MARKET_CAP = "ath_market_cap"
+    LAST_TRADE_TIMESTAMP = "last_trade_timestamp"
+
+
 class CoinSort(str, Enum):
     CREATED_TIMESTAMP = "created_timestamp"
     MARKET_CAP = "market_cap"
@@ -781,6 +788,7 @@ class Callout(BaseModel):
     xUsername: str | None
     xFollowerCount: int
     accountKind: str | None = None
+    prediction: Annotated[None, Field(None)] = None
 
 
 class CalloutAuthor(BaseModel):
@@ -984,10 +992,6 @@ class ChainCandlesParams(BaseModel):
     count: Annotated[int | None, Field(ge=1, le=300)] = 200
     """
     Bars ending at `to`.
-    """
-    pool: str | None = None
-    """
-    One pool of the coin. Omit to stitch curve and AMM bars together.
     """
 
 
@@ -1296,6 +1300,8 @@ class CoinMayhemState(BaseModel):
     multiplayer: bool | None = None
     pause_reason: str | None = None
     complete_reason: str | None = None
+    first_trade_quote_amount: str | None = None
+    stats: CoinMayhemStats | None = None
 
 
 class CoinMayhemStateParams(BaseModel):
@@ -1303,6 +1309,14 @@ class CoinMayhemStateParams(BaseModel):
     """
     Token mint address.
     """
+
+
+class CoinMayhemStats(BaseModel):
+    buyCount: int
+    sellCount: int
+    totalBuyVolumeSol: str
+    totalSellVolumeSol: str
+    netSolDeployed: str
 
 
 class CoinNarrativesParams(BaseModel):
@@ -1358,7 +1372,7 @@ class CoinPosition(BaseModel):
     totalCallouts: int
     amountHeld: float
     valueUsd: float | None
-    pnlUsd: float
+    pnlUsd: float | None
     pnlPercentage: float | str | None
     realizedPnlUsd: float
     tokenPriceUsd: float | None
@@ -1412,13 +1426,9 @@ class CoinTopCalloutsParams(BaseModel):
     """
     Coin address: a Solana mint or an EVM token (0x).
     """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 20
     """
     Maximum callouts to return.
-    """
-    chain: TokenChain | None = None
-    """
-    Chain of the coin, to pin an EVM token.
     """
 
 
@@ -1523,7 +1533,7 @@ class CoinsParams(BaseModel):
     """
     Maximum coins to return. pump.fun serves 70 at most.
     """
-    sort: CoinSort | None = CoinSort.CREATED_TIMESTAMP
+    sort: CoinListSort | None = CoinListSort.CREATED_TIMESTAMP
     """
     Ranking column.
     """
@@ -2487,43 +2497,9 @@ class GetCoinTimelineResponseItem(BaseModel):
 
 
 class GetCoinTopCalloutsResponse(BaseModel):
-    callouts: list[GetCoinTopCalloutsResponseCallout]
-
-
-class GetCoinTopCalloutsResponseCallout(BaseModel):
-    calloutId: str
-    userId: str
-    coinMint: str
-    marketCap: float
-    calloutPrice: float
-    calloutPriceUsd: float | None = None
-    multiple: float
-    createdAt: int
-    maxPriceSol: float
-    maxPriceUsd: float | None = None
-    thesis: str
-    user_uuid: str
-    likes: int | None = None
-    hasLiked: Annotated[None, Field(None)] = None
-    hasReposted: Annotated[None, Field(None)] = None
-    repostCount: int | None = None
-    quoteCount: int | None = None
-    updates: list[Any] | None = None
-    updateCount: int | None = None
-    commentCount: int | None = None
-    replyCount: int | None = None
-    maxMultiplier: float | None = None
-    maxMultiplierAt: str | None = None
-    mediaUrl: str | None = None
-    quotedCalloutId: Annotated[None, Field(None)] = None
-    quotedCallout: Annotated[None, Field(None)] = None
-    chain: str | None = None
-    perp: Annotated[None, Field(None)] = None
-    peakTimestamp: int | None = None
-    username: str | None = None
-    profileImage: str | None = None
-    xUsername: str | None = None
-    isVerified: bool | None = None
+    callouts: list[GetMintPositionsResponsePosition]
+    totalCount: int
+    hasMore: bool | None = None
 
 
 class GetCompetitionEntryHighlightsResponse(BaseModel):
@@ -2708,7 +2684,7 @@ class GetHolderStatsResponse(BaseModel):
     mint: str
     totalHolders: int
     top10HoldersPercent: float
-    devHoldingsPercent: int | None
+    devHoldingsPercent: float | None
     snipersHoldingsPercent: float
     bundlersHoldingsPercent: float
     totalFeesSol: float
@@ -2803,7 +2779,7 @@ class GetInMemoryCoinResponse(BaseModel):
     websiteReuseCount: int
     numHolders: int
     top10HoldersPercent: float
-    devHoldingsPercent: int
+    devHoldingsPercent: float
     snipersOwnedPercent: float
     bundlerOwnedPercentageV2: float
     coinCreatedSupply: int
@@ -2935,10 +2911,10 @@ class GetMintPositionsResponsePosition(BaseModel):
     accountKind: str | None = None
     amountHeld: float
     pnlUsd: float
-    pnlPercentage: float
+    pnlPercentage: float | None
     realizedPnlUsd: float
     costBasisAmount: float
-    costBasisUsd: float
+    costBasisUsd: float | None
     amountBoughtUsd: float
     amountBought: float
     callout: PositionCallout | None
@@ -3116,7 +3092,7 @@ class GetPerpTradesResponseTrade(BaseModel):
     quotePriceUsd: str | None
     valueUsd: str
     valueNative: str | None
-    coin: Pool
+    coin: Pool | None
     perp: Perp | None = None
 
 
@@ -3408,6 +3384,7 @@ class GetUserCalloutsResponseCallout(BaseModel):
     tailAthHist4h: TailHistogram | None = None
     tailAthHist24h: TailHistogram | None = None
     author: CalloutAuthor | None = None
+    prediction: Annotated[None, Field(None)] = None
 
 
 class GetUserCoinCalloutResponse(BaseModel):
@@ -3577,6 +3554,7 @@ class GetUserPositionsResponsePosition(BaseModel):
     realizedPnlUsd: float
     updatedAt: str
     lastSlotIndexId: str | None = None
+    tradeCount: int | None = None
 
 
 class GetUserRepostsResponse(BaseModel):
@@ -3978,6 +3956,7 @@ class HoldingCallout(BaseModel):
     viewCount: int
     quotedCalloutId: None
     quotedCallout: None
+    prediction: Annotated[None, Field(None)] = None
 
 
 class HomeFeedLegacyPosition(BaseModel):
@@ -4407,8 +4386,8 @@ class Livestream(BaseModel):
     numParticipants: int
     maxParticipants: int
     isLive: bool
-    thumbnail: str
-    thumbnailUpdatedAt: int
+    thumbnail: str | None = None
+    thumbnailUpdatedAt: int | None = None
     downrankScore: int
     title: str
     mode: str
@@ -5232,6 +5211,8 @@ class PositionCallout(BaseModel):
     quotedCallout: None
     actingUserId: Annotated[None, Field(None)] = None
     actingUser: Annotated[None, Field(None)] = None
+    prediction: Annotated[None, Field(None)] = None
+    pinnedUpdate: Update | None = None
 
 
 class PositionCoin(BaseModel):
@@ -5430,6 +5411,7 @@ class Reply(BaseModel):
     positionAvgEntryMcapUsd: float | None
     isQuote: bool
     viewCount: int | None = None
+    prediction: Annotated[None, Field(None)] = None
 
 
 class ReplyLikersParams(BaseModel):
@@ -6055,7 +6037,7 @@ class SimilarCoinResult(BaseModel):
     quote_mint: str | None = None
     base_decimals: int
     quote_decimals: int | None = None
-    pool_address: str
+    pool_address: str | None = None
     chain_id: str
     multichain_family: int
     protocol: str
@@ -6514,15 +6496,15 @@ class TrendingCoin(BaseModel):
     mint: str
     chain: str | None = None
     initialized: bool | None = None
-    name: str
-    symbol: str
-    image_uri: str
+    name: str | None = None
+    symbol: str | None = None
+    image_uri: str | None = None
     metadata_uri: str | None = None
     twitter: str | None = None
     bonding_curve: str | None = None
     associated_bonding_curve: str | None = None
     creator: str | None = None
-    created_timestamp: int
+    created_timestamp: int | None = None
     complete: bool | None = None
     virtual_sol_reserves: int | None = None
     virtual_token_reserves: int | None = None
@@ -6531,9 +6513,9 @@ class TrendingCoin(BaseModel):
     show_name: bool | None = None
     last_trade_timestamp: int | None = None
     market_cap: float | None = None
-    nsfw: bool
+    nsfw: bool | None = None
     inverted: bool | None = None
-    is_banned: bool
+    is_banned: bool | None = None
     pump_swap_pool: str | None = None
     real_sol_reserves: int | None = None
     real_token_reserves: int | None = None
@@ -6556,7 +6538,7 @@ class TrendingCoin(BaseModel):
     protocol: str | None = None
     volume_24h_usd: float | None = None
     price_change_24h_bps: int | None = None
-    total_supply_str: str
+    total_supply_str: str | None = None
     market_cap_usd: float | None = None
     virtual_quote_reserves: int | None = None
     real_quote_reserves: int | None = None
@@ -6747,10 +6729,6 @@ class UserCoinCalloutParams(BaseModel):
     mint: Annotated[str, Field(examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"])]
     """
     Token mint address.
-    """
-    quotes_limit: Annotated[int | None, Field(ge=0, le=20)] = None
-    """
-    Quote posts of the callout to include.
     """
 
 
@@ -7330,6 +7308,10 @@ CandleResolutionParam: TypeAlias = (
 ClipTypeParam: TypeAlias = ClipType | Literal["COMPLETE", "HIGHLIGHT", "PREVIEW"]
 CoinBoardParam: TypeAlias = (
     CoinBoard | Literal["new", "graduating", "graduated", "movers", "charity"]
+)
+CoinListSortParam: TypeAlias = (
+    CoinListSort
+    | Literal["created_timestamp", "market_cap", "ath_market_cap", "last_trade_timestamp"]
 )
 CoinSortParam: TypeAlias = (
     CoinSort

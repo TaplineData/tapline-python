@@ -25,6 +25,7 @@ from ..pumpfun import (
     ClipReferenceRequest,
     ClipsById,
     ClipTypeParam,
+    CoinListSortParam,
     CoinsBatch,
     CoinSortDirectionParam,
     CoinSortParam,
@@ -440,7 +441,6 @@ def _chain_candles(
     resolution: CandleResolutionParam,
     count: int = 200,
     measure: PriceMeasureParam = "price_usd",
-    pool: str | None = None,
     to: int | None = None,
 ) -> Request[GetChainCandlesResponse]:
     return Request(
@@ -448,7 +448,7 @@ def _chain_candles(
             _PREFIX + "/chains/{chain}/coins/{address}/candles", chain=chain, address=address
         ),
         GetChainCandlesResponse,
-        {"resolution": resolution, "count": count, "measure": measure, "pool": pool, "to": to},
+        {"resolution": resolution, "count": count, "measure": measure, "to": to},
     )
 
 
@@ -569,7 +569,7 @@ def _coins(
     limit: int = 50,
     offset: int = 0,
     order: CoinSortDirectionParam = "DESC",
-    sort: CoinSortParam = "created_timestamp",
+    sort: CoinListSortParam = "created_timestamp",
 ) -> Request[list[ListedCoin]]:
     return Request(
         _PREFIX + "/coins",
@@ -730,13 +730,11 @@ def _ath(
     )
 
 
-def _coin_top_callouts(
-    mint: str, *, chain: TokenChainParam | None = None, limit: int = 20
-) -> Request[GetCoinTopCalloutsResponse]:
+def _coin_top_callouts(mint: str, *, limit: int = 20) -> Request[GetCoinTopCalloutsResponse]:
     return Request(
         encode_path(_PREFIX + "/coins/{mint}/callouts/top", mint=mint),
         GetCoinTopCalloutsResponse,
-        {"chain": chain, "limit": limit},
+        {"limit": limit},
     )
 
 
@@ -1378,13 +1376,10 @@ def _user_callouts(
     )
 
 
-def _user_coin_callout(
-    address: str, mint: str, *, quotes_limit: int | None = None
-) -> Request[GetUserCoinCalloutResponse]:
+def _user_coin_callout(address: str, mint: str) -> Request[GetUserCoinCalloutResponse]:
     return Request(
         encode_path(_PREFIX + "/users/{address}/callouts/coin/{mint}", address=address, mint=mint),
         GetUserCoinCalloutResponse,
-        {"quotes_limit": quotes_limit},
     )
 
 
@@ -2219,7 +2214,6 @@ class Pumpfun(AsyncAPIResource):
         resolution: CandleResolutionParam,
         count: int = 200,
         measure: PriceMeasureParam = "price_usd",
-        pool: str | None = None,
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainCandlesResponse:
@@ -2233,7 +2227,6 @@ class Pumpfun(AsyncAPIResource):
             count: Bars ending at `to`.
             measure: What each bar measures. `market_cap_usd` multiplies the USD
                 price by the current circulating supply.
-            pool: One pool of the coin. Omit to stitch curve and AMM bars together.
             to: Unix time in milliseconds of the newest bar. Omit for now, forming
                 bar included.
             timeout: Overrides the client's timeout for this request.
@@ -2243,13 +2236,7 @@ class Pumpfun(AsyncAPIResource):
         """
         return await self._send(
             _chain_candles(
-                chain,
-                address,
-                resolution=resolution,
-                count=count,
-                measure=measure,
-                pool=pool,
-                to=to,
+                chain, address, resolution=resolution, count=count, measure=measure, to=to
             ),
             timeout=timeout,
         )
@@ -2465,7 +2452,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         offset: int = 0,
         order: CoinSortDirectionParam = "DESC",
-        sort: CoinSortParam = "created_timestamp",
+        sort: CoinListSortParam = "created_timestamp",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedCoin]:
         """The paginated coin list behind the board views. Costs 1 credit.
@@ -2840,22 +2827,20 @@ class Pumpfun(AsyncAPIResource):
         self,
         mint: str,
         *,
-        chain: TokenChainParam | None = None,
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinTopCalloutsResponse:
-        """Top callouts on a coin, Solana mint or EVM token. Costs 1 credit.
+        """Top callouts on a coin, Solana mint or EVM token, each with the caller's position. Costs 1 credit.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
-            chain: Chain of the coin, to pin an EVM token.
             limit: Maximum callouts to return.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.pumpfun.GetCoinTopCalloutsResponse`.
         """
-        return await self._send(_coin_top_callouts(mint, chain=chain, limit=limit), timeout=timeout)
+        return await self._send(_coin_top_callouts(mint, limit=limit), timeout=timeout)
 
     async def clip_counts(
         self,
@@ -4250,7 +4235,6 @@ class Pumpfun(AsyncAPIResource):
         address: str,
         mint: str,
         *,
-        quotes_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCoinCalloutResponse:
         """A wallet's callout on one coin; `callout` is `null` when there is none. Costs 1 credit.
@@ -4258,15 +4242,12 @@ class Pumpfun(AsyncAPIResource):
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             mint: Token mint address.
-            quotes_limit: Quote posts of the callout to include.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.pumpfun.GetUserCoinCalloutResponse`.
         """
-        return await self._send(
-            _user_coin_callout(address, mint, quotes_limit=quotes_limit), timeout=timeout
-        )
+        return await self._send(_user_coin_callout(address, mint), timeout=timeout)
 
     async def user_callout_replies(
         self,
@@ -5417,7 +5398,6 @@ class SyncPumpfun(SyncAPIResource):
         resolution: CandleResolutionParam,
         count: int = 200,
         measure: PriceMeasureParam = "price_usd",
-        pool: str | None = None,
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetChainCandlesResponse:
@@ -5431,7 +5411,6 @@ class SyncPumpfun(SyncAPIResource):
             count: Bars ending at `to`.
             measure: What each bar measures. `market_cap_usd` multiplies the USD
                 price by the current circulating supply.
-            pool: One pool of the coin. Omit to stitch curve and AMM bars together.
             to: Unix time in milliseconds of the newest bar. Omit for now, forming
                 bar included.
             timeout: Overrides the client's timeout for this request.
@@ -5441,13 +5420,7 @@ class SyncPumpfun(SyncAPIResource):
         """
         return self._send(
             _chain_candles(
-                chain,
-                address,
-                resolution=resolution,
-                count=count,
-                measure=measure,
-                pool=pool,
-                to=to,
+                chain, address, resolution=resolution, count=count, measure=measure, to=to
             ),
             timeout=timeout,
         )
@@ -5663,7 +5636,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         offset: int = 0,
         order: CoinSortDirectionParam = "DESC",
-        sort: CoinSortParam = "created_timestamp",
+        sort: CoinListSortParam = "created_timestamp",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ListedCoin]:
         """The paginated coin list behind the board views. Costs 1 credit.
@@ -6036,22 +6009,20 @@ class SyncPumpfun(SyncAPIResource):
         self,
         mint: str,
         *,
-        chain: TokenChainParam | None = None,
         limit: int = 20,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinTopCalloutsResponse:
-        """Top callouts on a coin, Solana mint or EVM token. Costs 1 credit.
+        """Top callouts on a coin, Solana mint or EVM token, each with the caller's position. Costs 1 credit.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
-            chain: Chain of the coin, to pin an EVM token.
             limit: Maximum callouts to return.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.pumpfun.GetCoinTopCalloutsResponse`.
         """
-        return self._send(_coin_top_callouts(mint, chain=chain, limit=limit), timeout=timeout)
+        return self._send(_coin_top_callouts(mint, limit=limit), timeout=timeout)
 
     def clip_counts(
         self,
@@ -7442,7 +7413,6 @@ class SyncPumpfun(SyncAPIResource):
         address: str,
         mint: str,
         *,
-        quotes_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCoinCalloutResponse:
         """A wallet's callout on one coin; `callout` is `null` when there is none. Costs 1 credit.
@@ -7450,15 +7420,12 @@ class SyncPumpfun(SyncAPIResource):
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
             mint: Token mint address.
-            quotes_limit: Quote posts of the callout to include.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.pumpfun.GetUserCoinCalloutResponse`.
         """
-        return self._send(
-            _user_coin_callout(address, mint, quotes_limit=quotes_limit), timeout=timeout
-        )
+        return self._send(_user_coin_callout(address, mint), timeout=timeout)
 
     def user_callout_replies(
         self,
