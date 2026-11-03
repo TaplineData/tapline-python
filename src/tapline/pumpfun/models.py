@@ -204,6 +204,7 @@ class MarketChain(str, Enum):
 class MayhemState(str, Enum):
     ACTIVE = "active"
     PAUSED = "paused"
+    COMPLETED = "completed"
 
 
 class MayhemWindow(str, Enum):
@@ -1299,6 +1300,8 @@ class CoinMayhemState(BaseModel):
     multiplayer: bool | None = None
     pause_reason: str | None = None
     complete_reason: str | None = None
+    first_trade_quote_amount: str | None = None
+    stats: CoinMayhemStats | None = None
 
 
 class CoinMayhemStateParams(BaseModel):
@@ -1306,6 +1309,14 @@ class CoinMayhemStateParams(BaseModel):
     """
     Token mint address.
     """
+
+
+class CoinMayhemStats(BaseModel):
+    buyCount: int
+    sellCount: int
+    totalBuyVolumeSol: str
+    totalSellVolumeSol: str
+    netSolDeployed: str
 
 
 class CoinNarrativesParams(BaseModel):
@@ -1401,6 +1412,23 @@ class CoinTimelineParams(BaseModel):
     cursor: str | None = None
     """
     `nextCursor` from the previous page; omit for the first page.
+    """
+
+
+class CoinTopCalloutsParams(BaseModel):
+    mint: Annotated[
+        str,
+        Field(
+            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
+            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
+        ),
+    ]
+    """
+    Coin address: a Solana mint or an EVM token (0x).
+    """
+    limit: Annotated[int | None, Field(ge=1, le=50)] = 20
+    """
+    Maximum callouts to return.
     """
 
 
@@ -2468,6 +2496,12 @@ class GetCoinTimelineResponseItem(BaseModel):
     recipients: list[ItemRecipient] | None = None
 
 
+class GetCoinTopCalloutsResponse(BaseModel):
+    callouts: list[GetMintPositionsResponsePosition]
+    totalCount: int
+    hasMore: bool | None = None
+
+
 class GetCompetitionEntryHighlightsResponse(BaseModel):
     entryId: str
     tokens: list[Token]
@@ -2877,10 +2911,10 @@ class GetMintPositionsResponsePosition(BaseModel):
     accountKind: str | None = None
     amountHeld: float
     pnlUsd: float
-    pnlPercentage: float
+    pnlPercentage: float | None
     realizedPnlUsd: float
     costBasisAmount: float
-    costBasisUsd: float
+    costBasisUsd: float | None
     amountBoughtUsd: float
     amountBought: float
     callout: PositionCallout | None
@@ -5178,6 +5212,7 @@ class PositionCallout(BaseModel):
     actingUserId: Annotated[None, Field(None)] = None
     actingUser: Annotated[None, Field(None)] = None
     prediction: Annotated[None, Field(None)] = None
+    pinnedUpdate: Update | None = None
 
 
 class PositionCoin(BaseModel):
@@ -7338,7 +7373,7 @@ MarketChainParam: TypeAlias = (
         "hypercore",
     ]
 )
-MayhemStateParam: TypeAlias = MayhemState | Literal["active", "paused"]
+MayhemStateParam: TypeAlias = MayhemState | Literal["active", "paused", "completed"]
 MayhemWindowParam: TypeAlias = MayhemWindow | Literal["24h", "7d"]
 MintPositionSortParam: TypeAlias = (
     MintPositionSort | Literal["LATEST", "TOP", "LOWEST_ENTRY", "RANKED", "CLOSED_PNL"]
