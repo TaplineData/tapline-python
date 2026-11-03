@@ -1860,10 +1860,6 @@ class SearchParams(BaseModel):
     """
     Lowest star rating, 2.0 to 4.5 in steps of 0.5.
     """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Places per page.
-    """
     cursor: str | None = ""
     """
     `pagination.next_cursor` from the previous page; empty for the first.
@@ -1879,6 +1875,10 @@ class SearchParams(BaseModel):
     zoom: Annotated[int | None, Field(ge=3, le=21)] = None
     """
     Map zoom around the point, as in `/maps/@lat,lng,14z`; 14 when omitted. Needs `latitude` and `longitude`.
+    """
+    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
+    """
+    Places per page.
     """
     hl: Annotated[
         str | None, Field(examples=["de"], pattern="^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?$")
