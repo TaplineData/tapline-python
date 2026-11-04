@@ -220,6 +220,25 @@ class MintPositionSort(str, Enum):
     CLOSED_PNL = "CLOSED_PNL"
 
 
+class MultichainTokenChain(str, Enum):
+    SOLANA = "solana"
+    BASE = "base"
+    BSC = "bsc"
+    ETHEREUM = "ethereum"
+    MONAD = "monad"
+    ROBINHOOD = "robinhood"
+    HYPEREVM = "hyperevm"
+    INK = "ink"
+    ARC = "arc"
+    MEGAETH = "megaeth"
+    XLAYER = "xlayer"
+    POLYGON = "polygon"
+    ARBITRUM = "arbitrum"
+    AVALANCHE = "avalanche"
+    OPTIMISM = "optimism"
+    SEI = "sei"
+
+
 class NarrativeSource(str, Enum):
     TRENDING = "trending"
     MOVERS = "movers"
@@ -399,6 +418,10 @@ class ActiveCompetitionEntry(BaseModel):
     competitionId: str
     competitionSlug: str
     phase: str
+
+
+class Address(RootModel[str]):
+    root: Annotated[str, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")]
 
 
 class Agentvolumeusd(BaseModel):
@@ -3143,6 +3166,49 @@ class GetPnlLeaderboardResponse(BaseModel):
     windowStartSec: int
 
 
+class GetPoolStatsResponse(BaseModel):
+    poolAddress: str
+    totalQuoteReservesUsd: float | None = None
+    createdAt: int
+    fee: int | None
+    liquidity: str
+    liquidityToken: str
+    nonLiquidityToken: str
+    price: str
+    priceNonQuoteToken: str
+    quoteToken: str
+    highPrice5m: str | None
+    highPrice1: str | None
+    highPrice4: str | None
+    highPrice12: str | None
+    highPrice24: str | None
+    lowPrice5m: str | None = None
+    lowPrice1: str | None
+    lowPrice4: str | None
+    lowPrice12: str | None
+    lowPrice24: str | None
+    priceChange5m: float | None
+    priceChange1: float | None
+    priceChange4: float | None
+    priceChange12: float | None
+    priceChange24: float | None
+    volume5m: str
+    volume1: str
+    volume4: str
+    volume12: str
+    volume24: str
+    bundlerCount: int | None
+    bundlerHeldPercentage: float | None
+    devHeldPercentage: float | None
+    insiderCount: int | None
+    insiderHeldPercentage: float | None
+    sniperCount: int | None
+    sniperHeldPercentage: float | None
+    token0: PoolToken
+    token1: PoolToken
+    isFallback: bool | None = None
+
+
 class GetPortfolioSummaryResponse(BaseModel):
     wallet: str
     from_: Annotated[int, Field(alias="from")]
@@ -3255,6 +3321,10 @@ class GetTokenHolderCountResponse(BaseModel):
     chain: str
     networkId: int
     holderCount: int
+
+
+class GetTokenMetadataBatchResponse(BaseModel):
+    tokens: list[MultichainToken]
 
 
 class GetTopTokenMintChainsResponse(BaseModel):
@@ -4799,6 +4869,50 @@ class MultiChainBreakdown(BaseModel):
     sei: Solana | None = None
 
 
+class MultichainToken(BaseModel):
+    address: str
+    poolAddress: str | None
+    totalSupply: str | None
+    circulatingSupply: str | None
+    chain: str
+    name: str
+    symbol: str
+    decimals: int
+    imageUri: str | None
+    highResImageUri: str | None
+    bannerImageUri: str | None
+    videoUri: str | None
+    description: str | None
+    launchpad: str | None
+    launchpadProgram: str | None
+    twitter: str | None
+    telegram: str | None
+    discord: str | None
+    website: str | None
+    instagram: str | None
+    facebook: str | None
+    email: str | None
+    other: dict[str, str]
+    creatorAddress: str | None
+    createTransactionHash: str | None
+    createdAt: int | None
+    migrationCompleted: bool | None
+    migratedAt: int | None
+    migratedPoolAddress: str | None
+    nonMajorPoolSelected: bool | None
+    potentialScamReasons: list[Any] | None
+    isValidated: bool
+    operatorBypass: bool
+    operatorBlacklist: bool
+    operatorWarning: None
+    isHolderReward: bool | None = None
+    assetClass: str | None
+    issuer: str | None
+    canonicalStock: bool | None
+    underlyingSymbol: str | None
+    imageBackdrop: str | None = None
+
+
 class Nativeasset(BaseModel):
     chainId: str
     address: str
@@ -5127,6 +5241,46 @@ class Point(BaseModel):
 class Pool(BaseModel):
     chainId: str
     address: str
+
+
+class PoolStatsParams(BaseModel):
+    chain: Annotated[MultichainTokenChain, Field(examples=["solana"])]
+    """
+    Chain the pool trades on.
+    """
+    pool: Annotated[
+        str,
+        Field(
+            examples=["FjGgje3HWNgVNn5KPY8nydYtsL5ShffUG61RpQKVpWXP"],
+            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64}))$",
+        ),
+    ]
+    """
+    Pool address: a base58 address on Solana; on an EVM chain a 0x pair address, or a 32-byte 0x pool id for Uniswap v4 pools. `poolAddress` on `/tokens/batch`.
+    """
+    token_address: Annotated[
+        str | None,
+        Field(
+            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
+            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
+        ),
+    ] = None
+    """
+    Token the pool is read for. On Solana pump.fun then answers that token's main pool whatever `pool` says; EVM chains ignore it.
+    """
+
+
+class PoolToken(BaseModel):
+    address: str
+    name: str
+    symbol: str
+    decimals: int
+    totalSupply: str
+    circulatingSupply: str
+    price: str
+    pooled: str
+    isScam: None
+    createdAt: int
 
 
 class PortfolioSummaryCache(BaseModel):
@@ -6240,6 +6394,29 @@ class TokenMember(BaseModel):
     realizedPnlUsd: float
     unrealizedPnlUsd: float
     buySpendUsd: float
+
+
+class TokenMetadataBatchRequest(BaseModel):
+    addresses: Annotated[
+        list[Address],
+        Field(
+            examples=[
+                [
+                    "7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump",
+                    "0x07b3D902783c3C12b077508c3B5c00113d1291D0",
+                ]
+            ],
+            max_length=50,
+            min_length=1,
+        ),
+    ]
+    """
+    Token addresses (Solana mints or EVM tokens) on any mix of chains, 1 to 50. EVM addresses come back lowercased; addresses pump.fun cannot resolve are left out.
+    """
+    chain: MultichainTokenChain | None = None
+    """
+    Look every address up on this chain and leave out those not on it. Omit to let pump.fun pick each address's chain.
+    """
 
 
 class Tokenpnl(BaseModel):
@@ -7377,6 +7554,27 @@ MayhemStateParam: TypeAlias = MayhemState | Literal["active", "paused", "complet
 MayhemWindowParam: TypeAlias = MayhemWindow | Literal["24h", "7d"]
 MintPositionSortParam: TypeAlias = (
     MintPositionSort | Literal["LATEST", "TOP", "LOWEST_ENTRY", "RANKED", "CLOSED_PNL"]
+)
+MultichainTokenChainParam: TypeAlias = (
+    MultichainTokenChain
+    | Literal[
+        "solana",
+        "base",
+        "bsc",
+        "ethereum",
+        "monad",
+        "robinhood",
+        "hyperevm",
+        "ink",
+        "arc",
+        "megaeth",
+        "xlayer",
+        "polygon",
+        "arbitrum",
+        "avalanche",
+        "optimism",
+        "sei",
+    ]
 )
 NarrativeSourceParam: TypeAlias = NarrativeSource | Literal["trending", "movers", "new"]
 NonMonadChainParam: TypeAlias = (
