@@ -5077,10 +5077,14 @@ class Playback(BaseModel):
 class PlaylistMapRequest(BaseModel):
     mints: Annotated[
         list[str],
-        Field(examples=[["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"]], min_length=1),
+        Field(
+            examples=[["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"]],
+            max_length=500,
+            min_length=1,
+        ),
     ]
     """
-    Token mint addresses, at least one.
+    Token mint addresses, 1 to 500.
     """
 
 
