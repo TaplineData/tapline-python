@@ -1760,7 +1760,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
-        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit.
+        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit per 80 results.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -1780,7 +1780,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
-        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit.
+        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit per 80 results.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -1800,7 +1800,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 24,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedRecentResponse:
-        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit per 40 results.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -1818,7 +1818,7 @@ class Pumpfun(AsyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedTrendingResponse:
-        """Returns the trending bounty feed. Costs 1 credit.
+        """Returns the trending bounty feed. Costs 2 credits.
 
         Args:
             limit: Maximum feed entries to return.
@@ -2433,7 +2433,7 @@ class Pumpfun(AsyncAPIResource):
         clips: Sequence[ClipReferenceRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ClipsById]:
-        """Resolve clips by their room and clip id pairs. Costs 1 credit.
+        """Resolve clips by their room and clip id pairs. Costs 1 credit per 20 results.
 
         Args:
             clips: Clips to resolve, 1 to 100, each addressed by room and clip id.
@@ -2544,7 +2544,7 @@ class Pumpfun(AsyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAthBatchResponse:
-        """All-time-high market caps for many coins at once. Costs 1 credit.
+        """All-time-high market caps for many coins at once. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 100.
@@ -2562,7 +2562,7 @@ class Pumpfun(AsyncAPIResource):
         include_nsfw: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit.
+        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), at most 500.
@@ -2586,7 +2586,7 @@ class Pumpfun(AsyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinBoardResponse:
-        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit.
+        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit per 75 results.
 
         Args:
             board: Which ranked board to read.
@@ -2650,7 +2650,7 @@ class Pumpfun(AsyncAPIResource):
         metrics: Sequence[MarketActivityMetricParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketActivityBatchResponse:
-        """Rolling market activity for many coins at once. Costs 1 credit.
+        """Rolling market activity for many coins at once. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 50.
@@ -2700,7 +2700,7 @@ class Pumpfun(AsyncAPIResource):
         sort: PerpSortParam = "volume_24h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[PerpMarket]:
-        """The HyperCore perpetuals screener: mark price, funding, open interest and 24h change per perp. Pass a perp's `mint` (such as `BTC`) with chain `hypercore` to the `/chains/{chain}/coins/{address}` routes for its candles and trades. Costs 1 credit.
+        """The HyperCore perpetuals screener: mark price, funding, open interest and 24h change per perp. Pass a perp's `mint` (such as `BTC`) with chain `hypercore` to the `/chains/{chain}/coins/{address}` routes for its candles and trades. Costs 1 credit per 75 results.
 
         Args:
             limit: Maximum perps to return.
@@ -2719,7 +2719,7 @@ class Pumpfun(AsyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
+        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 500.
@@ -2779,7 +2779,7 @@ class Pumpfun(AsyncAPIResource):
         sort_order: TopMintsSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTokenMintChainsResponse:
-        """The top-token list plus, for each address, the CAIP-2 chains it was vetted on (`eip155:8453`, `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`). Costs 1 credit.
+        """The top-token list plus, for each address, the CAIP-2 chains it was vetted on (`eip155:8453`, `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`). Costs 2 credits.
 
         Args:
             sort_order: Order of the list. Omit for pump.fun's curated order.
@@ -3191,7 +3191,7 @@ class Pumpfun(AsyncAPIResource):
         user_addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesBatchResponse:
-        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
+        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit per 20 results.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
@@ -3387,7 +3387,7 @@ class Pumpfun(AsyncAPIResource):
         sort: HolderRewardSortParam = "accrued",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHolderRewardsResponse:
-        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 1 credit.
+        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 8 credits per 250 results.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -3484,7 +3484,7 @@ class Pumpfun(AsyncAPIResource):
         updates_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHomeFeedResponse:
-        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
+        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 3 credits.
 
         Args:
             chain: Restrict the feed to one chain. pump.fun's feed does not cover
@@ -3641,7 +3641,7 @@ class Pumpfun(AsyncAPIResource):
         sort: LeaderboardSortParam = "combined",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardResponse:
-        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 1 credit.
+        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 2 credits.
 
         Args:
             limit: Maximum traders to return. pump.fun serves 100 at most.
@@ -3686,7 +3686,7 @@ class Pumpfun(AsyncAPIResource):
         sort: LeaderboardSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGroupPnlLeaderboardResponse:
-        """Squad (group) PnL leaderboard: each squad's combined PnL over its counted members, with its top positions. Costs 1 credit.
+        """Squad (group) PnL leaderboard: each squad's combined PnL over its counted members, with its top positions. Costs 2 credits.
 
         Args:
             limit: Maximum squads to return.
@@ -3789,10 +3789,10 @@ class Pumpfun(AsyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPlaylistMapResponse:
-        """HLS playlist URLs for the given mints, keyed by mint. Costs 1 credit.
+        """HLS playlist URLs for the given mints, keyed by mint. Costs 1 credit per 20 results.
 
         Args:
-            mints: Token mint addresses, at least one.
+            mints: Token mint addresses, 1 to 500.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -3916,7 +3916,7 @@ class Pumpfun(AsyncAPIResource):
         ids: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVerifiedProfilesResponse:
-        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
+        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit per 20 results.
 
         Args:
             ids: Wallet addresses (Solana or EVM) or pump.fun user ids to check for
@@ -4111,7 +4111,7 @@ class Pumpfun(AsyncAPIResource):
         chain: MultichainTokenChainParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenMetadataBatchResponse:
-        """Look up metadata for up to 50 tokens across chains in one call. Costs 1 credit.
+        """Look up metadata for up to 50 tokens across chains in one call. Costs 1 credit per 20 results.
 
         Args:
             addresses: Token addresses (Solana mints or EVM tokens) on any mix of
@@ -4170,7 +4170,7 @@ class Pumpfun(AsyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[UsersBatch]:
-        """Resolve many wallet addresses to profiles in one call. Costs 1 credit.
+        """Resolve many wallet addresses to profiles in one call. Costs 1 credit per 20 results.
 
         Args:
             addresses: Wallet addresses, 1 to 100.
@@ -4279,7 +4279,7 @@ class Pumpfun(AsyncAPIResource):
         window: CalloutWindowParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCalloutsResponse:
-        """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 1 credit.
+        """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 2 credits.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -4385,7 +4385,7 @@ class Pumpfun(AsyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit per 100 results.
 
         Args:
             address: Solana wallet address or pump.fun user id (UUID). pump.fun
@@ -4458,7 +4458,7 @@ class Pumpfun(AsyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit per 100 results.
 
         Args:
             address: Solana wallet address or pump.fun user id (UUID). pump.fun
@@ -4679,7 +4679,7 @@ class Pumpfun(AsyncAPIResource):
         updates_limit: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserPositionsResponse:
-        """A wallet's positions in specific coins. Costs 1 credit.
+        """A wallet's positions in specific coins. Costs 1 credit per 20 results.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -4731,7 +4731,7 @@ class Pumpfun(AsyncAPIResource):
         types: Sequence[UserTradeTypeParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserTradesResponse:
-        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
+        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit per 150 results.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -4757,7 +4757,7 @@ class Pumpfun(AsyncAPIResource):
         wallets: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletOverviewResponse:
-        """Total value and holdings summary for several Solana wallets. Costs 1 credit.
+        """Total value and holdings summary for several Solana wallets. Costs 1 credit per 20 results.
 
         Args:
             wallets: Solana wallet addresses, 1 to 50. pump.fun refuses the whole
@@ -4778,7 +4778,7 @@ class Pumpfun(AsyncAPIResource):
         size: int = 100,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletBalancesResponse:
-        """Token balances held by a Solana wallet. Costs 1 credit.
+        """Token balances held by a Solana wallet. Costs 1 credit per 150 results.
 
         Args:
             address: Solana wallet address. pump.fun refuses EVM wallets here.
@@ -4823,7 +4823,7 @@ class Pumpfun(AsyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletPnlBatchResponse:
-        """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit.
+        """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit per 20 results.
 
         Args:
             address: Solana wallet address. pump.fun refuses EVM wallets here.
@@ -5003,7 +5003,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
-        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit.
+        """Returns the live movers board with ranked coin, market, and activity data. Costs 1 credit per 80 results.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -5023,7 +5023,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
-        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit.
+        """Returns the trending board with ranked coin, market, and activity data. The body is labelled `board: movers`. Costs 1 credit per 80 results.
 
         Args:
             chains: Keep only coins on these chains. Repeat the parameter for
@@ -5043,7 +5043,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 24,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedRecentResponse:
-        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit.
+        """The most recent bounty submissions. Pass `cursor` from the previous page for more. Costs 1 credit per 40 results.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -5061,7 +5061,7 @@ class SyncPumpfun(SyncAPIResource):
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetBountyFeedTrendingResponse:
-        """Returns the trending bounty feed. Costs 1 credit.
+        """Returns the trending bounty feed. Costs 2 credits.
 
         Args:
             limit: Maximum feed entries to return.
@@ -5666,7 +5666,7 @@ class SyncPumpfun(SyncAPIResource):
         clips: Sequence[ClipReferenceRequest],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[ClipsById]:
-        """Resolve clips by their room and clip id pairs. Costs 1 credit.
+        """Resolve clips by their room and clip id pairs. Costs 1 credit per 20 results.
 
         Args:
             clips: Clips to resolve, 1 to 100, each addressed by room and clip id.
@@ -5777,7 +5777,7 @@ class SyncPumpfun(SyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetAthBatchResponse:
-        """All-time-high market caps for many coins at once. Costs 1 credit.
+        """All-time-high market caps for many coins at once. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 100.
@@ -5795,7 +5795,7 @@ class SyncPumpfun(SyncAPIResource):
         include_nsfw: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit.
+        """Resolve many mints to full coin records in one call. Unresolved addresses are omitted. Returns the same records as `/coins/raw-batch`. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), at most 500.
@@ -5817,7 +5817,7 @@ class SyncPumpfun(SyncAPIResource):
         offset: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetCoinBoardResponse:
-        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit.
+        """One ranked coin board (new, graduating, graduated, movers, or charity), across every chain unless `chains` narrows it. Costs 1 credit per 75 results.
 
         Args:
             board: Which ranked board to read.
@@ -5881,7 +5881,7 @@ class SyncPumpfun(SyncAPIResource):
         metrics: Sequence[MarketActivityMetricParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketActivityBatchResponse:
-        """Rolling market activity for many coins at once. Costs 1 credit.
+        """Rolling market activity for many coins at once. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 50.
@@ -5931,7 +5931,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: PerpSortParam = "volume_24h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[PerpMarket]:
-        """The HyperCore perpetuals screener: mark price, funding, open interest and 24h change per perp. Pass a perp's `mint` (such as `BTC`) with chain `hypercore` to the `/chains/{chain}/coins/{address}` routes for its candles and trades. Costs 1 credit.
+        """The HyperCore perpetuals screener: mark price, funding, open interest and 24h change per perp. Pass a perp's `mint` (such as `BTC`) with chain `hypercore` to the `/chains/{chain}/coins/{address}` routes for its candles and trades. Costs 1 credit per 75 results.
 
         Args:
             limit: Maximum perps to return.
@@ -5950,7 +5950,7 @@ class SyncPumpfun(SyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[CoinsBatch]:
-        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit.
+        """Resolve many mints to their raw indexer records. Returns the same records as `/coins/batch`; this route needs at least one mint. Costs 1 credit per 20 results.
 
         Args:
             mints: Coin addresses (Solana mints or EVM tokens), 1 to 500.
@@ -6010,7 +6010,7 @@ class SyncPumpfun(SyncAPIResource):
         sort_order: TopMintsSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTopTokenMintChainsResponse:
-        """The top-token list plus, for each address, the CAIP-2 chains it was vetted on (`eip155:8453`, `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`). Costs 1 credit.
+        """The top-token list plus, for each address, the CAIP-2 chains it was vetted on (`eip155:8453`, `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`). Costs 2 credits.
 
         Args:
             sort_order: Order of the list. Omit for pump.fun's curated order.
@@ -6422,7 +6422,7 @@ class SyncPumpfun(SyncAPIResource):
         user_addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTradesBatchResponse:
-        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit.
+        """Trades on one coin for several wallets at once. Amounts are raw integer strings, unlike `/coins/{mint}/trades`: `baseAmount` is in the coin's smallest unit (6 decimals for these coins) and `quoteAmount` in the quote token's smallest unit (lamports for SOL). Costs 1 credit per 20 results.
 
         Args:
             mint: Coin address: a Solana mint or an EVM token (0x).
@@ -6618,7 +6618,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: HolderRewardSortParam = "accrued",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHolderRewardsResponse:
-        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 1 credit.
+        """Returns holder-reward fees and payouts per coin, plus totals. Page with `page`, or pass a `cursor` from `next` to continue a previous result set. Costs 8 credits per 250 results.
 
         Args:
             cursor: `nextCursor` from the previous page; omit for the first page.
@@ -6713,7 +6713,7 @@ class SyncPumpfun(SyncAPIResource):
         updates_limit: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetHomeFeedResponse:
-        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 1 credit.
+        """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 3 credits.
 
         Args:
             chain: Restrict the feed to one chain. pump.fun's feed does not cover
@@ -6870,7 +6870,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: LeaderboardSortParam = "combined",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPnlLeaderboardResponse:
-        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 1 credit.
+        """Trader PnL leaderboard with the top 100 traders and no further pages. Costs 2 credits.
 
         Args:
             limit: Maximum traders to return. pump.fun serves 100 at most.
@@ -6915,7 +6915,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: LeaderboardSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetGroupPnlLeaderboardResponse:
-        """Squad (group) PnL leaderboard: each squad's combined PnL over its counted members, with its top positions. Costs 1 credit.
+        """Squad (group) PnL leaderboard: each squad's combined PnL over its counted members, with its top positions. Costs 2 credits.
 
         Args:
             limit: Maximum squads to return.
@@ -7016,10 +7016,10 @@ class SyncPumpfun(SyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetPlaylistMapResponse:
-        """HLS playlist URLs for the given mints, keyed by mint. Costs 1 credit.
+        """HLS playlist URLs for the given mints, keyed by mint. Costs 1 credit per 20 results.
 
         Args:
-            mints: Token mint addresses, at least one.
+            mints: Token mint addresses, 1 to 500.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -7143,7 +7143,7 @@ class SyncPumpfun(SyncAPIResource):
         ids: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetVerifiedProfilesResponse:
-        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit.
+        """Whether the KOL badge is shown for each wallet or user ID. This is the badge other routes report as `verifiedBadgeVisible`, not `isVerified`. Costs 1 credit per 20 results.
 
         Args:
             ids: Wallet addresses (Solana or EVM) or pump.fun user ids to check for
@@ -7338,7 +7338,7 @@ class SyncPumpfun(SyncAPIResource):
         chain: MultichainTokenChainParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTokenMetadataBatchResponse:
-        """Look up metadata for up to 50 tokens across chains in one call. Costs 1 credit.
+        """Look up metadata for up to 50 tokens across chains in one call. Costs 1 credit per 20 results.
 
         Args:
             addresses: Token addresses (Solana mints or EVM tokens) on any mix of
@@ -7395,7 +7395,7 @@ class SyncPumpfun(SyncAPIResource):
         addresses: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[UsersBatch]:
-        """Resolve many wallet addresses to profiles in one call. Costs 1 credit.
+        """Resolve many wallet addresses to profiles in one call. Costs 1 credit per 20 results.
 
         Args:
             addresses: Wallet addresses, 1 to 100.
@@ -7504,7 +7504,7 @@ class SyncPumpfun(SyncAPIResource):
         window: CalloutWindowParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserCalloutsResponse:
-        """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 1 credit.
+        """Callouts a wallet has posted. Pass `page_token` from `nextPageToken` for the next page, with the same `window`. Costs 2 credits.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -7610,7 +7610,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles following a wallet. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit per 100 results.
 
         Args:
             address: Solana wallet address or pump.fun user id (UUID). pump.fun
@@ -7683,7 +7683,7 @@ class SyncPumpfun(SyncAPIResource):
         sort: FollowSortParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[Follower]:
-        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit.
+        """Profiles a wallet follows. Without `limit`, `offset`, or `sort`, this is the legacy list, which stops at 50 profiles; set any of them to page through every profile (the same row shape). Costs 1 credit per 100 results.
 
         Args:
             address: Solana wallet address or pump.fun user id (UUID). pump.fun
@@ -7904,7 +7904,7 @@ class SyncPumpfun(SyncAPIResource):
         updates_limit: int = 0,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserPositionsResponse:
-        """A wallet's positions in specific coins. Costs 1 credit.
+        """A wallet's positions in specific coins. Costs 1 credit per 20 results.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -7956,7 +7956,7 @@ class SyncPumpfun(SyncAPIResource):
         types: Sequence[UserTradeTypeParam] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetUserTradesResponse:
-        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit.
+        """An account's token trades, newest first. Takes a wallet or user ID. Squad IDs may return no trades. Pass `cursor` from `nextCursor` for older trades. Costs 1 credit per 150 results.
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
@@ -7982,7 +7982,7 @@ class SyncPumpfun(SyncAPIResource):
         wallets: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletOverviewResponse:
-        """Total value and holdings summary for several Solana wallets. Costs 1 credit.
+        """Total value and holdings summary for several Solana wallets. Costs 1 credit per 20 results.
 
         Args:
             wallets: Solana wallet addresses, 1 to 50. pump.fun refuses the whole
@@ -8003,7 +8003,7 @@ class SyncPumpfun(SyncAPIResource):
         size: int = 100,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletBalancesResponse:
-        """Token balances held by a Solana wallet. Costs 1 credit.
+        """Token balances held by a Solana wallet. Costs 1 credit per 150 results.
 
         Args:
             address: Solana wallet address. pump.fun refuses EVM wallets here.
@@ -8048,7 +8048,7 @@ class SyncPumpfun(SyncAPIResource):
         mints: Sequence[str],
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetWalletPnlBatchResponse:
-        """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit.
+        """A Solana wallet's PnL across many Solana coins at once. Costs 1 credit per 20 results.
 
         Args:
             address: Solana wallet address. pump.fun refuses EVM wallets here.
