@@ -1,13 +1,12 @@
 """Capture real API payloads into ``tests/fixtures/youtube`` and index them.
 
-Tapline's demo endpoints run the same interactor and return the same response
-types as the authenticated ones, so they pin the models against production
-without an API key or credits. They are capped at five requests per IP per
-endpoint per day, so a fixture already captured from the API is never
-refetched::
+Requests go to the authenticated YouTube endpoints with ``TAPLINE_API_KEY``, so
+each capture spends credits. The keyless demo endpoints accept only the inputs
+the website offers, which these fixtures do not use. A fixture already
+captured from the API is never refetched::
 
-    uv run python scripts/capture_fixtures.py            # everything missing
-    uv run python scripts/capture_fixtures.py formats    # one fixture
+    TAPLINE_API_KEY=… uv run python scripts/capture_fixtures.py            # everything missing
+    TAPLINE_API_KEY=… uv run python scripts/capture_fixtures.py formats    # one fixture
 
 Requests go out through plain httpx. A fixture parsed by the models it exists
 to test would prove nothing.
@@ -20,14 +19,15 @@ carries per-segment keys a manual one never does, a projected metadata record,
 and searches filtered down to each result type.
 
 ``manifest.json`` records where every fixture in the directory came from.
-Fixtures it attributes to something other than this script — ``comment_replies``
-has no demo route at all — are left alone.
+Fixtures it attributes to something other than this script, such as
+``comment_replies``, are left alone.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -38,7 +38,7 @@ from urllib.parse import quote
 import httpx
 
 BASE_URL = "https://api.tapline.sh"
-DEMO_PREFIX = "/v1/youtube/demo"
+YOUTUBE_PREFIX = "/v1/youtube"
 FIXTURE_DIR = Path(__file__).resolve().parent.parent / "tests" / "fixtures" / "youtube"
 MANIFEST = FIXTURE_DIR / "manifest.json"
 
@@ -75,7 +75,7 @@ class Capture:
         name: Fixture file stem under ``tests/fixtures/youtube``.
         method: The ``tapline.youtube`` method that returns this shape.
         model: Class in :mod:`tapline.youtube` the payload must parse into.
-        template: Demo path below :data:`DEMO_PREFIX`, with ``{}`` placeholders.
+        template: Path below :data:`YOUTUBE_PREFIX`, with ``{}`` placeholders.
         segments: Path segment values, percent-encoded before substitution.
         params: Query parameters; a sequence repeats its key.
     """
@@ -90,11 +90,9 @@ class Capture:
     @property
     def path(self) -> str:
         encoded = {name: quote(value, safe="") for name, value in self.segments.items()}
-        return DEMO_PREFIX + self.template.format(**encoded)
+        return YOUTUBE_PREFIX + self.template.format(**encoded)
 
 
-# Ordered so every endpoint's first fixture is attempted before any endpoint's
-# second: the daily cap is per endpoint, so breadth survives a partial run.
 CAPTURES: tuple[Capture, ...] = (
     Capture(
         name="search",
@@ -267,7 +265,7 @@ def already_captured(spec: Capture, manifest: Mapping[str, Mapping[str, str]]) -
     """Whether this fixture is on disk *and* came from the API.
 
     A fixture recorded against another source is one this script never made,
-    so the daily cap has not been spent on it and it is worth spending now.
+    so it is worth fetching now.
     """
     entry = manifest.get(spec.name)
     return fixture_path(spec.name).exists() and entry is not None and entry["source"] == BASE_URL
@@ -298,13 +296,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Fixtures to capture. Defaults to every one that is missing.",
     )
     args = parser.parse_args(argv)
+    api_key = os.environ.get("TAPLINE_API_KEY")
+    if not api_key:
+        print("TAPLINE_API_KEY is not set.", file=sys.stderr)
+        return 2
     wanted = set(args.names) or {spec.name for spec in CAPTURES}
 
     FIXTURE_DIR.mkdir(parents=True, exist_ok=True)
     manifest = load_manifest()
     failures: list[str] = []
 
-    with httpx.Client(base_url=BASE_URL, timeout=TIMEOUT) as client:
+    with httpx.Client(base_url=BASE_URL, headers={"X-API-Key": api_key}, timeout=TIMEOUT) as client:
         for spec in CAPTURES:
             if spec.name not in wanted:
                 continue
@@ -314,8 +316,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             try:
                 manifest[spec.name] = capture(client, spec)
             except httpx.HTTPStatusError as err:
-                # A 429 is the daily demo cap, not a client defect: report the
-                # gap rather than retrying into it.
                 failures.append(spec.name)
                 status, body = err.response.status_code, err.response.text[:200]
                 print(f"FAILED   {spec.name} — HTTP {status} {body}")
