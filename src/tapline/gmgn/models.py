@@ -45,6 +45,8 @@ class Chain(str, Enum):
     ARC = "arc"
     STABLE = "stable"
     XLAYER = "xlayer"
+    AVALANCHE = "avalanche"
+    ELYSIUM = "elysium"
 
 
 class HolderOrderBy(str, Enum):
@@ -103,6 +105,9 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class Resolution(str, Enum):
@@ -3636,6 +3641,8 @@ ChainParam: TypeAlias = (
         "arc",
         "stable",
         "xlayer",
+        "avalanche",
+        "elysium",
     ]
 )
 HolderOrderByParam: TypeAlias = (
