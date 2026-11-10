@@ -44,22 +44,25 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
@@ -122,95 +125,95 @@ class GetProfileParams(BaseModel):
 
 
 class LinkedinCompanyEmployee(BaseModel):
-    image: str | None
-    link: str
     name: str
+    link: str
+    image: str | None
 
 
 class LinkedinCompanyLocation(BaseModel):
     city: str | None
-    country: str | None
     state: str | None
+    country: str | None
 
 
 class LinkedinCompanyPost(BaseModel):
-    author: LinkedinPostAuthor
-    commentCount: int | None
-    datePublished: str
-    id: str
-    isRepost: bool
-    likeCount: int | None
-    text: str | None
     url: str
+    id: str
+    datePublished: str
+    text: str | None
+    likeCount: int | None
+    commentCount: int | None
+    author: LinkedinPostAuthor
+    isRepost: bool
 
 
 class LinkedinCompanyPostsResponse(BaseModel):
-    hasNextPage: bool
     page: int
+    hasNextPage: bool
     posts: list[LinkedinCompanyPost]
 
 
 class LinkedinCompanyResponse(BaseModel):
-    affiliatedPages: list[LinkedinRelatedPage]
-    coverImage: str | None
+    id: str | None
+    url: str
+    name: str
     description: str | None
+    location: LinkedinCompanyLocation
     employeeCount: int | None
-    employees: list[LinkedinCompanyEmployee]
     followers: int | None
+    website: str | None
+    logo: str | None
+    coverImage: str | None
+    slogan: str | None
+    industry: str | None
+    size: str | None
     founded: int | None
     headquarters: str | None
-    id: str | None
-    industry: str | None
-    location: LinkedinCompanyLocation
-    logo: str | None
-    name: str
-    posts: list[LinkedinCompanyPost]
-    similarPages: list[LinkedinRelatedPage]
-    size: str | None
-    slogan: str | None
-    specialties: list[str]
     type: str | None
-    url: str
-    website: str | None
+    specialties: list[str]
+    similarPages: list[LinkedinRelatedPage]
+    affiliatedPages: list[LinkedinRelatedPage]
+    employees: list[LinkedinCompanyEmployee]
+    posts: list[LinkedinCompanyPost]
 
 
 class LinkedinCursorPagination(BaseModel):
-    completion: LinkedinJobsSearchCompletionValue | None
     next_cursor: str | None
+    completion: LinkedinJobsSearchCompletionValue | None
 
 
 class LinkedinJobCard(BaseModel):
-    benefits: str | None
-    company: LinkedinJobCompany
     id: str
+    url: str
+    title: str
+    company: LinkedinJobCompany
     location: str | None
     postedDate: str | None
     postedText: str | None
-    title: str
-    url: str
+    benefits: str | None
 
 
 class LinkedinJobCompany(BaseModel):
-    logo: str | None
     name: str | None
     url: str | None
+    logo: str | None
 
 
 class LinkedinJobResponse(BaseModel):
-    applicants: str | None
-    company: LinkedinJobCompany
-    description: str | None
-    descriptionHtml: str | None
-    easyApply: bool | None
-    employmentType: str | None
     id: str
-    industries: str | None
+    url: str
+    title: str
+    company: LinkedinJobCompany
     location: str | None
     postedText: str | None
+    applicants: str | None
     salary: str | None
+    description: str | None
+    descriptionHtml: str | None
     seniorityLevel: str | None
-    title: str
-    url: str
+    employmentType: str | None
+    industries: str | None
+    easyApply: bool | None
 
 
 class LinkedinJobsSearchResponse(BaseModel):
@@ -219,134 +222,134 @@ class LinkedinJobsSearchResponse(BaseModel):
 
 
 class LinkedinMoreArticle(BaseModel):
-    commentCount: int | None
+    link: str
+    title: str | None
     datePublished: str | None
     description: str | None
-    link: str
     reactionCount: int | None
-    title: str | None
+    commentCount: int | None
 
 
 class LinkedinOrganizationRole(BaseModel):
     field_type: Annotated[str, Field(alias="@type")]
-    description: str | None
-    endDate: int | str | None
-    startDate: int | str | None
     title: str | None
+    description: str | None
+    startDate: int | str | None
+    endDate: int | str | None
 
 
 class LinkedinPostAuthor(BaseModel):
-    followers: int | None
     name: str | None
     url: str | None
+    followers: int | None
 
 
 class LinkedinPostComment(BaseModel):
     author: str | None
-    linkedinUrl: str | None
     text: str
+    linkedinUrl: str | None
 
 
 class LinkedinPostResponse(BaseModel):
     activityUrn: str | None
-    author: LinkedinPostAuthor
-    commentCount: int | None
-    comments: list[LinkedinPostComment]
     contentUrn: str | None
+    url: str
+    name: str | None
+    headline: str | None
+    commentCount: int | None
+    likeCount: int | None
     datePublished: str | None
     description: str | None
-    headline: str | None
-    images: list[str]
-    likeCount: int | None
+    author: LinkedinPostAuthor
+    comments: list[LinkedinPostComment]
     moreArticles: list[LinkedinMoreArticle]
-    name: str | None
-    url: str
+    images: list[str]
     video: LinkedinPostVideo | None
 
 
 class LinkedinPostTranscriptResponse(BaseModel):
+    url: str
     transcript: str
     transcriptNotAvailable: bool
-    url: str
 
 
 class LinkedinPostVideo(BaseModel):
-    poster: str | None
     url: str
+    poster: str | None
 
 
 class LinkedinProfileActivity(BaseModel):
-    activityType: str | None
-    image: str | None
-    link: str
     title: str | None
+    activityType: str | None
+    link: str
+    image: str | None
 
 
 class LinkedinProfileArticle(BaseModel):
-    articleBody: str | None
+    headline: str
+    link: str
     author: str | None
     datePublished: str | None
-    headline: str
     image: str | None
+    articleBody: str | None
     likeCount: int | None
-    link: str
 
 
 class LinkedinProfileOrganization(BaseModel):
     field_type: Annotated[str, Field(alias="@type")]
-    location: str | None
-    member: LinkedinOrganizationRole
     name: str
     url: str | None
+    location: str | None
+    member: LinkedinOrganizationRole
 
 
 class LinkedinProfileProject(BaseModel):
-    contributors: list[LinkedinProfileProjectContributor]
-    dateRange: str | None
-    description: str | None
     name: str
     url: str | None
+    dateRange: str | None
+    description: str | None
+    contributors: list[LinkedinProfileProjectContributor]
 
 
 class LinkedinProfileProjectContributor(BaseModel):
-    image: str | None
-    link: str
     name: str | None
+    link: str
+    image: str | None
 
 
 class LinkedinProfilePublication(BaseModel):
-    date: str | None
     name: str
-    publisher: str | None
     url: str | None
+    publisher: str | None
+    date: str | None
 
 
 class LinkedinProfileRecommendation(BaseModel):
-    image: str | None
-    link: str | None
     name: str
+    link: str | None
+    image: str | None
     text: str
 
 
 class LinkedinProfileResponse(BaseModel):
-    about: str | None
-    activity: list[LinkedinProfileActivity]
-    articles: list[LinkedinProfileArticle]
-    connections: str | None
-    education: list[LinkedinProfileOrganization]
-    experience: list[LinkedinProfileOrganization]
-    followers: int | None
+    url: str
+    publicIdentifier: str
+    name: str
     headline: str | None
     image: str | None
     location: str | None
-    name: str
-    projects: list[LinkedinProfileProject]
-    publicIdentifier: str
-    publications: list[LinkedinProfilePublication]
+    followers: int | None
+    connections: str | None
+    about: str | None
     recentPosts: list[LinkedinProfileActivity]
+    experience: list[LinkedinProfileOrganization]
+    articles: list[LinkedinProfileArticle]
+    activity: list[LinkedinProfileActivity]
+    education: list[LinkedinProfileOrganization]
+    publications: list[LinkedinProfilePublication]
+    projects: list[LinkedinProfileProject]
     recommendations: list[LinkedinProfileRecommendation]
     similarProfiles: list[LinkedinSimilarProfile]
-    url: str
     websites: list[LinkedinProfileWebsite]
 
 
@@ -356,42 +359,24 @@ class LinkedinProfileWebsite(BaseModel):
 
 
 class LinkedinRelatedPage(BaseModel):
-    image: str | None
-    industry: str | None
     link: str
-    location: str | None
     name: str
+    industry: str | None
+    location: str | None
+    image: str | None
 
 
 class LinkedinSimilarProfile(BaseModel):
-    image: str | None
     link: str
     name: str
     subtitle: str | None
+    image: str | None
 
 
 class SearchJobsParams(BaseModel):
-    company_ids: Annotated[
-        str | None, Field(examples=["1586"], pattern="^\\d{1,12}(,\\d{1,12}){0,19}$")
-    ] = None
-    """
-    Comma-separated LinkedIn numeric company ids, up to 20 (the company `id` from `/v1/linkedin/company`).
-    """
     cursor: Annotated[str | None, Field(pattern="^[A-Za-z0-9_-]{0,200}$")] = None
     """
     The `pagination.next_cursor` from the previous page. Omit it, or send it empty, for the first page.
-    """
-    distance: Annotated[int | None, Field(ge=0, le=100)] = None
-    """
-    Radius in miles around a city `location`.
-    """
-    easy_apply: bool | None = False
-    """
-    Only jobs that accept LinkedIn Easy Apply.
-    """
-    geo_id: Annotated[int | None, Field(examples=[103644278], ge=1, le=9999999999)] = None
-    """
-    LinkedIn's numeric geo id, the `geoId` in a LinkedIn jobs URL (`103644278` is the United States).
     """
     keywords: Annotated[
         str | None, Field(examples=["python developer"], max_length=200, min_length=1)
@@ -405,9 +390,27 @@ class SearchJobsParams(BaseModel):
     """
     A place as LinkedIn names it: a country (`United States`), region or city (`Austin, Texas, United States`). Omitted, LinkedIn picks the country of our exit IP.
     """
+    geo_id: Annotated[int | None, Field(examples=[103644278], ge=1, le=9999999999)] = None
+    """
+    LinkedIn's numeric geo id, the `geoId` in a LinkedIn jobs URL (`103644278` is the United States).
+    """
+    distance: Annotated[int | None, Field(ge=0, le=100)] = None
+    """
+    Radius in miles around a city `location`.
+    """
     posted_within: PostedWithin | None = None
     """
     Only jobs posted within this window.
+    """
+    company_ids: Annotated[
+        str | None, Field(examples=["1586"], pattern="^\\d{1,12}(,\\d{1,12}){0,19}$")
+    ] = None
+    """
+    Comma-separated LinkedIn numeric company ids, up to 20 (the company `id` from `/v1/linkedin/company`).
+    """
+    easy_apply: bool | None = False
+    """
+    Only jobs that accept LinkedIn Easy Apply.
     """
 
 

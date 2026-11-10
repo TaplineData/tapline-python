@@ -3,8 +3,9 @@
 :class:`TaplineClient` is awaitable and :class:`SyncTaplineClient` blocks.
 Async is the unprefixed name because that is how the API is expected to be
 called: every endpoint fetches from its upstream site live, so a caller almost
-always wants several in flight at once. Each client carries one namespace per
-service (``airbnb``, ``birdeye``, ``brave_search``, ``expedia``, ``facebook``,
+always wants several in flight at once. Each client carries ``account``, for
+the key's credit balance, and one namespace per service (``airbnb``,
+``birdeye``, ``brave_search``, ``expedia``, ``facebook``,
 ``facebook_ad_library``, ``facebook_marketplace``, ``geckoterminal``, ``gmgn``,
 ``google_maps``, ``goplus``, ``imovelweb``, ``indeed``, ``instagram``, ``linkedin``, ``pinterest``,
 ``pinterest_v2``, ``ponsfamily``, ``pumpfun``, ``tiktok``, ``twitter``, ``youtube``, ``zillow``),
@@ -21,6 +22,7 @@ from ._base_client import AsyncAPIClient, SyncAPIClient
 from ._constants import DEFAULT_MAX_RETRIES
 from ._types import Headers, NotGiven, Timeout, not_given
 from .resources import (
+    Account,
     Airbnb,
     Birdeye,
     BraveSearch,
@@ -40,6 +42,7 @@ from .resources import (
     PinterestV2,
     Ponsfamily,
     Pumpfun,
+    SyncAccount,
     SyncAirbnb,
     SyncBirdeye,
     SyncBraveSearch,
@@ -95,6 +98,9 @@ class TaplineClient(AsyncAPIClient):
         async with TaplineClient(api_key=api_key) as tapline:
             comments = await tapline.youtube.comments(video_id=video_id)
     """
+
+    account: Account
+    """The account endpoints."""
 
     airbnb: Airbnb
     """The Airbnb endpoints."""
@@ -210,6 +216,7 @@ class TaplineClient(AsyncAPIClient):
             default_headers=default_headers,
             http_client=http_client,
         )
+        self.account = Account(self)
         self.airbnb = Airbnb(self)
         self.birdeye = Birdeye(self)
         self.brave_search = BraveSearch(self)
@@ -251,6 +258,9 @@ class SyncTaplineClient(SyncAPIClient):
         with SyncTaplineClient(api_key=api_key) as tapline:
             comments = tapline.youtube.comments(video_id=video_id)
     """
+
+    account: SyncAccount
+    """The account endpoints."""
 
     airbnb: SyncAirbnb
     """The Airbnb endpoints."""
@@ -366,6 +376,7 @@ class SyncTaplineClient(SyncAPIClient):
             default_headers=default_headers,
             http_client=http_client,
         )
+        self.account = SyncAccount(self)
         self.airbnb = SyncAirbnb(self)
         self.birdeye = SyncBirdeye(self)
         self.brave_search = SyncBraveSearch(self)

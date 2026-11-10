@@ -147,6 +147,9 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class BirdeyeCursorPagination(BaseModel):
@@ -1248,7 +1251,7 @@ class BirdeyeTrade(BaseModel):
     to: BirdeyeTradeTo
     tokenPrice: float | None
     mc: float | None = None
-    network: str
+    network: str | None = None
     soldPercentage: float | None = None
     sourceAddress: str | None = None
     platformAddress: str | None = None

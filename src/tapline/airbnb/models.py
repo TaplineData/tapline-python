@@ -115,6 +115,9 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class ReviewSort(str, Enum):
@@ -132,23 +135,35 @@ class RoomType(str, Enum):
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class GetCalendarRequest(BaseModel):
+    room_id: str
+    """
+    Airbnb listing ID
+    """
+    month: Annotated[int, Field(ge=1, le=12)]
+    """
+    Starting month (1-12)
+    """
+    year: Annotated[int, Field(ge=2000)]
+    """
+    Starting year
+    """
     count: Annotated[int | None, Field(ge=1, le=12)] = 12
     """
     Number of months to fetch
@@ -156,18 +171,6 @@ class GetCalendarRequest(BaseModel):
     currency: str | None = "USD"
     """
     ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
-    """
-    month: Annotated[int, Field(ge=1, le=12)]
-    """
-    Starting month (1-12)
-    """
-    room_id: str
-    """
-    Airbnb listing ID
-    """
-    year: Annotated[int, Field(ge=2000)]
-    """
-    Starting year
     """
 
 
@@ -179,9 +182,9 @@ class GetDetailsRequest(BaseModel):
 
 
 class GetPriceRequest(BaseModel):
-    adults: Annotated[int | None, Field(ge=1, le=16)] = 1
+    room_id: str
     """
-    Number of adults
+    Airbnb listing ID
     """
     check_in: str
     """
@@ -191,17 +194,21 @@ class GetPriceRequest(BaseModel):
     """
     Check-out date (YYYY-MM-DD)
     """
+    adults: Annotated[int | None, Field(ge=1, le=16)] = 1
+    """
+    Number of adults
+    """
     currency: str | None = "USD"
     """
     ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
     """
+
+
+class GetReviewsRequest(BaseModel):
     room_id: str
     """
     Airbnb listing ID
     """
-
-
-class GetReviewsRequest(BaseModel):
     limit: Annotated[int | None, Field(ge=1, le=50)] = 50
     """
     Number of reviews per page (max 50)
@@ -209,10 +216,6 @@ class GetReviewsRequest(BaseModel):
     offset: Annotated[int | None, Field(ge=0)] = 0
     """
     Pagination offset
-    """
-    room_id: str
-    """
-    Airbnb listing ID
     """
     sort: ReviewSort | None = None
     """
@@ -230,29 +233,29 @@ class ParsedAutocompleteResponse(BaseModel):
 
 
 class ParsedAutocompleteSuggestion(BaseModel):
+    title: str
+    subtitle: str | None
     description: str | None
+    place_id: str | None
     display_name: str | None
     latitude: float | None
     longitude: float | None
-    place_id: str | None
-    subtitle: str | None
-    title: str
 
 
 class ParsedBreakdownItem(BaseModel):
     nights: int | None
-    total: Money
     unit_price: Money
+    total: Money
 
 
 class ParsedCalendarDay(BaseModel):
+    date: str | None
     available: bool
+    min_nights: int | None
+    max_nights: int | None
     available_for_checkin: bool
     available_for_checkout: bool
     bookable: bool | None
-    date: str | None
-    max_nights: int | None
-    min_nights: int | None
     price: str | None
 
 
@@ -261,24 +264,24 @@ class ParsedCalendarMetadata(BaseModel):
 
 
 class ParsedCalendarMonth(BaseModel):
-    condition_ranges: list[ParsedConditionRange]
-    days: list[ParsedCalendarDay]
     month: int | None
     year: int | None
+    days: list[ParsedCalendarDay]
+    condition_ranges: list[ParsedConditionRange]
 
 
 class ParsedCalendarResponse(BaseModel):
-    metadata: ParsedCalendarMetadata
     months: list[ParsedCalendarMonth]
+    metadata: ParsedCalendarMetadata
 
 
 class ParsedConditionRange(BaseModel):
+    start_date: str | None
+    end_date: str | None
+    min_nights: int | None
+    max_nights: int | None
     closed_to_arrival: bool | None
     closed_to_departure: bool | None
-    end_date: str | None
-    max_nights: int | None
-    min_nights: int | None
-    start_date: str | None
 
 
 class ParsedCoordinates(BaseModel):
@@ -287,8 +290,8 @@ class ParsedCoordinates(BaseModel):
 
 
 class ParsedDetailsAmenity(BaseModel):
-    category: str | None
     name: str | None
+    category: str | None
     subtitle: str | None
 
 
@@ -298,9 +301,9 @@ class ParsedDetailsCalendarInfo(BaseModel):
 
 class ParsedDetailsCategoryRating(BaseModel):
     category: str | None
+    rating: str | None
     label: str | None
     percentage: float | None
-    rating: str | None
 
 
 class ParsedDetailsHighlight(BaseModel):
@@ -309,181 +312,181 @@ class ParsedDetailsHighlight(BaseModel):
 
 
 class ParsedDetailsHost(BaseModel):
+    name: str | None
+    user_id: str | None
+    profile_url: str | None
+    profile_picture_url: str | None
+    is_superhost: bool | None
+    is_verified: bool | None
     about: str | None
-    cohosts: list[ParsedDetailsPerson]
+    years_hosting: int | None
+    months_hosting: int | None
+    rating_count: int | None
+    rating_average: float | None
     host_highlights: list[str]
     host_response_rate: int | None
     host_response_time: HostResponseTimeValue | None
-    is_superhost: bool | None
-    is_verified: bool | None
-    months_hosting: int | None
-    name: str | None
-    profile_picture_url: str | None
-    profile_url: str | None
-    rating_average: float | None
-    rating_count: int | None
-    user_id: str | None
-    years_hosting: int | None
+    cohosts: list[ParsedDetailsPerson]
 
 
 class ParsedDetailsImage(BaseModel):
-    aspect_ratio: float | None
-    caption: str | None
-    height: int | None
-    id: str | None
-    is_professional: bool | None
-    orientation: str | None
     url: str
+    caption: str | None
+    id: str | None
+    aspect_ratio: float | None
+    orientation: str | None
+    is_professional: bool | None
     width: int | None
+    height: int | None
 
 
 class ParsedDetailsLocation(BaseModel):
-    address: str | None
     lat: float | None
     lng: float | None
+    address: str | None
 
 
 class ParsedDetailsPerson(BaseModel):
     name: str | None
-    profile_picture_url: str | None
-    profile_url: str | None
     user_id: str | None
+    profile_url: str | None
+    profile_picture_url: str | None
 
 
 class ParsedDetailsPolicies(BaseModel):
-    cancellation_policy: CancellationPolicyValue | None
-    check_in_end: str | None
-    check_in_time: str | None
-    check_out_time: str | None
     house_rules_subtitle: str | None
+    check_in_time: str | None
+    check_in_end: str | None
+    check_out_time: str | None
     safety_and_property: list[str]
+    cancellation_policy: CancellationPolicyValue | None
 
 
 class ParsedDetailsRatingSummary(BaseModel):
-    category_ratings: list[ParsedDetailsCategoryRating]
-    is_guest_favorite: bool | None
-    overall_count: int | None
     overall_rating: float | None
+    overall_count: int | None
+    is_guest_favorite: bool | None
+    category_ratings: list[ParsedDetailsCategoryRating]
 
 
 class ParsedDetailsResponse(BaseModel):
-    amenities: list[ParsedDetailsAmenity] | None = None
-    bath_type: str | None = None
-    baths: float | None = None
-    bedrooms: int | None = None
-    beds: int | None = None
-    calendar_info: ParsedDetailsCalendarInfo | None = None
-    description: str | None = None
+    room_id: str | None = None
+    listing_url: str | None = None
+    share_url: str | None = None
+    title: str | None = None
     description_html: str | None = None
+    description: str | None = None
+    property_type: str | None = None
+    room_type: RoomTypeValue | None = None
+    main_image_url: str | None = None
+    picture_count: int | None = None
     guest_favorite_description: str | None = None
-    highlights: list[ParsedDetailsHighlight] | None = None
-    host: ParsedDetailsHost | None = None
-    images: list[ParsedDetailsImage] | None = None
+    person_capacity: int | None = None
+    beds: int | None = None
+    bedrooms: int | None = None
+    baths: float | None = None
+    bath_type: str | None = None
+    is_new_listing: bool | None = None
     is_guest_favorite: bool | None = None
     is_hotel: bool | None = None
     is_luxe: bool | None = None
-    is_new_listing: bool | None = None
-    listing_url: str | None = None
+    images: list[ParsedDetailsImage] | None = None
+    highlights: list[ParsedDetailsHighlight] | None = None
+    amenities: list[ParsedDetailsAmenity] | None = None
     location: ParsedDetailsLocation | None = None
-    main_image_url: str | None = None
-    person_capacity: int | None = None
-    picture_count: int | None = None
-    policies: ParsedDetailsPolicies | None = None
-    property_type: str | None = None
+    host: ParsedDetailsHost | None = None
     rating_summary: ParsedDetailsRatingSummary | None = None
-    room_id: str | None = None
-    room_type: RoomTypeValue | None = None
-    share_url: str | None = None
-    title: str | None = None
+    policies: ParsedDetailsPolicies | None = None
+    calendar_info: ParsedDetailsCalendarInfo | None = None
 
 
 class ParsedListing(BaseModel):
-    badges: list[BadgeValue]
-    baths: float | None
-    bedrooms: int | None
-    beds: int | None
-    coordinates: ParsedCoordinates
-    early_bird_discount: bool
-    free_cancellation: bool
-    free_installment: bool
-    hotel_credit: bool
-    images: list[str]
-    is_new_listing: bool
-    length_of_stay_discount: bool
-    monthly_discount: bool
+    room_id: str | None
+    url: str | None
     name: str | None
-    pay_zero_upfront: bool
+    title: str | None
+    coordinates: ParsedCoordinates
     price: ParsedListingPrice
     rating: float | None
     review_count: int | None
-    room_id: str | None
-    title: str | None
-    url: str | None
+    images: list[str]
+    badges: list[BadgeValue]
+    beds: int | None
+    bedrooms: int | None
+    baths: float | None
+    free_cancellation: bool
+    free_installment: bool
+    pay_zero_upfront: bool
+    is_new_listing: bool
+    length_of_stay_discount: bool
     weekly_discount: bool
+    monthly_discount: bool
+    early_bird_discount: bool
+    hotel_credit: bool
 
 
 class ParsedListingPrice(BaseModel):
     amount: float | None
-    currency: str | None
     formatted: str | None
-    nights: int | None
+    currency: str | None
     original: Money | None
+    nights: int | None
 
 
 class ParsedPagination(BaseModel):
     next_cursor: str | None
-    page_cursors: list[str]
     previous_cursor: str | None
+    page_cursors: list[str]
 
 
 class ParsedPriceResponse(BaseModel):
     available: bool | None = None
-    breakdown: list[ParsedBreakdownItem] | None = None
-    can_instant_book: bool | None = None
-    currency: str | None = None
-    display_price: Money | None = None
-    guest_disclaimer: str | None = None
-    max_guest_capacity: int | None = None
-    max_pet_count: int | None = None
-    message: str | None = None
-    pet_disclaimer: str | None = None
-    pets_allowed: bool | None = None
-    price_mode: ParsedPriceResponsePriceModeValue | None = None
-    rate_details: ParsedRateDetails | None = None
-    requested_stay_total: Money | None = None
     unavailability_message: str | None = None
+    currency: str | None = None
+    price_mode: ParsedPriceResponsePriceModeValue | None = None
+    display_price: Money | None = None
+    rate_details: ParsedRateDetails | None = None
+    breakdown: list[ParsedBreakdownItem] | None = None
+    requested_stay_total: Money | None = None
+    message: str | None = None
+    max_guest_capacity: int | None = None
+    can_instant_book: bool | None = None
+    pets_allowed: bool | None = None
+    max_pet_count: int | None = None
+    pet_disclaimer: str | None = None
+    guest_disclaimer: str | None = None
 
 
 class ParsedRateDetails(BaseModel):
-    base_price: Money | None
+    unit: ParsedRateDetailsUnitValue
     count: int | None
+    rate: Money | None
+    base_price: Money | None
     discounts: list[ParsedRateDiscount]
     final_price: Money | None
-    rate: Money | None
-    unit: ParsedRateDetailsUnitValue
 
 
 class ParsedRateDiscount(BaseModel):
-    amount: Money
-    label: str | None
     type: ParsedRateDiscountTypeValue
+    label: str | None
+    amount: Money
 
 
 class ParsedReviewItem(BaseModel):
-    comments: str | None
-    created_at: str | None
     id: str | None
-    language: str | None
-    localized_date: str | None
+    comments: str | None
     rating: int | None
-    response: str | None
-    review_photo_urls: list[str]
-    reviewer_id: str | None
-    reviewer_is_superhost: bool | None
-    reviewer_location: str | None
+    language: str | None
+    created_at: str | None
+    localized_date: str | None
     reviewer_name: str | None
+    reviewer_id: str | None
     reviewer_picture_url: str | None
+    reviewer_location: str | None
     reviewer_tenure: str | None
+    reviewer_is_superhost: bool | None
+    review_photo_urls: list[str]
+    response: str | None
 
 
 class ParsedReviewsResponse(BaseModel):
@@ -497,53 +500,17 @@ class ParsedSearchResponse(BaseModel):
 
 
 class SearchLocationsParams(BaseModel):
-    language: str | None = "en"
-    """
-    ISO 639-1 language code (2-letter, e.g. 'en', 'pt', 'fr')
-    """
     query: Annotated[str, Field(examples=["London"])]
     """
     Free-text location query (e.g. 'London', 'Rio de Janeiro')
     """
+    language: str | None = "en"
+    """
+    ISO 639-1 language code (2-letter, e.g. 'en', 'pt', 'fr')
+    """
 
 
 class SearchRequest(BaseModel):
-    adults: Annotated[int | None, Field(ge=0)] = None
-    """
-    Number of adults
-    """
-    amenities: list[AmenityFilter] | None = None
-    """
-    Amenities to filter by, as readable slugs (e.g. "wifi", "kitchen", "tv", "self_check_in"). Unknown values are rejected with 422; the enum lists every accepted slug. Translated to Airbnb's numeric filter IDs internally.
-    """
-    check_in: str | None = None
-    """
-    Check-in date (YYYY-MM-DD)
-    """
-    check_out: str | None = None
-    """
-    Check-out date (YYYY-MM-DD)
-    """
-    children: Annotated[int | None, Field(ge=0)] = None
-    """
-    Number of children
-    """
-    currency: str | None = "USD"
-    """
-    ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
-    """
-    cursor: str | None = ""
-    """
-    Pagination cursor from previous response
-    """
-    free_cancellation: bool | None = False
-    """
-    Filter for free cancellation listings
-    """
-    infants: Annotated[int | None, Field(ge=0)] = None
-    """
-    Number of infants
-    """
     lat: Annotated[float | None, Field(ge=-90.0, le=90.0)] = None
     """
     Center latitude for radius search
@@ -552,17 +519,9 @@ class SearchRequest(BaseModel):
     """
     Center longitude for radius search
     """
-    min_bathrooms: Annotated[int | None, Field(ge=0)] = None
+    radius_km: Annotated[float | None, Field(gt=0.0)] = None
     """
-    Minimum number of bathrooms
-    """
-    min_bedrooms: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum number of bedrooms
-    """
-    min_beds: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum number of beds
+    Search radius in km around (lat, lon). Recommended way to set the area — the bounding box and map zoom are derived automatically.
     """
     ne_lat: Annotated[float | None, Field(ge=-90.0, le=90.0)] = None
     """
@@ -571,26 +530,6 @@ class SearchRequest(BaseModel):
     ne_long: Annotated[float | None, Field(ge=-180.0, le=180.0)] = None
     """
     Northeast longitude of bounding box
-    """
-    place_id: str | None = None
-    """
-    Google Place ID for the search area, from the `GET /v1/airbnb/locations` endpoint (`suggestions[].place_id`).
-    """
-    price_max: Annotated[int | None, Field(ge=0)] = None
-    """
-    Maximum price filter
-    """
-    price_min: Annotated[int | None, Field(ge=0)] = None
-    """
-    Minimum price filter
-    """
-    query: str | None = None
-    """
-    Text location query (e.g. 'London, United Kingdom')
-    """
-    radius_km: Annotated[float | None, Field(gt=0.0)] = None
-    """
-    Search radius in km around (lat, lon). Recommended way to set the area — the bounding box and map zoom are derived automatically.
     """
     sw_lat: Annotated[float | None, Field(ge=-90.0, le=90.0)] = None
     """
@@ -603,6 +542,70 @@ class SearchRequest(BaseModel):
     zoom: Annotated[int | None, Field(ge=1, le=20)] = None
     """
     Map zoom level, 1–20 (1 ≈ whole world, ~12 ≈ city, ~16 ≈ street, 20 ≈ building), same scale as Google Maps. Advanced: only needed with an explicit bounding box; auto-derived from `radius_km` otherwise.
+    """
+    place_id: str | None = None
+    """
+    Google Place ID for the search area, from the `GET /v1/airbnb/locations` endpoint (`suggestions[].place_id`).
+    """
+    query: str | None = None
+    """
+    Text location query (e.g. 'London, United Kingdom')
+    """
+    check_in: str | None = None
+    """
+    Check-in date (YYYY-MM-DD)
+    """
+    check_out: str | None = None
+    """
+    Check-out date (YYYY-MM-DD)
+    """
+    currency: str | None = "USD"
+    """
+    ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
+    """
+    cursor: str | None = ""
+    """
+    Pagination cursor from previous response
+    """
+    price_min: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum price filter
+    """
+    price_max: Annotated[int | None, Field(ge=0)] = None
+    """
+    Maximum price filter
+    """
+    amenities: list[AmenityFilter] | None = None
+    """
+    Amenities to filter by, as readable slugs (e.g. "wifi", "kitchen", "tv", "self_check_in"). Unknown values are rejected with 422; the enum lists every accepted slug. Translated to Airbnb's numeric filter IDs internally.
+    """
+    free_cancellation: bool | None = False
+    """
+    Filter for free cancellation listings
+    """
+    adults: Annotated[int | None, Field(ge=0)] = None
+    """
+    Number of adults
+    """
+    children: Annotated[int | None, Field(ge=0)] = None
+    """
+    Number of children
+    """
+    infants: Annotated[int | None, Field(ge=0)] = None
+    """
+    Number of infants
+    """
+    min_bedrooms: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum number of bedrooms
+    """
+    min_beds: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum number of beds
+    """
+    min_bathrooms: Annotated[int | None, Field(ge=0)] = None
+    """
+    Minimum number of bathrooms
     """
 
 

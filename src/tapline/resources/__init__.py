@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .account import Account, SyncAccount
 from .airbnb import Airbnb, SyncAirbnb
 from .birdeye import Birdeye, SyncBirdeye
 from .brave_search import BraveSearch, SyncBraveSearch
@@ -27,6 +28,7 @@ from .youtube import SyncYouTube, YouTube
 from .zillow import SyncZillow, Zillow
 
 __all__ = [
+    "Account",
     "Airbnb",
     "Birdeye",
     "BraveSearch",
@@ -46,6 +48,7 @@ __all__ = [
     "PinterestV2",
     "Ponsfamily",
     "Pumpfun",
+    "SyncAccount",
     "SyncAirbnb",
     "SyncBirdeye",
     "SyncBraveSearch",

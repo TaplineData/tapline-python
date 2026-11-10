@@ -166,6 +166,8 @@ See the [Pons Family guide](https://github.com/TaplineData/tapline-python/blob/m
 
 Your free account starts with 100 credits and can use every live endpoint. When you need more credits or higher rate limits, choose a paid plan under [Billing](https://tapline.sh/dashboard?tab=billing&utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=main_readme). Your API key and code stay the same.
 
+`sync_tapline.account.get_account_credits()` returns the key's credit balance and costs no credits.
+
 ## Async client
 
 Every service method has the same name and arguments on `TaplineClient`; only the call becomes awaitable.

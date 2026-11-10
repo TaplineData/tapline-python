@@ -30,6 +30,7 @@ next API Tapline adds.
 """
 
 from . import (
+    account,
     airbnb,
     birdeye,
     brave_search,
@@ -81,6 +82,7 @@ from ._pagination import CursorCompletion, CursorCompletionValue, CursorPaginati
 from ._types import Headers, NotGiven, Timeout, not_given
 from ._version import __title__, __version__
 from .resources import (
+    Account,
     Airbnb,
     Birdeye,
     BraveSearch,
@@ -100,6 +102,7 @@ from .resources import (
     PinterestV2,
     Ponsfamily,
     Pumpfun,
+    SyncAccount,
     SyncAirbnb,
     SyncBirdeye,
     SyncBraveSearch,
@@ -135,6 +138,7 @@ __all__ = [
     "APIResponseValidationError",
     "APIStatusError",
     "APITimeoutError",
+    "Account",
     "Airbnb",
     "AuthenticationError",
     "BadRequestError",
@@ -171,6 +175,7 @@ __all__ = [
     "Ponsfamily",
     "Pumpfun",
     "RateLimitError",
+    "SyncAccount",
     "SyncAirbnb",
     "SyncBirdeye",
     "SyncBraveSearch",
@@ -205,6 +210,7 @@ __all__ = [
     "Zillow",
     "__title__",
     "__version__",
+    "account",
     "airbnb",
     "birdeye",
     "brave_search",

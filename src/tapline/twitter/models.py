@@ -44,6 +44,9 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class ErrorDetail(BaseModel):
@@ -123,9 +126,9 @@ class GetUserTweetsParams(BaseModel):
 
 
 class TwitterArticle(BaseModel):
-    id: str
-    title: str
-    preview_text: str
+    id: str | None = None
+    title: str | None = None
+    preview_text: str | None = None
     text: str | None = None
     created_at: str | None = None
     first_published_at: str | None = None
@@ -137,18 +140,18 @@ class TwitterArticle(BaseModel):
 
 
 class TwitterArticleBlock(BaseModel):
-    text: str
+    text: str | None = None
     urls: list[TwitterArticleUrl] | None = None
     entity_ranges: list[TwitterArticleEntityRange] | None = None
-    type: str
+    type: str | None = None
     style_ranges: list[TwitterArticleStyleRange] | None = None
 
 
 class TwitterArticleEntity(BaseModel):
     media_ids: list[str] | None = None
-    key: str
+    key: str | None = None
     url: str | None = None
-    type: str
+    type: str | None = None
 
 
 class TwitterArticleEntityRange(BaseModel):
@@ -159,9 +162,9 @@ class TwitterArticleEntityRange(BaseModel):
 
 class TwitterArticleImage(BaseModel):
     id: str | None = None
-    url: str
-    width: int
-    height: int
+    url: str | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 class TwitterArticleStyleRange(BaseModel):
@@ -171,9 +174,9 @@ class TwitterArticleStyleRange(BaseModel):
 
 
 class TwitterArticleUrl(BaseModel):
-    text: str
-    from_index: int
-    to_index: int
+    text: str | None = None
+    from_index: int | None = None
+    to_index: int | None = None
 
 
 class TwitterAssetAmount(BaseModel):
@@ -183,8 +186,8 @@ class TwitterAssetAmount(BaseModel):
 
 
 class TwitterAssetPricePoint(BaseModel):
-    price: TwitterAssetAmount
-    priced_at: str
+    price: TwitterAssetAmount | None = None
+    priced_at: str | None = None
 
 
 class TwitterBioEntities(BaseModel):
@@ -193,14 +196,14 @@ class TwitterBioEntities(BaseModel):
 
 
 class TwitterBioMention(BaseModel):
-    handle: str
-    indices: list[int]
-    is_unmentioned: bool
+    handle: str | None = None
+    indices: list[int] | None = None
+    is_unmentioned: bool | None = None
 
 
 class TwitterBirthDate(BaseModel):
-    visibility: str
-    year_visibility: str
+    visibility: str | None = None
+    year_visibility: str | None = None
     day: int | None
     month: int | None
     year: int | None
@@ -211,9 +214,9 @@ class TwitterCard(BaseModel):
     creator_user_id: str | None = None
     title: str | None = None
     description: str | None = None
-    url: str
+    url: str | None = None
     vanity_url: str | None = None
-    type: str
+    type: str | None = None
     domain: str | None = None
     images: list[TwitterCardImage] | None = None
 
@@ -221,9 +224,9 @@ class TwitterCard(BaseModel):
 class TwitterCardImage(BaseModel):
     name: str
     alt_text: str | None = None
-    url: str
-    width: int
-    height: int
+    url: str | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 class TwitterCashtagAttachment(BaseModel):
@@ -241,42 +244,42 @@ class TwitterCashtagAttachment(BaseModel):
 
 
 class TwitterCashtagEntity(BaseModel):
-    text: str
-    indices: list[int]
+    text: str | None = None
+    indices: list[int] | None = None
     ticker: str | None = None
 
 
 class TwitterCommunityImage(BaseModel):
-    url: str
-    width: int
-    height: int
+    url: str | None = None
+    width: int | None = None
+    height: int | None = None
 
 
 class TwitterCommunityReference(BaseModel):
     id: str
-    name: str
+    name: str | None = None
     url: str
 
 
 class TwitterCommunityResponse(BaseModel):
     id: str
-    name: str
+    name: str | None = None
     description: str | None = None
-    member_count: int
-    is_nsfw: bool
-    created_at: str
+    member_count: int | None = None
+    is_nsfw: bool | None = None
+    created_at: str | None = None
     creator: TwitterUnavailableUser | TwitterUser | None = None
-    members: list[TwitterUnavailableUser | TwitterUser]
-    rules: list[TwitterCommunityRule]
+    members: list[TwitterUnavailableUser | TwitterUser] | None = None
+    rules: list[TwitterCommunityRule] | None = None
     topic: str | None = None
-    join_policy: str
-    default_banner: TwitterCommunityImage
+    join_policy: str | None = None
+    default_banner: TwitterCommunityImage | None = None
     custom_banner: TwitterCommunityImage | None = None
 
 
 class TwitterCommunityRule(BaseModel):
-    id: str
-    name: str
+    id: str | None = None
+    name: str | None = None
     description: str | None = None
 
 
@@ -293,7 +296,7 @@ class TwitterEntities(BaseModel):
 
 
 class TwitterMedia(BaseModel):
-    id: str
+    id: str | None = None
     source_post_id: str | None = None
     alt_text: str | None = None
     expanded_url: str | None = None
@@ -302,20 +305,20 @@ class TwitterMedia(BaseModel):
     allow_download: bool | None = None
     tags: list[TwitterMediaTag] | None = None
     source_user: TwitterUser | None = None
-    type: str
-    indices: list[int]
+    type: str | None = None
+    indices: list[int] | None = None
     width: int | None = None
     height: int | None = None
     monetizable: bool | None = None
     duration_millis: int | None = None
-    media_url: str
+    media_url: str | None = None
     variants: list[TwitterVideoVariant] | None = None
 
 
 class TwitterMediaTag(BaseModel):
     user_id: str | None = None
-    name: str
-    type: str
+    name: str | None = None
+    type: str | None = None
 
 
 class TwitterPost(BaseModel):
@@ -323,19 +326,19 @@ class TwitterPost(BaseModel):
     conversation_id: str | None = None
     note_id: str | None = None
     edit_history_ids: list[str] | None = None
-    text: str
+    text: str | None = None
     preview_text: str | None = None
-    language: str
+    language: str | None = None
     url: str | None = None
-    favorite_count: int
-    quote_count: int
-    reply_count: int
-    retweet_count: int
+    favorite_count: int | None = None
+    quote_count: int | None = None
+    reply_count: int | None = None
+    retweet_count: int | None = None
     bookmark_count: int | None = None
     view_count: int | None = None
     possibly_sensitive: bool | None = None
     created_at: str
-    author: TwitterUser
+    author: TwitterUser | None = None
     entities: TwitterEntities
     quoted_post: TwitterPostReference | None = None
     reply_to: TwitterReplyReference | None = None
@@ -344,7 +347,7 @@ class TwitterPost(BaseModel):
     cashtag_attachments: list[TwitterCashtagAttachment] | None = None
     community: TwitterCommunityReference | None = None
     preview_entities: TwitterEntities | None = None
-    display_text_range: list[int]
+    display_text_range: list[int] | None = None
     is_pinned: bool | None = None
     is_reply: bool
     is_quote: bool
@@ -392,9 +395,9 @@ class TwitterProfileResponse(BaseModel):
 
 
 class TwitterProfileUrl(BaseModel):
-    display_url: str
-    expanded_url: str
-    url: str
+    display_url: str | None = None
+    expanded_url: str | None = None
+    url: str | None = None
 
 
 class TwitterReplyReference(BaseModel):
@@ -406,14 +409,14 @@ class TwitterReplyReference(BaseModel):
 
 
 class TwitterSmartTag(BaseModel):
-    text: str
-    indices: list[int]
+    text: str | None = None
+    indices: list[int] | None = None
     ticker: str | None = None
 
 
 class TwitterTextEntity(BaseModel):
-    text: str
-    indices: list[int]
+    text: str | None = None
+    indices: list[int] | None = None
 
 
 class TwitterTweetResponse(BaseModel):
@@ -421,19 +424,19 @@ class TwitterTweetResponse(BaseModel):
     conversation_id: str | None = None
     note_id: str | None = None
     edit_history_ids: list[str] | None = None
-    text: str
+    text: str | None = None
     preview_text: str | None = None
-    language: str
+    language: str | None = None
     url: str | None = None
-    favorite_count: int
-    quote_count: int
-    reply_count: int
-    retweet_count: int
+    favorite_count: int | None = None
+    quote_count: int | None = None
+    reply_count: int | None = None
+    retweet_count: int | None = None
     bookmark_count: int | None = None
     view_count: int | None = None
     possibly_sensitive: bool | None = None
     created_at: str
-    author: TwitterUser
+    author: TwitterUser | None = None
     entities: TwitterEntities
     quoted_post: TwitterPostReference | None = None
     reply_to: TwitterReplyReference | None = None
@@ -442,7 +445,7 @@ class TwitterTweetResponse(BaseModel):
     cashtag_attachments: list[TwitterCashtagAttachment] | None = None
     community: TwitterCommunityReference | None = None
     preview_entities: TwitterEntities | None = None
-    display_text_range: list[int]
+    display_text_range: list[int] | None = None
     is_pinned: bool | None = None
     is_reply: bool
     is_quote: bool
@@ -457,10 +460,10 @@ class TwitterUnavailableUser(BaseModel):
 
 
 class TwitterUrlEntity(BaseModel):
-    display_url: str
-    expanded_url: str
-    url: str
-    indices: list[int]
+    display_url: str | None = None
+    expanded_url: str | None = None
+    url: str | None = None
+    indices: list[int] | None = None
 
 
 class TwitterUser(BaseModel):
@@ -497,7 +500,7 @@ class TwitterUser(BaseModel):
 
 
 class TwitterUserLabel(BaseModel):
-    description: str
+    description: str | None = None
     long_description: str | None = None
     url: str | None = None
     long_description_mentions: list[TwitterUserLabelMention] | None = None
@@ -506,14 +509,14 @@ class TwitterUserLabel(BaseModel):
 
 
 class TwitterUserLabelMention(BaseModel):
-    handle: str
-    indices: list[int]
+    handle: str | None = None
+    indices: list[int] | None = None
 
 
 class TwitterUserMention(BaseModel):
     id: str | None = None
-    handle: str
-    indices: list[int]
+    handle: str | None = None
+    indices: list[int] | None = None
 
 
 class TwitterUserTweetsResponse(BaseModel):
@@ -521,8 +524,8 @@ class TwitterUserTweetsResponse(BaseModel):
 
 
 class TwitterVideoVariant(BaseModel):
-    url: str
-    content_type: str
+    url: str | None = None
+    content_type: str | None = None
     bitrate: int | None = None
 
 

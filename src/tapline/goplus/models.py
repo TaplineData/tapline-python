@@ -78,26 +78,33 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class ErrorDetail(BaseModel):
-    ctx: dict[str, Any] | None = None
-    input: Any = None
+    type: str | None = None
     loc: list[str | int] | None = None
     msg: str | None = None
-    type: str | None = None
+    input: Any = None
+    ctx: dict[str, Any] | None = None
 
 
 class ErrorResponse(BaseModel):
     code: PublicErrorValue
-    details: list[ErrorDetail] | None = None
-    domain: str | None = None
     message: str
     request_id: str
+    domain: str | None = None
+    details: list[ErrorDetail] | None = None
     upgrade_url: str | None = None
 
 
 class GetEvmTokenSecurityParams(BaseModel):
+    chain_id: GoplusChainId
+    """
+    EVM chain id as GoPlus numbers it, such as 1 Ethereum, 56 BNB Chain or 8453 Base. The enum lists every EVM chain GoPlus token security supports.
+    """
     address: Annotated[
         str,
         Field(
@@ -107,10 +114,6 @@ class GetEvmTokenSecurityParams(BaseModel):
     ]
     """
     Token contract address: 0x plus 40 hex characters, any case.
-    """
-    chain_id: GoplusChainId
-    """
-    EVM chain id as GoPlus numbers it, such as 1 Ethereum, 56 BNB Chain or 8453 Base. The enum lists every EVM chain GoPlus token security supports.
     """
 
 
@@ -159,45 +162,45 @@ class GetTronTokenSecurityResponse(BaseModel):
 
 
 class GoplusEvmCexListing(BaseModel):
-    cex_list: list[str] | None = None
     listed: str | None = None
+    cex_list: list[str] | None = None
 
 
 class GoplusEvmDex(BaseModel):
-    liquidity: str | None = None
     liquidity_type: str | None = None
     name: str | None = None
-    pair: str | None = None
-    pool_fee: str | None = None
+    liquidity: str | None = None
     pool_manager: str | None = None
+    pool_fee: str | None = None
+    pair: str | None = None
 
 
 class GoplusEvmHolder(BaseModel):
     address: str | None = None
-    balance: str | None = None
-    is_contract: int | None = None
-    is_locked: int | None = None
-    percent: str | None = None
     tag: str | None = None
+    is_contract: int | None = None
+    balance: str | None = None
+    percent: str | None = None
+    is_locked: int | None = None
 
 
 class GoplusEvmLpHolder(BaseModel):
-    NFT_list: list[GoplusEvmLpNft] | None = None
     address: str | None = None
-    balance: str | None = None
-    is_contract: int | None = None
-    is_locked: int | None = None
-    percent: str | None = None
     tag: str | None = None
     value: str | None = None
+    is_contract: int | None = None
+    balance: str | None = None
+    percent: str | None = None
+    NFT_list: list[GoplusEvmLpNft] | None = None
+    is_locked: int | None = None
 
 
 class GoplusEvmLpNft(BaseModel):
+    value: str | None = None
     NFT_id: str | None = None
-    NFT_percentage: str | None = None
     amount: str | None = None
     in_effect: str | None = None
-    value: str | None = None
+    NFT_percentage: str | None = None
 
 
 class GoplusEvmTokenSecurity(BaseModel):
