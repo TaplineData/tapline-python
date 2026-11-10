@@ -163,7 +163,6 @@ from ..pumpfun import (
     MintPositionSortParam,
     MultichainTokenChainParam,
     NarrativeSourceParam,
-    NonMonadChainParam,
     OrderDirectionParam,
     PerpMarket,
     PerpSortParam,
@@ -228,7 +227,7 @@ def _achievement_catalog() -> Request[GetAchievementCatalogResponse]:
 
 
 def _movers_board(
-    *, chains: Sequence[NonMonadChainParam] | None = None, limit: int = 50
+    *, chains: Sequence[TokenChainParam] | None = None, limit: int = 50
 ) -> Request[GetMoversBoardResponse]:
     return Request(
         _PREFIX + "/boards/movers", GetMoversBoardResponse, {"chains": chains, "limit": limit}
@@ -236,7 +235,7 @@ def _movers_board(
 
 
 def _trending_board(
-    *, chains: Sequence[NonMonadChainParam] | None = None, limit: int = 50
+    *, chains: Sequence[TokenChainParam] | None = None, limit: int = 50
 ) -> Request[GetTrendingBoardResponse]:
     return Request(
         _PREFIX + "/boards/trending", GetTrendingBoardResponse, {"chains": chains, "limit": limit}
@@ -1526,7 +1525,7 @@ def _perp_trades(
 def _user_portfolio(
     address: str,
     *,
-    chain: NonMonadChainParam | None = None,
+    chain: TokenChainParam | None = None,
     filter: PortfolioFilterParam = "OPEN",
     filter_spam: bool | None = None,
     page: int = 0,
@@ -1594,7 +1593,7 @@ def _user_reposts(
 def _user_trades(
     address: str,
     *,
-    chain: NonMonadChainParam | None = None,
+    chain: TokenChainParam | None = None,
     cursor: str | None = None,
     limit: int = 50,
     mint: str | None = None,
@@ -1756,7 +1755,7 @@ class Pumpfun(AsyncAPIResource):
     async def movers_board(
         self,
         *,
-        chains: Sequence[NonMonadChainParam] | None = None,
+        chains: Sequence[TokenChainParam] | None = None,
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
@@ -1776,7 +1775,7 @@ class Pumpfun(AsyncAPIResource):
     async def trending_board(
         self,
         *,
-        chains: Sequence[NonMonadChainParam] | None = None,
+        chains: Sequence[TokenChainParam] | None = None,
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
@@ -2590,8 +2589,8 @@ class Pumpfun(AsyncAPIResource):
 
         Args:
             board: Which ranked board to read.
-            chains: Keep only coins on these chains, at most 8: pump.fun refuses all
-                nine at once. Repeat the parameter for several; omit it for every
+            chains: Keep only coins on these chains, at most 8: pump.fun refuses
+                more at once. Repeat the parameter for several; omit it for every
                 chain.
             limit: Maximum coins to return.
             offset: Rows to skip.
@@ -3487,8 +3486,7 @@ class Pumpfun(AsyncAPIResource):
         """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 3 credits.
 
         Args:
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             page: Page number, from 0.
             page_size: Number of feed entries to return.
             updates_limit: Author updates to include per callout.
@@ -3520,8 +3518,7 @@ class Pumpfun(AsyncAPIResource):
         """Every new callout backed by a live position, newest first, unranked, over the last 24 hours. Page with `page_token` from `nextPageToken`; a short page does not mean the end. `headToken` is the value to pass to `/home-feed/new/count`. Costs 1 credit.
 
         Args:
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             max_callout_market_cap_usd: Keep callouts made when the coin's market
                 cap was at most this.
             max_cost_basis_usd: Keep positions whose net USD cost basis is at most
@@ -3576,8 +3573,7 @@ class Pumpfun(AsyncAPIResource):
         Args:
             since: `headToken` from `/home-feed/new`, kept until you reload the
                 feed.
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             max_callout_market_cap_usd: Keep callouts made when the coin's market
                 cap was at most this.
             max_cost_basis_usd: Keep positions whose net USD cost basis is at most
@@ -4589,7 +4585,7 @@ class Pumpfun(AsyncAPIResource):
         self,
         address: str,
         *,
-        chain: NonMonadChainParam | None = None,
+        chain: TokenChainParam | None = None,
         filter: PortfolioFilterParam = "OPEN",
         filter_spam: bool | None = None,
         page: int = 0,
@@ -4604,7 +4600,7 @@ class Pumpfun(AsyncAPIResource):
         Args:
             address: Wallet address (Solana or EVM), pump.fun user id or squad id
                 (UUIDs).
-            chain: Only positions on this chain. pump.fun keeps no Monad portfolio.
+            chain: Only positions on this chain.
             filter: Which positions to return.
             filter_spam: Drop positions pump.fun groups as spam before paging.
             page: Zero-based page index.
@@ -4724,7 +4720,7 @@ class Pumpfun(AsyncAPIResource):
         self,
         address: str,
         *,
-        chain: NonMonadChainParam | None = None,
+        chain: TokenChainParam | None = None,
         cursor: str | None = None,
         limit: int = 50,
         mint: str | None = None,
@@ -4735,7 +4731,7 @@ class Pumpfun(AsyncAPIResource):
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
-            chain: Only trades on this chain. pump.fun serves no Monad trades here.
+            chain: Only trades on this chain.
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum trades to return.
             mint: Only trades in this coin (Solana mint or EVM token).
@@ -4999,7 +4995,7 @@ class SyncPumpfun(SyncAPIResource):
     def movers_board(
         self,
         *,
-        chains: Sequence[NonMonadChainParam] | None = None,
+        chains: Sequence[TokenChainParam] | None = None,
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMoversBoardResponse:
@@ -5019,7 +5015,7 @@ class SyncPumpfun(SyncAPIResource):
     def trending_board(
         self,
         *,
-        chains: Sequence[NonMonadChainParam] | None = None,
+        chains: Sequence[TokenChainParam] | None = None,
         limit: int = 50,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetTrendingBoardResponse:
@@ -5821,8 +5817,8 @@ class SyncPumpfun(SyncAPIResource):
 
         Args:
             board: Which ranked board to read.
-            chains: Keep only coins on these chains, at most 8: pump.fun refuses all
-                nine at once. Repeat the parameter for several; omit it for every
+            chains: Keep only coins on these chains, at most 8: pump.fun refuses
+                more at once. Repeat the parameter for several; omit it for every
                 chain.
             limit: Maximum coins to return.
             offset: Rows to skip.
@@ -6716,8 +6712,7 @@ class SyncPumpfun(SyncAPIResource):
         """The ranked home feed: trending coins with the callout position that put each one there, across Solana and the EVM chains. Page with `page`, from 0. Costs 3 credits.
 
         Args:
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             page: Page number, from 0.
             page_size: Number of feed entries to return.
             updates_limit: Author updates to include per callout.
@@ -6749,8 +6744,7 @@ class SyncPumpfun(SyncAPIResource):
         """Every new callout backed by a live position, newest first, unranked, over the last 24 hours. Page with `page_token` from `nextPageToken`; a short page does not mean the end. `headToken` is the value to pass to `/home-feed/new/count`. Costs 1 credit.
 
         Args:
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             max_callout_market_cap_usd: Keep callouts made when the coin's market
                 cap was at most this.
             max_cost_basis_usd: Keep positions whose net USD cost basis is at most
@@ -6805,8 +6799,7 @@ class SyncPumpfun(SyncAPIResource):
         Args:
             since: `headToken` from `/home-feed/new`, kept until you reload the
                 feed.
-            chain: Restrict the feed to one chain. pump.fun's feed does not cover
-                Monad.
+            chain: Restrict the feed to one chain.
             max_callout_market_cap_usd: Keep callouts made when the coin's market
                 cap was at most this.
             max_cost_basis_usd: Keep positions whose net USD cost basis is at most
@@ -7814,7 +7807,7 @@ class SyncPumpfun(SyncAPIResource):
         self,
         address: str,
         *,
-        chain: NonMonadChainParam | None = None,
+        chain: TokenChainParam | None = None,
         filter: PortfolioFilterParam = "OPEN",
         filter_spam: bool | None = None,
         page: int = 0,
@@ -7829,7 +7822,7 @@ class SyncPumpfun(SyncAPIResource):
         Args:
             address: Wallet address (Solana or EVM), pump.fun user id or squad id
                 (UUIDs).
-            chain: Only positions on this chain. pump.fun keeps no Monad portfolio.
+            chain: Only positions on this chain.
             filter: Which positions to return.
             filter_spam: Drop positions pump.fun groups as spam before paging.
             page: Zero-based page index.
@@ -7949,7 +7942,7 @@ class SyncPumpfun(SyncAPIResource):
         self,
         address: str,
         *,
-        chain: NonMonadChainParam | None = None,
+        chain: TokenChainParam | None = None,
         cursor: str | None = None,
         limit: int = 50,
         mint: str | None = None,
@@ -7960,7 +7953,7 @@ class SyncPumpfun(SyncAPIResource):
 
         Args:
             address: Wallet address (Solana or EVM) or pump.fun user id (UUID).
-            chain: Only trades on this chain. pump.fun serves no Monad trades here.
+            chain: Only trades on this chain.
             cursor: `nextCursor` from the previous page; omit for the first page.
             limit: Maximum trades to return.
             mint: Only trades in this coin (Solana mint or EVM token).

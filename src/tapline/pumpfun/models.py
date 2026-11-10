@@ -29,6 +29,16 @@ class BalanceChain(str, Enum):
     HYPE = "hype"
     INK = "ink"
     ARC = "arc"
+    MEGAETH = "megaeth"
+    XLAYER = "xlayer"
+    MONAD = "monad"
+    POLYGON = "polygon"
+    ARBITRUM = "arbitrum"
+    ELYSIUM = "elysium"
+    AVALANCHE = "avalanche"
+    OPTIMISM = "optimism"
+    SEI = "sei"
+    TRON = "tron"
 
 
 class BoostMode(str, Enum):
@@ -136,6 +146,20 @@ class FeedChain(str, Enum):
     HYPEREVM = "hyperevm"
     INK = "ink"
     ARC = "arc"
+    MEGAETH = "megaeth"
+    XLAYER = "xlayer"
+    MONAD = "monad"
+    POLYGON = "polygon"
+    ARBITRUM = "arbitrum"
+    ELYSIUM = "elysium"
+    AVALANCHE = "avalanche"
+    OPTIMISM = "optimism"
+    SEI = "sei"
+    TRON = "tron"
+    UNICHAIN = "unichain"
+    TON = "ton"
+    NEAR = "near"
+    STARKNET = "starknet"
 
 
 class FollowSort(str, Enum):
@@ -198,6 +222,16 @@ class MarketChain(str, Enum):
     HYPEREVM = "hyperevm"
     INK = "ink"
     ARC = "arc"
+    MEGAETH = "megaeth"
+    XLAYER = "xlayer"
+    POLYGON = "polygon"
+    ARBITRUM = "arbitrum"
+    ELYSIUM = "elysium"
+    AVALANCHE = "avalanche"
+    OPTIMISM = "optimism"
+    SEI = "sei"
+    TRON = "tron"
+    UNICHAIN = "unichain"
     HYPERCORE = "hypercore"
 
 
@@ -237,23 +271,15 @@ class MultichainTokenChain(str, Enum):
     AVALANCHE = "avalanche"
     OPTIMISM = "optimism"
     SEI = "sei"
+    TRON = "tron"
+    ELYSIUM = "elysium"
+    UNICHAIN = "unichain"
 
 
 class NarrativeSource(str, Enum):
     TRENDING = "trending"
     MOVERS = "movers"
     NEW = "new"
-
-
-class NonMonadChain(str, Enum):
-    SOLANA = "solana"
-    ETHEREUM = "ethereum"
-    BSC = "bsc"
-    BASE = "base"
-    ROBINHOOD = "robinhood"
-    HYPEREVM = "hyperevm"
-    INK = "ink"
-    ARC = "arc"
 
 
 class OrderDirection(str, Enum):
@@ -325,6 +351,9 @@ class PublicError(str, Enum):
     INVALID_CURSOR = "invalid_cursor"
     INSUFFICIENT_CREDITS = "insufficient_credits"
     INTERNAL_ERROR = "internal_error"
+    DEMO_INPUT_NOT_ALLOWED = "demo_input_not_allowed"
+    TURNSTILE_FAILED = "turnstile_failed"
+    TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
 class ReplyFilter(str, Enum):
@@ -355,6 +384,16 @@ class TokenChain(str, Enum):
     HYPEREVM = "hyperevm"
     INK = "ink"
     ARC = "arc"
+    MEGAETH = "megaeth"
+    XLAYER = "xlayer"
+    POLYGON = "polygon"
+    ARBITRUM = "arbitrum"
+    ELYSIUM = "elysium"
+    AVALANCHE = "avalanche"
+    OPTIMISM = "optimism"
+    SEI = "sei"
+    TRON = "tron"
+    UNICHAIN = "unichain"
 
 
 class TopMintsSort(str, Enum):
@@ -1265,7 +1304,7 @@ class CoinBoardParams(BaseModel):
     """
     chains: Annotated[list[TokenChain] | None, Field(max_length=8)] = None
     """
-    Keep only coins on these chains, at most 8: pump.fun refuses all nine at once. Repeat the parameter for several; omit it for every chain.
+    Keep only coins on these chains, at most 8: pump.fun refuses more at once. Repeat the parameter for several; omit it for every chain.
     """
 
 
@@ -1387,6 +1426,7 @@ class CoinPosition(BaseModel):
     userName: str
     profileImage: str
     walletAddress: str
+    profileWallet: str | None = None
     isVerified: bool
     verifiedBadgeVisible: bool | None = None
     xUsername: str | None
@@ -2729,6 +2769,7 @@ class GetHomeFeedResponseCoin(BaseModel):
     platform: str | None = None
     program: str | None = None
     chain: str | None
+    chain_id: str | None = None
     narrative: None
     position: CoinPosition
     recommendationId: str
@@ -3036,6 +3077,7 @@ class GetNewCalloutsFeedResponseCoin(BaseModel):
     platform: str | None
     program: str | None
     chain: str | None
+    chain_id: str | None = None
     narrative: None
     position: CoinPosition
     followedHolders: None
@@ -4060,7 +4102,7 @@ class HomeFeedParams(BaseModel):
     """
     chain: FeedChain | None = FeedChain.ALL
     """
-    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
+    Restrict the feed to one chain.
     """
     page: Annotated[int | None, Field(ge=0)] = None
     """
@@ -4844,7 +4886,7 @@ class MoversBoardParams(BaseModel):
     """
     Maximum board entries to return. pump.fun serves at most 150.
     """
-    chains: list[NonMonadChain] | None = None
+    chains: list[TokenChain] | None = None
     """
     Keep only coins on these chains. Repeat the parameter for several.
     """
@@ -4932,7 +4974,7 @@ class NewCalloutsCountParams(BaseModel):
     """
     chain: FeedChain | None = FeedChain.ALL
     """
-    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
+    Restrict the feed to one chain.
     """
     min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
@@ -4980,7 +5022,7 @@ class NewCalloutsFeedParams(BaseModel):
     """
     chain: FeedChain | None = FeedChain.ALL
     """
-    Restrict the feed to one chain. pump.fun's feed does not cover Monad.
+    Restrict the feed to one chain.
     """
     min_cost_basis_usd: Annotated[float | None, Field(ge=0.0)] = None
     """
@@ -5466,6 +5508,7 @@ class Quote(BaseModel):
 class QuoteCallout(BaseModel):
     accountKind: str | None = None
     callout: PositionCallout
+    chain: str | None = None
     coinImage: str | None
     coinMint: str
     coinName: str | None
@@ -6667,7 +6710,7 @@ class TrendingBoardParams(BaseModel):
     """
     Maximum board entries to return. pump.fun serves at most 150.
     """
-    chains: list[NonMonadChain] | None = None
+    chains: list[TokenChain] | None = None
     """
     Keep only coins on these chains. Repeat the parameter for several.
     """
@@ -6997,9 +7040,9 @@ class UserPortfolioParams(BaseModel):
     """
     Return only the spam group. Cannot be combined with `filter_spam`.
     """
-    chain: NonMonadChain | None = None
+    chain: TokenChain | None = None
     """
-    Only positions on this chain. pump.fun keeps no Monad portfolio.
+    Only positions on this chain.
     """
 
 
@@ -7069,9 +7112,9 @@ class UserTradesParams(BaseModel):
     """
     Only trades in this coin (Solana mint or EVM token).
     """
-    chain: NonMonadChain | None = None
+    chain: TokenChain | None = None
     """
-    Only trades on this chain. pump.fun serves no Monad trades here.
+    Only trades on this chain.
     """
     cursor: str | None = None
     """
@@ -7462,7 +7505,27 @@ Reply.model_rebuild()
 AthCurrencyParam: TypeAlias = AthCurrency | Literal["USD", "SOL", "BASE", "QUOTE"]
 BalanceChainParam: TypeAlias = (
     BalanceChain
-    | Literal["all", "solana", "ethereum", "base", "bsc", "robinhood", "hype", "ink", "arc"]
+    | Literal[
+        "all",
+        "solana",
+        "ethereum",
+        "base",
+        "bsc",
+        "robinhood",
+        "hype",
+        "ink",
+        "arc",
+        "megaeth",
+        "xlayer",
+        "monad",
+        "polygon",
+        "arbitrum",
+        "elysium",
+        "avalanche",
+        "optimism",
+        "sei",
+        "tron",
+    ]
 )
 BoostModeParam: TypeAlias = BoostMode | Literal["NONE", "IN_PROGRESS", "COMPLETED"]
 BountyPhaseParam: TypeAlias = (
@@ -7510,7 +7573,31 @@ CreatorFeeIntervalParam: TypeAlias = CreatorFeeInterval | Literal["5m", "30m", "
 FeePeriodParam: TypeAlias = FeePeriod | Literal["1d", "7d", "30d"]
 FeedChainParam: TypeAlias = (
     FeedChain
-    | Literal["all", "solana", "ethereum", "base", "bsc", "robinhood", "hyperevm", "ink", "arc"]
+    | Literal[
+        "all",
+        "solana",
+        "ethereum",
+        "base",
+        "bsc",
+        "robinhood",
+        "hyperevm",
+        "ink",
+        "arc",
+        "megaeth",
+        "xlayer",
+        "monad",
+        "polygon",
+        "arbitrum",
+        "elysium",
+        "avalanche",
+        "optimism",
+        "sei",
+        "tron",
+        "unichain",
+        "ton",
+        "near",
+        "starknet",
+    ]
 )
 FollowSortParam: TypeAlias = FollowSort | Literal["followers", "recent"]
 HolderRewardSortParam: TypeAlias = (
@@ -7551,6 +7638,16 @@ MarketChainParam: TypeAlias = (
         "hyperevm",
         "ink",
         "arc",
+        "megaeth",
+        "xlayer",
+        "polygon",
+        "arbitrum",
+        "elysium",
+        "avalanche",
+        "optimism",
+        "sei",
+        "tron",
+        "unichain",
         "hypercore",
     ]
 )
@@ -7578,13 +7675,12 @@ MultichainTokenChainParam: TypeAlias = (
         "avalanche",
         "optimism",
         "sei",
+        "tron",
+        "elysium",
+        "unichain",
     ]
 )
 NarrativeSourceParam: TypeAlias = NarrativeSource | Literal["trending", "movers", "new"]
-NonMonadChainParam: TypeAlias = (
-    NonMonadChain
-    | Literal["solana", "ethereum", "bsc", "base", "robinhood", "hyperevm", "ink", "arc"]
-)
 OrderDirectionParam: TypeAlias = OrderDirection | Literal["asc", "desc"]
 PerpSortParam: TypeAlias = (
     PerpSort | Literal["volume_24h", "open_interest", "funding_rate", "change_24h"]
@@ -7604,7 +7700,27 @@ ReplySortParam: TypeAlias = ReplySort | Literal["RECENCY", "POSITION", "PNL"]
 RollingWindowParam: TypeAlias = RollingWindow | Literal["1d", "1w", "1m"]
 TokenChainParam: TypeAlias = (
     TokenChain
-    | Literal["solana", "ethereum", "bsc", "base", "monad", "robinhood", "hyperevm", "ink", "arc"]
+    | Literal[
+        "solana",
+        "ethereum",
+        "bsc",
+        "base",
+        "monad",
+        "robinhood",
+        "hyperevm",
+        "ink",
+        "arc",
+        "megaeth",
+        "xlayer",
+        "polygon",
+        "arbitrum",
+        "elysium",
+        "avalanche",
+        "optimism",
+        "sei",
+        "tron",
+        "unichain",
+    ]
 )
 TopMintsSortParam: TypeAlias = TopMintsSort | Literal["volume_1_hr", "market_cap"]
 TradeKindParam: TypeAlias = TradeKind | Literal["swap", "perp_fill"]
