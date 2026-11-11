@@ -674,7 +674,7 @@ class FacebookSocialContextItem(BaseModel):
 
 
 class GetAdParams(BaseModel):
-    ad_id: Annotated[str, Field(examples=["1064958462685978"], pattern="^\\d{1,20}$")]
+    ad_id: Annotated[str, Field(examples=["1016451784037642"], pattern="^\\d{1,20}$")]
     """
     The ad's `ad_archive_id`.
     """
@@ -700,7 +700,7 @@ class GetAdReportParams(BaseModel):
 
 
 class GetAdTransparencyParams(BaseModel):
-    ad_id: Annotated[str, Field(examples=["1064958462685978"], pattern="^\\d{1,20}$")]
+    ad_id: Annotated[str, Field(examples=["1016451784037642"], pattern="^\\d{1,20}$")]
     """
     The ad's `ad_archive_id`.
     """

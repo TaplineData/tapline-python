@@ -1272,7 +1272,7 @@ class Gmgn(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletInfoResponse:
-        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
+        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, avalanche, elysium, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2135,7 +2135,7 @@ class Gmgn(AsyncAPIResource):
         period: WalletRankPeriodParam = "7d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletResponse:
-        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
+        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, avalanche, elysium, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -2609,7 +2609,7 @@ class SyncGmgn(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletInfoResponse:
-        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
+        """Smart-money profile for a wallet: labels, socials and aggregate performance. This data does not cover arbitrum, arc, avalanche, elysium, robinhood, stable or xlayer; use /wallet-common-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.
@@ -3472,7 +3472,7 @@ class SyncGmgn(SyncAPIResource):
         period: WalletRankPeriodParam = "7d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetSmartMoneyWalletResponse:
-        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
+        """Full wallet P&L analytics: realized and unrealized profit, win rate, holding periods and risk flags. This data does not cover arbitrum, arc, avalanche, elysium, robinhood, stable or xlayer; use /wallet-stat for those. Costs 2 credits.
 
         Args:
             chain: See the API reference.

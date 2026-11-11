@@ -45,6 +45,8 @@ class Chain(str, Enum):
     ARC = "arc"
     STABLE = "stable"
     XLAYER = "xlayer"
+    AVALANCHE = "avalanche"
+    ELYSIUM = "elysium"
 
 
 class HolderOrderBy(str, Enum):
@@ -3639,6 +3641,8 @@ ChainParam: TypeAlias = (
         "arc",
         "stable",
         "xlayer",
+        "avalanche",
+        "elysium",
     ]
 )
 HolderOrderByParam: TypeAlias = (
