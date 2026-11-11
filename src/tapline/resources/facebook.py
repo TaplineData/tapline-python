@@ -284,7 +284,8 @@ class Facebook(AsyncAPIResource):
         """List the comments on a post, photo, video or reel. Costs 3 credits.
 
         Args:
-            feedback_id: `feedback_id` of a post, photo, video or reel.
+            feedback_id: `feedback_id` of a post, photo, video or reel, as the posts
+                routes return it.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page.
             sort: Most relevant, newest first, or all comments.
@@ -894,7 +895,8 @@ class SyncFacebook(SyncAPIResource):
         """List the comments on a post, photo, video or reel. Costs 3 credits.
 
         Args:
-            feedback_id: `feedback_id` of a post, photo, video or reel.
+            feedback_id: `feedback_id` of a post, photo, video or reel, as the posts
+                routes return it.
             cursor: `pagination.next_cursor` from the previous page; empty for the
                 first page.
             sort: Most relevant, newest first, or all comments.

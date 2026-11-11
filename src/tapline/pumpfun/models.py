@@ -1632,9 +1632,9 @@ class Collectible(BaseModel):
     imageUrl: str
     grade: str
     setName: str | None
-    markUsd: float
-    markSource: str
-    markAsOf: str
+    markUsd: float | None
+    markSource: str | None
+    markAsOf: str | None
     insuredValueUsd: float | None
     insuredAsOf: str | None
     buybackValueUsd: float | None
@@ -2974,7 +2974,7 @@ class GetMintPositionsResponsePosition(BaseModel):
     xUsername: str | None
     accountKind: str | None = None
     amountHeld: float
-    pnlUsd: float
+    pnlUsd: float | None
     pnlPercentage: float | None
     realizedPnlUsd: float
     costBasisAmount: float
@@ -3473,12 +3473,15 @@ class GetUserCalloutsResponseCallout(BaseModel):
     replyCount: int
     maxMultiplier: float
     maxMultiplierAt: str | None
-    viewCount: int
+    viewCount: int | None = None
     mediaUrl: str | None
     quotedCalloutId: None
     quotedCallout: None
     chain: str | None = None
     perp: Annotated[None, Field(None)] = None
+    prediction: Annotated[None, Field(None)] = None
+    assetClass: str | None = None
+    collectible: Collectible | None = None
     tailBuyers: int | None = None
     tailCohort1h: int | None = None
     tailCohort4h: int | None = None
@@ -3495,8 +3498,12 @@ class GetUserCalloutsResponseCallout(BaseModel):
     tailAthHist1h: TailHistogram | None = None
     tailAthHist4h: TailHistogram | None = None
     tailAthHist24h: TailHistogram | None = None
+    rewardPools: list[str] | None = None
+    tailVolumeUsd: float | None = None
+    paidV1Usd: float | None = None
+    paidV2Usd: float | None = None
+    v2Boost: int | None = None
     author: CalloutAuthor | None = None
-    prediction: Annotated[None, Field(None)] = None
 
 
 class GetUserCoinCalloutResponse(BaseModel):
@@ -5372,7 +5379,7 @@ class Position(BaseModel):
     amountHeld: float
     valueUsd: float | None
     pnlUsd: float
-    pnlPercentage: float
+    pnlPercentage: float | None
     isExited: bool
     costBasisAmount: float
     costBasisUsd: float | None
@@ -5381,6 +5388,7 @@ class Position(BaseModel):
     realizedPnlUsd: float
     avgEntryMcapUsd: float | None
     perp: Annotated[None, Field(None)] = None
+    prediction: Annotated[None, Field(None)] = None
     receiptBasisUsd: float | None = None
 
 
@@ -5419,6 +5427,7 @@ class PositionCoin(BaseModel):
     name: str | None
     symbol: str | None
     imageUri: str | None
+    nsfw: bool | None = None
     marketCapUsd: float | None
     totalSupply: float | None
     protocol: str | None = None
@@ -5453,7 +5462,7 @@ class ProfileIdsRequest(BaseModel):
 
 
 class ProfilePin(BaseModel):
-    position: None
+    position: GetMintPositionsResponsePosition | None
     pinnedUpdate: None
 
 
@@ -5503,6 +5512,7 @@ class Quote(BaseModel):
     positionRealizedPnlUsd: float
     positionAvgEntryMcapUsd: float | None
     isQuote: bool
+    prediction: Annotated[None, Field(None)] = None
 
 
 class QuoteCallout(BaseModel):
@@ -5582,12 +5592,12 @@ class Replayintro(BaseModel):
 class Reply(BaseModel):
     id: str
     content: str
-    createdAt: str
+    createdAt: str | None
     likeCount: int
     userId: str
-    walletAddress: str
-    userName: str
-    profileImage: str
+    walletAddress: str | None
+    userName: str | None
+    profileImage: str | None
     accountKind: str | None = None
     mediaUrl: str | None
     parentMessageId: str | None
@@ -5696,7 +5706,7 @@ class RepostCallout(BaseModel):
     coinName: str
     coinImage: str
     symbol: str
-    marketCap: float
+    marketCap: float | None
     position: Position
 
 

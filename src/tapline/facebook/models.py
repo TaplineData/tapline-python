@@ -1139,12 +1139,14 @@ class ListCommentsParams(BaseModel):
     feedback_id: Annotated[
         str,
         Field(
-            examples=["ZmVlZGJhY2s6MTY1ODg3Njc4MjI3NDM1OA=="],
+            examples=[
+                "ZmVlZGJhY2s6cGZiaWQwanpoVnU4S2J1S1A2QXRSYUhLZXhnbTVaV3V6MlNZc1RtU0VyRUIxUG1wUGFNOXpUTkR5WUI3SmtqdXhKOGZvZWw="
+            ],
             pattern="^[A-Za-z0-9+/=_-]{8,400}$",
         ),
     ]
     """
-    `feedback_id` of a post, photo, video or reel.
+    `feedback_id` of a post, photo, video or reel, as the posts routes return it.
     """
     sort: CommentSort | None = CommentSort.RELEVANT
     """
