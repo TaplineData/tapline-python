@@ -320,11 +320,12 @@ class Instagram(AsyncAPIResource):
         allow_estimated: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostCountResponse:
-        """Returns the exact post count for a profile. Costs 1 credit.
+        """Returns the post count for a profile. `is_estimated` is true when the profile shows only a rounded count, such as 32K. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            allow_estimated: Ignored. Tapline always returns the exact count.
+            allow_estimated: Ignored. `is_estimated` in the response marks a rounded
+                count.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -621,11 +622,12 @@ class SyncInstagram(SyncAPIResource):
         allow_estimated: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramPostCountResponse:
-        """Returns the exact post count for a profile. Costs 1 credit.
+        """Returns the post count for a profile. `is_estimated` is true when the profile shows only a rounded count, such as 32K. Costs 1 credit.
 
         Args:
             handle: Instagram handle, with or without a leading @.
-            allow_estimated: Ignored. Tapline always returns the exact count.
+            allow_estimated: Ignored. `is_estimated` in the response marks a rounded
+                count.
             timeout: Overrides the client's timeout for this request.
 
         Returns:

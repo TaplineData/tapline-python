@@ -211,7 +211,7 @@ class GetPostCountParams(BaseModel):
     """
     allow_estimated: bool | None = None
     """
-    Ignored. Tapline always returns the exact count.
+    Ignored. `is_estimated` in the response marks a rounded count.
     """
 
 

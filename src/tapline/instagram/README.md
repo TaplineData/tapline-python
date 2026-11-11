@@ -1,6 +1,6 @@
 # Instagram with the Tapline Python SDK
 
-Use the Instagram client to read public profiles, posts, reels, comments, highlights, audio pages, popular topics, profile embeds, and exact post counts. Profiles, posts and `pagination` have the same shape on every route that returns them. Ids are strings, timestamps are ISO 8601, and durations are in seconds.
+Use the Instagram client to read public profiles, posts, reels, comments, highlights, audio pages, popular topics, profile embeds, and post counts. Profiles, posts and `pagination` have the same shape on every route that returns them. Ids are strings, timestamps are ISO 8601, and durations are in seconds.
 
 [Package guide](../../../README.md) · [Instagram API reference](https://tapline.sh/docs?utm_source=python_client&utm_medium=referral&utm_campaign=developer_acquisition&utm_content=instagram_readme#/instagram)
 
