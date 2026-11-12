@@ -170,7 +170,7 @@ class GetCalendarRequest(BaseModel):
     """
     currency: str | None = "USD"
     """
-    ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
+    Ignored. The calendar carries no prices. Any valid ISO 4217 code is still accepted.
     """
 
 
@@ -256,32 +256,16 @@ class ParsedCalendarDay(BaseModel):
     available_for_checkin: bool
     available_for_checkout: bool
     bookable: bool | None
-    price: str | None
-
-
-class ParsedCalendarMetadata(BaseModel):
-    constant_min_nights: int | None
 
 
 class ParsedCalendarMonth(BaseModel):
     month: int | None
     year: int | None
     days: list[ParsedCalendarDay]
-    condition_ranges: list[ParsedConditionRange]
 
 
 class ParsedCalendarResponse(BaseModel):
     months: list[ParsedCalendarMonth]
-    metadata: ParsedCalendarMetadata
-
-
-class ParsedConditionRange(BaseModel):
-    start_date: str | None
-    end_date: str | None
-    min_nights: int | None
-    max_nights: int | None
-    closed_to_arrival: bool | None
-    closed_to_departure: bool | None
 
 
 class ParsedCoordinates(BaseModel):
