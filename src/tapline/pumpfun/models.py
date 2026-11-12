@@ -12,13 +12,6 @@ from pydantic import Field, RootModel
 from tapline._models import PREFER_ENUM, BaseModel
 
 
-class AthCurrency(str, Enum):
-    USD = "USD"
-    SOL = "SOL"
-    BASE = "BASE"
-    QUOTE = "QUOTE"
-
-
 class BalanceChain(str, Enum):
     ALL = "all"
     SOLANA = "solana"
@@ -487,41 +480,6 @@ class ApprovedCreatorParams(BaseModel):
     ]
     """
     Coin address: a Solana mint or an EVM token (0x).
-    """
-
-
-class AthBatchRequest(BaseModel):
-    mints: Annotated[
-        list[Mint],
-        Field(
-            examples=[["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"]],
-            max_length=100,
-            min_length=1,
-        ),
-    ]
-    """
-    Coin addresses (Solana mints or EVM tokens), 1 to 100.
-    """
-
-
-class AthParams(BaseModel):
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-    currency: AthCurrency | None = AthCurrency.USD
-    """
-    Quote currency.
-    """
-    chain: TokenChain | None = None
-    """
-    Chain of the coin. Omit for a Solana pump.fun coin, the original behaviour; set it for an EVM token or to pin a coin to one chain.
     """
 
 
@@ -1457,27 +1415,6 @@ class CoinSocial(BaseModel):
     website: str | None
 
 
-class CoinTimelineParams(BaseModel):
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 50
-    """
-    Maximum timeline events to return.
-    """
-    cursor: str | None = None
-    """
-    `nextCursor` from the previous page; omit for the first page.
-    """
-
-
 class CoinTopCalloutsParams(BaseModel):
     mint: Annotated[
         str,
@@ -2013,27 +1950,6 @@ class FeeDetail(BaseModel):
     cashback: CostBasis
 
 
-class FeeSharingSharesParams(BaseModel):
-    address: Annotated[
-        str,
-        Field(
-            examples=["4DdrfiDHpmx55i4SPssxVzS9ZaKLb8qr45NKY9Er9nNh"],
-            pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$",
-        ),
-    ]
-    """
-    Solana wallet address. pump.fun refuses EVM wallets here.
-    """
-    limit: Annotated[int | None, Field(ge=1, le=100)] = 20
-    """
-    Maximum shares to return.
-    """
-    cursor: str | None = ""
-    """
-    Cursor from a previous page.
-    """
-
-
 class FeeSharingTotalsParams(BaseModel):
     address: Annotated[
         str,
@@ -2056,19 +1972,6 @@ class Finishe(BaseModel):
     periodLabel: str
     rank: int
     periodStart: str
-
-
-class FirstTradeParams(BaseModel):
-    mint: Annotated[
-        str,
-        Field(
-            examples=["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"],
-            pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$",
-        ),
-    ]
-    """
-    Coin address: a Solana mint or an EVM token (0x).
-    """
 
 
 class Firstappearance(BaseModel):
@@ -2187,14 +2090,6 @@ class GetAchievementCatalogResponse(BaseModel):
 
 class GetApprovedCreatorResponse(BaseModel):
     isApprovedCreator: bool
-
-
-class GetAthResponse(BaseModel):
-    athMarketCap: float | int | str
-
-
-class GetAthBatchResponse(RootModel[dict[str, GetAthResponse]]):
-    root: dict[str, GetAthResponse]
 
 
 class GetBanStatusResponse(RootModel[bool | dict[str, Any] | None]):
@@ -2544,21 +2439,6 @@ class GetCoinResponse(BaseModel):
     telegram: str | None = None
 
 
-class GetCoinTimelineResponse(BaseModel):
-    items: list[GetCoinTimelineResponseItem]
-    pagination: PageCursor
-
-
-class GetCoinTimelineResponseItem(BaseModel):
-    eventType: str
-    timestamp: str
-    creator: str | None = None
-    shareholders: list[ItemShareholder] | None = None
-    tx: str | None = None
-    totalDistributed: str | None = None
-    recipients: list[ItemRecipient] | None = None
-
-
 class GetCoinTopCalloutsResponse(BaseModel):
     callouts: list[GetMintPositionsResponsePosition]
     totalCount: int
@@ -2595,37 +2475,6 @@ class GetCreatorFeesResponse(BaseModel):
     isClaimable: bool
     series: list[Series]
     claimable: SeriesEarned | None = None
-
-
-class GetFeeSharingSharesResponse(BaseModel):
-    items: list[GetFeeSharingSharesResponseItem]
-    pagination: PageCursor
-
-
-class GetFeeSharingSharesResponseItem(BaseModel):
-    mint: str
-    bps: int
-    isAdmin: bool
-    sharingConfig: str
-    poolAddress: str | None
-
-
-class GetFirstTradeResponse(BaseModel):
-    slotIndexId: str
-    tx: str
-    timestamp: str
-    userAddress: str
-    type: str
-    program: str
-    priceUsd: str
-    priceSol: str
-    amountUsd: str
-    amountSol: str
-    baseAmount: str
-    quoteAmount: str
-    fillPriceUsd: str
-    fillPriceSol: str
-    isDevBuy: bool
 
 
 class GetFollowSuggestionsResponse(BaseModel):
@@ -2878,13 +2727,13 @@ class GetMarketActivityResponse(BaseModel):
 class GetMarketActivityResponse5m(BaseModel):
     numTxs: int
     volumeUSD: float
-    numUsers: int
+    numUsers: int | None
     numBuys: int
     numSells: int
     buyVolumeUSD: float
     sellVolumeUSD: float
-    numBuyers: int
-    numSellers: int
+    numBuyers: int | None
+    numSellers: int | None
     priceChangePercent: float
 
 
@@ -4151,12 +4000,6 @@ class Item(BaseModel):
     submission: Submission
 
 
-class ItemRecipient(BaseModel):
-    address: str
-    shareBps: int
-    amount: str
-
-
 class ItemResolution(BaseModel):
     firstPublishAt: str | None = None
     moderatorAddress: str
@@ -4177,11 +4020,6 @@ class ItemResolutionhistory(BaseModel):
     disputeEndsAt: str
     decisionVersion: int
     winners: list[BountyResolutionHistoryWinner] | None = None
-
-
-class ItemShareholder(BaseModel):
-    address: str
-    shareBps: int
 
 
 class ItemSubmission(BaseModel):
@@ -4825,7 +4663,7 @@ class Mint(RootModel[str]):
     root: Annotated[str, Field(pattern="^(?:[1-9A-HJ-NP-Za-km-z]{32,44}|0x[0-9a-fA-F]{40})$")]
 
 
-class Mint4(RootModel[str]):
+class Mint3(RootModel[str]):
     root: Annotated[str, Field(pattern="^[1-9A-HJ-NP-Za-km-z]{32,44}$")]
 
 
@@ -5067,12 +4905,6 @@ class OnboardingSuggestionsParams(BaseModel):
 class Page(BaseModel):
     nextCursor: str | None
     to: int | None
-    limit: int
-
-
-class PageCursor(BaseModel):
-    nextCursor: str | None
-    hasMore: bool
     limit: int
 
 
@@ -7385,7 +7217,7 @@ class WalletPnlBatchParams(BaseModel):
 
 class WalletPnlBatchRequest(BaseModel):
     mints: Annotated[
-        list[Mint4],
+        list[Mint3],
         Field(
             examples=[["7fSbFGMXDeF5n6yL2AReiQiedaeZJgs9u4B3eA9Xpump"]],
             max_length=50,
@@ -7512,7 +7344,6 @@ class Winner(BaseModel):
 Reply.model_rebuild()
 
 
-AthCurrencyParam: TypeAlias = AthCurrency | Literal["USD", "SOL", "BASE", "QUOTE"]
 BalanceChainParam: TypeAlias = (
     BalanceChain
     | Literal[

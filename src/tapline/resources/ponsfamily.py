@@ -45,15 +45,13 @@ from ..ponsfamily import (
     GetV2MarketTradesResponse,
     GetWalletIdentitiesResponse,
     GetWalletPositionsResponse,
-    Graduation,
-    Launch,
-    LaunchAgeParam,
-    LaunchSearchSortParam,
     LaunchSortParam,
     LaunchVersionParam,
     ListCtoMigrationsResponse,
     ListForumCommunitiesResponse,
     ListForumPostsResponse,
+    ListGraduatedCatalogResponse,
+    ListGraduationsResponse,
     ListLaunchesResponse,
     LiveMarket,
     MarketTrade,
@@ -135,63 +133,37 @@ def _get_forum_post_comments(
 
 def _list_launches(
     *,
-    age: LaunchAgeParam = "all",
-    graduated_page: int = 1,
-    graduated_page_size: int = 10,
-    include_graduated: bool = True,
-    page: int = 1,
-    page_size: int = 50,
+    cursor: str | None = None,
     sort: LaunchSortParam = "recentBuys",
     version: LaunchVersionParam = "all",
 ) -> Request[ListLaunchesResponse]:
     return Request(
         _PREFIX + "/launches",
         ListLaunchesResponse,
-        {
-            "age": age,
-            "graduated_page": graduated_page,
-            "graduated_page_size": graduated_page_size,
-            "include_graduated": include_graduated,
-            "page": page,
-            "page_size": page_size,
-            "sort": sort,
-            "version": version,
-        },
+        {"cursor": cursor, "sort": sort, "version": version},
     )
 
 
-def _list_graduated_catalog() -> Request[list[Launch]]:
-    return Request(_PREFIX + "/launches/graduated", list[Launch])
+def _list_graduated_catalog(*, cursor: str | None = None) -> Request[ListGraduatedCatalogResponse]:
+    return Request(
+        _PREFIX + "/launches/graduated", ListGraduatedCatalogResponse, {"cursor": cursor}
+    )
 
 
-def _list_graduations() -> Request[list[Graduation]]:
-    return Request(_PREFIX + "/launches/graduations", list[Graduation])
+def _list_graduations(*, cursor: str | None = None) -> Request[ListGraduationsResponse]:
+    return Request(_PREFIX + "/launches/graduations", ListGraduationsResponse, {"cursor": cursor})
 
 
 def _list_live_markets(*, markets: Sequence[str] | None = None) -> Request[list[LiveMarket]]:
     return Request(_PREFIX + "/launches/live-markets", list[LiveMarket], {"markets": markets})
 
 
-def _search_launches(
-    *,
-    age: LaunchAgeParam = "all",
-    page: int = 1,
-    q: str = "",
-    sort: LaunchSearchSortParam = "relevance",
-) -> Request[SearchLaunchesResponse]:
-    return Request(
-        _PREFIX + "/launches/search",
-        SearchLaunchesResponse,
-        {"age": age, "page": page, "q": q, "sort": sort},
-    )
+def _search_launches(*, q: str = "") -> Request[SearchLaunchesResponse]:
+    return Request(_PREFIX + "/launches/search", SearchLaunchesResponse, {"q": q})
 
 
-def _get_market(token: str, *, include_holders: bool = False) -> Request[GetMarketResponse]:
-    return Request(
-        encode_path(_PREFIX + "/markets/{token}", token=token),
-        GetMarketResponse,
-        {"include_holders": include_holders},
-    )
+def _get_market(token: str) -> Request[GetMarketResponse]:
+    return Request(encode_path(_PREFIX + "/markets/{token}", token=token), GetMarketResponse)
 
 
 def _get_market_ath(token: str) -> Request[GetMarketAthResponse]:
@@ -517,27 +489,17 @@ class Ponsfamily(AsyncAPIResource):
     async def list_launches(
         self,
         *,
-        age: LaunchAgeParam = "all",
-        graduated_page: int = 1,
-        graduated_page_size: int = 10,
-        include_graduated: bool = True,
-        page: int = 1,
-        page_size: int = 50,
+        cursor: str | None = None,
         sort: LaunchSortParam = "recentBuys",
         version: LaunchVersionParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListLaunchesResponse:
-        """Returns the launchpad explore board with tokens still climbing the bonding curve. The response fills `graduated.total` and `graduatedTotal` but sends `graduated.items` empty; use the graduated-launches endpoint for full records. Costs 2 credits.
+        """Returns the launchpad board of tokens still on their bonding curve, 40 per page, paged by cursor. Totals, page sizes, an age filter and a volume ranking are no longer available; `volume` ranks by latest trade. Costs 2 credits.
 
         Args:
-            age: Only include launches from this window.
-            graduated_page: Page number echoed in the graduated block.
-            graduated_page_size: Page size echoed in the graduated block.
-            include_graduated: Include the graduated block (counts only; pons sends
-                no graduated items).
-            page: Page of active launches.
-            page_size: Active launches per page.
-            sort: Ranking column for the active board.
+            cursor: `active.nextCursor` from the previous page, with the same
+                `sort`.
+            sort: Ranking column for the board.
             version: Restrict to a launchpad version.
             timeout: Overrides the client's timeout for this request.
 
@@ -545,48 +507,42 @@ class Ponsfamily(AsyncAPIResource):
             A :class:`~tapline.ponsfamily.ListLaunchesResponse`.
         """
         return await self._send(
-            _list_launches(
-                age=age,
-                graduated_page=graduated_page,
-                graduated_page_size=graduated_page_size,
-                include_graduated=include_graduated,
-                page=page,
-                page_size=page_size,
-                sort=sort,
-                version=version,
-            ),
-            timeout=timeout,
+            _list_launches(cursor=cursor, sort=sort, version=version), timeout=timeout
         )
 
     async def list_graduated_catalog(
         self,
         *,
+        cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> list[Launch]:
-        """The graduated tokens as full launch records, the catalog view of the graduations feed. Costs 2 credits.
+    ) -> ListGraduatedCatalogResponse:
+        """Graduated tokens as full launch records, 40 per page, largest market cap first, paged by cursor. Market caps move between calls, so a token can repeat or be skipped across pages. Costs 2 credits.
 
         Args:
+            cursor: `nextCursor` from the previous page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A list of :class:`~tapline.ponsfamily.Launch`.
+            A :class:`~tapline.ponsfamily.ListGraduatedCatalogResponse`.
         """
-        return await self._send(_list_graduated_catalog(), timeout=timeout)
+        return await self._send(_list_graduated_catalog(cursor=cursor), timeout=timeout)
 
     async def list_graduations(
         self,
         *,
+        cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> list[Graduation]:
-        """Every observed graduation event, as token address and graduation block. Costs 2 credits.
+    ) -> ListGraduationsResponse:
+        """Graduation times of graduated tokens, 40 per page, newest launch first, paged by cursor. Costs 2 credits.
 
         Args:
+            cursor: `nextCursor` from the previous page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A list of :class:`~tapline.ponsfamily.Graduation`.
+            A :class:`~tapline.ponsfamily.ListGraduationsResponse`.
         """
-        return await self._send(_list_graduations(), timeout=timeout)
+        return await self._send(_list_graduations(cursor=cursor), timeout=timeout)
 
     async def list_live_markets(
         self,
@@ -594,11 +550,11 @@ class Ponsfamily(AsyncAPIResource):
         markets: Sequence[str] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[LiveMarket]:
-        """Live price and graduation-progress snapshot for the launches currently trading. Costs 2 credits.
+        """Live price and graduation-progress snapshot for up to 8 given launches, or for the 40 that traded last. Costs 2 credits.
 
         Args:
             markets: Restrict the live-market snapshot to these token addresses, at
-                most 100 per call.
+                most 8 per call.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -609,48 +565,36 @@ class Ponsfamily(AsyncAPIResource):
     async def search_launches(
         self,
         *,
-        age: LaunchAgeParam = "all",
-        page: int = 1,
         q: str = "",
-        sort: LaunchSearchSortParam = "relevance",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchLaunchesResponse:
-        """Search launches by name, symbol, or contract address. Costs 2 credits.
+        """Search launches by name, symbol, or contract address; returns the 40 best matches, with no sorting, age filter or paging. Costs 2 credits.
 
         Args:
-            age: Only include launches from this window.
-            page: Result page.
             q: Free-text query matched against token name, symbol and address.
-            sort: Ranking column for the result set.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.ponsfamily.SearchLaunchesResponse`.
         """
-        return await self._send(
-            _search_launches(age=age, page=page, q=q, sort=sort), timeout=timeout
-        )
+        return await self._send(_search_launches(q=q), timeout=timeout)
 
     async def get_market(
         self,
         token: str,
         *,
-        include_holders: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketResponse:
-        """Price, market cap, liquidity, recent trades and price points for one v1 token. Costs 2 credits.
+        """Price, market cap and 24h pool volume for one token; trades, holders and liquidity are no longer part of the snapshot. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
-            include_holders: Include the holder list in the snapshot.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.ponsfamily.GetMarketResponse`.
         """
-        return await self._send(
-            _get_market(token, include_holders=include_holders), timeout=timeout
-        )
+        return await self._send(_get_market(token), timeout=timeout)
 
     async def get_market_ath(
         self,
@@ -658,7 +602,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketAthResponse:
-        """All-time-high price for a token and the block it was set in. Costs 2 credits.
+        """All-time-high price of a v1 token in ETH, taken as its highest daily close. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -693,7 +637,7 @@ class Ponsfamily(AsyncAPIResource):
         range: ChartRangeParam = "1h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketChartResponse:
-        """Bucketed price and volume points for a token, at the resolution the range implies. Costs 2 credits.
+        """Price and volume candles for a token in ETH, at the resolution the range implies; buckets without trades have no point. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -712,7 +656,7 @@ class Ponsfamily(AsyncAPIResource):
         deployer: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetDeveloperTradesResponse:
-        """What the deployer did with its own allocation: buys, sells, transfers, burns, and the dumped/moved/burned verdicts. Costs 2 credits.
+        """Tokens the deployer sent away, as moves and burns with totals; its buys and sells are no longer available. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -730,7 +674,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketHoldersResponse:
-        """Ranked token holders with balance, supply share, and per-holder PnL when available. Costs 2 credits.
+        """The 50 largest holders of a token and the total holder count. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -781,7 +725,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[MarketTrade]:
-        """The most recent buys and sells against a token's pool. Costs 2 credits.
+        """The 50 latest buys and sells of a token, in ETH for v1 launches. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -867,7 +811,7 @@ class Ponsfamily(AsyncAPIResource):
         range: ChartRangeParam = "1h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketChartResponse:
-        """Bucketed price and volume points for a v2 launch, with the quote asset's USD rate. Costs 2 credits.
+        """Price and volume candles for a v2 launch in its quote asset, at the resolution the range implies. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.
@@ -919,7 +863,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketHoldersResponse:
-        """Ranked holders of a v2 launch. Costs 2 credits.
+        """The 50 largest holders of a v2 launch and the total holder count. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.
@@ -936,7 +880,7 @@ class Ponsfamily(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketTradesResponse:
-        """Trades against a v2 (curve) launch, quoted in the launch's own quote asset. Costs 2 credits.
+        """The 50 latest trades against a v2 launch, in the launch's own quote asset. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.
@@ -1203,27 +1147,17 @@ class SyncPonsfamily(SyncAPIResource):
     def list_launches(
         self,
         *,
-        age: LaunchAgeParam = "all",
-        graduated_page: int = 1,
-        graduated_page_size: int = 10,
-        include_graduated: bool = True,
-        page: int = 1,
-        page_size: int = 50,
+        cursor: str | None = None,
         sort: LaunchSortParam = "recentBuys",
         version: LaunchVersionParam = "all",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ListLaunchesResponse:
-        """Returns the launchpad explore board with tokens still climbing the bonding curve. The response fills `graduated.total` and `graduatedTotal` but sends `graduated.items` empty; use the graduated-launches endpoint for full records. Costs 2 credits.
+        """Returns the launchpad board of tokens still on their bonding curve, 40 per page, paged by cursor. Totals, page sizes, an age filter and a volume ranking are no longer available; `volume` ranks by latest trade. Costs 2 credits.
 
         Args:
-            age: Only include launches from this window.
-            graduated_page: Page number echoed in the graduated block.
-            graduated_page_size: Page size echoed in the graduated block.
-            include_graduated: Include the graduated block (counts only; pons sends
-                no graduated items).
-            page: Page of active launches.
-            page_size: Active launches per page.
-            sort: Ranking column for the active board.
+            cursor: `active.nextCursor` from the previous page, with the same
+                `sort`.
+            sort: Ranking column for the board.
             version: Restrict to a launchpad version.
             timeout: Overrides the client's timeout for this request.
 
@@ -1231,48 +1165,42 @@ class SyncPonsfamily(SyncAPIResource):
             A :class:`~tapline.ponsfamily.ListLaunchesResponse`.
         """
         return self._send(
-            _list_launches(
-                age=age,
-                graduated_page=graduated_page,
-                graduated_page_size=graduated_page_size,
-                include_graduated=include_graduated,
-                page=page,
-                page_size=page_size,
-                sort=sort,
-                version=version,
-            ),
-            timeout=timeout,
+            _list_launches(cursor=cursor, sort=sort, version=version), timeout=timeout
         )
 
     def list_graduated_catalog(
         self,
         *,
+        cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> list[Launch]:
-        """The graduated tokens as full launch records, the catalog view of the graduations feed. Costs 2 credits.
+    ) -> ListGraduatedCatalogResponse:
+        """Graduated tokens as full launch records, 40 per page, largest market cap first, paged by cursor. Market caps move between calls, so a token can repeat or be skipped across pages. Costs 2 credits.
 
         Args:
+            cursor: `nextCursor` from the previous page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A list of :class:`~tapline.ponsfamily.Launch`.
+            A :class:`~tapline.ponsfamily.ListGraduatedCatalogResponse`.
         """
-        return self._send(_list_graduated_catalog(), timeout=timeout)
+        return self._send(_list_graduated_catalog(cursor=cursor), timeout=timeout)
 
     def list_graduations(
         self,
         *,
+        cursor: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
-    ) -> list[Graduation]:
-        """Every observed graduation event, as token address and graduation block. Costs 2 credits.
+    ) -> ListGraduationsResponse:
+        """Graduation times of graduated tokens, 40 per page, newest launch first, paged by cursor. Costs 2 credits.
 
         Args:
+            cursor: `nextCursor` from the previous page.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
-            A list of :class:`~tapline.ponsfamily.Graduation`.
+            A :class:`~tapline.ponsfamily.ListGraduationsResponse`.
         """
-        return self._send(_list_graduations(), timeout=timeout)
+        return self._send(_list_graduations(cursor=cursor), timeout=timeout)
 
     def list_live_markets(
         self,
@@ -1280,11 +1208,11 @@ class SyncPonsfamily(SyncAPIResource):
         markets: Sequence[str] | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[LiveMarket]:
-        """Live price and graduation-progress snapshot for the launches currently trading. Costs 2 credits.
+        """Live price and graduation-progress snapshot for up to 8 given launches, or for the 40 that traded last. Costs 2 credits.
 
         Args:
             markets: Restrict the live-market snapshot to these token addresses, at
-                most 100 per call.
+                most 8 per call.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
@@ -1295,44 +1223,36 @@ class SyncPonsfamily(SyncAPIResource):
     def search_launches(
         self,
         *,
-        age: LaunchAgeParam = "all",
-        page: int = 1,
         q: str = "",
-        sort: LaunchSearchSortParam = "relevance",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> SearchLaunchesResponse:
-        """Search launches by name, symbol, or contract address. Costs 2 credits.
+        """Search launches by name, symbol, or contract address; returns the 40 best matches, with no sorting, age filter or paging. Costs 2 credits.
 
         Args:
-            age: Only include launches from this window.
-            page: Result page.
             q: Free-text query matched against token name, symbol and address.
-            sort: Ranking column for the result set.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.ponsfamily.SearchLaunchesResponse`.
         """
-        return self._send(_search_launches(age=age, page=page, q=q, sort=sort), timeout=timeout)
+        return self._send(_search_launches(q=q), timeout=timeout)
 
     def get_market(
         self,
         token: str,
         *,
-        include_holders: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketResponse:
-        """Price, market cap, liquidity, recent trades and price points for one v1 token. Costs 2 credits.
+        """Price, market cap and 24h pool volume for one token; trades, holders and liquidity are no longer part of the snapshot. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
-            include_holders: Include the holder list in the snapshot.
             timeout: Overrides the client's timeout for this request.
 
         Returns:
             A :class:`~tapline.ponsfamily.GetMarketResponse`.
         """
-        return self._send(_get_market(token, include_holders=include_holders), timeout=timeout)
+        return self._send(_get_market(token), timeout=timeout)
 
     def get_market_ath(
         self,
@@ -1340,7 +1260,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketAthResponse:
-        """All-time-high price for a token and the block it was set in. Costs 2 credits.
+        """All-time-high price of a v1 token in ETH, taken as its highest daily close. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -1375,7 +1295,7 @@ class SyncPonsfamily(SyncAPIResource):
         range: ChartRangeParam = "1h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketChartResponse:
-        """Bucketed price and volume points for a token, at the resolution the range implies. Costs 2 credits.
+        """Price and volume candles for a token in ETH, at the resolution the range implies; buckets without trades have no point. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -1394,7 +1314,7 @@ class SyncPonsfamily(SyncAPIResource):
         deployer: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetDeveloperTradesResponse:
-        """What the deployer did with its own allocation: buys, sells, transfers, burns, and the dumped/moved/burned verdicts. Costs 2 credits.
+        """Tokens the deployer sent away, as moves and burns with totals; its buys and sells are no longer available. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -1412,7 +1332,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetMarketHoldersResponse:
-        """Ranked token holders with balance, supply share, and per-holder PnL when available. Costs 2 credits.
+        """The 50 largest holders of a token and the total holder count. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -1463,7 +1383,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> list[MarketTrade]:
-        """The most recent buys and sells against a token's pool. Costs 2 credits.
+        """The 50 latest buys and sells of a token, in ETH for v1 launches. Costs 2 credits.
 
         Args:
             token: Token contract address on Robinhood Chain.
@@ -1549,7 +1469,7 @@ class SyncPonsfamily(SyncAPIResource):
         range: ChartRangeParam = "1h",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketChartResponse:
-        """Bucketed price and volume points for a v2 launch, with the quote asset's USD rate. Costs 2 credits.
+        """Price and volume candles for a v2 launch in its quote asset, at the resolution the range implies. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.
@@ -1601,7 +1521,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketHoldersResponse:
-        """Ranked holders of a v2 launch. Costs 2 credits.
+        """The 50 largest holders of a v2 launch and the total holder count. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.
@@ -1618,7 +1538,7 @@ class SyncPonsfamily(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> GetV2MarketTradesResponse:
-        """Trades against a v2 (curve) launch, quoted in the launch's own quote asset. Costs 2 credits.
+        """The 50 latest trades against a v2 launch, in the launch's own quote asset. Costs 2 credits.
 
         Args:
             token: Token contract address of a v2 (curve) launch.

@@ -61,7 +61,7 @@ async def test_a_missing_field_reads_as_none_while_the_rest_of_the_response_pars
 async def test_a_field_of_another_type_keeps_its_value(api: MockAPI, engine: Engine) -> None:
     api.respond(
         httpx.Response(
-            200, json=[{"side": "buy", "blockNumber": 1}, {"side": "sell", "blockNumber": "late"}]
+            200, json=[{"side": "buy", "timestamp": 1}, {"side": "sell", "timestamp": "late"}]
         )
     )
 
@@ -69,9 +69,9 @@ async def test_a_field_of_another_type_keeps_its_value(api: MockAPI, engine: Eng
 
     assert [type(trade) for trade in trades] == [MarketTrade, MarketTrade]
     assert [trade.side for trade in trades] == ["buy", "sell"]
-    assert trades[0].blockNumber == 1
-    assert cast(object, trades[1].blockNumber) == "late"
-    assert trades[1].model_fields_set == {"side", "blockNumber"}
+    assert trades[0].timestamp == 1
+    assert cast(object, trades[1].timestamp) == "late"
+    assert trades[1].model_fields_set == {"side", "timestamp"}
 
 
 @pytest.mark.parametrize("payload", [["not", "an", "object"], "text", 42, True, None])

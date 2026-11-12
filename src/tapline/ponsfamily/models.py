@@ -25,20 +25,6 @@ class CommunityRank(str, Enum):
     REAL_MCAP = "realMcap"
 
 
-class LaunchAge(str, Enum):
-    ALL = "all"
-    FIELD_24H = "24h"
-    FIELD_7D = "7d"
-
-
-class LaunchSearchSort(str, Enum):
-    RELEVANCE = "relevance"
-    MARKET_CAP = "marketCap"
-    VOLUME = "volume"
-    NEWEST = "newest"
-    OLDEST = "oldest"
-
-
 class LaunchSort(str, Enum):
     RECENT_BUYS = "recentBuys"
     NEWEST = "newest"
@@ -238,10 +224,8 @@ class DeveloperTradeEvent(BaseModel):
     timestamp: int | None = None
     blockNumber: int | None = None
     transactionHash: str | None = None
-    priceUsd: float | None = None
     tokenAmount: str | None = None
     tokenAmountDecimal: float | None = None
-    valueUsd: float | None = None
     toAddress: str | None = None
 
 
@@ -437,16 +421,13 @@ class GetDeveloperTradesParams(BaseModel):
 class GetDeveloperTradesResponse(BaseModel):
     deployer: str | None = None
     events: list[DeveloperTradeEvent] | None = None
-    buyCount: int | None = None
-    sellCount: int | None = None
     moveCount: int | None = None
     burnCount: int | None = None
-    totalSoldUsd: float | None = None
     totalMovedTokens: float | None = None
     totalBurnedTokens: float | None = None
-    dumped: bool | None = None
     movedFunds: bool | None = None
     burned: bool | None = None
+    complete: bool | None = None
 
 
 class GetEthPriceResponse(BaseModel):
@@ -537,11 +518,7 @@ class GetMarketAthParams(BaseModel):
 
 class GetMarketAthResponse(BaseModel):
     token: str | None = None
-    pool: str | None = None
     priceEth: float | None = None
-    blockNumber: int | None = None
-    timestamp: str | None = None
-    updatedAt: int | None = None
 
 
 class GetMarketBurnedParams(BaseModel):
@@ -572,8 +549,6 @@ class GetMarketChartResponse(BaseModel):
     range: str | None = None
     intervalSeconds: int | None = None
     points: list[MarketChartPoint] | None = None
-    updatedAt: int | None = None
-    source: str | None = None
 
 
 class GetMarketHoldersParams(BaseModel):
@@ -610,10 +585,6 @@ class GetMarketParams(BaseModel):
     """
     Token contract address on Robinhood Chain.
     """
-    include_holders: bool | None = False
-    """
-    Include the holder list in the snapshot.
-    """
 
 
 class GetMarketResponse(BaseModel):
@@ -622,14 +593,7 @@ class GetMarketResponse(BaseModel):
     priceEth: float | None = None
     priceUsd: float | None = None
     marketCapUsd: float | None = None
-    liquidityUsd: float | None = None
     volume24hUsd: float | None = None
-    changePct: float | None = None
-    points: list[MarketPricePoint] | None = None
-    trades: list[MarketTrade] | None = None
-    holdersCount: int | None = None
-    holders: list[MarketHolder] | None = None
-    updatedAt: int | None = None
 
 
 class GetMarketTipParams(BaseModel):
@@ -787,9 +751,6 @@ class GetV2MarketChartResponse(BaseModel):
     range: str | None = None
     intervalSeconds: int | None = None
     points: list[V2ChartPoint] | None = None
-    updatedAt: int | None = None
-    quoteSymbol: str | None = None
-    quoteUsd: float | None = None
 
 
 class GetV2MarketHoldersParams(BaseModel):
@@ -847,7 +808,6 @@ class GetWalletPositionsResponse(BaseModel):
 class Graduation(BaseModel):
     token: str | None = None
     graduatedAt: str | None = None
-    observedBlockNumber: int | None = None
 
 
 class Launch(BaseModel):
@@ -857,38 +817,28 @@ class Launch(BaseModel):
     deployer: str | None = None
     pool: str | None = None
     pairToken: str | None = None
-    transactionHash: str | None = None
     blockNumber: int | None = None
     launchedAt: str | None = None
-    initialBuyWei: str | None = None
     name: str | None = None
     symbol: str | None = None
     logo: str | None = None
     description: str | None = None
     priceUsd: float | None = None
     marketCapUsd: float | None = None
-    liquidityUsd: float | None = None
     volume24hUsd: float | None = None
     graduated: bool | None = None
     graduatedAt: str | None = None
-    graduatedBlockNumber: int | None = None
     graduationProgressPct: float | None = None
     pairedPrincipalEth: float | None = None
     graduationThresholdEth: float | None = None
-    latestBuyAt: str | None = None
-    latestBuyBlockNumber: int | None = None
     realMcapUsd: float | None = None
     burnedPct: float | None = None
     quoteAsset: QuoteAsset | None = None
-    venue: str | None = None
-    isOriginal: bool | None = None
 
 
 class LaunchPage(BaseModel):
     items: list[Launch] | None = None
-    page: int | None = None
-    pageSize: int | None = None
-    total: int | None = None
+    nextCursor: str | None = None
 
 
 class ListCtoMigrationsResponse(BaseModel):
@@ -925,66 +875,62 @@ class ListForumPostsResponse(BaseModel):
     posts: list[ForumPost] | None = None
 
 
+class ListGraduatedCatalogParams(BaseModel):
+    cursor: Annotated[str | None, Field(pattern="^\\d+$")] = None
+    """
+    `nextCursor` from the previous page.
+    """
+
+
+class ListGraduatedCatalogResponse(BaseModel):
+    items: list[Launch] | None = None
+    nextCursor: str | None = None
+
+
+class ListGraduationsParams(BaseModel):
+    cursor: Annotated[str | None, Field(pattern="^\\d+\\.0x[0-9a-fA-F]{40}$")] = None
+    """
+    `nextCursor` from the previous page.
+    """
+
+
+class ListGraduationsResponse(BaseModel):
+    items: list[Graduation] | None = None
+    nextCursor: str | None = None
+
+
 class ListLaunchesParams(BaseModel):
     sort: LaunchSort | None = LaunchSort.RECENT_BUYS
     """
-    Ranking column for the active board.
-    """
-    age: LaunchAge | None = LaunchAge.ALL
-    """
-    Only include launches from this window.
+    Ranking column for the board.
     """
     version: LaunchVersion | None = LaunchVersion.ALL
     """
     Restrict to a launchpad version.
     """
-    page: Annotated[int | None, Field(ge=1)] = 1
+    cursor: Annotated[str | None, Field(pattern="^(\\d+|\\d+\\.0x[0-9a-fA-F]{40})$")] = None
     """
-    Page of active launches.
-    """
-    page_size: Annotated[int | None, Field(ge=1, le=500)] = 50
-    """
-    Active launches per page.
-    """
-    include_graduated: bool | None = True
-    """
-    Include the graduated block (counts only; pons sends no graduated items).
-    """
-    graduated_page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    Page number echoed in the graduated block.
-    """
-    graduated_page_size: Annotated[int | None, Field(ge=1, le=100)] = 10
-    """
-    Page size echoed in the graduated block.
+    `active.nextCursor` from the previous page, with the same `sort`.
     """
 
 
 class ListLaunchesResponse(BaseModel):
-    generatedAt: int | None = None
     active: LaunchPage | None = None
-    graduated: LaunchPage | None = None
-    activeTotal: int | None = None
-    graduatedTotal: int | None = None
-    launchTotal: int | None = None
 
 
 class ListLiveMarketsParams(BaseModel):
     markets: Annotated[
         list[str] | None,
-        Field(examples=[["0x39dBED3a2bd333467115dE45665cC57F813C4571"]], max_length=100),
+        Field(examples=[["0x39dBED3a2bd333467115dE45665cC57F813C4571"]], max_length=8),
     ] = None
     """
-    Restrict the live-market snapshot to these token addresses, at most 100 per call.
+    Restrict the live-market snapshot to these token addresses, at most 8 per call.
     """
 
 
 class LiveMarket(BaseModel):
     token: str | None = None
     pool: str | None = None
-    latestBuyAt: str | None = None
-    latestBuyBlockNumber: int | None = None
-    latestMarketBlockNumber: int | None = None
     priceUsd: float | None = None
     marketCapUsd: float | None = None
     graduated: bool | None = None
@@ -996,7 +942,6 @@ class LiveMarket(BaseModel):
 class MarketChartPoint(BaseModel):
     t: int | None = None
     priceEth: float | None = None
-    blockNumber: int | None = None
     volumeEth: float | None = None
     tradeCount: int | None = None
 
@@ -1005,27 +950,15 @@ class MarketHolder(BaseModel):
     address: str | None = None
     balance: str | None = None
     percentage: float | None = None
-    entryMcapUsd: float | None = None
-    pnlUsd: float | None = None
-    pnlPct: float | None = None
-
-
-class MarketPricePoint(BaseModel):
-    t: int | None = None
-    priceUsd: float | None = None
-    blockNumber: int | None = None
 
 
 class MarketTrade(BaseModel):
     side: str | None = None
     timestamp: int | None = None
-    blockNumber: int | None = None
     transactionHash: str | None = None
     recipient: str | None = None
-    tokenAmount: str | None = None
-    ethAmount: str | None = None
-    priceUsd: float | None = None
-    valueUsd: float | None = None
+    tokenAmount: float | None = None
+    ethAmount: float | None = None
 
 
 class MigrationSchedule(BaseModel):
@@ -1080,7 +1013,6 @@ class ProfileLaunch(BaseModel):
 class QuoteAsset(BaseModel):
     address: str | None = None
     symbol: str | None = None
-    name: str | None = None
     decimals: int | None = None
     isNative: bool | None = None
     assetClass: str | None = None
@@ -1091,25 +1023,10 @@ class SearchLaunchesParams(BaseModel):
     """
     Free-text query matched against token name, symbol and address.
     """
-    sort: LaunchSearchSort | None = LaunchSearchSort.RELEVANCE
-    """
-    Ranking column for the result set.
-    """
-    age: LaunchAge | None = LaunchAge.ALL
-    """
-    Only include launches from this window.
-    """
-    page: Annotated[int | None, Field(ge=1)] = 1
-    """
-    Result page.
-    """
 
 
 class SearchLaunchesResponse(BaseModel):
     items: list[Launch] | None = None
-    page: int | None = None
-    pageSize: int | None = None
-    total: int | None = None
 
 
 class TokenSocials(BaseModel):
@@ -1122,7 +1039,6 @@ class TokenSocials(BaseModel):
 class V2ChartPoint(BaseModel):
     t: int | None = None
     price: float | None = None
-    blockNumber: int | None = None
     volumeQuote: float | None = None
     tradeCount: int | None = None
 
@@ -1137,11 +1053,10 @@ class V2Trade(BaseModel):
     id: str | None = None
     venue: str | None = None
     side: str | None = None
-    tokenAmount: str | None = None
-    quoteAmount: str | None = None
+    tokenAmount: float | None = None
+    quoteAmount: float | None = None
     account: str | None = None
     transactionHash: str | None = None
-    blockNumber: int | None = None
     timestamp: int | None = None
 
 
@@ -1221,10 +1136,6 @@ ForumComment.model_rebuild()
 
 ChartRangeParam: TypeAlias = ChartRange | Literal["5m", "1h", "6h", "1d", "all"]
 CommunityRankParam: TypeAlias = CommunityRank | Literal["marketCap", "burnPct", "realMcap"]
-LaunchAgeParam: TypeAlias = LaunchAge | Literal["all", "24h", "7d"]
-LaunchSearchSortParam: TypeAlias = (
-    LaunchSearchSort | Literal["relevance", "marketCap", "volume", "newest", "oldest"]
-)
 LaunchSortParam: TypeAlias = (
     LaunchSort | Literal["recentBuys", "newest", "oldest", "marketCap", "volume"]
 )

@@ -287,14 +287,14 @@ class TestResponseDecoding:
     async def test_a_json_array_is_constructed_as_a_list_of_models(
         self, api: MockAPI, engine: Engine
     ) -> None:
-        api.respond(httpx.Response(200, json=[{"side": "buy", "blockNumber": 1}, {"side": "sell"}]))
+        api.respond(httpx.Response(200, json=[{"side": "buy", "timestamp": 1}, {"side": "sell"}]))
 
         trades = await fetch_market_trades(engine)
 
         assert isinstance(trades, list)
         assert all(isinstance(trade, MarketTrade) for trade in trades)
         assert [trade.side for trade in trades] == ["buy", "sell"]
-        assert trades[0].blockNumber == 1
+        assert trades[0].timestamp == 1
 
 
 class TestFailuresHttpxRaisesItself:
