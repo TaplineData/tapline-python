@@ -322,6 +322,10 @@ class TwitterMediaTag(BaseModel):
 
 
 class TwitterPost(BaseModel):
+    """
+    An X post: text, like, repost, reply, quote, bookmark and view counts, media, links, and its author's full account with follower and following counts.
+    """
+
     id: str
     conversation_id: str | None = None
     note_id: str | None = None
@@ -351,6 +355,7 @@ class TwitterPost(BaseModel):
     is_pinned: bool | None = None
     is_reply: bool
     is_quote: bool
+    is_edited: bool | None = None
     is_paid_promotion: bool | None = None
     has_ai_generated_media: bool | None = None
     media: list[TwitterMedia] | None = None
@@ -381,14 +386,20 @@ class TwitterProfileResponse(BaseModel):
     possibly_sensitive: bool | None = None
     is_blue_verified: bool | None = None
     is_verified: bool | None = None
+    verification_reason: str | None = None
     has_hidden_subscriptions: bool | None = None
+    can_highlight_posts: bool | None = None
     created_at: str | None = None
+    verified_at: str | None = None
     birth_date: TwitterBirthDate | None = None
     location: str | None = None
     bio_entities: TwitterBioEntities | None = None
     identity_label: TwitterUserLabel | None = None
     verified_type: str | None = None
     translator_type: str | None = None
+    is_super_follow_eligible: bool | None = None
+    parody_commentary_fan_label: str | None = None
+    is_profile_translatable: bool | None = None
     profile_image_shape: str | None = None
     profile_image_url: str | None = None
     banner_url: str | None = None
@@ -449,6 +460,7 @@ class TwitterTweetResponse(BaseModel):
     is_pinned: bool | None = None
     is_reply: bool
     is_quote: bool
+    is_edited: bool | None = None
     is_paid_promotion: bool | None = None
     has_ai_generated_media: bool | None = None
     media: list[TwitterMedia] | None = None
@@ -467,6 +479,10 @@ class TwitterUrlEntity(BaseModel):
 
 
 class TwitterUser(BaseModel):
+    """
+    An X account: bio, website and bio links, location, verification, profile and banner images, and follower, following and post counts.
+    """
+
     id: str
     handle: str | None = None
     pinned_post_ids: list[str] | None = None
@@ -486,14 +502,20 @@ class TwitterUser(BaseModel):
     possibly_sensitive: bool | None = None
     is_blue_verified: bool | None = None
     is_verified: bool | None = None
+    verification_reason: str | None = None
     has_hidden_subscriptions: bool | None = None
+    can_highlight_posts: bool | None = None
     created_at: str | None = None
+    verified_at: str | None = None
     birth_date: TwitterBirthDate | None = None
     location: str | None = None
     bio_entities: TwitterBioEntities | None = None
     identity_label: TwitterUserLabel | None = None
     verified_type: str | None = None
     translator_type: str | None = None
+    is_super_follow_eligible: bool | None = None
+    parody_commentary_fan_label: str | None = None
+    is_profile_translatable: bool | None = None
     profile_image_shape: str | None = None
     profile_image_url: str | None = None
     banner_url: str | None = None

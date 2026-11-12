@@ -273,7 +273,7 @@ class Indeed(AsyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanySuggestions:
-        """Find companies by name, with the keys the company routes take. Costs 2 credits.
+        """Suggest companies for a partly typed name, with the keys the company routes take. Costs 2 credits.
 
         Args:
             query: Company name, or its start.
@@ -667,7 +667,7 @@ class SyncIndeed(SyncAPIResource):
         limit: int = 10,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> IndeedCompanySuggestions:
-        """Find companies by name, with the keys the company routes take. Costs 2 credits.
+        """Suggest companies for a partly typed name, with the keys the company routes take. Costs 2 credits.
 
         Args:
             query: Company name, or its start.

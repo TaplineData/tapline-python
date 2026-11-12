@@ -97,7 +97,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyResponse:
-        """Returns a company, school, or showcase page with its profile details, follower and employee counts, specialties, related pages, featured employees, and latest posts. Costs 1 credit.
+        """Returns a company, school, or showcase page. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -121,7 +121,7 @@ class Linkedin(AsyncAPIResource):
         page: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyPostsResponse:
-        """Returns posts from a company, school, or showcase page, 10 per page, newest first. Each item includes its text, publish time, engagement, author, and repost status. Costs 1 credit.
+        """Lists a company, school, or showcase page's posts, 10 per page, newest first. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -146,7 +146,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobResponse:
-        """Returns one job with its company, location, posting age, applicant count, salary when available, full description, seniority, employment type, industries, and application method. Costs 1 credit.
+        """Returns one job posting. Costs 1 credit.
 
         Args:
             url: A LinkedIn job URL: `https://www.linkedin.com/jobs/view/<id>/`
@@ -172,7 +172,7 @@ class Linkedin(AsyncAPIResource):
         posted_within: PostedWithinParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobsSearchResponse:
-        """Searches jobs by keyword, location, company, posting window, distance, and application method. Returns 10 jobs per page. Pass `pagination.next_cursor` back for the next page. Costs 1 credit.
+        """Returns matching jobs, including company and posting details, 10 at a time. Costs 1 credit.
 
         Args:
             company_ids: Comma-separated LinkedIn numeric company ids, up to 20 (the
@@ -214,7 +214,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostResponse:
-        """Returns one post or article with its text, publish time, engagement, author, comments, images, and native video. Missing posts return 404. Costs 1 credit.
+        """Returns one post or Pulse article. Missing posts return 404. Costs 1 credit.
 
         Args:
             url: A LinkedIn post or article URL:
@@ -256,7 +256,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """Returns a member profile with its headline, bio, location, follower count, experience, education, recent activity, projects, publications, recommendations, and similar profiles. Missing or unavailable profiles return 404. Costs 2 credits.
+        """Returns a public member profile. Missing or unavailable profiles return 404. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,
@@ -289,7 +289,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyResponse:
-        """Returns a company, school, or showcase page with its profile details, follower and employee counts, specialties, related pages, featured employees, and latest posts. Costs 1 credit.
+        """Returns a company, school, or showcase page. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -313,7 +313,7 @@ class SyncLinkedin(SyncAPIResource):
         page: int = 1,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinCompanyPostsResponse:
-        """Returns posts from a company, school, or showcase page, 10 per page, newest first. Each item includes its text, publish time, engagement, author, and repost status. Costs 1 credit.
+        """Lists a company, school, or showcase page's posts, 10 per page, newest first. Costs 1 credit.
 
         Args:
             url: A LinkedIn company, school or showcase page URL:
@@ -338,7 +338,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobResponse:
-        """Returns one job with its company, location, posting age, applicant count, salary when available, full description, seniority, employment type, industries, and application method. Costs 1 credit.
+        """Returns one job posting. Costs 1 credit.
 
         Args:
             url: A LinkedIn job URL: `https://www.linkedin.com/jobs/view/<id>/`
@@ -364,7 +364,7 @@ class SyncLinkedin(SyncAPIResource):
         posted_within: PostedWithinParam | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinJobsSearchResponse:
-        """Searches jobs by keyword, location, company, posting window, distance, and application method. Returns 10 jobs per page. Pass `pagination.next_cursor` back for the next page. Costs 1 credit.
+        """Returns matching jobs, including company and posting details, 10 at a time. Costs 1 credit.
 
         Args:
             company_ids: Comma-separated LinkedIn numeric company ids, up to 20 (the
@@ -406,7 +406,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinPostResponse:
-        """Returns one post or article with its text, publish time, engagement, author, comments, images, and native video. Missing posts return 404. Costs 1 credit.
+        """Returns one post or Pulse article. Missing posts return 404. Costs 1 credit.
 
         Args:
             url: A LinkedIn post or article URL:
@@ -448,7 +448,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """Returns a member profile with its headline, bio, location, follower count, experience, education, recent activity, projects, publications, recommendations, and similar profiles. Missing or unavailable profiles return 404. Costs 2 credits.
+        """Returns a public member profile. Missing or unavailable profiles return 404. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,

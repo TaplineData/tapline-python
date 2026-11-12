@@ -40,7 +40,7 @@ class Account(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> AccountCreditsView:
-        """Return the credit balance of the account that owns the API key. `subscription_renews_at` is when the plan renews, or null without a plan. Works on every plan and costs no credits.
+        """Returns the account's remaining plan and prepaid credits, plus renewal details. This check is free and has no rate limit.
 
         Args:
             timeout: Overrides the client's timeout for this request.
@@ -68,7 +68,7 @@ class SyncAccount(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> AccountCreditsView:
-        """Return the credit balance of the account that owns the API key. `subscription_renews_at` is when the plan renews, or null without a plan. Works on every plan and costs no credits.
+        """Returns the account's remaining plan and prepaid credits, plus renewal details. This check is free and has no rate limit.
 
         Args:
             timeout: Overrides the client's timeout for this request.

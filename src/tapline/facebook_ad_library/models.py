@@ -124,6 +124,10 @@ class FacebookAd(BaseModel):
 
 
 class FacebookAdCard(BaseModel):
+    """
+    One Ad Library ad: its text, the advertiser page, the creative media and call to action, and its delivery.
+    """
+
     ad_archive_id: str | None
     ad_id: str | None
     text: FacebookAdText
@@ -140,6 +144,10 @@ class FacebookAdCard(BaseModel):
 
 
 class FacebookAdCarouselCard(BaseModel):
+    """
+    One carousel card: its own copy, link, call to action and image or video.
+    """
+
     title: str | None
     body: str | None
     caption: str | None
@@ -156,6 +164,10 @@ class FacebookAdCollation(BaseModel):
 
 
 class FacebookAdCreative(BaseModel):
+    """
+    The ad's creative: link, display format, call to action (cta_type), carousel cards, images and videos.
+    """
+
     link_url: str | None
     extra_links: list[str]
     branded_content: FacebookPage | None
@@ -172,6 +184,10 @@ class FacebookAdCreative(BaseModel):
 
 
 class FacebookAdDelivery(BaseModel):
+    """
+    Ad status and run dates: whether the ad is still running, when it started and stopped, and the platforms it runs on.
+    """
+
     total_active_seconds: int | None
     is_active: bool | None
     start_at: str | None
@@ -271,6 +287,10 @@ class FacebookAdSearchPage(BaseModel):
 
 
 class FacebookAdText(BaseModel):
+    """
+    The ad's copy: headline (title), ad text (body), link caption and link description.
+    """
+
     title: str | None
     body: str | None
     caption: str | None

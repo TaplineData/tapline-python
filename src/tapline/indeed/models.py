@@ -268,12 +268,7 @@ class GetSalariesParams(BaseModel):
 
 class IndeedApply(BaseModel):
     """
-    Indeed Apply metadata. Token-derived fields are null when the token does not decode.
-
-    `ats_job_id` is the job's id in the employer's applicant system. `required_resume_fields` and
-    `optional_resume_fields` list the résumé sections the application requires or offers, comma-separated
-    (`phone,education,skills`). `scopes` appears only when Indeed sends it and names supported clients such as
-    `desktop` and `mobile`. `locale` is the language or locale tag a few tokens carry (`en`, `fr`, `en_US`).
+    Application requirements and employer hiring-system details from Indeed.
     """
 
     ats_job_id: str | None
@@ -308,7 +303,12 @@ class IndeedAttributeCount(BaseModel):
 
 
 class IndeedCeo(BaseModel):
+    """
+    `start_date` is the day the CEO took office (`2012-10-01`).
+    """
+
     name: str | None
+    start_date: str | None
     approval: IndeedCeoApproval | None
     photo_url: str | None
 
@@ -344,7 +344,7 @@ class IndeedCodeLabel(BaseModel):
 
 class IndeedCompany(BaseModel):
     """
-    `description` is the short blurb and `about` the long text of the company page. `industry` is Indeed's single industry label and `sectors` its sector list; either may be empty alone. `headquarters` lists the places Indeed gives as head office. `reported_pay` is for the requested country.
+    An Indeed company profile with its description, industry, locations, and reported pay.
     """
 
     key: str
@@ -360,10 +360,13 @@ class IndeedCompany(BaseModel):
     ratings: IndeedCompanyRatings
     happiness: IndeedCompanyHappiness
     similar_companies: list[IndeedCompanySummary]
+    parent_company: IndeedParentCompany | None
     industry: str | None
+    industry_label: str | None
     sectors: list[str]
     size: IndeedCodeLabel
     revenue: IndeedCodeLabel
+    founded_year: int | None
     headquarters: list[str]
     profile_sections: list[IndeedProfileSection]
     ceo: IndeedCeo
@@ -416,16 +419,29 @@ class IndeedCompanyHappiness(BaseModel):
 
 
 class IndeedCompanyImages(BaseModel):
+    """
+    The company's square logo, page header image and wide logo.
+    """
+
     logo_url: str | None
     header_url: str | None
     rectangular_logo_url: str | None
 
 
 class IndeedCompanyLinks(BaseModel):
+    """
+    The company's website as Indeed holds it (for some companies a careers page) and its own Facebook, X (`twitter`), Instagram, LinkedIn and YouTube pages.
+
+    `custom_links` are the links the company added to its Indeed page, under the names it gave them; they fill the social pages Indeed's own fields leave empty.
+    """
+
     website: str | None
+    custom_links: list[IndeedCustomLink]
     facebook: str | None
     twitter: str | None
     instagram: str | None
+    linkedin: str | None
+    youtube: str | None
 
 
 class IndeedCompanyRatings(BaseModel):
@@ -454,20 +470,35 @@ class IndeedCompanySuggestion(BaseModel):
 
 
 class IndeedCompanySuggestions(BaseModel):
+    """
+    Indeed's autocomplete matches the start of a company's Indeed name. `companies` lists names equal to the query first, then names that start with its words, then names that hold all its words, each group in Indeed's order.
+    """
+
     companies: list[IndeedCompanySuggestion]
 
 
 class IndeedCompanySummary(BaseModel):
     """
     `page_path` is the company's path on every Indeed country site; `page_url` puts it on the site of the request or the job.
+
+    Directory entries and a profile's `similar_companies` also carry the profile facts Indeed sends with them: `description`, `links` (website and social pages), `industry` (Indeed's code) and `industry_label`, `sectors`, `size` (employee band), `revenue`, `founded_year` and `headquarters`. Other summaries leave them out.
     """
 
     key: str
     name: str | None
+    description: str | None = None
     page_url: str | None
     page_path: str | None
+    links: IndeedCompanyLinks | None = None
     rating: IndeedRating | None
     is_claimed: bool | None
+    industry: str | None = None
+    industry_label: str | None = None
+    sectors: list[str] | None = None
+    size: IndeedCodeLabel | None = None
+    revenue: IndeedCodeLabel | None = None
+    founded_year: int | None = None
+    headquarters: list[str] | None = None
     logo_url: str | None
 
 
@@ -484,6 +515,11 @@ class IndeedCursorPagination(BaseModel):
     next_cursor: str | None
     previous_cursor: str | None
     completion: IndeedCursorCompletionValue | None
+
+
+class IndeedCustomLink(BaseModel):
+    name: str | None
+    url: str
 
 
 class IndeedEmployerActivity(BaseModel):
@@ -510,14 +546,7 @@ class IndeedHappinessScore(BaseModel):
 
 class IndeedJob(BaseModel):
     """
-    `title` is as posted, `standard_title` Indeed's standard title and `normalized_title` the lower-case form the search facets use (it drops suffixes such as `(m/w/d)`).
-
-    `normalized_category` appears only when Indeed sends its job-category code.
-    `employer_reference` is the employer's requisition id; `company_name_as_posted` stays set when the job has no
-    Indeed company page (`company` null). `published_at` is the employer's posting time, often a date at midnight US
-    Central; `posted_on_indeed_at` is when Indeed received it, which `posted_within_days` filters on.
-    `work_schedule` and `detailed_salary` are the recruiter's free text. `applicants` comes only from
-    `/v1/indeed/jobs/{job_key}`; search results send it null.
+    An Indeed job listing with company, location, pay, schedule, and application details.
     """
 
     key: str
@@ -595,6 +624,8 @@ class IndeedJobAttributes(BaseModel):
 class IndeedJobCompany(BaseModel):
     """
     The hiring company with the profile facts the job answer carries; `/v1/indeed/companies/{company_key}` has the full profile.
+
+    `industry` is Indeed's industry code as it sends it (`Iv1_RETAIL`, at times several joined by commas) and `industry_label` its readable form (`Retail`); Indeed leaves both empty for most companies.
     """
 
     key: str
@@ -607,6 +638,7 @@ class IndeedJobCompany(BaseModel):
     parent_company: IndeedParentCompany | None
     is_claimed: bool | None
     industry: str | None
+    industry_label: str | None
     size: IndeedCodeLabel
     revenue: IndeedCodeLabel
     headquarters: list[str]
@@ -693,6 +725,10 @@ class IndeedJobSearchPage(BaseModel):
 
 
 class IndeedJobSearchResult(BaseModel):
+    """
+    `job` is the full job record, as `/v1/indeed/jobs/{job_key}` returns it less `applicants`.
+    """
+
     snippet: str | None
     job: IndeedJob
     group: IndeedJobGroup | None = None

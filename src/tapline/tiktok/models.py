@@ -778,6 +778,10 @@ class TikTokSongVideosResponse(BaseModel):
 
 
 class TikTokStatistics(BaseModel):
+    """
+    A video's engagement and analytics: play (view), like (digg), comment, share, save (collect) and repost counts.
+    """
+
     comment_count: int | None = None
     digg_count: int | None = None
     play_count: int | None = None
@@ -848,6 +852,10 @@ class TikTokTrendingFeedResponse(BaseModel):
 
 
 class TikTokUser(BaseModel):
+    """
+    A TikTok account: nickname, bio (signature), bio link (bio_url), contact emails from the bio (signature_emails), verification, avatars, and follower, following, like and video counts.
+    """
+
     uid: str | None
     unique_id: str | None
     short_id: str | None = None
@@ -913,6 +921,10 @@ class TikTokUserSearchResponse(BaseModel):
 
 
 class TikTokVideo(BaseModel):
+    """
+    A TikTok video: description text, statistics, media files, music, hashtags, and its author's account with follower counts.
+    """
+
     aweme_id: str | None
     group_id: str | None = None
     poll_id: str | None = None
@@ -970,6 +982,10 @@ class TikTokVideo(BaseModel):
 
 
 class TikTokVideoMedia(BaseModel):
+    """
+    A video's files: duration, size, covers, playback variants with their format, bitrate and size, download URL, and captions.
+    """
+
     original_language: str | None = None
     is_muted: bool | None = None
     width: int | None = None

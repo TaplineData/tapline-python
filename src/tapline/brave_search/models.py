@@ -451,6 +451,10 @@ class BraveSearchIcon(BaseModel):
 
 
 class BraveSearchImage(BaseModel):
+    """
+    An image URL with its width and height in pixels.
+    """
+
     url: str | None = None
     resized_url: str | None = None
     proxied_url: str | None = None
@@ -470,6 +474,10 @@ class BraveSearchImage(BaseModel):
 
 
 class BraveSearchImageResult(BaseModel):
+    """
+    One image result: the page the image is on (url, site, title), the full-size image with its width and height (image) and a thumbnail.
+    """
+
     title: str
     full_title: str | None
     description: str
@@ -521,6 +529,10 @@ class BraveSearchNewsPage(BaseModel):
 
 
 class BraveSearchNewsResult(BaseModel):
+    """
+    One news article: title, snippet (description), link, publisher (source, site), how long ago it was published (age_label) and its thumbnail image.
+    """
+
     title: str
     description: str
     description_html: str | None = None
@@ -553,6 +565,10 @@ class BraveSearchOpeningHoursDaysItem(BaseModel):
 
 
 class BraveSearchPlace(BaseModel):
+    """
+    One business or place: name (title), website (url), coordinates, address, opening hours, phone and email (contact), categories, rating with its review count (rating), reviews, price range, photos (thumbnail, pictures) and social profiles. A search returns a rating only for places the source has rated.
+    """
+
     id: str | None = None
     ai_answer_key: str | None = None
     title: str
@@ -1989,6 +2005,10 @@ class BraveSearchStandingsGroup(BaseModel):
 
 
 class BraveSearchSuggestion(BaseModel):
+    """
+    One autocomplete suggestion: the completed query (text) and its type (query or entity); an entity also has a name, description, category and image.
+    """
+
     name: str | None = None
     text: str
     description: str | None = None
@@ -2223,6 +2243,10 @@ class BraveSearchUnobservedObject(BaseModel):
 
 
 class BraveSearchVideoResult(BaseModel):
+    """
+    One video: title, snippet (description), link (url), the date it was published (published_at, age_label), its site, its thumbnail and, in video, its length in seconds, view count, channel and player link.
+    """
+
     title: str
     full_title: str | None = None
     description: str
@@ -2248,6 +2272,10 @@ class BraveSearchVideoResult(BaseModel):
 
 
 class BraveSearchVideoResultVideo(BaseModel):
+    """
+    The video itself: its channel (creator, author), length in seconds (duration_seconds), view count (views, when the source shows one), tags and player link (embed_url).
+    """
+
     embed_url: str | None
     author: BraveSearchVideoResultVideoAuthor | None
     creator: str | None
@@ -3203,6 +3231,10 @@ class BraveSearchWebPageVideos(BaseModel):
 
 
 class BraveSearchWebResult(BaseModel):
+    """
+    One web page: title, snippet text (description), link (url), the date it was published (published_at, age_label), its site, its links to other pages of the site (deep_links, sitelinks) and, on articles, the author (article).
+    """
+
     title: str
     full_title: str | None
     description: str

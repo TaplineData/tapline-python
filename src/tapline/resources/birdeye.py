@@ -313,7 +313,7 @@ class Birdeye(AsyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeOhlcv:
-        """USD candles as parallel arrays, oldest first: `o`, `h`, `l`, `c`, `v` and unix seconds in `t`. Up to `count` bars ending before `to` (exclusive), or now when `to` is omitted. Intervals with no trades have no bar. An unknown token answers empty arrays. Costs 1 credit.
+        """Returns USD price and volume candles in oldest-first order. Periods with no trades are omitted, and unknown tokens return empty results. Costs 1 credit.
 
         Args:
             chain: Chain the token lives on, as birdeye names it.
@@ -571,7 +571,7 @@ class Birdeye(AsyncAPIResource):
         token: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTransactionsPage:
-        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. Empty values may be omitted. Costs 2 credits.
+        """Returns a wallet's swaps, newest first, with amounts, prices, and USD values. Multi-token swaps may appear more than once. Costs 2 credits.
 
         Args:
             chain: Chain of the wallet PnL data. birdeye computes PnL on these
@@ -638,7 +638,7 @@ class Birdeye(AsyncAPIResource):
         interval: BirdeyeNetWorthIntervalParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeNetWorthHistory:
-        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points without a value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
+        """Returns a Solana wallet's net worth over time, newest first. Unknown wallets return no history. Costs 2 credits.
 
         Args:
             wallet: Solana wallet address, base58.
@@ -748,7 +748,7 @@ class SyncBirdeye(SyncAPIResource):
         to: int | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeOhlcv:
-        """USD candles as parallel arrays, oldest first: `o`, `h`, `l`, `c`, `v` and unix seconds in `t`. Up to `count` bars ending before `to` (exclusive), or now when `to` is omitted. Intervals with no trades have no bar. An unknown token answers empty arrays. Costs 1 credit.
+        """Returns USD price and volume candles in oldest-first order. Periods with no trades are omitted, and unknown tokens return empty results. Costs 1 credit.
 
         Args:
             chain: Chain the token lives on, as birdeye names it.
@@ -1004,7 +1004,7 @@ class SyncBirdeye(SyncAPIResource):
         token: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeWalletTransactionsPage:
-        """A wallet's swaps, newest first, with both legs (token, amount, price) and USD value. A transaction that swaps through several tokens appears once per leg, so `tx_hash` can repeat. Pass `token` to keep swaps of one token. Empty values may be omitted. Costs 2 credits.
+        """Returns a wallet's swaps, newest first, with amounts, prices, and USD values. Multi-token swaps may appear more than once. Costs 2 credits.
 
         Args:
             chain: Chain of the wallet PnL data. birdeye computes PnL on these
@@ -1071,7 +1071,7 @@ class SyncBirdeye(SyncAPIResource):
         interval: BirdeyeNetWorthIntervalParam = "1d",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BirdeyeNetWorthHistory:
-        """A Solana wallet's net worth over time, newest point first, one point per `interval` (at most 90). Points without a value carry only `timestamp`. `net_worth_change_percent` is 999999 when the window starts at zero. An unknown wallet answers an empty `history` list. Costs 2 credits.
+        """Returns a Solana wallet's net worth over time, newest first. Unknown wallets return no history. Costs 2 credits.
 
         Args:
             wallet: Solana wallet address, base58.

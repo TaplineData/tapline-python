@@ -153,6 +153,10 @@ class PinterestV2BoardResponse(BaseModel):
 
 
 class PinterestV2BoardSummary(BaseModel):
+    """
+    A board: id, name, description, link, pin, follower, section and collaborator counts, privacy, created and order-modified dates, owner, collaborators, related ideas, cover pin and cover and preview images.
+    """
+
     id: str | None = None
     node_id: str | None = None
     section_id: str | None = None
@@ -244,6 +248,10 @@ class PinterestV2MediaVariant(BaseModel):
 
 
 class PinterestV2Metrics(BaseModel):
+    """
+    Engagement: saves, repins, shares, comments, reactions and reactions by type, and tried-it counts.
+    """
+
     aggregated_pin_id: str | None = None
     aggregated_pin_node_id: str | None = None
     repin_count: int | None = None
@@ -266,6 +274,10 @@ class PinterestV2MusicCredit(BaseModel):
 
 
 class PinterestV2Pin(BaseModel):
+    """
+    One pin: id, title, description and alt text, link and domain, engagement (metrics), creation time, pinner, creator, origin pinner, board, rich pin data, hashtags, annotations, images with sizes and colour, video and idea pin pages.
+    """
+
     id: str | None = None
     original_pin_id: str | None = None
     product_id: str | None = None
@@ -421,6 +433,18 @@ class PinterestV2ProductStatus(BaseModel):
     shopping_flags: list[int] | None = None
 
 
+class PinterestV2ProfileStory(BaseModel):
+    """
+    A block Pinterest shows above a profile's boards. `type` is Pinterest's story type: `all_pins` is the profile's latest pins, with `url` the page that lists them all. Pinterest gives a story a new `id` on every call.
+    """
+
+    id: str | None = None
+    title: str | None = None
+    url: str | None = None
+    pins: list[PinterestV2StoryPin] | None = None
+    type: str | None = None
+
+
 class PinterestV2PromotionData(BaseModel):
     campaign_id: str | None = None
     promotion_id: str | None = None
@@ -507,9 +531,22 @@ class PinterestV2SearchMetadata(BaseModel):
 
 class PinterestV2SearchResponse(BaseModel):
     pins: list[PinterestV2Pin]
+    stories: list[PinterestV2SearchStory] | None = None
     metadata: PinterestV2SearchMetadata | None = None
     guides: list[PinterestV2SearchGuide] | None = None
     cursor: str | None
+
+
+class PinterestV2SearchStory(BaseModel):
+    """
+    A block Pinterest puts between search results. `type` is Pinterest's story type: `shop_tab_upsell` holds product pins and `featured_boards` boards. `pin_ids` name the block's pins, which `pins` also lists.
+    """
+
+    id: str | None = None
+    pin_ids: list[str] | None = None
+    title: str | None = None
+    boards: list[PinterestV2BoardSummary] | None = None
+    type: str | None = None
 
 
 class PinterestV2Story(BaseModel):
@@ -565,6 +602,17 @@ class PinterestV2StoryPage(BaseModel):
     images: list[PinterestV2Image] | None = None
 
 
+class PinterestV2StoryPin(BaseModel):
+    """
+    A pin inside a story. Pinterest gives these pins `e1_` ids that it does not resolve for logged-out visitors, so they have no link.
+    """
+
+    id: str | None = None
+    node_id: str | None = None
+    description: str | None = None
+    image_url: str | None = None
+
+
 class PinterestV2StoryTextStyle(BaseModel):
     color: str | None = None
     highlight_color: str | None = None
@@ -583,6 +631,10 @@ class PinterestV2TextEntity(BaseModel):
 
 
 class PinterestV2TextVariants(BaseModel):
+    """
+    Other texts Pinterest keeps for the pin. `grid_title` (the title on the grid card) is always listed; the others only when they differ from `title` and `description`.
+    """
+
     grid_title: str | None = None
     unified_title: str | None = None
     seo_title: str | None = None
@@ -617,6 +669,10 @@ class PinterestV2TriedItScore(BaseModel):
 
 
 class PinterestV2User(BaseModel):
+    """
+    A Pinterest account: id, username, name, profile link, follower count, website and avatar images.
+    """
+
     id: str | None = None
     username: str | None = None
     node_id: str | None = None
@@ -640,6 +696,7 @@ class PinterestV2User(BaseModel):
 
 class PinterestV2UserBoardsResponse(BaseModel):
     boards: list[PinterestV2BoardSummary]
+    stories: list[PinterestV2ProfileStory]
     cursor: str | None
 
 

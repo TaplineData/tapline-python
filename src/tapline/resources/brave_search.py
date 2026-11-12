@@ -823,7 +823,7 @@ class BraveSearch(AsyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchVideosPage:
-        """Search videos. Costs 5 credits.
+        """Search videos: up to 50 per page. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;
@@ -1384,7 +1384,7 @@ class SyncBraveSearch(SyncAPIResource):
         search_language: BraveSearchLanguageParam = "en",
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> BraveSearchVideosPage:
-        """Search videos. Costs 5 credits.
+        """Search videos: up to 50 per page. Costs 5 credits.
 
         Args:
             query: Search text. Operators such as `site:`, quotes and `-term` work;

@@ -298,7 +298,7 @@ class Tiktok(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileVideosResponse:
-        """Videos a user posted, newest first or most popular first, 35 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `max_cursor` back for the next page while `has_more` is true. Costs 1 credit.
+        """Returns up to 35 videos from a profile, sorted by newest or most popular. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or
@@ -718,7 +718,7 @@ class SyncTiktok(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileVideosResponse:
-        """Videos a user posted, newest first or most popular first, 35 per page. `create_time` is in Unix seconds and `media.duration_ms` in milliseconds. Pass `max_cursor` back for the next page while `has_more` is true. Costs 1 credit.
+        """Returns up to 35 videos from a profile, sorted by newest or most popular. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or

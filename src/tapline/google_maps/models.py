@@ -956,6 +956,8 @@ class GoogleMapsPlace(BaseModel):
     `place_kind` is Google's coarse kind code (6 lodging, 9 business, 1 landmark, 0 area); `commerce_kind` is 1 for food and drink and 2 for retail. Google sends no label for either.
 
     `open_state_changes_at` is the local time the status line next changes: an hour before closing ("Closing soon"), 30 minutes before opening, 24:00 when nothing changes before midnight. `is_operating_business` is false for closed businesses and for areas.
+
+    `url` is the place's Google Maps link; where Google sends none, as in search results, it is the `https://maps.google.com/?cid=` link built from `cid`.
     """
 
     feature_id: str | None
@@ -1241,6 +1243,10 @@ class GoogleMapsReverseGeocode(BaseModel):
 
 
 class GoogleMapsReview(BaseModel):
+    """
+    `author` is the reviewer: contributor id, name, profile link, picture, review and photo counts and Local Guide flag. `owner_response` is the owner's reply, `photos` the photos in the review and `details` its guided answers (food, service).
+    """
+
     review_id: str | None
     text: str | None
     preview_text: str | None

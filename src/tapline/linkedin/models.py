@@ -12,6 +12,17 @@ from pydantic import Field
 from tapline._models import PREFER_ENUM, BaseModel
 
 
+class LinkedinCompanyResponsePagetype(str, Enum):
+    COMPANY = "company"
+    SCHOOL = "school"
+    SHOWCASE = "showcase"
+
+
+class LinkedinJobResponseJobstate(str, Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+
+
 class LinkedinJobsSearchCompletion(str, Enum):
     EXHAUSTED = "exhausted"
     DEPTH_LIMIT = "depth_limit"
@@ -131,12 +142,37 @@ class LinkedinCompanyEmployee(BaseModel):
 
 
 class LinkedinCompanyLocation(BaseModel):
+    street: str | None
     city: str | None
     state: str | None
+    postalCode: str | None
     country: str | None
+    """
+    ISO 3166-1 alpha-2 code.
+    """
+
+
+class LinkedinCompanyOffice(BaseModel):
+    isHeadquarters: bool
+    """
+    LinkedIn marks this office as the primary location.
+    """
+    street: str | None
+    streetLine2: str | None
+    city: str | None
+    state: str | None
+    postalCode: str | None
+    country: str | None
+    """
+    ISO 3166-1 alpha-2 code.
+    """
 
 
 class LinkedinCompanyPost(BaseModel):
+    contentUrn: str | None
+    """
+    The share or ugcPost URN of the post's content.
+    """
     url: str
     id: str
     datePublished: str
@@ -144,7 +180,22 @@ class LinkedinCompanyPost(BaseModel):
     likeCount: int | None
     commentCount: int | None
     author: LinkedinPostAuthor
+    mentions: list[LinkedinPostMention]
+    """
+    Members and pages tagged in the text.
+    """
+    resharedPost: LinkedinResharedPost | None
+    """
+    The post this one quotes, when it reshares one with its own text.
+    """
+    linkPreview: LinkedinPostLinkPreview | None
     isRepost: bool
+    repostedBy: LinkedinPostReposter | None
+    """
+    The page that reposted it, when the card is a plain repost.
+    """
+    images: list[str]
+    video: LinkedinPostVideo | None
 
 
 class LinkedinCompanyPostsResponse(BaseModel):
@@ -162,18 +213,37 @@ class LinkedinCompanyResponse(BaseModel):
     employeeCount: int | None
     followers: int | None
     website: str | None
+    jobsUrl: str | None
+    """
+    LinkedIn's job search for the page's open jobs.
+    """
     logo: str | None
     coverImage: str | None
     slogan: str | None
+    """
+    The page's tagline.
+    """
     industry: str | None
     size: str | None
     founded: int | None
     headquarters: str | None
+    locations: list[LinkedinCompanyOffice]
+    """
+    Every office on the page's Locations list.
+    """
     type: str | None
+    pageType: LinkedinCompanyResponsePagetypeValue
+    universalName: str
+    """
+    The page's name in its URL, such as `shopify`.
+    """
     specialties: list[str]
     similarPages: list[LinkedinRelatedPage]
     affiliatedPages: list[LinkedinRelatedPage]
     employees: list[LinkedinCompanyEmployee]
+    """
+    The members LinkedIn features as working there.
+    """
     posts: list[LinkedinCompanyPost]
 
 
@@ -191,6 +261,9 @@ class LinkedinJobCard(BaseModel):
     postedDate: str | None
     postedText: str | None
     benefits: str | None
+    """
+    The card's insight line, such as `Actively Hiring` or `Be an early applicant`.
+    """
 
 
 class LinkedinJobCompany(BaseModel):
@@ -206,6 +279,9 @@ class LinkedinJobResponse(BaseModel):
     company: LinkedinJobCompany
     location: str | None
     postedText: str | None
+    """
+    The posting age, such as `2 weeks ago`.
+    """
     applicants: str | None
     salary: str | None
     description: str | None
@@ -214,6 +290,10 @@ class LinkedinJobResponse(BaseModel):
     employmentType: str | None
     industries: str | None
     easyApply: bool | None
+    jobState: LinkedinJobResponseJobstateValue
+    """
+    `closed` when LinkedIn shows `No longer accepting applications`.
+    """
 
 
 class LinkedinJobsSearchResponse(BaseModel):
@@ -242,12 +322,67 @@ class LinkedinPostAuthor(BaseModel):
     name: str | None
     url: str | None
     followers: int | None
+    image: str | None
 
 
 class LinkedinPostComment(BaseModel):
+    id: str | None
+    """
+    The comment's numeric id, from `urn:li:comment:(<post urn>,<id>)`.
+    """
     author: str | None
     text: str
     linkedinUrl: str | None
+    """
+    The commenter's member or company page.
+    """
+    url: str | None
+    """
+    LinkedIn's link to the comment: the post, this comment first.
+    """
+    likeCount: int | None
+    """
+    Reactions of every type on the comment.
+    """
+    datePublished: str | None
+    """
+    When the comment was posted, read from its id.
+    """
+    isByPostAuthor: bool | None
+    """
+    Whether the post's author wrote the comment.
+    """
+    mentions: list[LinkedinPostMention]
+    """
+    Members and pages tagged in the comment.
+    """
+    authorHeadline: str | None
+    """
+    The commenter's headline; LinkedIn shows guests few of them.
+    """
+    authorImage: str | None
+
+
+class LinkedinPostLinkPreview(BaseModel):
+    title: str | None
+    subtitle: str | None
+    """
+    The linked site or the article's byline.
+    """
+    url: str
+
+
+class LinkedinPostMention(BaseModel):
+    name: str
+    url: str
+    """
+    The mentioned member, company, school or showcase page.
+    """
+
+
+class LinkedinPostReposter(BaseModel):
+    name: str
+    url: str | None
 
 
 class LinkedinPostResponse(BaseModel):
@@ -261,6 +396,15 @@ class LinkedinPostResponse(BaseModel):
     datePublished: str | None
     description: str | None
     author: LinkedinPostAuthor
+    mentions: list[LinkedinPostMention]
+    """
+    Members and pages tagged in the text.
+    """
+    resharedPost: LinkedinResharedPost | None
+    """
+    The post this one quotes, when it reshares one with its own text.
+    """
+    linkPreview: LinkedinPostLinkPreview | None
     comments: list[LinkedinPostComment]
     moreArticles: list[LinkedinMoreArticle]
     images: list[str]
@@ -279,13 +423,44 @@ class LinkedinPostVideo(BaseModel):
 
 
 class LinkedinProfileActivity(BaseModel):
+    id: str | None
+    """
+    The post's numeric id, from its link.
+    """
     title: str | None
     activityType: str | None
     link: str
+    likeCount: int | None
+    commentCount: int | None
+    datePublished: str | None
+    """
+    When the post was published, read from its id.
+    """
+    author: LinkedinPostAuthor
+    """
+    Who wrote the post: someone else when the member reposted or reacted to it.
+    """
+    mentions: list[LinkedinPostMention]
+    """
+    Members and pages tagged in the text.
+    """
+    resharedPost: LinkedinResharedPost | None
+    """
+    The post this one quotes, when it reshares one with its own text.
+    """
+    linkPreview: LinkedinPostLinkPreview | None
+    repostedBy: LinkedinPostReposter | None
+    """
+    The member who reposted it, when the card is a plain repost.
+    """
     image: str | None
 
 
 class LinkedinProfileArticle(BaseModel):
+    id: str | None
+    """
+    The article's numeric id, from `urn:li:linkedInArticle:<id>`.
+    """
     headline: str
     link: str
     author: str | None
@@ -293,6 +468,34 @@ class LinkedinProfileArticle(BaseModel):
     image: str | None
     articleBody: str | None
     likeCount: int | None
+
+
+class LinkedinProfileCertification(BaseModel):
+    name: str
+    url: str | None
+    """
+    The credential's own page.
+    """
+    date: str | None
+    """
+    The issue date as LinkedIn prints it, such as `May 2021`.
+    """
+    issuer: str | None
+
+
+class LinkedinProfileHonor(BaseModel):
+    name: str
+    description: str | None
+    date: str | None
+    """
+    The award date as LinkedIn prints it, such as `Aug 2015`.
+    """
+    issuer: str | None
+
+
+class LinkedinProfileLanguage(BaseModel):
+    name: str
+    proficiency: str | None
 
 
 class LinkedinProfileOrganization(BaseModel):
@@ -332,15 +535,35 @@ class LinkedinProfileRecommendation(BaseModel):
 
 
 class LinkedinProfileResponse(BaseModel):
+    memberId: str | None
+    """
+    LinkedIn's numeric member id, from `urn:li:member:<id>`.
+    """
     url: str
     publicIdentifier: str
     name: str
     headline: str | None
+    firstName: str | None
+    """
+    The first name LinkedIn uses for the member, such as `Bill`.
+    """
+    lastName: str | None
+    """
+    The rest of `name` after `firstName`.
+    """
     image: str | None
     location: str | None
     followers: int | None
     connections: str | None
+    recommendationCount: int | None
+    """
+    How many people recommended the member; guests see the first two in `recommendations`.
+    """
     about: str | None
+    badges: list[str]
+    """
+    Profile badges LinkedIn shows guests, such as `Creator` and `Top Voice`.
+    """
     recentPosts: list[LinkedinProfileActivity]
     experience: list[LinkedinProfileOrganization]
     articles: list[LinkedinProfileArticle]
@@ -351,6 +574,13 @@ class LinkedinProfileResponse(BaseModel):
     recommendations: list[LinkedinProfileRecommendation]
     similarProfiles: list[LinkedinSimilarProfile]
     websites: list[LinkedinProfileWebsite]
+    languages: list[LinkedinProfileLanguage]
+    certifications: list[LinkedinProfileCertification]
+    honors: list[LinkedinProfileHonor]
+    """
+    The Honors & Awards section.
+    """
+    coverImage: str | None
 
 
 class LinkedinProfileWebsite(BaseModel):
@@ -366,10 +596,18 @@ class LinkedinRelatedPage(BaseModel):
     image: str | None
 
 
+class LinkedinResharedPost(BaseModel):
+    id: str | None
+    text: str | None
+    url: str | None
+    author: LinkedinPostAuthor
+
+
 class LinkedinSimilarProfile(BaseModel):
     link: str
     name: str
     subtitle: str | None
+    location: str | None
     image: str | None
 
 
@@ -417,6 +655,12 @@ class SearchJobsParams(BaseModel):
 PostedWithinParam: TypeAlias = (
     PostedWithin | Literal["past_hour", "past_24_hours", "past_week", "past_month"]
 )
+LinkedinCompanyResponsePagetypeValue: TypeAlias = Annotated[
+    LinkedinCompanyResponsePagetype | str, PREFER_ENUM
+]
+LinkedinJobResponseJobstateValue: TypeAlias = Annotated[
+    LinkedinJobResponseJobstate | str, PREFER_ENUM
+]
 LinkedinJobsSearchCompletionValue: TypeAlias = Annotated[
     LinkedinJobsSearchCompletion | str, PREFER_ENUM
 ]

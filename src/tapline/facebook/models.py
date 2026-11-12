@@ -100,6 +100,10 @@ class FacebookAiDisclosure(BaseModel):
 
 
 class FacebookAttachment(BaseModel):
+    """
+    A post attachment: a photo or video (media), album items, or a link card with its title, link (url, external_url) and image.
+    """
+
     title: str | None
     subtitle: str | None
     url: str | None
@@ -274,6 +278,10 @@ class FacebookDashStream(BaseModel):
 
 
 class FacebookEngagement(BaseModel):
+    """
+    Engagement counts: reactions with reactions by type, comments, shares, video views and plays.
+    """
+
     reaction_count: int | None
     reaction_count_text: str | None
     comment_count: int | None
@@ -745,6 +753,10 @@ class FacebookPlace(BaseModel):
 
 
 class FacebookPost(BaseModel):
+    """
+    One post: its id and link, text, creation time, author and owner page, attachments (photos, videos, link cards), top comments and engagement.
+    """
+
     id: str | None
     story_id: str | None
     feedback_id: str | None
@@ -1013,6 +1025,10 @@ class FacebookVideoSearchReel(BaseModel):
 
 
 class FacebookVideoSearchResult(BaseModel):
+    """
+    One video result: the post (text, link, author, date, engagement, attachments) or the reel (description, length, date, view count, thumbnail).
+    """
+
     video_id: str | None
     post: FacebookPost | None
     reel: FacebookVideoSearchReel | None

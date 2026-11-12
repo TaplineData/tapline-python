@@ -177,7 +177,7 @@ class Twitter(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterUserTweetsResponse:
-        """Returns an account's pinned post and newest original posts with text, engagement, media, links, and quoted-post data. The response contains about five posts and no cursor. Protected accounts return no posts. Costs 1 credit.
+        """Returns the pinned post and up to five recent original posts from an account. Protected accounts return no posts, and there are no additional pages. Costs 1 credit.
 
         Args:
             handle: X handle, with or without a leading @: 1 to 15 letters, digits
@@ -302,7 +302,7 @@ class SyncTwitter(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TwitterUserTweetsResponse:
-        """Returns an account's pinned post and newest original posts with text, engagement, media, links, and quoted-post data. The response contains about five posts and no cursor. Protected accounts return no posts. Costs 1 credit.
+        """Returns the pinned post and up to five recent original posts from an account. Protected accounts return no posts, and there are no additional pages. Costs 1 credit.
 
         Args:
             handle: X handle, with or without a leading @: 1 to 15 letters, digits

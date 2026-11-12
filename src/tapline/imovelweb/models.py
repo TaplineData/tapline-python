@@ -661,14 +661,7 @@ class ImovelwebDuplicatePublisherRaw(BaseModel):
 
 class ImovelwebListing(BaseModel):
     """
-    One search result. `description` is plain text, imovelweb's markup removed;
-    `photo_count` counts every photo, beyond the few a search card carries;
-    `ai_description` is imovelweb's own generated summary, when it wrote one; `logo_url` is a
-    development's own logo. `published_days_ago` is 0 for today; a listing without a date has
-    null. `units` lists a development's units when imovelweb sends them with the search.
-    `duplicate_group_id` names the group of publishers' copies the listing belongs to, the
-    same on every copy, and is null for a listing no one else publishes. Search results carry
-    no IPTU: imovelweb sends it as null; `/listings/{posting_id}` has it.
+    A property listing from an imovelweb search, including its price, location, photos, and seller.
     """
 
     bedrooms: int | None
@@ -718,12 +711,7 @@ class ImovelwebListing(BaseModel):
 
 class ImovelwebListingDetail(BaseModel):
     """
-    A listing page. `description` is plain text with line breaks kept;
-    `/listings/{posting_id}/publishers` lists the other agencies advertising the same property.
-    `view_count` and `popularity_message` are imovelweb's own counters, when it shows them.
-    `iptu` is the property tax as the page's price block shows it, in whole reais; imovelweb
-    gives no period and advertisers enter yearly or monthly amounts, so read it with the
-    description.
+    Full details for an imovelweb property listing, including its price, photos, seller, and viewing activity. Property tax may be monthly or yearly.
     """
 
     bedrooms: int | None
@@ -1094,10 +1082,7 @@ class ImovelwebPoint(BaseModel):
 
 class ImovelwebPublisher(BaseModel):
     """
-    An agency's or developer's profile. `phone_text` is the free text the publisher
-    writes; `phone_numbers` holds each number in it as +55, area code and number.
-    `active_listing_count` is imovelweb's count of live listings and `listed_count` the
-    count its profile page lists. `ratings` is null when imovelweb keeps no statistics.
+    An imovelweb agency or developer with contact details, listing counts, and ratings.
     """
 
     id: str

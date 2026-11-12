@@ -200,7 +200,7 @@ class GetPriceRequest(BaseModel):
     """
     currency: str | None = "USD"
     """
-    ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
+    The currency used for prices. Airbnb may fall back to USD, so check the currency in the response.
     """
 
 
@@ -545,7 +545,7 @@ class SearchRequest(BaseModel):
     """
     currency: str | None = "USD"
     """
-    ISO 4217 currency code (default USD). Any valid ISO 4217 code is accepted, but Airbnb only renders prices natively in a subset and silently falls back to USD for the rest, so the response `currency` field is authoritative and may differ from the request. The natively-supported codes are enumerated in the `SupportedCurrency` schema (and machine-readably under this field's `x-supported-currencies`).
+    The currency used for prices. Airbnb may fall back to USD, so check the currency in the response.
     """
     cursor: str | None = ""
     """

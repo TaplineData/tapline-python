@@ -533,6 +533,10 @@ class InstagramMediaImage(BaseModel):
 
 
 class InstagramMetrics(BaseModel):
+    """
+    A post's engagement and analytics: like, comment, play and view counts.
+    """
+
     like_count: int | None = None
     comment_count: int | None = None
     play_count: int | None = None
@@ -564,6 +568,10 @@ class InstagramPopularSearchResponse(BaseModel):
 
 
 class InstagramPost(BaseModel):
+    """
+    An Instagram post: caption text, like, comment and play counts, its images and videos, and its author.
+    """
+
     id: str
     shortcode: str
     facebook_id: str | None = None
@@ -614,6 +622,10 @@ class InstagramPostResponse(BaseModel):
 
 
 class InstagramProfile(BaseModel):
+    """
+    An Instagram account: bio, bio links, follower, following and post counts, verification, category, business contact (public_email, public_phone_number, biography_emails), address and profile pictures.
+    """
+
     id: str
     handle: str
     facebook_id: str | None = None
@@ -655,6 +667,8 @@ class InstagramProfile(BaseModel):
     is_joined_recently: bool | None = None
     has_channel: bool | None = None
     has_longform_media: bool | None = None
+    is_threads_badge_shown: bool | None = None
+    is_account_transparency_shown: bool | None = None
     profile_images: list[InstagramImage] | None = None
     recent_longform_videos: list[InstagramPost] | None = None
 
@@ -750,23 +764,35 @@ class InstagramTopic(BaseModel):
 
 
 class InstagramUser(BaseModel):
+    """
+    An Instagram account in brief: handle, name, verification, privacy and profile picture. A post's owner also carries its bio, follower and post counts and account type.
+    """
+
     id: str
     handle: str | None = None
     facebook_id: str | None = None
     messaging_facebook_id: str | None = None
     name: str | None = None
+    biography: str | None = None
     subscriber_count: int | None = None
+    follower_count: int | None = None
+    post_count: int | None = None
     is_verified: bool | None = None
     is_private: bool | None = None
     is_embeds_disabled: bool | None = None
     is_unpublished: bool | None = None
     badges: list[Any] | None = None
+    account_type: int | None = None
     profile_image_url: str | None = None
     profile_image_id: str | None = None
     profile_images: list[InstagramImage] | None = None
 
 
 class InstagramUserPostsResponse(BaseModel):
+    """
+    A page of an account's posts, with the author's profile and follower counts in `profile`.
+    """
+
     profile: InstagramProfile
     posts: list[InstagramPost]
     pagination: InstagramPagination
