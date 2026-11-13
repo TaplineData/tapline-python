@@ -21,7 +21,7 @@ attribute on a client is where the eleven methods live.
 
 from __future__ import annotations
 
-from .channel import ChannelResponse, ChannelVideosResponse
+from .channel import ChannelResponse, ChannelVideoItem, ChannelVideosResponse
 from .comment import CommentItem, CommentsResponse, CommentThread, RepliesResponse
 from .format import FormatItem, FormatsResponse
 from .heatmap import HeatmapItem, HeatmapResponse
@@ -90,6 +90,7 @@ __all__ = [
     "ChannelContentTypeParam",
     "ChannelContentTypeValue",
     "ChannelResponse",
+    "ChannelVideoItem",
     "ChannelVideosResponse",
     "ChapterItem",
     "CommentItem",

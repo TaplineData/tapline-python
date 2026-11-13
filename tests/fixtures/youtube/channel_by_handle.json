@@ -5,13 +5,26 @@
   "handle": "@mkbhd",
   "handle_url": "https://www.youtube.com/@mkbhd",
   "description": "MKBHD: Quality Tech Videos | YouTuber | Geek | Consumer Electronics | Tech Head | Internet Personality!\n\nbusiness@MKBHD.com\n\nNYC",
+  "links": [
+    "http://twitter.com/MKBHD",
+    "http://instagram.com/MKBHD",
+    "https://youtube.com/c/TheStudio",
+    "http://reddit.com/r/MKBHD",
+    "http://discord.gg/MKBHD"
+  ],
+  "facebook_profile_id": null,
   "channel_follower_count": 21400000,
+  "video_count": 1866,
+  "view_count": 5894735997,
+  "is_verified": true,
+  "joined_date": "2008-03-21",
   "tags": [
     "MKBHD",
     "MarquesBrownlee",
     "Marques",
     "Brownlee"
   ],
+  "country": "United States",
   "thumbnail": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s900-c-k-c0x00ffffff-no-rj",
   "thumbnails": [
     {
@@ -20,11 +33,12 @@
       "height": 900
     },
     {
-      "url": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s200-c-k-c0x00ffffff-no-rj?days_since_epoch=20733",
+      "url": "https://yt3.googleusercontent.com/qu4TmIaYUlS41-dJ9gZ7DUR3nilvmB5_11i6OKSdvNnBNiyOusZP1bMN6ICnuxtjFBb6ioKgRQ=s200-c-k-c0x00ffffff-no-rj?days_since_epoch=20770",
       "width": 200,
       "height": 200
     }
   ],
+  "banner": "https://yt3.googleusercontent.com/zi_48HwHU4s0Hnb6tZuvRzTfCPHrLEnrtIMDLzMauDEyDmURh9JZ4wrNd3lKr7m9uVnT4YjYKw=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
   "available_content_types": [
     "videos",
     "shorts",

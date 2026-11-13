@@ -17,6 +17,7 @@ from tapline import CursorCompletion, CursorPagination
 from tapline.youtube import (
     ChannelContentType,
     ChannelResponse,
+    ChannelVideoItem,
     ChannelVideosResponse,
     CommentsResponse,
     Ext,
@@ -33,6 +34,7 @@ from tapline.youtube import (
     SubtitleFormat,
     SubtitleResponse,
     SubtitleTracksResponse,
+    VideoListItem,
     VideoMetadataResponse,
 )
 
@@ -47,6 +49,7 @@ SEARCH_RESULT = {
     "url": f"https://www.youtube.com/watch?v={VIDEO_ID}",
     "duration": 212,
     "view_count": 1_600_000_000,
+    "published_time_text": "16 years ago",
     "channel": "Rick Astley",
     "channel_id": CHANNEL_ID,
     "channel_url": f"https://www.youtube.com/channel/{CHANNEL_ID}",
@@ -73,10 +76,18 @@ CHANNEL = {
     "handle": "@RickAstleyYT",
     "handle_url": "https://www.youtube.com/@RickAstleyYT",
     "description": "Official YouTube channel.",
+    "links": ["https://www.rickastley.co.uk/"],
+    "facebook_profile_id": "RickAstley",
     "channel_follower_count": 4_600_000,
+    "video_count": 340,
+    "view_count": 3_900_000_000,
+    "is_verified": True,
+    "joined_date": "2006-10-24",
     "tags": ["music"],
+    "country": "United Kingdom",
     "thumbnail": THUMBNAIL["url"],
     "thumbnails": [THUMBNAIL],
+    "banner": "https://yt3.googleusercontent.com/banner=w2560",
     "available_content_types": ["videos", "shorts"],
     "content_tab_count": 2,
     "playlist_count": 2,
@@ -91,11 +102,15 @@ CHANNEL_VIDEOS = {
             "title": "A short",
             "url": f"https://www.youtube.com/shorts/{VIDEO_ID}",
             "view_count": 1000,
+            "published_time_text": None,
             "channel": "Rick Astley",
             "channel_id": CHANNEL_ID,
+            "channel_handle": "@RickAstleyYT",
             "channel_url": f"https://www.youtube.com/channel/{CHANNEL_ID}",
+            "content_type": "shorts",
             "thumbnail": THUMBNAIL["url"],
             "thumbnails": [THUMBNAIL],
+            "channel_thumbnail": THUMBNAIL["url"],
             "live_status": None,
             "channel_is_verified": None,
         }
@@ -359,6 +374,33 @@ class TestEveryResponse:
             ChannelContentType.SHORTS,
         ]
         assert channel.content_tab_count == 2
+
+    def test_a_channel_lists_its_profile_counts_and_links(self) -> None:
+        channel = ChannelResponse.model_validate(CHANNEL)
+
+        assert channel.video_count == 340
+        assert channel.view_count == 3_900_000_000
+        assert channel.is_verified is True
+        assert channel.joined_date == "2006-10-24"
+        assert channel.country == "United Kingdom"
+        assert channel.links == ["https://www.rickastley.co.uk/"]
+        assert channel.facebook_profile_id == "RickAstley"
+        assert channel.banner == "https://yt3.googleusercontent.com/banner=w2560"
+
+    def test_a_channel_video_names_its_tab_and_channel_handle(self) -> None:
+        video = ChannelVideosResponse.model_validate(CHANNEL_VIDEOS).videos[0]
+
+        assert isinstance(video, ChannelVideoItem)
+        assert isinstance(video, VideoListItem)
+        assert video.content_type is ChannelContentType.SHORTS
+        assert video.channel_handle == "@RickAstleyYT"
+        assert video.channel_thumbnail == THUMBNAIL["url"]
+        assert video.published_time_text is None
+
+    def test_a_search_result_carries_its_published_time_label(self) -> None:
+        result = SearchResponse.model_validate(SEARCH).results[0]
+
+        assert result.published_time_text == "16 years ago"
 
     def test_a_listing_entry_may_omit_its_duration(self) -> None:
         video = ChannelVideosResponse.model_validate(CHANNEL_VIDEOS).videos[0]

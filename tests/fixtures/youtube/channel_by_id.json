@@ -5,7 +5,21 @@
   "handle": "@veritasium",
   "handle_url": "https://www.youtube.com/@veritasium",
   "description": "An element of truth - videos about science, education, and anything else we find interesting.",
-  "channel_follower_count": 21300000,
+  "links": [
+    "https://ve42.co/YTBio",
+    "https://snatoms.com/",
+    "https://patreon.com/veritasium",
+    "http://facebook.com/veritasium",
+    "https://www.tiktok.com/@veritasium?lang=en",
+    "http://twitter.com/veritasium",
+    "https://www.instagram.com/veritasium_daily/"
+  ],
+  "facebook_profile_id": "veritasium",
+  "channel_follower_count": 21400000,
+  "video_count": 549,
+  "view_count": 4750687645,
+  "is_verified": true,
+  "joined_date": "2010-07-21",
   "tags": [
     "science videos",
     "science",
@@ -20,8 +34,11 @@
     "biology",
     "teaching",
     "learning",
-    "math"
+    "math",
+    "united states",
+    "finance"
   ],
+  "country": "United States",
   "thumbnail": "https://yt3.googleusercontent.com/7vCbvtCqtjQ3YLgsJt7Y952MQV1sBvhllSCSxHP8_sVZdcPCBrITfhkN2RdyCuwPnsByq-1GoA=s900-c-k-c0x00ffffff-no-rj",
   "thumbnails": [
     {
@@ -30,11 +47,12 @@
       "height": 900
     },
     {
-      "url": "https://yt3.googleusercontent.com/7vCbvtCqtjQ3YLgsJt7Y952MQV1sBvhllSCSxHP8_sVZdcPCBrITfhkN2RdyCuwPnsByq-1GoA=s200-c-k-c0x00ffffff-no-rj?days_since_epoch=20733",
+      "url": "https://yt3.googleusercontent.com/7vCbvtCqtjQ3YLgsJt7Y952MQV1sBvhllSCSxHP8_sVZdcPCBrITfhkN2RdyCuwPnsByq-1GoA=s200-c-k-c0x00ffffff-no-rj?days_since_epoch=20770",
       "width": 200,
       "height": 200
     }
   ],
+  "banner": "https://yt3.googleusercontent.com/sDCGwJYqtOxT-odxPiErdlwfq3jlzXh0TsYFXtSSD6rld0Be51ZUNcoE17di2u1OiCjQunbcqA=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj",
   "available_content_types": [
     "videos",
     "shorts"

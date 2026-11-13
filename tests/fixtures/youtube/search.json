@@ -9,6 +9,7 @@
       "url": "https://www.youtube.com/@veritasium",
       "duration": null,
       "view_count": null,
+      "published_time_text": null,
       "channel": "Veritasium",
       "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
       "channel_url": "https://www.youtube.com/@veritasium",
@@ -31,300 +32,31 @@
     },
     {
       "result_type": "video",
-      "id": "wcjwXf1-8wY",
-      "title": "L’incroyable ingénierie derrière la machine Enigma nazie",
-      "url": "https://www.youtube.com/watch?v=wcjwXf1-8wY",
-      "duration": 2949,
-      "view_count": 17270,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/wcjwXf1-8wY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDYB_j3SLndF2rV3mrKlGCcjHQalQ",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/wcjwXf1-8wY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDYB_j3SLndF2rV3mrKlGCcjHQalQ",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/wcjwXf1-8wY/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAp11o7MPDegOz4S29JGEXSqzqqHg",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": "Comment les décrypteurs de Bletchley Park ont-ils percé le code « indéchiffrable » d'Enigma ? Avec le soutien d'Incogni : utilisez ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "video",
-      "id": "mv3P8Lx-NYw",
-      "title": "Comment le frigo a mis fin à l’un des plus grands monopoles du monde",
-      "url": "https://www.youtube.com/watch?v=mv3P8Lx-NYw",
-      "duration": 1690,
-      "view_count": 8946,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/mv3P8Lx-NYw/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBplmigK8yf8cBZnbUkNhJtBobujQ",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/mv3P8Lx-NYw/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBplmigK8yf8cBZnbUkNhJtBobujQ",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/mv3P8Lx-NYw/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDZAceY6s70hqlz_z_LQjhFlHtY2g",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": "L'ascension et la chute d'un empire glacé oublié. Sponsorisé par Brilliant. Pour apprendre gratuitement sur Brilliant pendant 30 ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "video",
-      "id": "tSGyy7kbeeU",
-      "title": "L’Homme Qui a Tué des Millions et Sauvé des Milliards",
-      "url": "https://www.youtube.com/watch?v=tSGyy7kbeeU",
-      "duration": 1190,
-      "view_count": 3675,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/tSGyy7kbeeU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCiGrz7_Bush_lWD5TgbPsQmOs-MA",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/tSGyy7kbeeU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCiGrz7_Bush_lWD5TgbPsQmOs-MA",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/tSGyy7kbeeU/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLB2Wuc7iH-a5oF0Vswnx1n2pSFa1A",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": "Préparez-vous à un voyage fascinant à travers l'histoire et la chimie avec notre dernière vidéo qui plonge dans l'héritage ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "playlist",
-      "id": "PLkahZjV5wKe_Yh-7VFrP1bxJOtkVzdqeB",
-      "title": "Fascinating Stories",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe_Yh-7VFrP1bxJOtkVzdqeB",
-      "duration": null,
-      "view_count": null,
+      "id": "XKSjCOKDtpk",
+      "title": "Do we know how magnets work yet?",
+      "url": "https://www.youtube.com/watch?v=XKSjCOKDtpk",
+      "duration": 2153,
+      "view_count": 10967194,
+      "published_time_text": "9mo ago",
       "channel": "Veritasium",
       "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
       "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLA9NYzZhgaTF8srAYZCpGOMFXPNjw",
+      "thumbnail": "https://i.ytimg.com/vi/XKSjCOKDtpk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC_0RoYkXcXuZvd_4LCaXXxoDNCBQ",
       "thumbnails": [
         {
-          "url": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLA9NYzZhgaTF8srAYZCpGOMFXPNjw",
+          "url": "https://i.ytimg.com/vi/XKSjCOKDtpk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC_0RoYkXcXuZvd_4LCaXXxoDNCBQ",
           "width": 360,
           "height": 202
         },
         {
-          "url": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDf2cphyjSxtz9x_JsLPXGvN0k6XA",
+          "url": "https://i.ytimg.com/vi/XKSjCOKDtpk/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAtVly_RkRYRfGFVobJUwbNdQEsEQ",
           "width": 720,
           "height": 404
         }
       ],
-      "description": null,
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "playlist",
-      "id": "PLkahZjV5wKe-Z1RP3ZiYwe8JSAolmqF9M",
-      "title": "Math",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe-Z1RP3ZiYwe8JSAolmqF9M",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium",
-      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
-      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/A5w-dEgIU1M/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBtNUnK3pQu7vn6pKmiXjb_VvCKhQ",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/A5w-dEgIU1M/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBtNUnK3pQu7vn6pKmiXjb_VvCKhQ",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/A5w-dEgIU1M/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBZr3cZ5OoaCx1DQPh-CIXrUGhNkA",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": null,
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "playlist",
-      "id": "PLkahZjV5wKe9q3K-nk82kVD_pNfPZ140i",
-      "title": "Physics",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe9q3K-nk82kVD_pNfPZ140i",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium",
-      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
-      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/AF8d72mA41M/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAc5OAFi6Ca_21uV-9ohBXrbsemPw",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/AF8d72mA41M/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAc5OAFi6Ca_21uV-9ohBXrbsemPw",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/AF8d72mA41M/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCCkmECtcw8ESnfdh3LMAAIwGCzFQ",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": null,
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "video",
-      "id": "yAZxADrYiLY",
-      "title": "Cette équation va changer votre vision du monde : découvrez la carte logistique",
-      "url": "https://www.youtube.com/watch?v=yAZxADrYiLY",
-      "duration": 1041,
-      "view_count": 11544,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/yAZxADrYiLY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBfSxBW0Vp_A4UkTU7v3njdTCJA4Q",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/yAZxADrYiLY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBfSxBW0Vp_A4UkTU7v3njdTCJA4Q",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/yAZxADrYiLY/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA-t4tHOs8_yAJmrZJhQOxDSWjySg",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": "Vous êtes prêts à découvrir comment une simple équation relie les lapins, la convection, les fractales, le chaos et même les ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "video",
-      "id": "pn1C0XK5Eho",
-      "title": "La Découverte qui a Révolutionné Pi",
-      "url": "https://www.youtube.com/watch?v=pn1C0XK5Eho",
-      "duration": 1073,
-      "view_count": 9652,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/pn1C0XK5Eho/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCuejoUkf8r3rxp2xof_Aaj-bIy-g",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/pn1C0XK5Eho/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCuejoUkf8r3rxp2xof_Aaj-bIy-g",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/pn1C0XK5Eho/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCSWmsayHYCEy_BQa4_-p8i7-932w",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": "Plongez dans l'histoire rocambolesque du calcul de pi, où l'ingéniosité d'Isaac Newton a éclipsé des siècles de méthodes ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "playlist",
-      "id": "PLkahZjV5wKe-lnPv1TseLsmMexz3IO81Q",
-      "title": "Biology",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe-lnPv1TseLsmMexz3IO81Q",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium",
-      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
-      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/nfAqTSjMBJk/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDkw2RyXmn6HG63pNeBK0HAsaJlow",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/nfAqTSjMBJk/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDkw2RyXmn6HG63pNeBK0HAsaJlow",
-          "width": 360,
-          "height": 202
-        },
-        {
-          "url": "https://i.ytimg.com/vi/nfAqTSjMBJk/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBolg7SGTx6hOaruhsKDVvb9U4QXg",
-          "width": 720,
-          "height": 404
-        }
-      ],
-      "description": null,
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "channel",
-      "id": "UCXtxgWwk55kVJo9lCCZRdmg",
-      "title": "Veritasium en español",
-      "url": "https://www.youtube.com/@VeritasiumES",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium en español",
-      "channel_id": "UCXtxgWwk55kVJo9lCCZRdmg",
-      "channel_url": "https://www.youtube.com/@VeritasiumES",
-      "thumbnail": "//yt3.ggpht.com/eEzOCQszM2PCifAaJlJhjRsewotTEIqDdqt9YN4qS2Y-JldCdUMHW19ULcIqd-3WvQi70qvENqU=s88-c-k-c0x00ffffff-no-rj-mo",
-      "thumbnails": [
-        {
-          "url": "//yt3.ggpht.com/eEzOCQszM2PCifAaJlJhjRsewotTEIqDdqt9YN4qS2Y-JldCdUMHW19ULcIqd-3WvQi70qvENqU=s88-c-k-c0x00ffffff-no-rj-mo",
-          "width": 88,
-          "height": 88
-        },
-        {
-          "url": "//yt3.ggpht.com/eEzOCQszM2PCifAaJlJhjRsewotTEIqDdqt9YN4qS2Y-JldCdUMHW19ULcIqd-3WvQi70qvENqU=s176-c-k-c0x00ffffff-no-rj-mo",
-          "width": 176,
-          "height": 176
-        }
-      ],
-      "description": "Un elemento de la verdad. Videos de Ciencia y Tecnología doblados al español Somos la traducción oficial al español del canal ...",
+      "description": "What this strange quantum effect reveals about potentials. Sponsored by Planet Wild. Want to restore the planet's ecosystems and ...",
       "live_status": null,
       "channel_is_verified": true
-    },
-    {
-      "result_type": "channel",
-      "id": "UCin0m13qWv3-051xlWlHamA",
-      "title": "Veritasium en Français",
-      "url": "https://www.youtube.com/@VeritasiumFR",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/@VeritasiumFR",
-      "thumbnail": "//yt3.ggpht.com/Iv9K2cSrt5_ey6nPVcQFzoBmDWd7RJxN-VpJ1LBRDRqrQuvR60FTtIwlXoH7BZbQ4Gtr14n5=s88-c-k-c0x00ffffff-no-rj-mo",
-      "thumbnails": [
-        {
-          "url": "//yt3.ggpht.com/Iv9K2cSrt5_ey6nPVcQFzoBmDWd7RJxN-VpJ1LBRDRqrQuvR60FTtIwlXoH7BZbQ4Gtr14n5=s88-c-k-c0x00ffffff-no-rj-mo",
-          "width": 88,
-          "height": 88
-        },
-        {
-          "url": "//yt3.ggpht.com/Iv9K2cSrt5_ey6nPVcQFzoBmDWd7RJxN-VpJ1LBRDRqrQuvR60FTtIwlXoH7BZbQ4Gtr14n5=s176-c-k-c0x00ffffff-no-rj-mo",
-          "width": 176,
-          "height": 176
-        }
-      ],
-      "description": "Un élément de vérité - des vidéos sur la science, l'éducation, et tout ce que je trouve intéressant. Ceci est une chaîne officielle de ...",
-      "live_status": null,
-      "channel_is_verified": null
     },
     {
       "result_type": "channel",
@@ -333,6 +65,7 @@
       "url": "https://www.youtube.com/@VeritasiumPT",
       "duration": null,
       "view_count": null,
+      "published_time_text": null,
       "channel": "Veritasium em Português",
       "channel_id": "UCnopJilYkHmuK-sdl07vkVg",
       "channel_url": "https://www.youtube.com/@VeritasiumPT",
@@ -355,72 +88,24 @@
     },
     {
       "result_type": "playlist",
-      "id": "PLkahZjV5wKe9EKkCQ25-XxvtRWgW-BtC3",
-      "title": "Engineering",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe9EKkCQ25-XxvtRWgW-BtC3",
+      "id": "PLkahZjV5wKe_Yh-7VFrP1bxJOtkVzdqeB",
+      "title": "Fascinating Stories",
+      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe_Yh-7VFrP1bxJOtkVzdqeB",
       "duration": null,
       "view_count": null,
+      "published_time_text": null,
       "channel": "Veritasium",
       "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
       "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/Tt6WQYtefXA/hqdefault.jpg?sqp=-oaymwEdCOADEI4CSFryq4qpAw8IARUAAIhCGAHtAZmZGUI=&rs=AOn4CLCPRh3xPFZoPMtWIUCNAOBBGjcNTg",
+      "thumbnail": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLA9NYzZhgaTF8srAYZCpGOMFXPNjw",
       "thumbnails": [
         {
-          "url": "https://i.ytimg.com/vi/Tt6WQYtefXA/hqdefault.jpg?sqp=-oaymwEdCOADEI4CSFryq4qpAw8IARUAAIhCGAHtAZmZGUI=&rs=AOn4CLCPRh3xPFZoPMtWIUCNAOBBGjcNTg",
-          "width": 480,
-          "height": 270
-        }
-      ],
-      "description": null,
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "channel",
-      "id": "UCQV_lwBnBsWeH7xtVWLzcOw",
-      "title": "Veritasium po Polsku",
-      "url": "https://www.youtube.com/@VeritasiumPL",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium po Polsku",
-      "channel_id": "UCQV_lwBnBsWeH7xtVWLzcOw",
-      "channel_url": "https://www.youtube.com/@VeritasiumPL",
-      "thumbnail": "//yt3.ggpht.com/ENnY7-Ki0UN5_XH3mgGNvKQ9HJT6gq1oE1A6YnW0mxCAP-nqHjjiBj2WGSyznGG6mmo49zReU5g=s88-c-k-c0x00ffffff-no-rj-mo",
-      "thumbnails": [
-        {
-          "url": "//yt3.ggpht.com/ENnY7-Ki0UN5_XH3mgGNvKQ9HJT6gq1oE1A6YnW0mxCAP-nqHjjiBj2WGSyznGG6mmo49zReU5g=s88-c-k-c0x00ffffff-no-rj-mo",
-          "width": 88,
-          "height": 88
-        },
-        {
-          "url": "//yt3.ggpht.com/ENnY7-Ki0UN5_XH3mgGNvKQ9HJT6gq1oE1A6YnW0mxCAP-nqHjjiBj2WGSyznGG6mmo49zReU5g=s176-c-k-c0x00ffffff-no-rj-mo",
-          "width": 176,
-          "height": 176
-        }
-      ],
-      "description": "Element prawdy – filmy o nauce, edukacji i wszystkim, co uważam za interesujące. To jest oficjalny kanał Veritasium w języku ...",
-      "live_status": null,
-      "channel_is_verified": null
-    },
-    {
-      "result_type": "playlist",
-      "id": "PLkahZjV5wKe-bi4kBx7b9rX80g6SMW78H",
-      "title": "Space",
-      "url": "https://www.youtube.com/playlist?list=PLkahZjV5wKe-bi4kBx7b9rX80g6SMW78H",
-      "duration": null,
-      "view_count": null,
-      "channel": "Veritasium",
-      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
-      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
-      "thumbnail": "https://i.ytimg.com/vi/XRr1kaXKBsU/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDkOc5wPXqZBiCJQV8k7G7CTk53ww",
-      "thumbnails": [
-        {
-          "url": "https://i.ytimg.com/vi/XRr1kaXKBsU/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDkOc5wPXqZBiCJQV8k7G7CTk53ww",
+          "url": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCOgCEMoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLA9NYzZhgaTF8srAYZCpGOMFXPNjw",
           "width": 360,
           "height": 202
         },
         {
-          "url": "https://i.ytimg.com/vi/XRr1kaXKBsU/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLB6B5SJxI47nuCGwIaxqDnt52wCSg",
+          "url": "https://i.ytimg.com/vi/IV3dnLzthDA/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDf2cphyjSxtz9x_JsLPXGvN0k6XA",
           "width": 720,
           "height": 404
         }
@@ -430,111 +115,456 @@
       "channel_is_verified": null
     },
     {
-      "result_type": "channel",
-      "id": "UC2LZO6swZ9SLUEOks3WnsfA",
-      "title": "2veritasium",
-      "url": "https://www.youtube.com/@derek",
-      "duration": null,
-      "view_count": null,
-      "channel": "2veritasium",
-      "channel_id": "UC2LZO6swZ9SLUEOks3WnsfA",
-      "channel_url": "https://www.youtube.com/@derek",
-      "thumbnail": "//yt3.ggpht.com/e7ENWdyffTfOl7CNadvF7UAwkFy3q-ZeN-jZdSozfvwIB-GzKxARcaZKvlldNRj6r48mQDS0=s88-c-k-c0x00ffffff-no-rj-mo",
+      "result_type": "video",
+      "id": "E7uGvsT_nnM",
+      "title": "Why Apollo Astronauts Trained in Nuclear Bomb Craters",
+      "url": "https://www.youtube.com/watch?v=E7uGvsT_nnM",
+      "duration": 788,
+      "view_count": 9154166,
+      "published_time_text": "7y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/E7uGvsT_nnM/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCtTLszYQ9JALZwpIO0W9y09SW9xA",
       "thumbnails": [
         {
-          "url": "//yt3.ggpht.com/e7ENWdyffTfOl7CNadvF7UAwkFy3q-ZeN-jZdSozfvwIB-GzKxARcaZKvlldNRj6r48mQDS0=s88-c-k-c0x00ffffff-no-rj-mo",
-          "width": 88,
-          "height": 88
+          "url": "https://i.ytimg.com/vi/E7uGvsT_nnM/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCtTLszYQ9JALZwpIO0W9y09SW9xA",
+          "width": 360,
+          "height": 202
         },
         {
-          "url": "//yt3.ggpht.com/e7ENWdyffTfOl7CNadvF7UAwkFy3q-ZeN-jZdSozfvwIB-GzKxARcaZKvlldNRj6r48mQDS0=s176-c-k-c0x00ffffff-no-rj-mo",
-          "width": 176,
-          "height": 176
+          "url": "https://i.ytimg.com/vi/E7uGvsT_nnM/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC9f73LVDYVLk930DIuVScHVQHRtg",
+          "width": 720,
+          "height": 404
         }
       ],
-      "description": "Derek Muller's YouTube channel.",
+      "description": "Apollo astronauts trained in nuclear bomb craters at the Nevada National Security Site. But why?Thanks Audible! Start listening ...",
       "live_status": null,
       "channel_is_verified": true
     },
     {
       "result_type": "video",
-      "id": "uiR7yeGfsZs",
-      "title": "Le défaut fondamental des maths",
-      "url": "https://www.youtube.com/watch?v=uiR7yeGfsZs",
-      "duration": 1975,
-      "view_count": 35930,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/uiR7yeGfsZs/hqdefault.jpg?sqp=-oaymwEnCOADEI4CSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBSEY-KDhOguG2CzAEk6b7j-eHZQA",
+      "id": "mScpHTIi-kM",
+      "title": "Once you understand game theory, you understand the world.",
+      "url": "https://www.youtube.com/watch?v=mScpHTIi-kM",
+      "duration": 1639,
+      "view_count": 27642314,
+      "published_time_text": "2y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/mScpHTIi-kM/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLALiElVmk14NPEO7bKf0XyDBT2ZwQ",
       "thumbnails": [
         {
-          "url": "https://i.ytimg.com/vi/uiR7yeGfsZs/hqdefault.jpg?sqp=-oaymwEnCOADEI4CSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBSEY-KDhOguG2CzAEk6b7j-eHZQA",
-          "width": 480,
-          "height": 270
+          "url": "https://i.ytimg.com/vi/mScpHTIi-kM/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLALiElVmk14NPEO7bKf0XyDBT2ZwQ",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/mScpHTIi-kM/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA-_Kwwo-krkdH0UbmChsytb5EhtQ",
+          "width": 720,
+          "height": 404
         }
       ],
-      "description": "Plongez dans un voyage captivant à travers les mystères des mathématiques et découvrez pourquoi certaines vérités restent ...",
+      "description": "This is a video about the most famous problem in Game Theory, the Prisoner's Dilemma. Head to https://brilliant.org/veritasium to ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "5qYRfCnIITk",
+      "title": "Plato Got Vision Totally Wrong",
+      "url": "https://www.youtube.com/watch?v=5qYRfCnIITk",
+      "duration": 878,
+      "view_count": 143026,
+      "published_time_text": "7h ago",
+      "channel": "minutephysics and MinuteEarth",
+      "channel_id": null,
+      "channel_url": null,
+      "thumbnail": "https://i.ytimg.com/vi/5qYRfCnIITk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC6IngTgoyiJGqkbCOGm_rNMebKZw",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/5qYRfCnIITk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC6IngTgoyiJGqkbCOGm_rNMebKZw",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/5qYRfCnIITk/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA0KJOkdQuJBz6sGA2o8qwz0dhOIg",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Sign up to get started with Brilliant for free here: https://brilliant.org/minutephysics. You'll also save 20% off an annual subscription.",
       "live_status": null,
       "channel_is_verified": null
     },
     {
       "result_type": "video",
-      "id": "kZ3Cr-EKELY",
-      "title": "Les lampes de sel, miracle ou arnaque ?",
-      "url": "https://www.youtube.com/watch?v=kZ3Cr-EKELY",
-      "duration": 932,
-      "view_count": 2894,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/kZ3Cr-EKELY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCG_8qVf0ZVYhFmD5ePQEnj2f317A",
+      "id": "x32Zq-XvID4",
+      "title": "The Obviously True Theorem No One Can Prove",
+      "url": "https://www.youtube.com/watch?v=x32Zq-XvID4",
+      "duration": 2554,
+      "view_count": 9959685,
+      "published_time_text": "1y ago",
+      "channel": "Veritasium and fern",
+      "channel_id": null,
+      "channel_url": null,
+      "thumbnail": "https://i.ytimg.com/vi/x32Zq-XvID4/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBwZq-7sj1yo-7nIE4srX9MbX6Pig",
       "thumbnails": [
         {
-          "url": "https://i.ytimg.com/vi/kZ3Cr-EKELY/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCG_8qVf0ZVYhFmD5ePQEnj2f317A",
+          "url": "https://i.ytimg.com/vi/x32Zq-XvID4/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBwZq-7sj1yo-7nIE4srX9MbX6Pig",
           "width": 360,
           "height": 202
         },
         {
-          "url": "https://i.ytimg.com/vi/kZ3Cr-EKELY/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBvoS7dXevHF9-gphJpVoEko5PDiw",
+          "url": "https://i.ytimg.com/vi/x32Zq-XvID4/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDJRyxBBNqHzoJBAkCDPKlrbQpSQA",
           "width": 720,
           "height": 404
         }
       ],
-      "description": "Les ions négatifs dans l'air améliorent-ils l'humeur et la vigilance, et réduisent-ils l'anxiété et la dépression ? Une partie de cette ...",
+      "description": "This deceptively simple math problem has stumped mathematicians for almost 300 years! Head to ...",
       "live_status": null,
       "channel_is_verified": null
     },
     {
       "result_type": "video",
-      "id": "hirBnAMmCoU",
-      "title": "Le Théorème Évidemment Vrai Que Personne Ne Peut Prouver",
-      "url": "https://www.youtube.com/watch?v=hirBnAMmCoU",
-      "duration": 2529,
-      "view_count": 31327,
-      "channel": "Veritasium en Français",
-      "channel_id": "UCin0m13qWv3-051xlWlHamA",
-      "channel_url": "https://www.youtube.com/channel/UCin0m13qWv3-051xlWlHamA",
-      "thumbnail": "https://i.ytimg.com/vi/hirBnAMmCoU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDL3teUfgoQ86jYkkDeNDQs9f6GKA",
+      "id": "P-4pbFcERnk",
+      "title": "What Happens If You Keep Slowing Down?",
+      "url": "https://www.youtube.com/watch?v=P-4pbFcERnk",
+      "duration": 1809,
+      "view_count": 11863345,
+      "published_time_text": "9mo ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/P-4pbFcERnk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCaP9PjfkfCQnheA7EbWTQ1hwsHAg",
       "thumbnails": [
         {
-          "url": "https://i.ytimg.com/vi/hirBnAMmCoU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDL3teUfgoQ86jYkkDeNDQs9f6GKA",
+          "url": "https://i.ytimg.com/vi/P-4pbFcERnk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCaP9PjfkfCQnheA7EbWTQ1hwsHAg",
           "width": 360,
           "height": 202
         },
         {
-          "url": "https://i.ytimg.com/vi/hirBnAMmCoU/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLD1yqJjrgzF9Gc8PtRW34MQ1YqlBA",
+          "url": "https://i.ytimg.com/vi/P-4pbFcERnk/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCEEtxVfHWZhRm850LKhyicxyFmQQ",
           "width": 720,
           "height": 404
         }
       ],
-      "description": "Plongez dans l'univers fascinant des mathématiques avec notre vidéo captivante sur le mystère de la conjecture de Goldbach!",
+      "description": "What happens if you keep slowing down time? Sponsored by Hostinger - Make today your Day One and visit https://ve42.co/VE10.",
       "live_status": null,
-      "channel_is_verified": null
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "esQyYGezS7c",
+      "title": "The world depends on a collection of strange items. They're not cheap",
+      "url": "https://www.youtube.com/watch?v=esQyYGezS7c",
+      "duration": 1112,
+      "view_count": 12632222,
+      "published_time_text": "3y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/esQyYGezS7c/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAJNkAWLuXq2UoXAoNZEVRd3s2SnQ",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/esQyYGezS7c/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAJNkAWLuXq2UoXAoNZEVRd3s2SnQ",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/esQyYGezS7c/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDiShlQWNAY2grkV-uHPRSv_t_nsQ",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "This government warehouse keeps our entire society up to standard. Part of this video was sponsored by Google Domains.",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "JsBZOcqZerk",
+      "title": "The Insane Real Engineering of the Nazi Enigma Machine",
+      "url": "https://www.youtube.com/watch?v=JsBZOcqZerk",
+      "duration": 2862,
+      "view_count": 21954850,
+      "published_time_text": "1mo ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/JsBZOcqZerk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBXXgbuNJUXQ4gtrDNMs3DDAtyYhA",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/JsBZOcqZerk/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBXXgbuNJUXQ4gtrDNMs3DDAtyYhA",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/JsBZOcqZerk/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCMjtsCk5_ilbTjEL5wkXVKKZlEZA",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "How did Bletchley Park's codebreakers crack the \"unbreakable\" enigma? Sponsored by Incogni - use code veritasium at ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "NIk_0AW5hFU",
+      "title": "There Is Something Faster Than Light",
+      "url": "https://www.youtube.com/watch?v=NIk_0AW5hFU",
+      "duration": 2656,
+      "view_count": 17571718,
+      "published_time_text": "10mo ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/NIk_0AW5hFU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBi6anVmU_xa8o9W5VxzhQ4szagVA",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/NIk_0AW5hFU/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBi6anVmU_xa8o9W5VxzhQ4szagVA",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/NIk_0AW5hFU/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBYAkdlALF5GL9deOH-3hgMxnOekw",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "How an argument between Einstein and Bohr changed quantum mechanics forever. Sponsored by NordVPN - Get exclusive ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "3LopI4YeC4I",
+      "title": "Why Being Delusional is a Superpower",
+      "url": "https://www.youtube.com/watch?v=3LopI4YeC4I",
+      "duration": 724,
+      "view_count": 15256395,
+      "published_time_text": "6y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/3LopI4YeC4I/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBS4Rw6kaoytVTGDpZA99rFZLDOFw",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/3LopI4YeC4I/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBS4Rw6kaoytVTGDpZA99rFZLDOFw",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/3LopI4YeC4I/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLD6v4q1lN-DRTN1tQHdKddMuZgccQ",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "In a competitive world, tiny advantages can make all the difference. Get 10% off Snatoms with code 'giveluck' in the US: ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "GVsUOuSjvcg",
+      "title": "Future Computers Will Be Radically Different (Analog Computing)",
+      "url": "https://www.youtube.com/watch?v=GVsUOuSjvcg",
+      "duration": 1302,
+      "view_count": 13205958,
+      "published_time_text": "4y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/GVsUOuSjvcg/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAKGfNZX0T8iY8wTBJ1D66QFfPxzQ",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/GVsUOuSjvcg/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAKGfNZX0T8iY8wTBJ1D66QFfPxzQ",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/GVsUOuSjvcg/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCmmHgFnswuQ_7vQnQcQKjmoYq_sA",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Visit https://brilliant.org/Veritasium/ to get started learning STEM for free, and the first 200 people will get 20% off their annual ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "NiCgcUTL9_Q",
+      "title": "Fiber Optics are so much cooler than I thought",
+      "url": "https://www.youtube.com/watch?v=NiCgcUTL9_Q",
+      "duration": 2072,
+      "view_count": 16081774,
+      "published_time_text": "1mo ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/NiCgcUTL9_Q/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBstnzhWm9beEYPO5wRbmtuIFUr5Q",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/NiCgcUTL9_Q/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBstnzhWm9beEYPO5wRbmtuIFUr5Q",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/NiCgcUTL9_Q/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAs6IuCKQye0E6zTu1bH0R3KArFQw",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Why making glass fibers to send signals was almost impossible. Sponsored by Saily - Get an exclusive 15% discount on Saily ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "IgF3OX8nT0w",
+      "title": "The Most Powerful Computers You've Never Heard Of",
+      "url": "https://www.youtube.com/watch?v=IgF3OX8nT0w",
+      "duration": 1213,
+      "view_count": 13748126,
+      "published_time_text": "4y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/IgF3OX8nT0w/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBoDhhyiMOfJ2-Zg_f3TYAShh-Zhw",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/IgF3OX8nT0w/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBoDhhyiMOfJ2-Zg_f3TYAShh-Zhw",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/IgF3OX8nT0w/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCRi1dDKj0dqBpi2TKPkTH98GYPhg",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Analog computers were the most powerful computers for thousands of years, relegated to obscurity by the digital revolution.",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "GK2pZ_oVU1o",
+      "title": "The Scariest Chart in Electrical Engineering",
+      "url": "https://www.youtube.com/watch?v=GK2pZ_oVU1o",
+      "duration": 2384,
+      "view_count": 6855959,
+      "published_time_text": "3mo ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/GK2pZ_oVU1o/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCcDX5_ayeuQooy-EmAziTnfvcDAg",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/GK2pZ_oVU1o/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCcDX5_ayeuQooy-EmAziTnfvcDAg",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/GK2pZ_oVU1o/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA_cD2bu8aHdmc7YTwM-Tx0mmT6tw",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Why is the Smith Chart one of the scariest charts in electrical engineering? Sponsored by Incogni - use code veritasium at ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "qJZ1Ez28C-A",
+      "title": "The Strangest Implication of Quantum Mechanics",
+      "url": "https://www.youtube.com/watch?v=qJZ1Ez28C-A",
+      "duration": 1981,
+      "view_count": 20782091,
+      "published_time_text": "1y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/qJZ1Ez28C-A/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA3EmFEuqWlalK6cG6btji8b6Ogkw",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/qJZ1Ez28C-A/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLA3EmFEuqWlalK6cG6btji8b6Ogkw",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/qJZ1Ez28C-A/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAG-YXEH5K_tROn3eLugu4tgYkWQQ",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Does light take all possible paths at the same time? Get exclusive NordVPN deal here ➵ https://NordVPN.com/veritasium It's ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "5eW6Eagr9XA",
+      "title": "The Expert Myth",
+      "url": "https://www.youtube.com/watch?v=5eW6Eagr9XA",
+      "duration": 1079,
+      "view_count": 16053316,
+      "published_time_text": "4y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/5eW6Eagr9XA/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBLqVinlifvk2fhMs6-rHb0t8rAaA",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/5eW6Eagr9XA/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBLqVinlifvk2fhMs6-rHb0t8rAaA",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/5eW6Eagr9XA/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC3afUBgvJQjnbAoE-svGK8QXLe9g",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Which experts have real expertise? This video is sponsored by Brilliant. The first 200 people to sign up via ...",
+      "live_status": null,
+      "channel_is_verified": true
+    },
+    {
+      "result_type": "video",
+      "id": "XX7PdJIGiCw",
+      "title": "The Most Controversial Idea In Biology",
+      "url": "https://www.youtube.com/watch?v=XX7PdJIGiCw",
+      "duration": 1730,
+      "view_count": 9217643,
+      "published_time_text": "1y ago",
+      "channel": "Veritasium",
+      "channel_id": "UCHnyfMqiRRG1u-2MsSQLbXA",
+      "channel_url": "https://www.youtube.com/channel/UCHnyfMqiRRG1u-2MsSQLbXA",
+      "thumbnail": "https://i.ytimg.com/vi/XX7PdJIGiCw/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBKiNNW9skbcRJcj3AWOO7xRe6mVw",
+      "thumbnails": [
+        {
+          "url": "https://i.ytimg.com/vi/XX7PdJIGiCw/hq720.jpg?sqp=-oaymwEnCOgCEMoBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBKiNNW9skbcRJcj3AWOO7xRe6mVw",
+          "width": 360,
+          "height": 202
+        },
+        {
+          "url": "https://i.ytimg.com/vi/XX7PdJIGiCw/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDAJhuLTep7Ghm03BPnKRd-yMgXgA",
+          "width": 720,
+          "height": 404
+        }
+      ],
+      "description": "Most people don't fully understand evolution. Sponsored by Hostinger - visit https://ve42.co/hostingern8n and use the code ...",
+      "live_status": null,
+      "channel_is_verified": true
     }
   ],
   "pagination": {
-    "next_cursor": "eyJ2IjoxLCJxIjoidmVyaXRhc2l1bSIsImMiOm51bGwsImYiOnsic29ydCI6InJlbGV2YW5jZSIsInVwbG9hZF9kYXRlIjpudWxsLCJzZWFyY2hfdHlwZSI6bnVsbCwiZHVyYXRpb24iOm51bGwsImZlYXR1cmVzIjpbXX0sInQiOiJFc1lGRWdwMlpYSnBkR0Z6YVhWdEdyUUZVMEpUUTBGU2FGWlJNR2gxWlZkYVRtTlhiRk5WYTJONFpGTXdlVlJZVGxSVlZYaHBWMFZIUTBGUmRETlpNbkF6VjBkWmVFeFVhRE5YV1VsQ1F6SXhNazB4UVRSVVNHZDBWR3hzTTJkblJVeGtSazVJWlZock0yRXlTbXhhVmxkRFFWTktVVlJIZEdoaFJuQnhWbXBXTTFNeVZtWlhWMmQwVGpGYVIyTnNRWGhaYm1oTFZETlNjbFp1Y0d0alYxWkRaMmRGYVZWRmVISlpWMmhoWVd4Wk1XUXdkR3hNVm05NFZXeEJlbGR0YkZwa01sVTBVMnhPUW1JeWVIUmpWVmsxVkZsSlFrbHNRazFoTWtadlYyMXdWMDVZWkV4YVZHeDRUVEJ6ZEdKdGN6Uk5iWFJYVWtZNWQxUnRXbEZYYWtVd1RVZHRRMEZSZERWUlZuQTBVVlZTZVZkWGJFMVhXVWxDUXpOQ2RVMVZUWGRYUlhNeFVsZG9kbWRuUldsVlJYaHlXVmRvWVdGc1dURmtNSFJzVEZkNGRWVklXWGhXU0U1c1ZFaE9kRlJYVmpSbGFrNUtWSHBuZUZWWlNVSkhSbFpFVjBoU05Gb3haRE5oZWxVeFlURmFTMko2YkhOUk1FNWhWVzFTZEZvMFNVSkhSbFpFWVZjMGQySlVSWHBqVm1ReVRYa3dkMDVVUmpSaVJtUnpVMGRHZEZGWlNVSkhSbFpFWW0wNWQxTnRiSE5YVjNSSllsaFdURXhZVG10aVJFRXpaRzEwVjFvMFNVSkpiRUpOWVRKR2IxZHRjRmRPV0dSTVdsUnNSbE15ZEVSVlZFa3hURlpvTkdSdVVsTldNbVJZVEZWS01GRjZUME5CVW1oV1VURkdWMWd5ZUROUmJUVkRZekZrYkZORVpEUmtSbHBZVkVod2FsUXpaVU5CVTBwUlZFZDBhR0ZHY0hGV2FsWXpVekpWZEZsdGF6QmhNRW8wVGpKSk5XTnNaelJOUjJNeVZUQXhXRTU2YUVsblowVlpWbFZOZVZSR2NGQk9iazR6VjJwc1ZGUkdWa1pVTW5SNlRURmtkV015V2tKblowVk1aRmRzVTA0emJHeFNNbHA2VjI1UFEwRlJkSEpYYWs1RVkya3hSbE13VmsxWFdVbENRekpvY0dOclNuVlJWVEYwVVRJNVZuTm5SVWREWjFGSlIwSkJRelpuUlVWRFFVbFJSMUVsTTBRbE0wU2dBZ1FZZ2VEb0dDSUxjMlZoY21Ob0xXWmxaV1ElM0QifQ",
+    "next_cursor": "eyJ2IjoxLCJxIjoidmVyaXRhc2l1bSIsImMiOm51bGwsImYiOnsic29ydCI6InJlbGV2YW5jZSIsInVwbG9hZF9kYXRlIjpudWxsLCJzZWFyY2hfdHlwZSI6bnVsbCwiZHVyYXRpb24iOm51bGwsImZlYXR1cmVzIjpbXX0sInQiOiJFdVFERWdwMlpYSnBkR0Z6YVhWdEd0SURVMEpUUTBGU2FGWlJNR2gxWlZkYVRtTlhiRk5WYTJONFpGTXdlVlJZVGxSVlZYaHBWMFZIUTBGUmRGbFRNVTV4VVRBNVRGSklVbmRoTkVsQ1IwWldSR0p0T1hkVGJXeHpWMWQwU1dKWVZreE1XRTVyWWtSQk0yUnRkRmRhTkVsQ1NXeENUV0V5Um05WGJYQlhUbGhrVEZwV09WcGhRekF6Vm10YWVWVkVSbWxsUlhCUVpFZDBWMlZ0VW5oYVZVdERRVkYwUms0elZraGtiazVWV0RJMWRWUlpTVUpETWpGVVdUTkNTVlpGYkhCTVYzUk9aMmRGVEU1WVJscFZiVnBFWW10c1NsWkhkVU5CVVhRMFRYcEtZV05UTVZsa2EyeEZUa2xKUWtNeFFYUk9TRUpwVW0xT1JsVnROWEpuWjBWTVdsaE9VbVZXYkVoYVdIQlVUakpQUTBGUmRFdGpNRXBoVkRKT2VGZHRWbmxoTkVsQ1F6QTFTbUV4T0hkUlZtTXhZVVZhVm1kblJVeE5NSGgyWTBWck1GZFhWa1JPUlcxRFFWRjBTRlp1VGxaVU0xWlVZVzVhYWxvMFNVSkRNRFZ3VVRKa2FsWldVazFQVmpsU1oyZEZURk5YWkVkTk1EbFpUMGMxVlUxSVpVTkJVWFJJVTNwS2QxZHNPWFpXYkZWNFlqUkpRa016Umt0WGFrWkdaV3BKTkZGNU1VSm5aMFZNVGxkV1dFNXJWbWhhTTBrMVYwVkhRMEZSZEZsWFJHUlJXa1Z3U2xJeWJFUmtOMGxDUW1kdlJVTkNaMUZCZFc5Q1FrRm5RMFZDYXlVelJLQUNCQmlCNE9nWUlndHpaV0Z5WTJndFptVmxaQSUzRCUzRCJ9",
     "completion": null
   }
 }

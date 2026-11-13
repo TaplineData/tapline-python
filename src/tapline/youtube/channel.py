@@ -6,7 +6,7 @@ from .response_enums import ChannelContentTypeValue
 from .thumbnail import ThumbnailItem
 from .video import VideoListItem
 
-__all__ = ["ChannelResponse", "ChannelVideosResponse"]
+__all__ = ["ChannelResponse", "ChannelVideoItem", "ChannelVideosResponse"]
 
 
 class ChannelResponse(BaseModel):
@@ -28,14 +28,37 @@ class ChannelResponse(BaseModel):
 
     description: str | None
 
+    links: list[str] | None
+    """Bio links from the channel's About panel. ``None`` on Tapline's fallback
+    scraper."""
+
+    facebook_profile_id: str | None
+    """Facebook ID the channel linked, usually the page's username."""
+
     channel_follower_count: int | None
 
+    video_count: int | None
+
+    view_count: int | None
+    """Total views across the channel's videos."""
+
+    is_verified: bool | None
+
+    joined_date: str | None
+    """``YYYY-MM-DD``."""
+
     tags: list[str]
+
+    country: str | None
+    """Country from the channel's About panel, in English."""
 
     thumbnail: str | None
     """URL of the preferred avatar, the first entry of ``thumbnails``."""
 
     thumbnails: list[ThumbnailItem]
+
+    banner: str | None
+    """URL of the channel's banner image, widest size."""
 
     available_content_types: list[ChannelContentTypeValue] | None
     """Which of the videos, shorts and streams tabs the channel has, each one a
@@ -50,6 +73,23 @@ class ChannelResponse(BaseModel):
     playlists."""
 
 
+class ChannelVideoItem(VideoListItem):
+    """A video as it appears on one of a channel's videos, shorts or streams tabs."""
+
+    published_time_text: str | None
+    """Publish date as the channel page labels it, such as ``"2 days ago"``.
+    ``None`` on shorts."""
+
+    channel_handle: str | None
+    """Channel handle, such as ``"@veritasium"``."""
+
+    content_type: ChannelContentTypeValue
+    """The tab the video was listed on."""
+
+    channel_thumbnail: str | None
+    """URL of the channel's profile picture."""
+
+
 class ChannelVideosResponse(BaseModel):
     """Response of ``youtube.channel_videos``."""
 
@@ -57,6 +97,6 @@ class ChannelVideosResponse(BaseModel):
 
     returned_count: int
 
-    videos: list[VideoListItem]
+    videos: list[ChannelVideoItem]
 
     pagination: CursorPagination

@@ -30,6 +30,10 @@ class SearchResultItem(BaseModel):
 
     view_count: int | None
 
+    published_time_text: str | None
+    """When the video was published, as search labels it, such as ``"3 years
+    ago"``. ``None`` on channels and playlists."""
+
     channel: str | None
 
     channel_id: str | None
