@@ -49,6 +49,18 @@ class PublicError(str, Enum):
     TURNSTILE_UNAVAILABLE = "turnstile_unavailable"
 
 
+class TwitterPostPostType(str, Enum):
+    POST = "post"
+    REPLY = "reply"
+    QUOTE = "quote"
+
+
+class TwitterTweetResponsePostType(str, Enum):
+    POST = "post"
+    REPLY = "reply"
+    QUOTE = "quote"
+
+
 class ErrorDetail(BaseModel):
     type: str | None = None
     loc: list[str | int] | None = None
@@ -257,6 +269,9 @@ class TwitterCommunityImage(BaseModel):
 
 class TwitterCommunityReference(BaseModel):
     id: str
+    """
+    Community ID: the X Community the post was shared in.
+    """
     name: str | None = None
     url: str
 
@@ -299,20 +314,44 @@ class TwitterMedia(BaseModel):
     id: str | None = None
     source_post_id: str | None = None
     alt_text: str | None = None
+    """
+    Alt text the author wrote for the image.
+    """
     expanded_url: str | None = None
     tco_url: str | None = None
     availability: str | None = None
     allow_download: bool | None = None
     tags: list[TwitterMediaTag] | None = None
+    """
+    Tagged people: the accounts tagged in the photo.
+    """
     source_user: TwitterUser | None = None
     type: str | None = None
+    """
+    Media type: `photo`, `video` or `animated_gif`.
+    """
     indices: list[int] | None = None
     width: int | None = None
+    """
+    Dimensions: the media's original width in pixels.
+    """
     height: int | None = None
+    """
+    Dimensions: the media's original height in pixels.
+    """
     monetizable: bool | None = None
     duration_millis: int | None = None
+    """
+    Video duration in milliseconds.
+    """
     media_url: str | None = None
+    """
+    Image URL; for a video or GIF, its thumbnail.
+    """
     variants: list[TwitterVideoVariant] | None = None
+    """
+    Video: the video or GIF files, one per format and bitrate.
+    """
 
 
 class TwitterMediaTag(BaseModel):
@@ -323,25 +362,73 @@ class TwitterMediaTag(BaseModel):
 
 class TwitterPost(BaseModel):
     """
-    An X post: text, like, repost, reply, quote, bookmark and view counts, media, links, and its author's full account with follower and following counts.
+    An X post: post type, text, like, repost, reply, quote, bookmark and view counts, media, links, and its author's full account with follower and following counts.
     """
 
     id: str
+    """
+    Post ID: the post's numeric X id.
+    """
     conversation_id: str | None = None
+    """
+    Conversation ID: the id of the thread's first post.
+    """
     note_id: str | None = None
+    """
+    Note post: the id of the X Note that holds a long post's full text; set on long posts only.
+    """
     edit_history_ids: list[str] | None = None
+    """
+    Edit post IDs: the ids of every version of the post, oldest first.
+    """
     text: str | None = None
+    """
+    Text: the post's full text; for a long post, its whole Note.
+    """
     preview_text: str | None = None
+    """
+    The shorter text X shows before a long post is expanded.
+    """
     language: str | None = None
+    """
+    Language: the language code X detected for the text.
+    """
     url: str | None = None
+    """
+    Post URL on x.com.
+    """
     favorite_count: int | None = None
+    """
+    Like count.
+    """
     quote_count: int | None = None
+    """
+    Quote count.
+    """
     reply_count: int | None = None
+    """
+    Reply count.
+    """
     retweet_count: int | None = None
+    """
+    Repost count.
+    """
     bookmark_count: int | None = None
+    """
+    Bookmark count.
+    """
     view_count: int | None = None
+    """
+    View count; left out when X shows no count.
+    """
     possibly_sensitive: bool | None = None
+    """
+    Possibly sensitive: X marks the post's media as possibly sensitive.
+    """
     created_at: str
+    """
+    Created at: when the post was sent, ISO 8601 UTC.
+    """
     author: TwitterUser | None = None
     entities: TwitterEntities
     quoted_post: TwitterPostReference | None = None
@@ -352,13 +439,53 @@ class TwitterPost(BaseModel):
     community: TwitterCommunityReference | None = None
     preview_entities: TwitterEntities | None = None
     display_text_range: list[int] | None = None
+    """
+    Display text range: the start and end of the text X displays.
+    """
+    post_type: TwitterPostPostTypeValue
+    """
+    Post type: `reply` when it answers another post, else `quote` when it quotes one, else `post`.
+    """
     is_pinned: bool | None = None
+    """
+    Is pinned: the account pinned this post to its profile.
+    """
     is_reply: bool
+    """
+    Is reply: the post answers another post.
+    """
     is_quote: bool
+    """
+    Is quote: the post quotes another post.
+    """
+    is_repost: bool | None = None
+    """
+    Is repost: always false on `/user-tweets`, whose window holds the account's original posts only.
+    """
+    is_note_post: bool
+    """
+    Is note post: true for a long post (an X Note), whose full text is in `text` and whose note is `note_id`.
+    """
     is_edited: bool | None = None
+    """
+    Edited: the post has more than one version.
+    """
     is_paid_promotion: bool | None = None
+    """
+    Is paid promotion: the author marked the post as a paid promotion.
+    """
     has_ai_generated_media: bool | None = None
+    """
+    The post's media is marked as AI-generated.
+    """
+    has_video: bool | None = None
+    """
+    Has video: true when `media` holds a video; animated GIFs do not count.
+    """
     media: list[TwitterMedia] | None = None
+    """
+    Media: images, and videos with their thumbnail, duration and files.
+    """
 
 
 class TwitterPostReference(BaseModel):
@@ -368,41 +495,156 @@ class TwitterPostReference(BaseModel):
 
 class TwitterProfileResponse(BaseModel):
     id: str
+    """
+    User ID: the account's numeric X id.
+    """
     handle: str | None = None
+    """
+    Username: the X handle, without the @.
+    """
     pinned_post_ids: list[str] | None = None
+    """
+    Pinned post IDs: the post the account pinned to its profile.
+    """
     name: str | None = None
+    """
+    Name: the account's display name.
+    """
     bio: str | None = None
+    """
+    Bio: the profile description.
+    """
     url: str | None = None
+    """
+    Profile URL on x.com.
+    """
     website_urls: list[TwitterProfileUrl] | None = None
+    """
+    Website: the link in the profile's website field.
+    """
     follower_count: int | None = None
+    """
+    Followers: how many accounts follow this one.
+    """
     following_count: int | None = None
+    """
+    Following: how many accounts this one follows.
+    """
     post_count: int | None = None
+    """
+    Posts count: the account's posts, replies and reposts.
+    """
+    media_count: int | None = None
+    """
+    Media count: how many of the account's posts hold a photo or video.
+    """
     subscriber_count: int | None = None
+    """
+    Subscribers to the account's paid subscription.
+    """
     creator_subscription_count: int | None = None
+    """
+    Creator subscriptions: paid subscriptions the account holds.
+    """
     highlighted_post_count: int | None = None
+    """
+    Highlights count: posts the account added to its Highlights tab.
+    """
     user_seed_post_count: int | None = None
+    """
+    Seed post count X reports for the account.
+    """
     business_affiliate_count: int | None = None
+    """
+    Business affiliates count: accounts affiliated with this business account.
+    """
     is_protected: bool | None = None
+    """
+    Protected: true when only approved followers see the account's posts.
+    """
     possibly_sensitive: bool | None = None
+    """
+    Possibly sensitive: X marks the account's media as possibly sensitive.
+    """
     is_blue_verified: bool | None = None
+    """
+    Blue verified: the account has the blue checkmark (X Premium).
+    """
     is_verified: bool | None = None
+    """
+    Legacy verified: the account kept a legacy verification checkmark.
+    """
     verification_reason: str | None = None
+    """
+    Verification reason: X's text on why the account is verified.
+    """
     has_hidden_subscriptions: bool | None = None
+    """
+    Hidden subscriptions: the account hides its subscriptions on its profile.
+    """
     can_highlight_posts: bool | None = None
+    """
+    Can highlight posts: the account can add posts to a Highlights tab.
+    """
     created_at: str | None = None
+    """
+    Account created: when the account joined X, ISO 8601 UTC.
+    """
     verified_at: str | None = None
+    """
+    Verified since: when the account's verification started, ISO 8601 UTC.
+    """
     birth_date: TwitterBirthDate | None = None
     location: str | None = None
+    """
+    Location: the free-text location on the profile.
+    """
     bio_entities: TwitterBioEntities | None = None
     identity_label: TwitterUserLabel | None = None
     verified_type: str | None = None
+    """
+    Verified type (account type): `Business` or `Government` for a gold or grey checkmark.
+    """
+    professional_type: str | None = None
+    """
+    Professional account type, `Business` or `Creator`; left out for a personal account.
+    """
+    professional_categories: list[str] | None = None
+    """
+    Professional categories the account picked, such as `Science & Technology`.
+    """
     translator_type: str | None = None
+    """
+    Translator type: the account's X translator role, `none` for most accounts.
+    """
     is_super_follow_eligible: bool | None = None
+    """
+    Super follow eligible: the account can offer paid subscriptions.
+    """
     parody_commentary_fan_label: str | None = None
+    """
+    Parody label: `Parody`, `Commentary`, `Fan` or `None`.
+    """
     is_profile_translatable: bool | None = None
+    """
+    Profile translatable: X offers a translation of the bio.
+    """
+    has_default_profile_image: bool | None = None
+    """
+    Default profile image: true when the account keeps X's anonymous default picture.
+    """
     profile_image_shape: str | None = None
+    """
+    Profile image shape: `Circle`, or `Square` for a business account.
+    """
     profile_image_url: str | None = None
+    """
+    Profile picture URL.
+    """
     banner_url: str | None = None
+    """
+    Banner image URL.
+    """
 
 
 class TwitterProfileUrl(BaseModel):
@@ -413,8 +655,17 @@ class TwitterProfileUrl(BaseModel):
 
 class TwitterReplyReference(BaseModel):
     post_id: str
+    """
+    Replied-to post: the id of the post this one answers.
+    """
     user_id: str | None = None
+    """
+    In reply to: the id of the account this post answers.
+    """
     handle: str | None = None
+    """
+    In reply to: the handle of the account this post answers.
+    """
     created_at: str
     author: TwitterUser | None = None
 
@@ -432,21 +683,69 @@ class TwitterTextEntity(BaseModel):
 
 class TwitterTweetResponse(BaseModel):
     id: str
+    """
+    Post ID: the post's numeric X id.
+    """
     conversation_id: str | None = None
+    """
+    Conversation ID: the id of the thread's first post.
+    """
     note_id: str | None = None
+    """
+    Note post: the id of the X Note that holds a long post's full text; set on long posts only.
+    """
     edit_history_ids: list[str] | None = None
+    """
+    Edit post IDs: the ids of every version of the post, oldest first.
+    """
     text: str | None = None
+    """
+    Text: the post's full text; for a long post, its whole Note.
+    """
     preview_text: str | None = None
+    """
+    The shorter text X shows before a long post is expanded.
+    """
     language: str | None = None
+    """
+    Language: the language code X detected for the text.
+    """
     url: str | None = None
+    """
+    Post URL on x.com.
+    """
     favorite_count: int | None = None
+    """
+    Like count.
+    """
     quote_count: int | None = None
+    """
+    Quote count.
+    """
     reply_count: int | None = None
+    """
+    Reply count.
+    """
     retweet_count: int | None = None
+    """
+    Repost count.
+    """
     bookmark_count: int | None = None
+    """
+    Bookmark count.
+    """
     view_count: int | None = None
+    """
+    View count; left out when X shows no count.
+    """
     possibly_sensitive: bool | None = None
+    """
+    Possibly sensitive: X marks the post's media as possibly sensitive.
+    """
     created_at: str
+    """
+    Created at: when the post was sent, ISO 8601 UTC.
+    """
     author: TwitterUser | None = None
     entities: TwitterEntities
     quoted_post: TwitterPostReference | None = None
@@ -457,13 +756,53 @@ class TwitterTweetResponse(BaseModel):
     community: TwitterCommunityReference | None = None
     preview_entities: TwitterEntities | None = None
     display_text_range: list[int] | None = None
+    """
+    Display text range: the start and end of the text X displays.
+    """
+    post_type: TwitterTweetResponsePostTypeValue
+    """
+    Post type: `reply` when it answers another post, else `quote` when it quotes one, else `post`.
+    """
     is_pinned: bool | None = None
+    """
+    Is pinned: the account pinned this post to its profile.
+    """
     is_reply: bool
+    """
+    Is reply: the post answers another post.
+    """
     is_quote: bool
+    """
+    Is quote: the post quotes another post.
+    """
+    is_repost: bool | None = None
+    """
+    Is repost: always false on `/user-tweets`, whose window holds the account's original posts only.
+    """
+    is_note_post: bool
+    """
+    Is note post: true for a long post (an X Note), whose full text is in `text` and whose note is `note_id`.
+    """
     is_edited: bool | None = None
+    """
+    Edited: the post has more than one version.
+    """
     is_paid_promotion: bool | None = None
+    """
+    Is paid promotion: the author marked the post as a paid promotion.
+    """
     has_ai_generated_media: bool | None = None
+    """
+    The post's media is marked as AI-generated.
+    """
+    has_video: bool | None = None
+    """
+    Has video: true when `media` holds a video; animated GIFs do not count.
+    """
     media: list[TwitterMedia] | None = None
+    """
+    Media: images, and videos with their thumbnail, duration and files.
+    """
 
 
 class TwitterUnavailableUser(BaseModel):
@@ -474,51 +813,169 @@ class TwitterUnavailableUser(BaseModel):
 class TwitterUrlEntity(BaseModel):
     display_url: str | None = None
     expanded_url: str | None = None
+    """
+    Expanded URL: the full link behind the t.co link.
+    """
     url: str | None = None
     indices: list[int] | None = None
 
 
 class TwitterUser(BaseModel):
     """
-    An X account: bio, website and bio links, location, verification, profile and banner images, and follower, following and post counts.
+    An X account: bio, website and bio links, location, verification, profile and banner images, follower, following and post counts, media count, and professional type and categories.
     """
 
     id: str
+    """
+    User ID: the account's numeric X id.
+    """
     handle: str | None = None
+    """
+    Username: the X handle, without the @.
+    """
     pinned_post_ids: list[str] | None = None
+    """
+    Pinned post IDs: the post the account pinned to its profile.
+    """
     name: str | None = None
+    """
+    Name: the account's display name.
+    """
     bio: str | None = None
+    """
+    Bio: the profile description.
+    """
     url: str | None = None
+    """
+    Profile URL on x.com.
+    """
     website_urls: list[TwitterProfileUrl] | None = None
+    """
+    Website: the link in the profile's website field.
+    """
     follower_count: int | None = None
+    """
+    Followers: how many accounts follow this one.
+    """
     following_count: int | None = None
+    """
+    Following: how many accounts this one follows.
+    """
     post_count: int | None = None
+    """
+    Posts count: the account's posts, replies and reposts.
+    """
+    media_count: int | None = None
+    """
+    Media count: how many of the account's posts hold a photo or video.
+    """
     subscriber_count: int | None = None
+    """
+    Subscribers to the account's paid subscription.
+    """
     creator_subscription_count: int | None = None
+    """
+    Creator subscriptions: paid subscriptions the account holds.
+    """
     highlighted_post_count: int | None = None
+    """
+    Highlights count: posts the account added to its Highlights tab.
+    """
     user_seed_post_count: int | None = None
+    """
+    Seed post count X reports for the account.
+    """
     business_affiliate_count: int | None = None
+    """
+    Business affiliates count: accounts affiliated with this business account.
+    """
     is_protected: bool | None = None
+    """
+    Protected: true when only approved followers see the account's posts.
+    """
     possibly_sensitive: bool | None = None
+    """
+    Possibly sensitive: X marks the account's media as possibly sensitive.
+    """
     is_blue_verified: bool | None = None
+    """
+    Blue verified: the account has the blue checkmark (X Premium).
+    """
     is_verified: bool | None = None
+    """
+    Legacy verified: the account kept a legacy verification checkmark.
+    """
     verification_reason: str | None = None
+    """
+    Verification reason: X's text on why the account is verified.
+    """
     has_hidden_subscriptions: bool | None = None
+    """
+    Hidden subscriptions: the account hides its subscriptions on its profile.
+    """
     can_highlight_posts: bool | None = None
+    """
+    Can highlight posts: the account can add posts to a Highlights tab.
+    """
     created_at: str | None = None
+    """
+    Account created: when the account joined X, ISO 8601 UTC.
+    """
     verified_at: str | None = None
+    """
+    Verified since: when the account's verification started, ISO 8601 UTC.
+    """
     birth_date: TwitterBirthDate | None = None
     location: str | None = None
+    """
+    Location: the free-text location on the profile.
+    """
     bio_entities: TwitterBioEntities | None = None
     identity_label: TwitterUserLabel | None = None
     verified_type: str | None = None
+    """
+    Verified type (account type): `Business` or `Government` for a gold or grey checkmark.
+    """
+    professional_type: str | None = None
+    """
+    Professional account type, `Business` or `Creator`; left out for a personal account.
+    """
+    professional_categories: list[str] | None = None
+    """
+    Professional categories the account picked, such as `Science & Technology`.
+    """
     translator_type: str | None = None
+    """
+    Translator type: the account's X translator role, `none` for most accounts.
+    """
     is_super_follow_eligible: bool | None = None
+    """
+    Super follow eligible: the account can offer paid subscriptions.
+    """
     parody_commentary_fan_label: str | None = None
+    """
+    Parody label: `Parody`, `Commentary`, `Fan` or `None`.
+    """
     is_profile_translatable: bool | None = None
+    """
+    Profile translatable: X offers a translation of the bio.
+    """
+    has_default_profile_image: bool | None = None
+    """
+    Default profile image: true when the account keeps X's anonymous default picture.
+    """
     profile_image_shape: str | None = None
+    """
+    Profile image shape: `Circle`, or `Square` for a business account.
+    """
     profile_image_url: str | None = None
+    """
+    Profile picture URL.
+    """
     banner_url: str | None = None
+    """
+    Banner image URL.
+    """
 
 
 class TwitterUserLabel(BaseModel):
@@ -551,8 +1008,12 @@ class TwitterVideoVariant(BaseModel):
     bitrate: int | None = None
 
 
+PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
+TwitterPostPostTypeValue: TypeAlias = Annotated[TwitterPostPostType | str, PREFER_ENUM]
+TwitterTweetResponsePostTypeValue: TypeAlias = Annotated[
+    TwitterTweetResponsePostType | str, PREFER_ENUM
+]
+
+
 TwitterCommunityTweetsResponse.model_rebuild()
 TwitterPost.model_rebuild()
-
-
-PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

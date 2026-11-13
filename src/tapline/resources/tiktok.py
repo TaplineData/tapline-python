@@ -268,7 +268,7 @@ class Tiktok(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileResponse:
-        """Returns a profile by handle or numeric user ID, including its bio, avatars, verification, privacy, follower count, following count, likes, and video count. Costs 1 credit.
+        """Returns a profile by handle or numeric user ID, including its bio, website, category, avatars, verification, privacy, follower count, following count, likes, and video count. Costs 1 credit.
 
         Args:
             cache_max_age: Ignored. Every request fetches a fresh response and is
@@ -298,7 +298,7 @@ class Tiktok(AsyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileVideosResponse:
-        """Returns up to 35 videos from a profile, sorted by newest or most popular. Costs 1 credit.
+        """Returns up to 35 videos per page from a profile, newest or most popular first; send `max_cursor` for the next page. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or
@@ -688,7 +688,7 @@ class SyncTiktok(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileResponse:
-        """Returns a profile by handle or numeric user ID, including its bio, avatars, verification, privacy, follower count, following count, likes, and video count. Costs 1 credit.
+        """Returns a profile by handle or numeric user ID, including its bio, website, category, avatars, verification, privacy, follower count, following count, likes, and video count. Costs 1 credit.
 
         Args:
             cache_max_age: Ignored. Every request fetches a fresh response and is
@@ -718,7 +718,7 @@ class SyncTiktok(SyncAPIResource):
         user_id: str | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> TikTokProfileVideosResponse:
-        """Returns up to 35 videos from a profile, sorted by newest or most popular. Costs 1 credit.
+        """Returns up to 35 videos per page from a profile, newest or most popular first; send `max_cursor` for the next page. Costs 1 credit.
 
         Args:
             handle: The TikTok handle, with or without a leading @. Send `handle` or

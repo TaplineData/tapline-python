@@ -482,11 +482,26 @@ class TikTokCommentsResponse(BaseModel):
 class TikTokContentRestrictions(BaseModel):
     warning_text: str | None = None
     allow_share: bool | None = None
+    """
+    Share setting: others may share the video.
+    """
     allow_comment: bool | None = None
+    """
+    Comment setting: TikTok accepts comments on the video.
+    """
     allow_repost: bool | None = None
+    """
+    Repost setting: others may repost the video.
+    """
     allow_download: bool | None = None
     allow_duet: bool | None = None
+    """
+    Duet setting: others may duet the video.
+    """
     allow_stitch: bool | None = None
+    """
+    Stitch setting: others may stitch the video.
+    """
     allow_react: bool | None = None
     allow_music: bool | None = None
     allow_danmaku: bool | None = None
@@ -494,6 +509,9 @@ class TikTokContentRestrictions(BaseModel):
     allow_create_sticker: bool | None = None
     is_private: bool | None = None
     is_deleted: bool | None = None
+    """
+    Deleted. App answers only.
+    """
     is_under_review: bool | None = None
     is_prohibited: bool | None = None
     download_status: int | None = None
@@ -504,6 +522,9 @@ class TikTokContentRestrictions(BaseModel):
     warnings: list[TikTokContentWarning] | None = None
     sound_exemption: int | None = None
     comment_audience: int | None = None
+    """
+    Comment setting: who may comment, as TikTok's code. 0 is everyone and 3 is comments off.
+    """
     share_type: int | None = None
     privacy_code: int | None = None
     is_friends_only: bool | None = None
@@ -651,37 +672,67 @@ class TikTokMediaResource(BaseModel):
     width: int | None = None
     height: int | None = None
     data_size: int | None = None
+    """
+    The file's size in bytes: the video size on a video file.
+    """
     file_hash: str | None = None
     file_cs: str | None = None
 
 
 class TikTokMusic(BaseModel):
     id: str | None
+    """
+    Music ID.
+    """
     extracted_from_aweme_id: str | None = None
     title: str | None = None
+    """
+    Music title.
+    """
     language: str | None = None
     video_count: int | None = None
     restrictions: TikTokMusicRestrictions | None = None
     create_time: int | None = None
     author: str | None
+    """
+    Music author name.
+    """
     owner: TikTokUser | None = None
     artists: list[TikTokUser] | None = None
     matched_song: TikTokMatchedSong | None = None
     external_songs: list[TikTokExternalSong] | None = None
     album: str | None = None
     duration_seconds: float | None = None
+    """
+    Music duration in seconds.
+    """
     is_original: bool | None = None
+    """
+    Original sound: the poster recorded the sound.
+    """
     is_original_sound: bool | None = None
     is_copyrighted: bool | None = None
+    """
+    Music is copyrighted.
+    """
     is_commerce_music: bool | None = None
+    """
+    Music is commercial: cleared for use in business videos.
+    """
     is_unlimited_music: bool | None = None
     is_author_artist: bool | None = None
     is_label_supplied: bool | None = None
     theme_tags: list[str] | None = None
     cover_large: TikTokMediaResource | None = None
+    """
+    Music cover URL.
+    """
     cover_medium: TikTokMediaResource | None = None
     cover_thumb: TikTokMediaResource | None = None
     play: TikTokMediaResource | None = None
+    """
+    Music URL: the audio file.
+    """
 
 
 class TikTokMusicRestrictions(BaseModel):
@@ -714,6 +765,10 @@ class TikTokPhoto(BaseModel):
 
 
 class TikTokPhotoPost(BaseModel):
+    """
+    Images: a photo post's title and photos.
+    """
+
     title: str | None = None
     text_language: str | None = None
     photos: list[TikTokPhoto]
@@ -746,8 +801,17 @@ class TikTokProfileResponse(BaseModel):
 
 class TikTokProfileVideosResponse(BaseModel):
     videos: list[TikTokVideo]
+    """
+    Up to 35 videos and photo posts per page.
+    """
     max_cursor: str | None
+    """
+    Send as `max_cursor` for the next page. Null on the last page.
+    """
     has_more: bool
+    """
+    Another page exists.
+    """
 
 
 class TikTokRelatedSearch(BaseModel):
@@ -783,12 +847,33 @@ class TikTokStatistics(BaseModel):
     """
 
     comment_count: int | None = None
+    """
+    Comment count.
+    """
     digg_count: int | None = None
+    """
+    Like count.
+    """
     play_count: int | None = None
+    """
+    View count.
+    """
     share_count: int | None = None
+    """
+    Share count.
+    """
     collect_count: int | None = None
+    """
+    Save count: how many accounts saved the video.
+    """
     repost_count: int | None = None
+    """
+    Repost count.
+    """
     download_count: int | None = None
+    """
+    Download count. App answers only.
+    """
     forward_count: int | None = None
     whatsapp_share_count: int | None = None
     engagement_rate: float | None = None
@@ -853,52 +938,127 @@ class TikTokTrendingFeedResponse(BaseModel):
 
 class TikTokUser(BaseModel):
     """
-    A TikTok account: nickname, bio (signature), bio link (bio_url), contact emails from the bio (signature_emails), verification, avatars, and follower, following, like and video counts.
+    A TikTok account: name (nickname), bio (signature), website (bio_url), contact emails from the bio (signature_emails), category, verified, private, business, organization and TikTok Shop flags, comment, duet, stitch and download settings, avatars, and follower, following, like, liked-video, friend and video counts.
     """
 
     uid: str | None
+    """
+    User ID: the account's numeric id.
+    """
     unique_id: str | None
+    """
+    Username: the handle, without the @.
+    """
     short_id: str | None = None
     instagram_id: str | None = None
     sec_uid: str | None = None
+    """
+    Secondary user ID (secUid), which TikTok's list pages take.
+    """
     live_room_id: str | None = None
     nickname: str | None = None
+    """
+    Name: the display name.
+    """
     signature: str | None = None
+    """
+    Bio: the profile text.
+    """
     verification_description: str | None = None
     language: str | None = None
+    """
+    Language: the account's app language code.
+    """
     bio_url: str | None = None
+    """
+    Website: the link in the bio.
+    """
     follower_count: int | None = None
+    """
+    Followers: how many accounts follow this one.
+    """
     following_count: int | None = None
+    """
+    Following: how many accounts this one follows.
+    """
     total_favorited: int | None = None
+    """
+    Likes count: likes on all the account's videos.
+    """
     aweme_count: int | None = None
+    """
+    Videos count: the account's public videos and photo posts.
+    """
     favoriting_count: int | None = None
+    """
+    Liked videos count: videos this account liked.
+    """
     friend_count: int | None = None
+    """
+    Friends count: accounts that follow each other with this one.
+    """
     like_engagement_rate: float | None = None
     is_verified: bool | None = None
+    """
+    Verified: TikTok shows the verified badge.
+    """
     is_private: bool | None = None
+    """
+    Private account.
+    """
     has_active_story: bool | None = None
     following_visibility: int | None = None
     is_embed_banned: bool | None = None
     is_hidden_from_search: bool | None = None
     mention_status: int | None = None
     created_at: int | None = None
+    """
+    Account created, in Unix seconds.
+    """
     nickname_modified_at: str | None = None
     unique_id_modified_at: str | None = None
     musician: TikTokMusician | None = None
     youtube_channel: TikTokLinkedYoutubeChannel | None = None
     twitter: TikTokLinkedTwitterAccount | None = None
     region: str | None = None
+    """
+    Location: the account's country code. App answers only.
+    """
     account_region: str | None = None
     comment_setting: int | None = None
+    """
+    Comment setting: who may comment on the account's videos, as TikTok's code.
+    """
     duet_setting: int | None = None
+    """
+    Duet setting: who may duet the account's videos, as TikTok's code.
+    """
     stitch_setting: int | None = None
+    """
+    Stitch setting: who may stitch the account's videos, as TikTok's code.
+    """
     download_setting: int | None = None
+    """
+    Download setting: whether others may save the account's videos, as TikTok's code.
+    """
     profile_embed_permission: int | None = None
     is_business: bool | None = None
+    """
+    Business account.
+    """
     business_category: str | None = None
+    """
+    Category: the business account's category.
+    """
     is_seller: bool | None = None
+    """
+    TikTok Shop seller.
+    """
     is_live_seller: bool | None = None
     is_organization: bool | None = None
+    """
+    Organization: the account belongs to an organization.
+    """
     is_favorites_public: bool | None = None
     is_star: bool | None = None
     commerce_level: int | None = None
@@ -910,8 +1070,14 @@ class TikTokUser(BaseModel):
     avatar_thumb: TikTokMediaResource | None = None
     avatar_medium: TikTokMediaResource | None = None
     avatar_larger: TikTokMediaResource | None = None
+    """
+    Profile picture, 1080 px.
+    """
     covers: list[TikTokMediaResource] | None = None
     videos: list[TikTokVideo] | None = None
+    """
+    Recent posts: the account's videos, where the answer holds them.
+    """
 
 
 class TikTokUserSearchResponse(BaseModel):
@@ -922,51 +1088,108 @@ class TikTokUserSearchResponse(BaseModel):
 
 class TikTokVideo(BaseModel):
     """
-    A TikTok video: description text, statistics, media files, music, hashtags, and its author's account with follower counts.
+    A TikTok video or photo post: description text, language, hashtags, mentions, place, pinned and ad flags, statistics, media files, music, settings, and its author's account with follower counts.
     """
 
     aweme_id: str | None
+    """
+    Video ID.
+    """
     group_id: str | None = None
     poll_id: str | None = None
     description: str | None = None
+    """
+    Text: the caption.
+    """
     description_language: str | None = None
+    """
+    Language of the text.
+    """
     search_description: str | None = None
     search_description_language: str | None = None
     url: str | None
+    """
+    Video URL.
+    """
     share_url: str | None = None
+    """
+    Share URL. App answers only.
+    """
     statistics: TikTokStatistics | None = None
     restrictions: TikTokContentRestrictions
+    """
+    Settings: duet, stitch, comment, share and repost settings, and the private, review and deleted states.
+    """
     create_time: int | None = None
+    """
+    Created at, in Unix seconds.
+    """
     create_time_utc: str | None = None
+    """
+    Created at, in UTC.
+    """
     last_edited_at: str | None = None
     author: TikTokUser | None = None
     music: TikTokMusic | None = None
+    """
+    Music: its ID, title, author name, duration, URL, cover, and original sound, copyrighted and commercial flags.
+    """
     added_sound: TikTokMusic | None = None
     text_entities: list[TikTokTextEntity]
+    """
+    Mentions and hashtags in the text, with their positions. Type 0 is a mention (`unique_id`), type 1 a hashtag.
+    """
     hashtags: list[TikTokHashtag]
+    """
+    Hashtags in the text.
+    """
     tagged_users: list[TikTokUser] | None = None
     sponsors: list[TikTokUser] | None = None
     advertisement: TikTokAdvertisement | None = None
     products: list[TikTokProduct] | None = None
     anchors: list[TikTokAnchor] | None = None
     location: TikTokLocation | None = None
+    """
+    Location name and address of the tagged place.
+    """
     playlist: TikTokPlaylist | None = None
     sticker: TikTokSticker | None = None
     effects: list[TikTokEffect] | None = None
     follow_up: TikTokFollowUpRelationship | None = None
     region: str | None = None
+    """
+    Region: the poster's country code. App answers only.
+    """
     content_type: str
+    """
+    Content type: `video` or `multi_photo` (a photo post).
+    """
     post_type_code: int | None = None
+    """
+    Aweme type: TikTok's aweme_type code. 0 is a video and 150 a photo post.
+    """
     category_code: int | None = None
     branded_content_type: int | None = None
+    """
+    Paid partnership: TikTok's branded content code. App answers only.
+    """
     branded_content_label: str | None = None
+    """
+    Paid partnership label, for example `Paid partnership`. App answers only.
+    """
     ai_labels: TikTokAiLabels | None = None
     text_overlays: list[TikTokTextOverlay] | None = None
+    """
+    Sticker texts: the text stickers on the video.
+    """
     is_ad: bool | None
     is_official_item: bool | None = None
     is_original_item: bool | None = None
     is_memory_post: bool | None = None
     is_pinned: bool | None = None
+    """
+    Is pinned to the top of the profile. On /profile/videos it is false on every video that is not pinned.
+    """
     is_paid_content: bool | None = None
     has_promotional_music: bool | None = None
     music_start_time_ms: int | None = None
@@ -978,6 +1201,9 @@ class TikTokVideo(BaseModel):
     related_searches: list[TikTokRelatedSearch] | None = None
     anchor_extras: str | None = None
     photo_post: TikTokPhotoPost | None = None
+    """
+    Images: the photos of a photo post.
+    """
     media: TikTokVideoMedia | None = None
 
 
@@ -989,24 +1215,60 @@ class TikTokVideoMedia(BaseModel):
     original_language: str | None = None
     is_muted: bool | None = None
     width: int | None = None
+    """
+    Video width in pixels.
+    """
     height: int | None = None
+    """
+    Video height in pixels.
+    """
     duration_ms: int | None = None
+    """
+    Video duration in milliseconds.
+    """
     ratio: str | None = None
+    """
+    Video definition, for example `540p`.
+    """
     has_original_audio: bool | None = None
     has_watermark: bool | None = None
+    """
+    Has watermark, as TikTok's app reports it. App answers only.
+    """
     is_hd_bitrate: bool | None = None
     is_custom_cover: bool | None = None
     cover: TikTokMediaResource | None = None
+    """
+    Thumbnail: the cover image.
+    """
     origin_cover: TikTokMediaResource | None = None
+    """
+    Original cover image.
+    """
     dynamic_cover: TikTokMediaResource | None = None
+    """
+    Dynamic cover: the animated preview.
+    """
     animated_cover: TikTokMediaResource | None = None
     ai_dynamic_cover: TikTokMediaResource | None = None
     ai_dynamic_cover_backup: TikTokMediaResource | None = None
     playback_variants: list[TikTokVideoVariant]
+    """
+    Video: the playable files, each with its format, codec, bitrate and size (`data_size`).
+    """
     audio_variants: list[TikTokAudioVariant]
     download: TikTokMediaResource | None = None
+    """
+    Download URL: the file TikTok offers to save.
+    """
     download_no_watermark: TikTokMediaResource | None = None
+    """
+    Video without watermark. App answers only.
+    """
     captions: list[TikTokCaption]
+    """
+    Subtitles: the caption tracks, each with its language and URL.
+    """
     audio_loudness: float | None = None
     audio_peak: float | None = None
 
@@ -1023,16 +1285,28 @@ class TikTokVideoVariant(BaseModel):
     width: int | None = None
     height: int | None = None
     data_size: int | None = None
+    """
+    The file's size in bytes: the video size on a video file.
+    """
     file_hash: str | None = None
     file_cs: str | None = None
     variant: str
     codec: str | None = None
     format: str | None = None
+    """
+    Video format: the file's container.
+    """
     bitrate: int | None = None
+    """
+    Video bitrate in bits per second.
+    """
     fps: float | None = None
     quality_type: int | None = None
     gear_name: str | None = None
     quality_label: str | None = None
+
+
+PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
 
 
 TikTokCollectionVideosResponse.model_rebuild()
@@ -1048,6 +1322,3 @@ TikTokProfileVideosResponse.model_rebuild()
 TikTokSongVideosResponse.model_rebuild()
 TikTokTrendingFeedResponse.model_rebuild()
 TikTokUser.model_rebuild()
-
-
-PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]

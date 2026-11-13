@@ -424,6 +424,9 @@ class InstagramCaption(BaseModel):
     author_id: str | None = None
     media_id: str | None = None
     text: str
+    """
+    Text of the caption.
+    """
     translated_text: str | None = None
     status: str | None = None
     created_at: str | None = None
@@ -431,6 +434,9 @@ class InstagramCaption(BaseModel):
     mentions: list[str] | None = None
     content_type: str | None = None
     is_edited: bool | None = None
+    """
+    Edited: the caption was changed after posting.
+    """
     has_translation: bool | None = None
 
 
@@ -462,6 +468,16 @@ class InstagramDescription(BaseModel):
 
 class InstagramEmbedResponse(BaseModel):
     html: str
+
+
+class InstagramFacebookPage(BaseModel):
+    """
+    The Facebook page linked to an Instagram account (its Facebook link).
+    """
+
+    id: str
+    name: str | None = None
+    url: str | None = None
 
 
 class InstagramHighlight(BaseModel):
@@ -512,14 +528,29 @@ class InstagramMedia(BaseModel):
     commerciality_status: str | None = None
     tagged_users: list[InstagramTag] | None = None
     type: InstagramMediaTypeValue
+    """
+    Image or video.
+    """
     width: int | None = None
     height: int | None = None
     duration_seconds: float | None = None
+    """
+    Video duration in seconds.
+    """
     has_audio: bool | None = None
+    """
+    Has audio: the video has a sound track.
+    """
     is_download_eligible: bool | None = None
     preview_placeholder: str | None = None
     images: list[InstagramMediaImage]
+    """
+    Image: the photo, or a video's cover (thumbnail), in each size Instagram sends.
+    """
     videos: list[InstagramVideo]
+    """
+    Video files, in each size Instagram sends.
+    """
     audio_url: str | None = None
 
 
@@ -538,13 +569,28 @@ class InstagramMetrics(BaseModel):
     """
 
     like_count: int | None = None
+    """
+    Like count.
+    """
     comment_count: int | None = None
+    """
+    Comment count.
+    """
     play_count: int | None = None
+    """
+    View count: the video's plays.
+    """
     instagram_play_count: int | None = None
+    """
+    Instagram view count: the video's plays on Instagram alone.
+    """
     facebook_play_count: int | None = None
     facebook_like_count: int | None = None
     facebook_comment_count: int | None = None
     view_count: int | None = None
+    """
+    View count Instagram sends beside the plays, when it sends one.
+    """
     repost_count: int | None = None
     remix_count: int | None = None
     premium_reaction_count: int | None = None
@@ -573,35 +619,77 @@ class InstagramPost(BaseModel):
     """
 
     id: str
+    """
+    Post ID.
+    """
     shortcode: str
+    """
+    Post code: the code in the post's URL.
+    """
     facebook_id: str | None = None
     title: str | None = None
     caption: InstagramCaption | None = None
+    """
+    Text: the caption, its hashtags, mentions and edit flag.
+    """
     accessibility_text: str | None = None
     language: str | None = None
+    """
+    Language of the caption, when Instagram sends it.
+    """
     url: str
+    """
+    Post URL.
+    """
     metrics: InstagramMetrics
+    """
+    Engagement: like, comment and view counts.
+    """
     restrictions: InstagramRestrictions | None = None
+    """
+    Commenting disabled and other limits on the post.
+    """
     is_live: bool | None = None
     taken_at: str | None = None
+    """
+    Created at: when the post was published.
+    """
     author: InstagramUser | None = None
+    """
+    Author: username, name, ID, verified flag and picture; bio, followers, posts count and type when the author owns the profile asked for.
+    """
     collaborators: list[InstagramUser] | None = None
     location: InstagramLocation | None = None
     audio: InstagramAudio | None = None
+    """
+    Music: the song or original audio a reel uses.
+    """
     topics: list[InstagramTopic] | None = None
     tagged_users: list[InstagramTag] | None = None
+    """
+    Tagged people.
+    """
     facebook_tagged_users: list[InstagramTag] | None = None
     attributions: list[InstagramAttribution] | None = None
     type: InstagramPostTypeValue
+    """
+    Post type: image, video or carousel.
+    """
     product_type: str | None = None
     subtype: str | None = None
     available_autodub_languages: list[str] | None = None
     sponsorship: InstagramSponsorship | None = None
+    """
+    Paid partnership: the paid partnership flag and sponsor tags.
+    """
     ai_label: str | None = None
     ai_detection_method: str | None = None
     is_pinned: bool | None = None
     is_quiet: bool | None = None
     media: list[InstagramMedia]
+    """
+    Media: each image or video of the post, one per carousel slide (images), with thumbnails, video duration and has audio.
+    """
 
 
 class InstagramPostCountResponse(BaseModel):
@@ -623,64 +711,195 @@ class InstagramPostResponse(BaseModel):
 
 class InstagramProfile(BaseModel):
     """
-    An Instagram account: bio, bio links, follower, following and post counts, verification, category, business contact (public_email, public_phone_number, biography_emails), address and profile pictures.
+    An Instagram account: bio, bio links, Facebook link, follower, following and post counts, verification, category, business contact (public_email, public_phone_number, biography_emails), address, account flags and profile pictures.
     """
 
     id: str
+    """
+    User ID: the account's numeric Instagram id.
+    """
     handle: str
+    """
+    Username, without the @.
+    """
     facebook_id: str | None = None
+    """
+    Facebook ID of the Instagram account.
+    """
     name: str | None = None
+    """
+    Display name.
+    """
     biography: str | None = None
+    """
+    Bio text.
+    """
     external_url: str | None = None
+    """
+    Website: the bio's main link.
+    """
     external_redirect_url: str | None = None
+    """
+    The website link through Instagram's l.instagram.com redirect.
+    """
     bio_links: list[InstagramBioLink] | None = None
+    """
+    Bio links: every link in the bio.
+    """
     follower_count: int | None = None
+    """
+    Followers count.
+    """
     following_count: int | None = None
+    """
+    Following count.
+    """
     post_count: int | None = None
+    """
+    Posts count.
+    """
     reel_count: int | None = None
+    """
+    Reel count; logged-out Instagram does not send it, so it is null. See has_reels.
+    """
     highlight_count: int | None = None
+    """
+    Highlights count: how many story highlights the profile lists.
+    """
     longform_video_count: int | None = None
+    """
+    IGTV video count; logged-out Instagram does not send it, so it is null.
+    """
     engagement_rate: float | None = None
     is_private: bool | None = None
+    """
+    Private account.
+    """
     is_verified: bool | None = None
+    """
+    Verified (blue check).
+    """
     is_memorialized: bool | None = None
+    """
+    Memorialized account.
+    """
     is_embeds_disabled: bool | None = None
+    """
+    Embeds disabled: the account blocks embedding its posts.
+    """
     is_country_blocked: bool | None = None
     has_active_story: bool | None = None
+    """
+    Latest reel media: whether a story is up now (posted in the last 24 hours).
+    """
     latest_reel_at: str | None = None
+    """
+    Latest reel media: when the story that is up was posted; null when none is up.
+    """
     biography_entities: list[InstagramBiographyEntity] | None = None
     address: InstagramAddress | None = None
     related_profiles: list[InstagramUser] | None = None
+    """
+    Related profiles (similar accounts), when Instagram sends them.
+    """
+    facebook_page: InstagramFacebookPage | None = None
+    """
+    Facebook link: the Facebook page linked to the account.
+    """
     pronouns: list[str] | None = None
     category: str | None = None
+    """
+    Category of a business or creator account.
+    """
     business_category: str | None = None
     contact_method: str | None = None
+    """
+    Contact method, when Instagram sends it (not to logged-out visitors).
+    """
     public_email: str | None = None
+    """
+    Business email the account shows, when Instagram sends it (not to logged-out visitors).
+    """
     biography_emails: list[str] | None = None
+    """
+    Email addresses written in the bio.
+    """
     public_phone_number: str | None = None
+    """
+    Business phone the account shows, when Instagram sends it (not to logged-out visitors).
+    """
     account_type: int | None = None
+    """
+    Account type: 1 personal, 2 business, 3 creator.
+    """
     account_label: str | None = None
+    threads_badge_label: str | None = None
+    """
+    Text post app badge label: the Threads username on the profile's Threads badge.
+    """
     badges: list[Any] | None = None
     is_business: bool | None = None
+    """
+    Business account.
+    """
     is_professional: bool | None = None
+    """
+    Professional account: a business or creator account.
+    """
     is_unpublished: bool | None = None
+    """
+    Unpublished account.
+    """
     is_joined_recently: bool | None = None
+    """
+    Recently joined, when Instagram sends it (not to logged-out visitors).
+    """
+    has_reels: bool | None = None
+    """
+    Has reels: the account has posted reels.
+    """
     has_channel: bool | None = None
+    """
+    Has channel (broadcast channel), when Instagram sends it (not to logged-out visitors).
+    """
     has_longform_media: bool | None = None
     is_threads_badge_shown: bool | None = None
+    """
+    Show text post app badge: the profile shows its Threads badge.
+    """
     is_account_transparency_shown: bool | None = None
+    """
+    Account transparency details shown: the profile shows its About this account details.
+    """
     profile_images: list[InstagramImage] | None = None
+    """
+    Profile picture URLs: the standard picture, then the HD one.
+    """
     recent_longform_videos: list[InstagramPost] | None = None
 
 
 class InstagramProfileResponse(BaseModel):
     profile: InstagramProfile
     recent_posts: InstagramPostPage | None
+    """
+    Recent posts: the account's newest 12 grid posts. Pass pagination.next_cursor as next_max_id to /v1/instagram/user/posts for the next 12.
+    """
     recent_posts_status: InstagramProfileResponseRecentPostsStatusValue
+    recent_reels: InstagramPostPage | None
+    """
+    Recent reels: the newest 12 reels on the account's reels tab. Pass pagination.next_cursor as max_id to /v1/instagram/user/reels for more.
+    """
+    highlights: list[InstagramHighlight]
+    """
+    Highlights: the account's story highlights.
+    """
 
 
 class InstagramRestrictions(BaseModel):
     comments_disabled: bool | None = None
+    """
+    Commenting disabled: the author turned comments off.
+    """
     sharing_restricted: bool | None = None
     media_unavailable_reason: str | None = None
     deleted_reason: int | None = None
@@ -691,6 +910,9 @@ class InstagramSponsorship(BaseModel):
     sponsors: list[InstagramUser] | None = None
     is_ad: bool | None = None
     is_paid_partnership: bool | None = None
+    """
+    Paid partnership: the post carries the paid partnership label.
+    """
 
 
 class InstagramStory(BaseModel):
@@ -769,21 +991,48 @@ class InstagramUser(BaseModel):
     """
 
     id: str
+    """
+    User ID: the account's numeric Instagram id.
+    """
     handle: str | None = None
+    """
+    Username, without the @.
+    """
     facebook_id: str | None = None
     messaging_facebook_id: str | None = None
     name: str | None = None
+    """
+    Display name.
+    """
     biography: str | None = None
+    """
+    Bio text; sent on a post's author when the author owns the profile asked for.
+    """
     subscriber_count: int | None = None
     follower_count: int | None = None
+    """
+    Followers; sent on a post's author when the author owns the profile asked for.
+    """
     post_count: int | None = None
+    """
+    Posts count; sent on a post's author when the author owns the profile asked for.
+    """
     is_verified: bool | None = None
+    """
+    Verified (blue check).
+    """
     is_private: bool | None = None
     is_embeds_disabled: bool | None = None
     is_unpublished: bool | None = None
     badges: list[Any] | None = None
     account_type: int | None = None
+    """
+    Account type: 1 personal, 2 business, 3 creator.
+    """
     profile_image_url: str | None = None
+    """
+    Profile picture URL.
+    """
     profile_image_id: str | None = None
     profile_images: list[InstagramImage] | None = None
 
@@ -794,8 +1043,17 @@ class InstagramUserPostsResponse(BaseModel):
     """
 
     profile: InstagramProfile
+    """
+    The account the posts belong to, with its followers and posts count.
+    """
     posts: list[InstagramPost]
+    """
+    Posts: 12 per page, in the profile grid's order.
+    """
     pagination: InstagramPagination
+    """
+    Pass next_cursor as next_max_id for the next page while has_more is true.
+    """
 
 
 class InstagramUserReelsResponse(BaseModel):

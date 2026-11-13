@@ -350,30 +350,88 @@ class IndeedCompany(BaseModel):
     key: str
     name: str | None
     description: str | None
+    """
+    Tagline: the company's one-line blurb.
+    """
     about: str | None
+    """
+    Description: the long About text of the company page.
+    """
     page_url: str | None
     page_path: str | None
     reviews_url: str | None
     salaries_url: str | None
     links: IndeedCompanyLinks
     reported_pay: IndeedReportedPay
+    """
+    Reported pay: the average salary per pay period from employees' reports in the requested country.
+    """
     ratings: IndeedCompanyRatings
+    """
+    Employer rating from 1 to 5 with its count, overall and by category.
+    """
     happiness: IndeedCompanyHappiness
+    """
+    Happiness scores from 0 to 100 with response counts, overall and by factor.
+    """
     similar_companies: list[IndeedCompanySummary]
+    """
+    Similar companies Indeed shows beside this one.
+    """
     parent_company: IndeedParentCompany | None
+    """
+    Parent company, when Indeed lists this one as its subsidiary.
+    """
     industry: str | None
     industry_label: str | None
     sectors: list[str]
+    """
+    Industry sectors, by name.
+    """
     size: IndeedCodeLabel
+    """
+    Size band: the employee count range.
+    """
     revenue: IndeedCodeLabel
+    """
+    Estimated revenue range.
+    """
     founded_year: int | None
+    """
+    Founded: the year the company was founded.
+    """
     headquarters: list[str]
+    """
+    Headquarters location: the head office address as the company wrote it.
+    """
+    headquarters_address: IndeedHeadquartersAddress | None
+    """
+    Headquarters street, city, region, postal code and country, read from the first `headquarters` entry.
+    """
     profile_sections: list[IndeedProfileSection]
+    """
+    Overview sections the company wrote for its page.
+    """
     ceo: IndeedCeo
+    """
+    CEO: name, photo, start date and employees' approval.
+    """
     is_claimed: bool | None
+    """
+    Claimed profile: true when the company manages its Indeed page.
+    """
     brand_color: str | None
+    """
+    Brand color, as a hex code.
+    """
     stock_symbol: str | None
+    """
+    Ticker: the company's stock symbol.
+    """
     images: IndeedCompanyImages
+    """
+    Logo, cover image and wide logo.
+    """
 
 
 class IndeedCompanyDirectory(BaseModel):
@@ -436,6 +494,10 @@ class IndeedCompanyLinks(BaseModel):
     """
 
     website: str | None
+    careers_url: str | None
+    """
+    The company's careers page: the first custom link named or pathed for careers or jobs.
+    """
     custom_links: list[IndeedCustomLink]
     facebook: str | None
     twitter: str | None
@@ -544,39 +606,114 @@ class IndeedHappinessScore(BaseModel):
     count: int | None
 
 
+class IndeedHeadquartersAddress(BaseModel):
+    """
+    The parts of the first `headquarters` entry its text names; a part it leaves out is null.
+    """
+
+    street: str | None
+    """
+    Street lines before the city, as written (`400 Queen St W`).
+    """
+    city: str | None
+    region: str | None
+    """
+    US state or Canadian province, by name (`Quebec`).
+    """
+    postal_code: str | None
+    """
+    Canadian, US or UK postal code (`S7K 1J5`, `97035`).
+    """
+    country_code: str | None
+    """
+    ISO 3166-1 alpha-2 country, from a country name, postal code or region (`CA`).
+    """
+
+
 class IndeedJob(BaseModel):
     """
     An Indeed job listing with company, location, pay, schedule, and application details.
     """
 
     key: str
+    """
+    Job ID on Indeed.
+    """
     title: str | None
     standard_title: str | None
+    """
+    Position title: Indeed's standard title for the job.
+    """
     normalized_title: str | None
     description: str | None
     description_html: str | None
     language: str | None
     indeed_url: str
+    """
+    Job page link.
+    """
     description_urls: list[str]
+    """
+    Links found in the description.
+    """
     pay: IndeedPay | None
     applicants: IndeedJobApplicants | None
     status: IndeedJobStatus
+    """
+    Job state: expired or open, plus repost, urgent and high-volume hiring flags.
+    """
     published_at: str | None
+    """
+    Posted: when the employer published the job.
+    """
     posted_on_indeed_at: str | None
+    """
+    Created: when the posting was created on Indeed.
+    """
     expires_at: str | None
+    """
+    Closes: when the posting expires.
+    """
     company: IndeedJobCompany | None
+    """
+    The hiring company: name, Indeed ID, website, logo, description and industry (sector).
+    """
     location: IndeedJobLocation | None
+    """
+    Places: the job's address down to the street, and whether it is remote.
+    """
     origin: IndeedJobOrigin
     company_name_as_posted: str | None
     work_schedule: str | None
+    """
+    Working hours, as the recruiter wrote them.
+    """
     detailed_salary: str | None
     description_emails: list[str]
+    """
+    Contact emails found in the description.
+    """
     attributes: IndeedJobAttributes
+    """
+    Employment type, remote work, working hours, benefits, experience level, education level, licences and qualifications.
+    """
     requirements: list[IndeedRequirement]
+    """
+    Required and preferred qualifications the employer marked.
+    """
     occupations: list[IndeedAttribute]
+    """
+    Job category: Indeed's occupation codes and labels.
+    """
     apply: IndeedJobApply
+    """
+    How to apply: the employer's application page, or the Indeed Apply form.
+    """
     employer_activity: IndeedEmployerActivity | None
     employer_reference: str | None
+    """
+    Employer job number: the employer's own requisition id.
+    """
     normalized_category: str | None = None
     photos: list[IndeedJobPhoto]
 

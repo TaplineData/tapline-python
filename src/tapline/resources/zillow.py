@@ -237,7 +237,7 @@ class Zillow(AsyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowPropertyRecords:
-        """Returns a property's price and tax history, last sale, schools, nearby homes, and listing, buyer and co-agent attribution. Costs 1 credit.
+        """Returns a property's full record: price, estimates, address, county, parcel ID, facts and features, taxes, price and tax history, schools, nearby homes and agents. Costs 1 credit.
 
         Args:
             zpid: Zillow property id: the digits before `_zpid` in a home's Zillow
@@ -465,7 +465,7 @@ class SyncZillow(SyncAPIResource):
         *,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> ZillowPropertyRecords:
-        """Returns a property's price and tax history, last sale, schools, nearby homes, and listing, buyer and co-agent attribution. Costs 1 credit.
+        """Returns a property's full record: price, estimates, address, county, parcel ID, facts and features, taxes, price and tax history, schools, nearby homes and agents. Costs 1 credit.
 
         Args:
             zpid: Zillow property id: the digits before `_zpid` in a home's Zillow

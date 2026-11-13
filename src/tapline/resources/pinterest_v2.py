@@ -85,7 +85,7 @@ class PinterestV2(AsyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestV2BoardResponse:
-        """Returns board details and pins in board order. Board information may be up to 24 hours old. Costs 1 credit.
+        """Returns board details and pins in board order, up to 25 per page. Pass `cursor` back until it is `null`. Board information may be up to 24 hours old. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:
@@ -198,7 +198,7 @@ class SyncPinterestV2(SyncAPIResource):
         trim: bool | None = None,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> PinterestV2BoardResponse:
-        """Returns board details and pins in board order. Board information may be up to 24 hours old. Costs 1 credit.
+        """Returns board details and pins in board order, up to 25 per page. Pass `cursor` back until it is `null`. Board information may be up to 24 hours old. Costs 1 credit.
 
         Args:
             url: A Pinterest board URL:

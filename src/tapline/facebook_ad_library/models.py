@@ -125,7 +125,7 @@ class FacebookAd(BaseModel):
 
 class FacebookAdCard(BaseModel):
     """
-    One Ad Library ad: its text, the advertiser page, the creative media and call to action, and its delivery.
+    One Ad Library ad: ad archive ID and Ad Library URL, collation ID and collation count (versions of one creative), ad text, ad categories, the advertiser page (page ID, page name, profile URL, profile picture, like count, page categories, is deleted), the creative (images, videos, carousel cards, extra texts, extra links, link URL, display format, call to action text and type), delivery and moderation.
     """
 
     ad_archive_id: str | None
@@ -185,7 +185,7 @@ class FacebookAdCreative(BaseModel):
 
 class FacebookAdDelivery(BaseModel):
     """
-    Ad status and run dates: whether the ad is still running, when it started and stopped, and the platforms it runs on.
+    Ad status and run dates: whether the ad is active (still running), start date, end date (or last seen), total active time, the publisher platforms it runs on, and the targeted or reached countries (EU ads).
     """
 
     total_active_seconds: int | None
@@ -219,6 +219,10 @@ class FacebookAdDisclaimerVerification(BaseModel):
 
 
 class FacebookAdImage(BaseModel):
+    """
+    One ad image: the original image URL and the resized and watermarked copies.
+    """
+
     original_url: str | None
     resized_url: str | None
     watermarked_resized_url: str | None
@@ -226,6 +230,10 @@ class FacebookAdImage(BaseModel):
 
 
 class FacebookAdModeration(BaseModel):
+    """
+    Report count, hidden-data status, gated type, beneficiary payer eligibility, contains sensitive content, contains digital created media (AI) and the state media label.
+    """
+
     report_count: int | None
     hide_data_status: FacebookCode
     gated_type: FacebookCode
@@ -244,6 +252,10 @@ class FacebookAdParty(BaseModel):
 
 
 class FacebookAdPerformance(BaseModel):
+    """
+    Spend, impressions and reach estimate ranges, when the Ad Library shows them (political and issue ads, EU reach).
+    """
+
     spend: FacebookMoneyRange | None
     impressions: FacebookCountRange | None
     reach: FacebookCountRange | None
@@ -282,6 +294,10 @@ class FacebookAdReportAdvertisersPage(BaseModel):
 
 
 class FacebookAdSearchPage(BaseModel):
+    """
+    One page of Ad Library ads, 10 ads per page, with the cursor for the next page.
+    """
+
     ads: list[FacebookAdCard]
     pagination: FacebookCursorPagination
 
@@ -327,6 +343,10 @@ class FacebookAdVersionsPage(BaseModel):
 
 
 class FacebookAdVideo(BaseModel):
+    """
+    One ad video: HD and SD video URLs and the video preview image.
+    """
+
     hd_url: str | None
     sd_url: str | None
     watermarked_hd_url: str | None
@@ -522,12 +542,17 @@ class FacebookMoneyRange(BaseModel):
 
 
 class FacebookPage(BaseModel):
+    """
+    A page or public profile: page ID (the id the Ad Library takes) and profile ID, username, name, link and Ad Library link, followers, following, likes and talking about, verified badge and active business page, tabs, category, profile picture and cover photo.
+    """
+
     page_id: str | None
     profile_id: str | None
     username: str | None = None
     story_bucket_ids: list[str] | None = None
     name: str | None
     url: str | None
+    ad_library_url: str | None = None
     metrics: FacebookPageMetrics
     status: FacebookPageStatus
     instagram: FacebookInstagramAccount | None = None

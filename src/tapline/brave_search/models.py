@@ -150,6 +150,10 @@ class PublicError(str, Enum):
 
 
 class BraveSearchAddress(BaseModel):
+    """
+    A postal address: the one-line address (display_address) and its parts: street (street_address), house number, city (address_locality), region (address_region, the state or province), postal code, country, country code (ISO 3166-1 alpha-2, lowercase) and plus code. Place searches read the parts from the one-line address and leave out a part it doesn't hold cleanly.
+    """
+
     display_address: str
     street_address: str | None = None
     house_number: str | None = None
@@ -157,6 +161,8 @@ class BraveSearchAddress(BaseModel):
     address_region: str | None = None
     postal_code: str | None = None
     country: str | None = None
+    country_code: str | None = None
+    plus_code: str | None = None
     type: str
 
 
@@ -566,7 +572,7 @@ class BraveSearchOpeningHoursDaysItem(BaseModel):
 
 class BraveSearchPlace(BaseModel):
     """
-    One business or place: name (title), website (url), coordinates, address, opening hours, phone and email (contact), categories, rating with its review count (rating), reviews, price range, photos (thumbnail, pictures) and social profiles. A search returns a rating only for places the source has rated.
+    One business or place: place id (id), name (title), category (category, categories, icon_category) and description, website (url), coordinates (latitude, longitude), address with its street, house number, city, region, postal code and country, phone and email (contact), opening hours with today's hours (opening_hours.current_day), rating with its best rating, review count and whether Tripadvisor rated it (rating), reviews, price level (price_range), cuisines, photo (thumbnail) and more photos (pictures), family friendly and social profiles. A search returns a rating only for places the source has rated.
     """
 
     id: str | None = None
@@ -2019,6 +2025,10 @@ class BraveSearchSuggestion(BaseModel):
 
 
 class BraveSearchSuggestions(BaseModel):
+    """
+    Brave's autocomplete suggestions for the search (query), in Brave's order.
+    """
+
     suggestions: list[BraveSearchSuggestion]
     query: BraveSearchTextQuery
 
@@ -3964,9 +3974,6 @@ class ViaItem(RootModel[str]):
     root: Annotated[str, Field(pattern="^-?\\d{1,3}(\\.\\d+)?,-?\\d{1,3}(\\.\\d+)?$")]
 
 
-BraveSearchStandingsGroup.model_rebuild()
-
-
 BraveSearchAvoidFeatureParam: TypeAlias = (
     BraveSearchAvoidFeature | Literal["highways", "tolls", "ferries"]
 )
@@ -4040,3 +4047,6 @@ BraveSearchCursorCompletionValue: TypeAlias = Annotated[
     BraveSearchCursorCompletion | str, PREFER_ENUM
 ]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
+
+
+BraveSearchStandingsGroup.model_rebuild()

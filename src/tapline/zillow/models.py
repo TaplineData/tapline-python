@@ -517,7 +517,7 @@ class ZillowProperty(BaseModel):
     """
     The home as its Zillow page holds it. `zestimate` and `rentZestimate` are Zillow's value and rent estimates; `priceHistory` the listing and sale events; `propertyTaxRate` and `taxAssessedValue` the taxes; `monthlyHoaFee`, `affordabilityEstimateV2.totalMonthlyCost` and `mortgageZHLRates` the monthly costs; `daysOnZillow` and `datePosted` the time on the market; `listing_agent`, `listed_by` and `attributionInfo` the listing agent; `brokerageName` the broker; `openHouseSchedule` the open houses.
 
-    Pages Zillow shows as showcase listings (`isShowcaseListing`) carry fewer of these: no days on Zillow, agent, page views or tax rate. `/v1/zillow/properties/{zpid}/records` has every home's schools, tax history, full price history and listing agent.
+    Pages Zillow shows as showcase listings (`isShowcaseListing`) carry fewer of these: no days on Zillow, agent, page views or tax rate. `/v1/zillow/properties/{zpid}/records` has every home's county, parcel ID, annual tax, assessed value, tax rate, days on Zillow, schools, tax and price history, nearby homes and listing agent.
     """
 
     zpid: str
@@ -936,9 +936,18 @@ class ZillowPropertyPropertyTourOptions(BaseModel):
 
 
 class ZillowPropertyRecords(BaseModel):
+    """
+    The home's full record. `price` is the list price, `zestimate` and `rentZestimate` Zillow's value and rent estimates, `priceHistory` the listing and sale events, `lastSoldPrice` the last sale; `taxHistory`, `propertyTaxRate`, `resoFacts.taxAnnualAmount` and `resoFacts.taxAssessedValue` the taxes; `parcelId` the parcel ID, `county` the county, `neighborhoodRegion` the neighborhood; `hoaFee` the HOA fee, due at the interval `resoFacts.hoaFee` names; `daysOnZillow` the days on the market and `resoFacts.onMarketDate` the listing date; `attributionInfo` the listing agent, broker and MLS ID; `schools` the schools; `nearbyHomes` the nearby homes; `resoFacts` the facts and features, year built included; `thumb` the main photo.
+    """
+
     zpid: str
+    parcelId: str | None = None
+    description: str | None = None
+    price: int | None = None
     priceHistory: list[ZillowPropertyPriceHistory]
     lastSoldPrice: int | None
+    zestimate: int | None = None
+    rentZestimate: int | None = None
     taxHistory: list[ZillowTaxHistoryEntry] | None
     homeStatus: str
     dateSold: int | None
@@ -946,6 +955,30 @@ class ZillowPropertyRecords(BaseModel):
     schools: list[ZillowSchool]
     nearbyHomes: list[ZillowPropertySummary] | None
     resoFacts: ZillowSchoolAssignmentFacts | None
+    parentRegion: ZillowPropertyParentRegion | None = None
+    homeType: str | None = None
+    address: ZillowRecordsAddress | None = None
+    streetAddress: str | None = None
+    city: str | None = None
+    state: str | None = None
+    zipcode: str | None = None
+    county: str | None = None
+    countyFIPS: str | None = None
+    neighborhoodRegion: ZillowPropertyNeighborhoodRegion | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    bedrooms: int | None = None
+    bathrooms: float | None = None
+    livingAreaValue: int | None = None
+    livingAreaUnits: str | None = None
+    livingAreaUnitsShort: str | None = None
+    lotAreaValue: float | None = None
+    lotAreaUnits: str | None = None
+    propertyTaxRate: float | None = None
+    hoaFee: int | None = None
+    daysOnZillow: int | None = None
+    timeOnZillow: str | None = None
+    thumb: list[ZillowPropertyNeighborhoodMapThumb] | None = None
 
 
 class ZillowPropertyRegionLink(BaseModel):
@@ -1317,6 +1350,16 @@ class ZillowPropertyVirtualTour(BaseModel):
     viewerUrl: str
 
 
+class ZillowRecordsAddress(BaseModel):
+    streetAddress: str
+    city: str | None
+    state: str | None
+    zipcode: str | None
+    neighborhood: Any = None
+    community: Any = None
+    subdivision: str | None = None
+
+
 class ZillowRecordsAttributionInfo(BaseModel):
     mlsId: str | None
     lastChecked: str | None
@@ -1340,6 +1383,33 @@ class ZillowRecordsAttributionInfo(BaseModel):
     mlsDisclaimer: str | None
     notMLSSourcedListing: bool | None
     providerLogo: str | None
+
+
+class ZillowRecordsFeeAndDue(BaseModel):
+    name: str | None
+    type: str
+    fee: str | None
+    phone: str | None
+
+
+class ZillowRecordsRoom(BaseModel):
+    description: Any = None
+    roomDescription: str | None = None
+    area: Any = None
+    dimensions: Any = None
+    level: Any = None
+    features: Any = None
+    roomArea: str | None = None
+    roomAreaSource: Any = None
+    roomAreaUnits: str | None = None
+    roomDimensions: str | None = None
+    roomFeatures: list[str] | None = None
+    roomLength: str | None = None
+    roomLengthWidthSource: Any = None
+    roomLengthWidthUnits: str | None = None
+    roomLevel: str | None = None
+    roomType: str | None = None
+    roomWidth: str | None = None
 
 
 class ZillowRegion(BaseModel):
@@ -1395,12 +1465,197 @@ class ZillowSchool(BaseModel):
 
 
 class ZillowSchoolAssignmentFacts(BaseModel):
+    """
+    The home's facts and features from its MLS listing, the assigned schools included. `onMarketDate` is the listing date, `yearBuilt` the year built, `parcelNumber` the parcel ID, `taxAnnualAmount` the annual tax, `taxAssessedValue` the assessed value and `hoaFee` the HOA fee with its frequency.
+    """
+
+    listingId: Any = None
+    additionalParcelsDescription: Any = None
+    zoningDescription: str | None = None
+    hoaFeeTotal: str | None = None
+    pricePerSquareFoot: int | None = None
+    storiesTotal: int | None = None
+    totalActualRent: int | None = None
+    canRaiseHorses: bool | None = None
+    developmentStatus: Any = None
+    hasPetsAllowed: bool | None = None
+    availabilityDate: int | None = None
+    landLeaseExpirationDate: Any = None
+    offerReviewDate: Any = None
+    onMarketDate: int | None = None
     elementarySchool: str | None
     elementarySchoolDistrict: str | None
     middleOrJuniorSchool: str | None
     middleOrJuniorSchoolDistrict: str | None
     highSchool: str | None
     highSchoolDistrict: str | None
+    listAOR: str | None = None
+    aboveGradeFinishedArea: str | None = None
+    accessibilityFeatures: list[str] | None = None
+    additionalFeeInfo: Any = None
+    architecturalStyle: str | None = None
+    associations: list[Any] | None = None
+    associationFee: str | None = None
+    associationAmenities: list[str] | None = None
+    associationFee2: str | None = None
+    associationFeeIncludes: list[str] | None = None
+    associationName: str | None = None
+    associationName2: str | None = None
+    associationPhone: str | None = None
+    associationPhone2: str | None = None
+    basementYN: bool | None = None
+    buildingFeatures: Any = None
+    buildingName: str | None = None
+    appliances: list[str] | None = None
+    atAGlanceFacts: list[ZillowPropertyAtAGlanceFact] | None = None
+    attic: str | None = None
+    basement: str | None = None
+    bathrooms: int | None = None
+    bathroomsFull: int | None = None
+    bathroomsHalf: int | None = None
+    bathroomsOneQuarter: int | None = None
+    bathroomsPartial: Any = None
+    bathroomsFloat: float | None = None
+    bathroomsThreeQuarter: int | None = None
+    bedrooms: int | None = None
+    belowGradeFinishedArea: str | None = None
+    bodyType: Any = None
+    builderModel: Any = None
+    builderName: str | None = None
+    buildingArea: str | None = None
+    buildingAreaSource: Any = None
+    carportParkingCapacity: int | None = None
+    cityRegion: str | None = None
+    commonWalls: str | None = None
+    communityFeatures: list[str] | None = None
+    compensationBasedOn: Any = None
+    constructionMaterials: list[str] | None = None
+    contingency: Any = None
+    cooling: list[str] | None = None
+    coveredParkingCapacity: int | None = None
+    cropsIncludedYN: Any = None
+    cumulativeDaysOnMarket: str | None = None
+    doorFeatures: list[str] | None = None
+    electric: list[str] | None = None
+    elevation: int | None = None
+    elevationUnits: str | None = None
+    entryLevel: Any = None
+    entryLocation: str | None = None
+    exclusions: list[str] | None = None
+    exteriorFeatures: list[str] | None = None
+    feesAndDues: list[ZillowRecordsFeeAndDue] | None = None
+    fencing: str | None = None
+    fireplaceFeatures: list[str] | None = None
+    fireplaces: int | None = None
+    flooring: list[str] | None = None
+    foundationArea: int | None = None
+    foundationDetails: list[str] | None = None
+    frontageLength: Any = None
+    frontageType: Any = None
+    furnished: bool | None = None
+    garageParkingCapacity: int | None = None
+    gas: list[str] | None = None
+    greenBuildingVerificationType: Any = None
+    greenEnergyEfficient: list[str] | None = None
+    greenEnergyGeneration: Any = None
+    greenIndoorAirQuality: Any = None
+    greenSustainability: Any = None
+    greenWaterConservation: list[str] | None = None
+    hasAdditionalParcels: bool | None = None
+    hasAssociation: bool | None = None
+    hasAttachedGarage: bool | None = None
+    hasAttachedProperty: bool | None = None
+    hasCooling: bool | None = None
+    hasCarport: bool | None = None
+    hasElectricOnProperty: bool | None = None
+    hasFireplace: bool | None = None
+    hasGarage: bool | None = None
+    hasHeating: bool | None = None
+    hasHomeWarranty: bool | None = None
+    hasLandLease: bool | None = None
+    hasOpenParking: bool | None = None
+    hasRentControl: Any = None
+    hasSpa: bool | None = None
+    hasPrivatePool: bool | None = None
+    hasView: bool | None = None
+    hasWaterfrontView: bool | None = None
+    heating: list[str] | None = None
+    hoaFee: str | None = None
+    homeType: str | None = None
+    horseAmenities: list[str] | None = None
+    horseYN: bool | None = None
+    inclusions: list[str] | None = None
+    incomeIncludes: Any = None
+    interiorFeatures: list[str] | None = None
+    irrigationWaterRightsAcres: int | None = None
+    irrigationWaterRightsYN: bool | None = None
+    isNewConstruction: bool | None = None
+    isSeniorCommunity: bool | None = None
+    landLeaseAmount: str | None = None
+    laundryFeatures: list[str] | None = None
+    leaseTerm: str | None = None
+    levels: str | None = None
+    listingTerms: str | None = None
+    lotFeatures: list[str] | None = None
+    lotSize: str | None = None
+    lotSizeDimensions: str | None = None
+    livingArea: str | None = None
+    livingAreaRange: Any = None
+    livingAreaRangeUnits: str | None = None
+    livingQuarters: list[Any] | None = None
+    mainLevelBathrooms: int | None = None
+    mainLevelBedrooms: int | None = None
+    marketingType: Any = None
+    municipality: Any = None
+    numberOfUnitsInCommunity: int | None = None
+    numberOfUnitsVacant: Any = None
+    openParkingCapacity: int | None = None
+    otherEquipment: list[str] | None = None
+    otherFacts: list[Any] | None = None
+    otherParking: list[str] | None = None
+    otherStructures: list[str] | None = None
+    ownership: str | None = None
+    ownershipType: str | None = None
+    parcelNumber: str | None = None
+    parkingCapacity: int | None = None
+    parkingFeatures: list[str] | None = None
+    parkName: Any = None
+    patioAndPorchFeatures: list[str] | None = None
+    petsMaxWeight: Any = None
+    poolFeatures: list[str] | None = None
+    propertyCondition: str | None = None
+    propertySubType: list[str] | None = None
+    roadSurfaceType: list[str] | None = None
+    roofType: str | None = None
+    rooms: list[ZillowRecordsRoom] | None = None
+    roomTypes: list[str] | None = None
+    securityFeatures: list[str] | None = None
+    sewer: list[str] | None = None
+    spaFeatures: list[str] | None = None
+    specialListingConditions: str | None = None
+    stories: int | None = None
+    storiesDecimal: float | None = None
+    structureType: str | None = None
+    subdivisionName: str | None = None
+    taxAnnualAmount: int | None = None
+    taxAssessedValue: int | None = None
+    tenantPays: Any = None
+    topography: str | None = None
+    utilities: list[str] | None = None
+    vegetation: list[str] | None = None
+    view: list[str] | None = None
+    virtualTour: str | None = None
+    waterSource: list[str] | None = None
+    waterBodyName: str | None = None
+    waterfrontFeatures: list[str] | None = None
+    waterView: str | None = None
+    waterViewYN: bool | None = None
+    windowFeatures: list[str] | None = None
+    woodedArea: Any = None
+    yearBuilt: int | None = None
+    yearBuiltEffective: Any = None
+    zoning: str | None = None
+    media: list[Any] | None = None
 
 
 class ZillowSchoolThemedRating(BaseModel):

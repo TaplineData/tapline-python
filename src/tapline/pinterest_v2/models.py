@@ -139,17 +139,32 @@ class PinterestV2AudioData(BaseModel):
 
 class PinterestV2BoardCover(BaseModel):
     pin_id: str | None = None
+    """
+    Cover pin id: the pin whose image covers the board.
+    """
     timestamp: int | None = None
     crop: list[int] | None = None
     custom_cover: bool | None = None
     image_url: str | None = None
+    """
+    Cover pin image link.
+    """
     image_signature: str | None = None
 
 
 class PinterestV2BoardResponse(BaseModel):
     board: PinterestV2BoardSummary
+    """
+    The board: id, name, description, link, privacy, owner and counts.
+    """
     pins: list[PinterestV2Pin]
+    """
+    The board's pins in board order, up to 25 per page.
+    """
     cursor: str | None
+    """
+    Pass back as `cursor` for the next page; null on the last page.
+    """
 
 
 class PinterestV2BoardSummary(BaseModel):
@@ -158,35 +173,104 @@ class PinterestV2BoardSummary(BaseModel):
     """
 
     id: str | None = None
+    """
+    Board id.
+    """
     node_id: str | None = None
     section_id: str | None = None
+    """
+    Id of the board section the pin sits in.
+    """
     slug: str | None = None
+    """
+    Board name as it appears in the board link.
+    """
     name: str | None = None
+    """
+    Board name.
+    """
     description: str | None = None
+    """
+    Board description.
+    """
     url: str | None = None
+    """
+    Board link.
+    """
     pin_count: int | None = None
+    """
+    Pin count: pins on the board.
+    """
     follower_count: int | None = None
+    """
+    Follower count: accounts that follow the board.
+    """
     collaborator_count: int | None = None
+    """
+    Collaborator count.
+    """
     section_count: int | None = None
+    """
+    Section count.
+    """
     sectionless_pin_count: int | None = None
+    """
+    Pins outside any section.
+    """
     place_saves_count: int | None = None
+    """
+    Place saves count: places saved to the board.
+    """
     privacy: str | None = None
+    """
+    Privacy: public, protected or secret.
+    """
     created_at: str | None = None
+    """
+    Created at: when the board was made.
+    """
     modified_at: str | None = None
+    """
+    Order modified at: when a pin was last added to the board or moved on it.
+    """
     event_date: str | None = None
     event_start_date: str | None = None
     owner: PinterestV2User | None = None
+    """
+    Owner: id, username, name and image of the account that owns the board.
+    """
     collaborators: list[PinterestV2User] | None = None
+    """
+    Collaborators: the accounts that pin to the board with the owner.
+    """
     related_interests: list[PinterestV2RelatedInterest] | None = None
+    """
+    Related ideas: Pinterest topics with links.
+    """
     category: str | None = None
+    """
+    Board category.
+    """
     is_collaborative: bool | None = None
+    """
+    Collaborative: whether other accounts can pin to the board.
+    """
     is_ads_only: bool | None = None
     has_custom_cover: bool | None = None
     collaborator_requests_enabled: bool | None = None
     cover_pin: PinterestV2BoardCover | None = None
+    """
+    Cover pin id and crop.
+    """
     cover_images: list[PinterestV2Image] | None = None
+    """
+    Cover image in each size.
+    """
     header_images: list[PinterestV2Image] | None = None
     images: list[PinterestV2Image] | None = None
+    """
+    Preview images of the board's latest pins.
+    """
 
 
 class PinterestV2CarouselItem(BaseModel):
@@ -220,10 +304,25 @@ class PinterestV2CookTime(BaseModel):
 class PinterestV2Image(BaseModel):
     alt_text: str | None = None
     url: str | None = None
+    """
+    Image link.
+    """
     variant: str | None = None
+    """
+    Image size name, such as 236x, 736x or originals.
+    """
     width: float | None = None
+    """
+    Image width in pixels.
+    """
     height: float | None = None
+    """
+    Image height in pixels.
+    """
     dominant_color: str | None = None
+    """
+    Image color: the dominant colour as a hex code.
+    """
 
 
 class PinterestV2Ingredient(BaseModel):
@@ -255,14 +354,35 @@ class PinterestV2Metrics(BaseModel):
     aggregated_pin_id: str | None = None
     aggregated_pin_node_id: str | None = None
     repin_count: int | None = None
+    """
+    Repins.
+    """
     share_count: int | None = None
+    """
+    Shares.
+    """
     reaction_count: int | None = None
+    """
+    Reactions.
+    """
     favorite_count: int | None = None
     save_count: int | None = None
+    """
+    Saves.
+    """
     done_count: int | None = None
     comment_count: int | None = None
+    """
+    Comments.
+    """
     reactions: dict[str, int] | None = None
+    """
+    Reactions by type: count per reaction type id.
+    """
     tried_it: PinterestV2TriedItMetrics | None = None
+    """
+    Tried it photos, videos and responses.
+    """
 
 
 class PinterestV2MusicCredit(BaseModel):
@@ -279,120 +399,312 @@ class PinterestV2Pin(BaseModel):
     """
 
     id: str | None = None
+    """
+    Pin id.
+    """
     original_pin_id: str | None = None
+    """
+    Canonical pin: id of the original pin this one repeats.
+    """
     product_id: str | None = None
     top_interest_id: int | None = None
     advertiser_id: str | None = None
     link_domain_id: str | None = None
     node_id: str | None = None
     title: str | None = None
+    """
+    Title; when the pin has none, the title on its logged-out page.
+    """
     description: str | None = None
+    """
+    Description; when the pin has none, the description on its logged-out page.
+    """
     alt_text: str | None = None
+    """
+    SEO alt text: the image description written for search engines and screen readers.
+    """
     auto_alt_text: str | None = None
+    """
+    Auto alt text: the image description Pinterest generates.
+    """
     text_variants: PinterestV2TextVariants | None = None
+    """
+    Grid title, SEO title, SEO description and the other texts kept for the pin.
+    """
     url: str | None = None
+    """
+    Link to the pin's page.
+    """
     link: str | None = None
+    """
+    Link: the website the pin leads to.
+    """
     mobile_link: str | None = None
     original_pin_url: str | None = None
     affiliate_link: str | None = None
     metrics: PinterestV2Metrics | None = None
+    """
+    Engagement: saves, repins, shares, comments, reactions, reactions by type and tried it photos.
+    """
     product_status: PinterestV2ProductStatus | None = None
     restrictions: PinterestV2Restrictions | None = None
+    """
+    Comments disabled and the other limits on the pin.
+    """
     created_at: str | None = None
+    """
+    Created at: when the pin was saved.
+    """
     pinner: PinterestV2User | None = None
+    """
+    Pinner: the account that saved the pin, with id, username, name, image, followers and website.
+    """
     creator: PinterestV2User | None = None
+    """
+    Creator: the account that made the pin, with id, username, name, image, followers and website.
+    """
     origin_pinner: PinterestV2User | None = None
+    """
+    Origin pinner: the account that first saved the pin.
+    """
     promoter: PinterestV2User | None = None
     board: PinterestV2BoardSummary | None = None
+    """
+    Board the pin is saved to: board id, name, link, privacy, image, pins, sections and collaborative.
+    """
     link_owner: PinterestV2User | None = None
+    """
+    Account that owns the link's website.
+    """
     story: PinterestV2Story | None = None
+    """
+    Idea pin pages of an idea pin.
+    """
     carousel: list[PinterestV2CarouselItem] | None = None
     collection: list[PinterestV2CollectionItem] | None = None
     rich_content: PinterestV2RichContent | None = None
+    """
+    Rich pin: type, title, description, site name, products and rating.
+    """
     sponsorship: PinterestV2AttributionData | None = None
     source_attribution: PinterestV2AttributionData | None = None
     media_attribution: PinterestV2AttributionData | None = None
     music_attributions: list[PinterestV2MusicCredit] | None = None
     text_entities: list[PinterestV2TextEntity] | None = None
     hashtags: list[str] | None = None
+    """
+    Hashtags in the description.
+    """
     topics: list[PinterestV2Topic] | None = None
+    """
+    Topics assigned to the pin.
+    """
     promotion: PinterestV2PromotionData | None = None
+    """
+    Promoted and the pin's ad campaign.
+    """
     annotations: list[PinterestV2RelatedInterest] | None = None
+    """
+    Annotations: the interest tags linked to the pin.
+    """
     breadcrumbs: list[PinterestV2RelatedInterest] | None = None
     visual_objects: list[PinterestV2VisualObject] | None = None
+    """
+    Visual objects: boxes around the things found in the image.
+    """
     domain: str | None = None
+    """
+    Domain of the link.
+    """
     category: str | None = None
+    """
+    Pin category.
+    """
     dominant_color: str | None = None
+    """
+    Image color: the image's dominant colour as a hex code.
+    """
     is_video: bool | None = None
     is_repin: bool | None = None
+    """
+    Is a repin: whether the pinner saved another account's pin.
+    """
     media_type: str | None = None
+    """
+    Pin format: image, video, story, carousel or collection.
+    """
     product_type: str | None = None
     digital_media_source_type: int | None = None
     referring_source: str | None = None
     creation_method: str | None = None
+    """
+    Creation method, such as uploaded, bookmarklet or extension.
+    """
     affiliate_disclosure: str | None = None
     images: list[PinterestV2Image] | None = None
+    """
+    Image in each size, with width and height.
+    """
     image_signature: str | None = None
     video: PinterestV2Video | None = None
+    """
+    Video streams, length and views.
+    """
 
 
 class PinterestV2PinResponse(BaseModel):
     id: str | None = None
+    """
+    Pin id.
+    """
     original_pin_id: str | None = None
+    """
+    Canonical pin: id of the original pin this one repeats.
+    """
     product_id: str | None = None
     top_interest_id: int | None = None
     advertiser_id: str | None = None
     link_domain_id: str | None = None
     node_id: str | None = None
     title: str | None = None
+    """
+    Title; when the pin has none, the title on its logged-out page.
+    """
     description: str | None = None
+    """
+    Description; when the pin has none, the description on its logged-out page.
+    """
     alt_text: str | None = None
+    """
+    SEO alt text: the image description written for search engines and screen readers.
+    """
     auto_alt_text: str | None = None
+    """
+    Auto alt text: the image description Pinterest generates.
+    """
     text_variants: PinterestV2TextVariants | None = None
+    """
+    Grid title, SEO title, SEO description and the other texts kept for the pin.
+    """
     url: str | None = None
+    """
+    Link to the pin's page.
+    """
     link: str | None = None
+    """
+    Link: the website the pin leads to.
+    """
     mobile_link: str | None = None
     original_pin_url: str | None = None
     affiliate_link: str | None = None
     metrics: PinterestV2Metrics | None = None
+    """
+    Engagement: saves, repins, shares, comments, reactions, reactions by type and tried it photos.
+    """
     product_status: PinterestV2ProductStatus | None = None
     restrictions: PinterestV2Restrictions | None = None
+    """
+    Comments disabled and the other limits on the pin.
+    """
     created_at: str | None = None
+    """
+    Created at: when the pin was saved.
+    """
     pinner: PinterestV2User | None = None
+    """
+    Pinner: the account that saved the pin, with id, username, name, image, followers and website.
+    """
     creator: PinterestV2User | None = None
+    """
+    Creator: the account that made the pin, with id, username, name, image, followers and website.
+    """
     origin_pinner: PinterestV2User | None = None
+    """
+    Origin pinner: the account that first saved the pin.
+    """
     promoter: PinterestV2User | None = None
     board: PinterestV2BoardSummary | None = None
+    """
+    Board the pin is saved to: board id, name, link, privacy, image, pins, sections and collaborative.
+    """
     link_owner: PinterestV2User | None = None
+    """
+    Account that owns the link's website.
+    """
     story: PinterestV2Story | None = None
+    """
+    Idea pin pages of an idea pin.
+    """
     carousel: list[PinterestV2CarouselItem] | None = None
     collection: list[PinterestV2CollectionItem] | None = None
     rich_content: PinterestV2RichContent | None = None
+    """
+    Rich pin: type, title, description, site name, products and rating.
+    """
     sponsorship: PinterestV2AttributionData | None = None
     source_attribution: PinterestV2AttributionData | None = None
     media_attribution: PinterestV2AttributionData | None = None
     music_attributions: list[PinterestV2MusicCredit] | None = None
     text_entities: list[PinterestV2TextEntity] | None = None
     hashtags: list[str] | None = None
+    """
+    Hashtags in the description.
+    """
     topics: list[PinterestV2Topic] | None = None
+    """
+    Topics assigned to the pin.
+    """
     promotion: PinterestV2PromotionData | None = None
+    """
+    Promoted and the pin's ad campaign.
+    """
     annotations: list[PinterestV2RelatedInterest] | None = None
+    """
+    Annotations: the interest tags linked to the pin.
+    """
     breadcrumbs: list[PinterestV2RelatedInterest] | None = None
     visual_objects: list[PinterestV2VisualObject] | None = None
+    """
+    Visual objects: boxes around the things found in the image.
+    """
     domain: str | None = None
+    """
+    Domain of the link.
+    """
     category: str | None = None
+    """
+    Pin category.
+    """
     dominant_color: str | None = None
+    """
+    Image color: the image's dominant colour as a hex code.
+    """
     is_video: bool | None = None
     is_repin: bool | None = None
+    """
+    Is a repin: whether the pinner saved another account's pin.
+    """
     media_type: str | None = None
+    """
+    Pin format: image, video, story, carousel or collection.
+    """
     product_type: str | None = None
     digital_media_source_type: int | None = None
     referring_source: str | None = None
     creation_method: str | None = None
+    """
+    Creation method, such as uploaded, bookmarklet or extension.
+    """
     affiliate_disclosure: str | None = None
     images: list[PinterestV2Image] | None = None
+    """
+    Image in each size, with width and height.
+    """
     image_signature: str | None = None
     video: PinterestV2Video | None = None
+    """
+    Video streams, length and views.
+    """
 
 
 class PinterestV2Product(BaseModel):
@@ -450,6 +762,9 @@ class PinterestV2PromotionData(BaseModel):
     promotion_id: str | None = None
     is_active_ad: bool | None = None
     is_promoted: bool | None = None
+    """
+    Promoted: whether the pin is a paid promotion.
+    """
     has_been_promoted: bool | None = None
     is_third_party_ad: bool | None = None
     is_downstream_promotion: bool | None = None
@@ -460,9 +775,21 @@ class PinterestV2PromotionData(BaseModel):
 class PinterestV2Rating(BaseModel):
     id: str | None = None
     rating_count: int | None = None
+    """
+    Rich pin rating count.
+    """
     review_count: int | None = None
+    """
+    Rich pin review count.
+    """
     value: str | None = None
+    """
+    Rich pin rating.
+    """
     best_value: str | None = None
+    """
+    Highest rating the site allows.
+    """
 
 
 class PinterestV2Recipe(BaseModel):
@@ -485,6 +812,9 @@ class PinterestV2RelatedInterest(BaseModel):
 
 class PinterestV2Restrictions(BaseModel):
     comments_disabled: bool | None = None
+    """
+    Comments disabled: whether the pin takes comments.
+    """
     is_hidden: bool | None = None
     is_viewer_restricted: bool | None = None
     seo_noindex_reason: str | None = None
@@ -498,18 +828,48 @@ class PinterestV2Restrictions(BaseModel):
 class PinterestV2RichContent(BaseModel):
     id: str | None = None
     title: str | None = None
+    """
+    Rich pin title.
+    """
     display_name: str | None = None
+    """
+    Rich pin name as shown on the pin.
+    """
     description: str | None = None
+    """
+    Rich pin description.
+    """
     url: str | None = None
+    """
+    Page the rich pin data comes from.
+    """
     rating: PinterestV2Rating | None = None
+    """
+    Rich pin rating, rating count and review count.
+    """
     products: list[PinterestV2Product] | None = None
+    """
+    Rich pin products with prices and stock.
+    """
     type: str | None = None
+    """
+    Rich pin type, such as article, recipe or product.
+    """
     site_name: str | None = None
+    """
+    Rich pin site name.
+    """
     is_hard_404: bool | None = None
     is_soft_404: bool | None = None
     display_cook_time_seconds: int | None = None
     article: PinterestV2Article | None = None
+    """
+    Article details for an article pin.
+    """
     recipe: PinterestV2Recipe | None = None
+    """
+    Recipe details for a recipe pin.
+    """
     favicon_url: str | None = None
 
 
@@ -531,10 +891,16 @@ class PinterestV2SearchMetadata(BaseModel):
 
 class PinterestV2SearchResponse(BaseModel):
     pins: list[PinterestV2Pin]
+    """
+    Pins, up to 25 per page.
+    """
     stories: list[PinterestV2SearchStory] | None = None
     metadata: PinterestV2SearchMetadata | None = None
     guides: list[PinterestV2SearchGuide] | None = None
     cursor: str | None
+    """
+    Pass back as `cursor` for the next page; null on the last page.
+    """
 
 
 class PinterestV2SearchStory(BaseModel):
@@ -556,9 +922,15 @@ class PinterestV2Story(BaseModel):
     node_id: str | None = None
     title: str | None = None
     page_count: int | None = None
+    """
+    Number of idea pin pages.
+    """
     total_video_duration_ms: float | None = None
     is_deleted: bool | None = None
     pages: list[PinterestV2StoryPage] | None = None
+    """
+    Idea pin pages: each page's blocks, text, images and videos.
+    """
     has_affiliate_products: bool | None = None
     has_product_pins: bool | None = None
     canvas_aspect_ratio: float | None = None
@@ -636,28 +1008,67 @@ class PinterestV2TextVariants(BaseModel):
     """
 
     grid_title: str | None = None
+    """
+    Grid title: the title on the pin's grid card.
+    """
     unified_title: str | None = None
+    """
+    Title on the pin's close-up view.
+    """
     seo_title: str | None = None
+    """
+    SEO title: the page title Pinterest writes for search engines.
+    """
     page_title: str | None = None
+    """
+    Title on the pin's logged-out page.
+    """
     grid_description: str | None = None
+    """
+    Description on the pin's grid card.
+    """
     unified_description: str | None = None
+    """
+    Description on the pin's close-up view.
+    """
     seo_description: str | None = None
+    """
+    SEO description: the page description Pinterest writes for search engines.
+    """
     page_description: str | None = None
+    """
+    Description on the pin's logged-out page.
+    """
     description_html: str | None = None
+    """
+    Description with links as HTML.
+    """
 
 
 class PinterestV2Topic(BaseModel):
     id: str | None = None
     name: str | None = None
+    """
+    Topic name.
+    """
 
 
 class PinterestV2TriedItMetrics(BaseModel):
     user_count: int | None = None
+    """
+    Accounts that tried the pin.
+    """
     responses_count: int | None = None
     recommended_count: int | None = None
     details_count: int | None = None
     videos_count: int | None = None
+    """
+    Tried it videos.
+    """
     images_count: int | None = None
+    """
+    Tried it photos.
+    """
     rating: int | None = None
     tags: list[str] | None = None
     recommend_scores: list[PinterestV2TriedItScore] | None = None
@@ -674,13 +1085,34 @@ class PinterestV2User(BaseModel):
     """
 
     id: str | None = None
+    """
+    Account id.
+    """
     username: str | None = None
+    """
+    Username.
+    """
     node_id: str | None = None
     full_name: str | None = None
+    """
+    Name shown on the profile.
+    """
     profile_url: str | None = None
+    """
+    Link to the profile.
+    """
     website_url: str | None = None
+    """
+    Website the account links to.
+    """
     domain_url: str | None = None
+    """
+    Website domain the account claimed.
+    """
     follower_count: int | None = None
+    """
+    Followers.
+    """
     is_direct_to_site_allowed: bool | None = None
     is_verified_merchant: bool | None = None
     is_primary_website_verified: bool | None = None
@@ -692,12 +1124,21 @@ class PinterestV2User(BaseModel):
     is_default_image: bool | None = None
     is_partner: bool | None = None
     images: list[PinterestV2Image] | None = None
+    """
+    Profile image in each size.
+    """
 
 
 class PinterestV2UserBoardsResponse(BaseModel):
     boards: list[PinterestV2BoardSummary]
+    """
+    Boards, about 25 per page, most recently pinned to first.
+    """
     stories: list[PinterestV2ProfileStory]
     cursor: str | None
+    """
+    Pass back as `cursor` for the next page; null on the last page.
+    """
 
 
 class PinterestV2VerifiedIdentityData(BaseModel):
@@ -709,17 +1150,41 @@ class PinterestV2Video(BaseModel):
     id: str | None = None
     node_id: str | None = None
     urls: list[str] | None = None
+    """
+    Video stream links.
+    """
     view_count: int | None = None
+    """
+    Video views.
+    """
     duration_ms: float | None = None
+    """
+    Video length in milliseconds.
+    """
     signature: str | None = None
     variants: list[PinterestV2MediaVariant] | None = None
+    """
+    Video in each format and size.
+    """
 
 
 class PinterestV2VisualObject(BaseModel):
     x: float | None = None
+    """
+    Left edge as a share of the image width.
+    """
     y: float | None = None
+    """
+    Top edge as a share of the image height.
+    """
     width: float | None = None
+    """
+    Box width as a share of the image width.
+    """
     height: float | None = None
+    """
+    Box height as a share of the image height.
+    """
 
 
 class SearchPinsParams(BaseModel):

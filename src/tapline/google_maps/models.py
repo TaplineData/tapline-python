@@ -442,6 +442,9 @@ class GoogleMapsContributorSummary(BaseModel):
     local_guide_level: int | None
     is_local_guide: bool | None
     avatar_url: str | None
+    """
+    Profile picture; a business owner's is the business logo.
+    """
 
 
 class GoogleMapsCoordinateQuery(BaseModel):
@@ -962,63 +965,152 @@ class GoogleMapsPlace(BaseModel):
 
     feature_id: str | None
     cid: str | None
+    """
+    Customer id (CID): Google's decimal place number.
+    """
     place_id: str | None
     kgmid: str | None
+    """
+    Knowledge Graph id, `/g/…` or `/m/…`.
+    """
     business_profile_id: str | None
+    """
+    Google Business Profile id.
+    """
     name: str | None
     native_name: str | None
+    """
+    The name in the local language, where it differs.
+    """
     address: str | None
     description: str | None
     short_description: str | None
     description_paragraphs: list[str]
     long_description: str | None
     card_text: str | None
+    """
+    Card details: the line Maps shows under the name.
+    """
     name_language: str | None
     native_name_language: str | None
     url: str | None
     reviews_url: str | None
+    """
+    Reviews link: the place's Google reviews page.
+    """
+    directions_url: str | None
+    """
+    Directions link: Google Maps directions to the place.
+    """
+    knowledge_graph_url: str | None
+    """
+    Knowledge Graph link: the Google Search page of `kgmid`.
+    """
     website: GoogleMapsLink | None
     phone: GoogleMapsPhone | None
     reservation_links: list[GoogleMapsLink]
+    """
+    Booking links to the place's own reservation pages.
+    """
     action_links: list[GoogleMapsActionLink]
+    """
+    Booking and order links: reserve a table, book online, order online.
+    """
     claim_url: str | None
     price: GoogleMapsMoney | None
+    """
+    Hotel price for a night, or the place's price text.
+    """
     price_level: str | None
+    """
+    Price level, such as `$$`.
+    """
     rating: float | None
     review_count: int | None
     rating_counts: list[GoogleMapsRatingCount]
+    """
+    Rating distribution: reviews per star.
+    """
     photo_count: int | None
     open_status: str | None
+    """
+    Hours today, as Maps shows them: `Open · Closes 11 PM`.
+    """
     open_state: GoogleMapsCode
+    """
+    Open now: open, closing soon or closed.
+    """
     open_state_changes_at: str | None
     hours: list[GoogleMapsDayHours]
+    """
+    Opening hours for each day of the coming week.
+    """
     secondary_hours: list[GoogleMapsSecondaryHours]
+    """
+    Service hours, such as delivery, takeout, brunch or happy hours.
+    """
     business_status: GoogleMapsCode
+    """
+    Status: operational, temporarily closed or permanently closed.
+    """
     is_operating_business: bool | None
     is_claimed: bool
+    """
+    Claimed: the business manages its Google profile.
+    """
     notices: list[GoogleMapsNotice]
     notice_summaries: list[str]
     posting_restrictions: list[GoogleMapsPostingRestriction]
     location: GoogleMapsPlaceLocation
     owner: GoogleMapsContributorSummary | None
+    """
+    The owner: owner id, owner name, owner link and the business logo in `avatar_url`.
+    """
     located_in: GoogleMapsPlaceSummary | None
+    """
+    Parent place, such as the mall a store is in.
+    """
     area: GoogleMapsPlaceArea | None
     containing_regions: list[GoogleMapsContainingRegion]
     places_inside: list[GoogleMapsPlaceInside]
+    """
+    Child places, such as a mall's stores.
+    """
     directory_categories: list[GoogleMapsDirectoryCategory]
     top_reviews: list[GoogleMapsReview]
     review_quotes: list[GoogleMapsReviewQuote]
+    """
+    Review snippets Maps quotes for the place.
+    """
     partner_reviews: list[GoogleMapsPartnerReviews]
     review_topics: list[GoogleMapsReviewTopic]
+    """
+    Review tags: topics reviews mention, with counts.
+    """
     categories: list[str]
+    """
+    Main category first, then more categories.
+    """
     category_gcids: list[str]
+    """
+    Category id of the main category, such as `restaurant`.
+    """
     result_type: str | None
     result_type_tags: list[str]
     place_kind: GoogleMapsCode
     commerce_kind: GoogleMapsCode
     attributes: list[GoogleMapsAttributeGroup]
+    """
+    About: attribute groups such as accessibility (wheelchair access), service options, amenities and payments. Search results carry fewer groups than the place route.
+    """
     highlights: list[GoogleMapsHighlight]
+    """
+    From the business: lines such as `LGBTQ+ friendly` or `Identifies as women-owned`.
+    """
     hotel: GoogleMapsHotel | None
+    """
+    Hotel class, offers and amenities; null for a place that is not lodging.
+    """
     travel_times: list[GoogleMapsTravelTime]
     photos: list[GoogleMapsPhoto]
     cover_photos: list[GoogleMapsPhoto]
@@ -1065,20 +1157,54 @@ class GoogleMapsPlaceLocation(BaseModel):
     building_feature_id: str | None
     address_lines: list[str]
     street: str | None
+    """
+    Street and house number.
+    """
     neighborhood: str | None
+    """
+    Neighbourhood.
+    """
     city: str | None
     postal_code: str | None
     state: str | None
+    """
+    Region: state, province or first-level area.
+    """
+    county: str | None
+    """
+    County or second-level area.
+    """
     locality: str | None
+    """
+    City line of the address, such as `New York, NY`.
+    """
     country: str | None
+    """
+    Country name, in the answer's language.
+    """
     country_code: str | None
+    """
+    ISO 3166-1 alpha-2 country code.
+    """
     plus_code: str | None
+    """
+    Local plus code.
+    """
     global_plus_code: str | None
+    """
+    Global plus code.
+    """
     address_with_name: str | None
     latitude: float | None
     longitude: float | None
     time_zone: str | None
+    """
+    IANA time zone.
+    """
     entrance: GoogleMapsCoordinates | None
+    """
+    Entry point.
+    """
     alternate_point: GoogleMapsCoordinates | None
     floor: str | None
     floor_name: str | None
@@ -1244,13 +1370,16 @@ class GoogleMapsReverseGeocode(BaseModel):
 
 class GoogleMapsReview(BaseModel):
     """
-    `author` is the reviewer: contributor id, name, profile link, picture, review and photo counts and Local Guide flag. `owner_response` is the owner's reply, `photos` the photos in the review and `details` its guided answers (food, service).
+    `author` is the reviewer: contributor id, name, profile link, picture, review and photo counts and Local Guide flag. `owner_response` is the owner reply, `photos` the review photos with their captions and `details` the review details: guided answers (food, service).
     """
 
     review_id: str | None
     text: str | None
     preview_text: str | None
     language: str | None
+    """
+    Review language code, such as `en`.
+    """
     original_language_name: str | None
     translated_text: str | None
     translated_preview_text: str | None
@@ -1260,10 +1389,19 @@ class GoogleMapsReview(BaseModel):
     rating: int | None
     max_rating: int | None
     like_count: int | None
+    """
+    Helpful count: how many people marked the review helpful.
+    """
     reaction_counts: list[GoogleMapsReviewReaction]
     created_at: str | None
+    """
+    Published at, ISO 8601.
+    """
     edited_at: str | None
     relative_date: str | None
+    """
+    Published ago, such as `2 weeks ago`.
+    """
     author: GoogleMapsContributorSummary | None
     place: GoogleMapsPlaceSummary | None
     details: list[GoogleMapsReviewDetail]
@@ -1294,6 +1432,9 @@ class GoogleMapsReviewOwnerResponse(BaseModel):
     report_url: str | None
     created_at: str | None
     relative_date: str | None
+    """
+    Owner reply ago, such as `a week ago`.
+    """
 
 
 class GoogleMapsReviewQuote(BaseModel):
@@ -1335,6 +1476,10 @@ class GoogleMapsReviewTopic(BaseModel):
 
 
 class GoogleMapsReviewsPage(BaseModel):
+    """
+    Up to `limit` reviews a page (1 to 60, default 20) in `sort` order; `pagination.next_cursor` asks for the next page. The place's overall rating and review count come from `/v1/google-maps/places/{feature_id}`.
+    """
+
     reviews: list[GoogleMapsReview]
     query: GoogleMapsReviewsQuery
     pagination: GoogleMapsCursorPagination
@@ -1422,6 +1567,10 @@ class GoogleMapsSearchMeta(BaseModel):
 
 
 class GoogleMapsSearchPage(BaseModel):
+    """
+    Up to `limit` places a page (1 to 100, default 20); `pagination.next_cursor` asks for the next page. Google sends no total count.
+    """
+
     results: list[GoogleMapsPlace]
     searched_area: GoogleMapsSearchArea | None
     query: GoogleMapsSearchQuery

@@ -7341,9 +7341,6 @@ class Winner(BaseModel):
     claimAmountAtomic: str | None = None
 
 
-Reply.model_rebuild()
-
-
 BalanceChainParam: TypeAlias = (
     BalanceChain
     | Literal[
@@ -7570,6 +7567,9 @@ UserReplyFilterParam: TypeAlias = UserReplyFilter | Literal["ALL", "REPLIES", "Q
 UserTradeTypeParam: TypeAlias = UserTradeType | Literal["trades", "transfers"]
 VodPeriodParam: TypeAlias = VodPeriod | Literal["hourly", "daily", "weekly", "monthly"]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
+
+
+Reply.model_rebuild()
 
 
 NonMonadChain: TypeAlias = TokenChain

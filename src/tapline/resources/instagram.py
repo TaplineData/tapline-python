@@ -297,7 +297,7 @@ class Instagram(AsyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramProfileResponse:
-        """Returns normalized profile data and recent posts. `recent_posts_status` distinguishes available, private, and unavailable timelines. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
+        """Returns an account's profile with its 12 newest posts, 12 newest reels and story highlights. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
@@ -418,7 +418,7 @@ class Instagram(AsyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserPostsResponse:
-        """Returns normalized profile and post data. Pass `pagination.next_cursor` as `next_max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
+        """Returns 12 posts per page with their authors; pass `pagination.next_cursor` as `next_max_id` for the next page. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
@@ -599,7 +599,7 @@ class SyncInstagram(SyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramProfileResponse:
-        """Returns normalized profile data and recent posts. `recent_posts_status` distinguishes available, private, and unavailable timelines. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
+        """Returns an account's profile with its 12 newest posts, 12 newest reels and story highlights. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.
@@ -720,7 +720,7 @@ class SyncInstagram(SyncAPIResource):
         trim: bool = False,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> InstagramUserPostsResponse:
-        """Returns normalized profile and post data. Pass `pagination.next_cursor` as `next_max_id` while `pagination.has_more` is true. `trim` is accepted for compatibility and does not remove fields. Costs 3 credits.
+        """Returns 12 posts per page with their authors; pass `pagination.next_cursor` as `next_max_id` for the next page. Costs 3 credits.
 
         Args:
             handle: Instagram handle, with or without a leading @.

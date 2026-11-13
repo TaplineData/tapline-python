@@ -1131,9 +1131,6 @@ class WalletTotals(BaseModel):
     winRate: float | None = None
 
 
-ForumComment.model_rebuild()
-
-
 ChartRangeParam: TypeAlias = ChartRange | Literal["5m", "1h", "6h", "1d", "all"]
 CommunityRankParam: TypeAlias = CommunityRank | Literal["marketCap", "burnPct", "realMcap"]
 LaunchSortParam: TypeAlias = (
@@ -1143,3 +1140,6 @@ LaunchVersionParam: TypeAlias = LaunchVersion | Literal["all", "v1", "v2"]
 PortfolioRangeParam: TypeAlias = PortfolioRange | Literal["1d", "7d", "30d"]
 PostSortParam: TypeAlias = PostSort | Literal["hot", "new", "top"]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
+
+
+ForumComment.model_rebuild()

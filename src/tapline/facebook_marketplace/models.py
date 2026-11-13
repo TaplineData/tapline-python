@@ -129,11 +129,15 @@ class FacebookImage(BaseModel):
 
 class FacebookListing(BaseModel):
     """
-    One Marketplace listing: title, description, price and original price, status, listing date, category path, location, seller with ratings, condition and other attributes, delivery and shipping, and vehicle details. Photos and videos are on `/marketplace/listings/{listing_id}/photos`.
+    One Marketplace listing: title and custom title, description, price, currency and original price (strikethrough_price), status (live, sold, pending, listing status), listing date, category ID, name, slug and category path, location (place, place slug, coordinates, postal code, country code), seller (seller ID, name, photo, joined date, seller profile ID, seller rating and combined rating, seller CMS ID), condition and other attributes, delivery types and shipping (shipping profile ID and shipping option IDs at the top level), item count, product item ID, origin target ID, badges with their badge source, and vehicle details. Photos and videos are on `/marketplace/listings/{listing_id}/photos`.
     """
 
     id: str
     product_item_id: str | None
+    seller_cms_id: str | None
+    origin_target_id: str | None
+    shipping_profile_id: str | None
+    shipping_option_ids: list[str]
     title: str | None
     base_title: str | None
     custom_title: str | None
@@ -165,6 +169,8 @@ class FacebookListing(BaseModel):
     is_multi_variant_listing: bool | None
     cross_post_marketplace_flags: list[bool]
     badges: list[str]
+    badge_source: str | None
+    badge_image_urls: list[str]
 
 
 class FacebookListingAttribute(BaseModel):
@@ -285,13 +291,21 @@ class FacebookListingSellerProfile(BaseModel):
 
 
 class FacebookListingShipping(BaseModel):
+    """
+    Shipping: shipping price and shipping price lists (price only, and with zip code), purchase protection, shipping offered, buy now enabled, checkout, free-shipping discounts, delivery window, shipping eligible and the shipping label rate type.
+    """
+
     shipping_price_text: str | None
+    shipping_price_list: list[str]
+    shipping_price_list_with_zip_code: list[str]
     is_purchase_protected: bool | None
     is_shipping_offered: bool | None
     is_buy_now_enabled: bool | None
     is_checkout_enabled: bool | None
     has_free_shipping_discounts: bool | None
     estimated_delivery_window: str | None
+    is_shipping_eligible: bool | None
+    shipping_label_rate_type: str | None
 
 
 class FacebookListingStatus(BaseModel):
@@ -327,7 +341,59 @@ class FacebookListingVehicle(BaseModel):
     transmission: str | None
 
 
+class FacebookListingWithMedia(BaseModel):
+    """
+    One Marketplace listing with every photo and video, read from the listing's own page in one call: all listing fields, then photos (photo links, captions, sizes) and videos (video links, HD links, thumbnails, sizes).
+    """
+
+    id: str
+    product_item_id: str | None
+    seller_cms_id: str | None
+    origin_target_id: str | None
+    shipping_profile_id: str | None
+    shipping_option_ids: list[str]
+    title: str | None
+    base_title: str | None
+    custom_title: str | None
+    description: str | None
+    share_url: str | None
+    price: FacebookMoney | None
+    inventory_count: int | None
+    price_in_cents: int | None
+    strikethrough_price: FacebookMoney | None
+    sweepstake_status: str | None
+    friends_visibility: FacebookCode
+    can_share: bool | None
+    status: FacebookListingStatus
+    created_at: str | None
+    category: FacebookListingCategory
+    taxonomy: list[FacebookListingCategory]
+    location: FacebookListingLocation
+    seller: FacebookListingSellerProfile
+    hashtags: list[str]
+    attributes: list[FacebookListingAttribute]
+    delivery_types: list[FacebookCode]
+    shipping: FacebookListingShipping
+    inventory_type: FacebookCode
+    search_pivots: list[str]
+    details_type: FacebookCode
+    seller_type: str | None
+    vehicle_seller_type: str | None
+    vehicle: FacebookListingVehicle | None
+    is_multi_variant_listing: bool | None
+    cross_post_marketplace_flags: list[bool]
+    badges: list[str]
+    badge_source: str | None
+    badge_image_urls: list[str]
+    photos: list[FacebookPhoto]
+    videos: list[FacebookVideo]
+
+
 class FacebookListingsPage(BaseModel):
+    """
+    One page of Marketplace listings (Facebook sends 10 to 24 per page) with the cursor for the next page.
+    """
+
     listings: list[FacebookListingCard]
     search: FacebookListingSearch
     seo_title: str | None
@@ -501,6 +567,13 @@ class FacebookVideoPlayer(BaseModel):
 
 
 class GetMarketplaceListingParams(BaseModel):
+    listing_id: Annotated[str, Field(examples=["4498962133715634"], pattern="^\\d{1,20}$")]
+    """
+    Numeric Marketplace listing id.
+    """
+
+
+class GetMarketplaceListingWithMediaParams(BaseModel):
     listing_id: Annotated[str, Field(examples=["4498962133715634"], pattern="^\\d{1,20}$")]
     """
     Numeric Marketplace listing id.

@@ -143,9 +143,25 @@ class LinkedinCompanyEmployee(BaseModel):
 
 class LinkedinCompanyLocation(BaseModel):
     street: str | None
+    """
+    The headquarters' street.
+    """
+    streetLine2: str | None
+    """
+    The headquarters' second street line, such as a suite or floor.
+    """
     city: str | None
+    """
+    The headquarters' city.
+    """
     state: str | None
+    """
+    The headquarters' area: its state or region, such as `California`.
+    """
     postalCode: str | None
+    """
+    The headquarters' postal code.
+    """
     country: str | None
     """
     ISO 3166-1 alpha-2 code.
@@ -158,9 +174,18 @@ class LinkedinCompanyOffice(BaseModel):
     LinkedIn marks this office as the primary location.
     """
     street: str | None
+    """
+    The office's street.
+    """
     streetLine2: str | None
+    """
+    The office's second street line, such as a suite or floor.
+    """
     city: str | None
     state: str | None
+    """
+    The office's area: its state or region.
+    """
     postalCode: str | None
     country: str | None
     """
@@ -168,18 +193,59 @@ class LinkedinCompanyOffice(BaseModel):
     """
 
 
+class LinkedinCompanyPageTab(BaseModel):
+    name: str
+    """
+    The tab's label, such as `Jobs`.
+    """
+    url: str | None
+
+
 class LinkedinCompanyPost(BaseModel):
     contentUrn: str | None
     """
-    The share or ugcPost URN of the post's content.
+    Share URN: the share or ugcPost URN of the post's content.
     """
     url: str
+    """
+    Post URL.
+    """
     id: str
+    """
+    Post ID: the post's numeric activity id.
+    """
     datePublished: str
+    """
+    Posted at, read from the post id.
+    """
     text: str | None
+    """
+    The post's text.
+    """
     likeCount: int | None
+    """
+    Reactions of every type; 0 when LinkedIn prints no count.
+    """
     commentCount: int | None
+    """
+    Comments; 0 when LinkedIn prints no count.
+    """
+    reactionTypes: list[str]
+    """
+    Reactions by type: the types LinkedIn draws beside the reaction count, such as `LIKE` and `PRAISE`, most used first; guests see no count per type.
+    """
     author: LinkedinPostAuthor
+    """
+    The post's author: its name, LinkedIn URL, picture and followers.
+    """
+    authorId: str | None
+    """
+    The author's numeric LinkedIn ID: the page's organization ID on the page's own posts, null on posts by others.
+    """
+    authorHeadline: str | None
+    """
+    The author's headline, when LinkedIn shows it on the card; LinkedIn shows guests few of them.
+    """
     mentions: list[LinkedinPostMention]
     """
     Members and pages tagged in the text.
@@ -190,61 +256,134 @@ class LinkedinCompanyPost(BaseModel):
     """
     linkPreview: LinkedinPostLinkPreview | None
     isRepost: bool
+    """
+    Whether the card is a repost or a post by someone other than the page.
+    """
     repostedBy: LinkedinPostReposter | None
     """
     The page that reposted it, when the card is a plain repost.
     """
     images: list[str]
+    """
+    The post's images.
+    """
     video: LinkedinPostVideo | None
+    """
+    The post's native video.
+    """
 
 
 class LinkedinCompanyPostsResponse(BaseModel):
     page: int
+    """
+    The page number, 1 to 7.
+    """
     hasNextPage: bool
+    """
+    Whether `page + 1` holds more posts.
+    """
     posts: list[LinkedinCompanyPost]
+    """
+    Up to 10 posts, newest first.
+    """
 
 
 class LinkedinCompanyResponse(BaseModel):
     id: str | None
+    """
+    LinkedIn ID: the page's numeric organization id.
+    """
     url: str
+    """
+    The page's LinkedIn URL.
+    """
     name: str
     description: str | None
+    """
+    The page's About text.
+    """
     location: LinkedinCompanyLocation
+    """
+    The headquarters address: street, area, city, postal code and country.
+    """
     employeeCount: int | None
+    """
+    Employees: the members LinkedIn counts as working there. LinkedIn leaves it off some guest pages, then null.
+    """
     followers: int | None
+    """
+    The page's followers.
+    """
     website: str | None
     jobsUrl: str | None
     """
-    LinkedIn's job search for the page's open jobs.
+    Jobs link: LinkedIn's job search for the page's open jobs; null when the page lists none.
     """
     logo: str | None
+    """
+    The page's logo.
+    """
     coverImage: str | None
+    """
+    The page's cover image.
+    """
     slogan: str | None
     """
-    The page's tagline.
+    The page's tagline: the line under its name.
     """
     industry: str | None
     size: str | None
+    """
+    The size band, such as `51-200 employees`.
+    """
     founded: int | None
+    """
+    The year founded.
+    """
     headquarters: str | None
+    """
+    The headquarters as the About section prints it, such as `Ottawa, ON`.
+    """
     locations: list[LinkedinCompanyOffice]
     """
     Every office on the page's Locations list.
     """
     type: str | None
+    """
+    The company type, such as `Privately Held` or `Public Company`.
+    """
     pageType: LinkedinCompanyResponsePagetypeValue
+    """
+    The page type: `company`, `school`, or `showcase` for a showcase page.
+    """
     universalName: str
     """
     The page's name in its URL, such as `shopify`.
     """
     specialties: list[str]
+    """
+    The specialties from the About section.
+    """
     similarPages: list[LinkedinRelatedPage]
+    """
+    Similar pages (lookalike companies) LinkedIn lists, usually 10, each with its industry.
+    """
     affiliatedPages: list[LinkedinRelatedPage]
+    """
+    Affiliated pages, such as showcase pages and subsidiaries.
+    """
     employees: list[LinkedinCompanyEmployee]
     """
     The members LinkedIn features as working there.
     """
     posts: list[LinkedinCompanyPost]
+    """
+    The page's newest posts, up to 10; `/v1/linkedin/company/posts` pages through more.
+    """
+    pageTabs: list[LinkedinCompanyPageTab]
+    """
+    The page tabs LinkedIn shows guests, such as `Overview`, `Jobs` and `Life`; most pages show guests none.
+    """
 
 
 class LinkedinCursorPagination(BaseModel):
@@ -254,12 +393,24 @@ class LinkedinCursorPagination(BaseModel):
 
 class LinkedinJobCard(BaseModel):
     id: str
+    """
+    Job ID.
+    """
     url: str
+    """
+    Job URL.
+    """
     title: str
     company: LinkedinJobCompany
     location: str | None
     postedDate: str | None
+    """
+    Posted at: the date LinkedIn lists the job under, such as `2026-11-10`.
+    """
     postedText: str | None
+    """
+    The posting age, such as `2 days ago`.
+    """
     benefits: str | None
     """
     The card's insight line, such as `Actively Hiring` or `Be an early applicant`.
@@ -268,36 +419,105 @@ class LinkedinJobCard(BaseModel):
 
 class LinkedinJobCompany(BaseModel):
     name: str | None
+    """
+    The company's name.
+    """
     url: str | None
+    """
+    The company's LinkedIn URL.
+    """
     logo: str | None
+    """
+    The company's logo.
+    """
+
+
+class LinkedinJobPoster(BaseModel):
+    name: str
+    url: str | None
+    """
+    The poster's member profile.
+    """
+    headline: str | None
+    """
+    The poster's headline.
+    """
+    image: str | None
 
 
 class LinkedinJobResponse(BaseModel):
     id: str
+    """
+    Job ID.
+    """
     url: str
+    """
+    Job URL.
+    """
     title: str
     company: LinkedinJobCompany
+    """
+    The job's company: its name, LinkedIn URL and logo.
+    """
+    companyId: str | None
+    """
+    The hiring company's numeric LinkedIn ID.
+    """
     location: str | None
+    """
+    The job's location.
+    """
     postedText: str | None
     """
-    The posting age, such as `2 weeks ago`.
+    Posted at, as the posting age LinkedIn prints, such as `2 weeks ago`; guests see no posting date.
     """
     applicants: str | None
+    """
+    Applicants as LinkedIn prints them, such as `Over 200 applicants`.
+    """
     salary: str | None
+    """
+    The salary range the employer published.
+    """
     description: str | None
+    """
+    The job description as plain text.
+    """
     descriptionHtml: str | None
+    """
+    The job description as HTML.
+    """
     seniorityLevel: str | None
+    """
+    The seniority level, such as `Mid-Senior level`.
+    """
     employmentType: str | None
+    """
+    The employment type, such as `Full-time`.
+    """
     industries: str | None
+    """
+    The industries LinkedIn lists for the job.
+    """
     easyApply: bool | None
+    """
+    Whether the job takes LinkedIn Easy Apply; null when the page shows no apply button.
+    """
     jobState: LinkedinJobResponseJobstateValue
     """
     `closed` when LinkedIn shows `No longer accepting applications`.
+    """
+    jobPoster: LinkedinJobPoster | None
+    """
+    The hiring team member LinkedIn shows guests as the job's poster, when the posting names one.
     """
 
 
 class LinkedinJobsSearchResponse(BaseModel):
     jobs: list[LinkedinJobCard]
+    """
+    Up to 10 jobs; pass `pagination.next_cursor` as `cursor` for the next 10, up to 1,000 jobs.
+    """
     pagination: LinkedinCursorPagination
 
 
@@ -313,6 +533,18 @@ class LinkedinMoreArticle(BaseModel):
 class LinkedinOrganizationRole(BaseModel):
     field_type: Annotated[str, Field(alias="@type")]
     title: str | None
+    degree: str | None
+    """
+    Schools only: the degree, such as `BSBA`.
+    """
+    fieldOfStudy: str | None
+    """
+    Schools only: the field of study, such as `Marketing`.
+    """
+    activities: str | None
+    """
+    Schools only: the activities and societies line.
+    """
     description: str | None
     startDate: int | str | None
     endDate: int | str | None
@@ -363,6 +595,35 @@ class LinkedinPostComment(BaseModel):
     authorImage: str | None
 
 
+class LinkedinPostDocument(BaseModel):
+    """
+    A PDF or slide document attached to the post.
+    """
+
+    title: str | None
+    pageCount: int | None
+    pageImages: list[str]
+    """
+    The page images LinkedIn ships with the post, the cover first.
+    """
+
+
+class LinkedinPostJob(BaseModel):
+    """
+    A job posting shared in the post.
+    """
+
+    id: str | None
+    """
+    The job's numeric id, from its link.
+    """
+    title: str | None
+    company: str | None
+    location: str | None
+    url: str
+    logo: str | None
+
+
 class LinkedinPostLinkPreview(BaseModel):
     title: str | None
     subtitle: str | None
@@ -393,9 +654,17 @@ class LinkedinPostResponse(BaseModel):
     headline: str | None
     commentCount: int | None
     likeCount: int | None
+    reactionTypes: list[str]
+    """
+    The up to three most used reaction types, such as `LIKE` and `PRAISE`; LinkedIn shows guests no count per type.
+    """
     datePublished: str | None
     description: str | None
     author: LinkedinPostAuthor
+    authorHeadline: str | None
+    """
+    The author's headline, when the author is a member.
+    """
     mentions: list[LinkedinPostMention]
     """
     Members and pages tagged in the text.
@@ -405,6 +674,8 @@ class LinkedinPostResponse(BaseModel):
     The post this one quotes, when it reshares one with its own text.
     """
     linkPreview: LinkedinPostLinkPreview | None
+    job: LinkedinPostJob | None
+    document: LinkedinPostDocument | None
     comments: list[LinkedinPostComment]
     moreArticles: list[LinkedinMoreArticle]
     images: list[str]
@@ -432,6 +703,10 @@ class LinkedinProfileActivity(BaseModel):
     link: str
     likeCount: int | None
     commentCount: int | None
+    reactionTypes: list[str]
+    """
+    The up to three most used reaction types, such as `LIKE` and `PRAISE`; LinkedIn shows guests no count per type.
+    """
     datePublished: str | None
     """
     When the post was published, read from its id.
@@ -449,11 +724,17 @@ class LinkedinProfileActivity(BaseModel):
     The post this one quotes, when it reshares one with its own text.
     """
     linkPreview: LinkedinPostLinkPreview | None
+    job: LinkedinPostJob | None
+    document: LinkedinPostDocument | None
     repostedBy: LinkedinPostReposter | None
     """
     The member who reposted it, when the card is a plain repost.
     """
     image: str | None
+    videoPoster: str | None
+    """
+    The video's poster image, when the post is a video.
+    """
 
 
 class LinkedinProfileArticle(BaseModel):
@@ -483,6 +764,14 @@ class LinkedinProfileCertification(BaseModel):
     issuer: str | None
 
 
+class LinkedinProfileCourse(BaseModel):
+    name: str
+    number: str | None
+    """
+    The course number the member gave.
+    """
+
+
 class LinkedinProfileHonor(BaseModel):
     name: str
     description: str | None
@@ -504,6 +793,10 @@ class LinkedinProfileOrganization(BaseModel):
     url: str | None
     location: str | None
     member: LinkedinOrganizationRole
+    logo: str | None
+    """
+    The company or school logo; masked profiles show it for the current company and top school only.
+    """
 
 
 class LinkedinProfileProject(BaseModel):
@@ -565,14 +858,35 @@ class LinkedinProfileResponse(BaseModel):
     Profile badges LinkedIn shows guests, such as `Creator` and `Top Voice`.
     """
     recentPosts: list[LinkedinProfileActivity]
+    """
+    The member's posts and reposts, newest first, up to 9; no pagination.
+    """
     experience: list[LinkedinProfileOrganization]
+    """
+    Jobs, current first.
+    """
     articles: list[LinkedinProfileArticle]
+    """
+    The member's newest articles, up to 10; no pagination.
+    """
     activity: list[LinkedinProfileActivity]
+    """
+    Posts the member liked or commented on, up to 9; no pagination.
+    """
     education: list[LinkedinProfileOrganization]
+    """
+    Schools.
+    """
     publications: list[LinkedinProfilePublication]
     projects: list[LinkedinProfileProject]
     recommendations: list[LinkedinProfileRecommendation]
+    """
+    Recommendations received; guests see the first two, `recommendationCount` holds the total.
+    """
     similarProfiles: list[LinkedinSimilarProfile]
+    """
+    Similar people: the profiles LinkedIn suggests beside this one, up to 20.
+    """
     websites: list[LinkedinProfileWebsite]
     languages: list[LinkedinProfileLanguage]
     certifications: list[LinkedinProfileCertification]
@@ -580,7 +894,39 @@ class LinkedinProfileResponse(BaseModel):
     """
     The Honors & Awards section.
     """
+    skills: list[str]
+    """
+    Skill names; LinkedIn shows them to guests on open profiles only.
+    """
+    courses: list[LinkedinProfileCourse]
+    """
+    Courses the member lists as taken.
+    """
+    volunteering: list[LinkedinProfileVolunteering]
+    """
+    The Volunteer Experience section.
+    """
     coverImage: str | None
+
+
+class LinkedinProfileVolunteering(BaseModel):
+    role: str
+    organization: str | None
+    organizationUrl: str | None
+    cause: str | None
+    """
+    The cause, such as `Economic Empowerment`.
+    """
+    description: str | None
+    startDate: int | str | None
+    """
+    A year, or `YYYY-MM`.
+    """
+    endDate: int | str | None
+    """
+    A year, or `YYYY-MM`; null while the role is current.
+    """
+    logo: str | None
 
 
 class LinkedinProfileWebsite(BaseModel):
@@ -590,8 +936,14 @@ class LinkedinProfileWebsite(BaseModel):
 
 class LinkedinRelatedPage(BaseModel):
     link: str
+    """
+    The page's LinkedIn URL.
+    """
     name: str
     industry: str | None
+    """
+    The page's industry, as LinkedIn prints it on the card.
+    """
     location: str | None
     image: str | None
 

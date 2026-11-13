@@ -532,12 +532,17 @@ class FacebookOtherMedia(BaseModel):
 
 
 class FacebookPage(BaseModel):
+    """
+    A page or public profile: page ID (the id the Ad Library takes) and profile ID, username, name, link and Ad Library link, followers, following, likes and talking about, verified badge and active business page, tabs, category, profile picture and cover photo.
+    """
+
     page_id: str | None
     profile_id: str | None
     username: str | None = None
     story_bucket_ids: list[str] | None = None
     name: str | None
     url: str | None
+    ad_library_url: str | None = None
     metrics: FacebookPageMetrics
     status: FacebookPageStatus
     instagram: FacebookInstagramAccount | None = None
@@ -583,6 +588,10 @@ class FacebookPageEventsPage(BaseModel):
 
 
 class FacebookPageIntro(BaseModel):
+    """
+    A page's Intro card: about text (bio), category and page type, websites and other links (social links), phones, emails, addresses, business hours, rating with review count, price range, services and the confirmed owner.
+    """
+
     profile_id: str
     page_id: str | None
     bio_status_id: str | None
@@ -633,6 +642,16 @@ class FacebookPagePhotosPage(BaseModel):
     collection: FacebookCollectionSummary
     photos: list[FacebookPhoto]
     pagination: FacebookCursorPagination
+
+
+class FacebookPageProfile(BaseModel):
+    """
+    A page or public profile read from its link in one call: the description, the header (page ID, username, name, link, Ad Library link, exact followers and talking about, following, verified badge, active business page, profile picture and cover photo) and the Intro card (about text, category and page type, website and other links, phone, email, address, hours, rating).
+    """
+
+    description: str | None
+    page: FacebookPage
+    intro: FacebookPageIntro | None
 
 
 class FacebookPageRating(BaseModel):
@@ -754,7 +773,7 @@ class FacebookPlace(BaseModel):
 
 class FacebookPost(BaseModel):
     """
-    One post: its id and link, text, creation time, author and owner page, attachments (photos, videos, link cards), top comments and engagement.
+    One post: post ID and post URL, text, created at, author (name, short name, ID, URL, picture) and owner page, attachments (images, videos with thumbnail and duration, link cards with link URL), AI disclosure (made with AI), top comments and engagement (reaction count, reactions by type, comment count, share count, view count).
     """
 
     id: str | None
@@ -799,6 +818,10 @@ class FacebookPostStatus(BaseModel):
 
 
 class FacebookPostsPage(BaseModel):
+    """
+    One page of posts, newest first: 3 posts per page, the most Facebook shows a logged-out visitor per request; the cursor fetches the next 3.
+    """
+
     posts: list[FacebookPost]
     pagination: FacebookCursorPagination
 
@@ -1081,6 +1104,16 @@ class GetPageAboutParams(BaseModel):
     """
 
 
+class GetPageByUrlParams(BaseModel):
+    url: Annotated[
+        str,
+        Field(examples=["https://www.facebook.com/NASA"], max_length=2000, min_length=1),
+    ]
+    """
+    A facebook.com URL or path, such as `https://www.facebook.com/NASA/posts/pfbid0...`.
+    """
+
+
 class GetPageIntroParams(BaseModel):
     profile_id: Annotated[str, Field(examples=["100044561550831"], pattern="^\\d{1,20}$")]
     """
@@ -1351,9 +1384,6 @@ class SearchVideosParams(BaseModel):
     """
 
 
-FacebookPost.model_rebuild()
-
-
 CommentSortParam: TypeAlias = CommentSort | Literal["relevant", "newest", "all"]
 EventDateRangeParam: TypeAlias = (
     EventDateRange
@@ -1363,3 +1393,6 @@ EventDateRangeParam: TypeAlias = (
 )
 GroupSortParam: TypeAlias = GroupSort | Literal["top", "newest"]
 PublicErrorValue: TypeAlias = Annotated[PublicError | str, PREFER_ENUM]
+
+
+FacebookPost.model_rebuild()

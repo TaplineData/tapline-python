@@ -20,6 +20,7 @@ from tapline.facebook_marketplace import (
     FacebookListing,
     FacebookListingPhotos,
     FacebookListingsPage,
+    FacebookListingWithMedia,
     FacebookMarketplaceCategories,
     FacebookMarketplaceLocations,
     FacebookRentalsMap,
@@ -51,6 +52,7 @@ RESPONSES: dict[str, type[Any]] = {
     "search_marketplace": FacebookListingsPage,
     "get_marketplace_listing": FacebookListing,
     "list_marketplace_listing_photos": FacebookListingPhotos,
+    "get_marketplace_listing_with_media": FacebookListingWithMedia,
     "search_marketplace_locations": FacebookMarketplaceLocations,
     "list_marketplace_rentals": FacebookRentalsMap,
 }
@@ -61,6 +63,7 @@ METHODS = [
     "search_marketplace",
     "get_marketplace_listing",
     "list_marketplace_listing_photos",
+    "get_marketplace_listing_with_media",
     "search_marketplace_locations",
     "list_marketplace_rentals",
 ]
