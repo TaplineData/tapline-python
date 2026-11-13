@@ -391,6 +391,7 @@ class GetAnalyticsResponse(BaseModel):
     generatedAt: int | None = None
     latestDay: int | None = None
     series: list[AnalyticsDay] | None = None
+    hours: list[AnalyticsDay] | None = None
     today: AnalyticsDay | None = None
     indexer: AnalyticsIndexer | None = None
     earnings: AnalyticsEarnings | None = None

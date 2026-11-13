@@ -370,7 +370,7 @@ class LinkedinCompanyResponse(BaseModel):
     """
     affiliatedPages: list[LinkedinRelatedPage]
     """
-    Affiliated pages, such as showcase pages and subsidiaries.
+    Affiliated pages: `/company/` links are group companies, `/showcase/` links are brand pages.
     """
     employees: list[LinkedinCompanyEmployee]
     """
@@ -554,6 +554,9 @@ class LinkedinPostAuthor(BaseModel):
     name: str | None
     url: str | None
     followers: int | None
+    """
+    The author's follower count; null when LinkedIn shows no exact count.
+    """
     image: str | None
 
 
@@ -648,12 +651,21 @@ class LinkedinPostReposter(BaseModel):
 
 class LinkedinPostResponse(BaseModel):
     activityUrn: str | None
+    """
+    The post's activity URN, `urn:li:activity:<id>`; null on Pulse articles.
+    """
     contentUrn: str | None
+    """
+    The URN of the post's content: a share or ugcPost URN.
+    """
     url: str
     name: str | None
     headline: str | None
     commentCount: int | None
     likeCount: int | None
+    """
+    Reactions of every type on the post.
+    """
     reactionTypes: list[str]
     """
     The up to three most used reaction types, such as `LIKE` and `PRAISE`; LinkedIn shows guests no count per type.
@@ -677,6 +689,9 @@ class LinkedinPostResponse(BaseModel):
     job: LinkedinPostJob | None
     document: LinkedinPostDocument | None
     comments: list[LinkedinPostComment]
+    """
+    The comments LinkedIn shows guests, up to 10 per call; `commentCount` holds the total.
+    """
     moreArticles: list[LinkedinMoreArticle]
     images: list[str]
     video: LinkedinPostVideo | None
@@ -702,6 +717,9 @@ class LinkedinProfileActivity(BaseModel):
     activityType: str | None
     link: str
     likeCount: int | None
+    """
+    Reactions of every type on the post.
+    """
     commentCount: int | None
     reactionTypes: list[str]
     """
@@ -836,6 +854,9 @@ class LinkedinProfileResponse(BaseModel):
     publicIdentifier: str
     name: str
     headline: str | None
+    """
+    The headline under the name; LinkedIn can hide it from guests.
+    """
     firstName: str | None
     """
     The first name LinkedIn uses for the member, such as `Bill`.
@@ -845,14 +866,26 @@ class LinkedinProfileResponse(BaseModel):
     The rest of `name` after `firstName`.
     """
     image: str | None
+    """
+    The profile photo URL.
+    """
     location: str | None
     followers: int | None
+    """
+    The follower count.
+    """
     connections: str | None
+    """
+    The connection count as LinkedIn prints it, such as `500+`.
+    """
     recommendationCount: int | None
     """
     How many people recommended the member; guests see the first two in `recommendations`.
     """
     about: str | None
+    """
+    The About section; LinkedIn can hide it from guests.
+    """
     badges: list[str]
     """
     Profile badges LinkedIn shows guests, such as `Creator` and `Top Voice`.
@@ -907,6 +940,9 @@ class LinkedinProfileResponse(BaseModel):
     The Volunteer Experience section.
     """
     coverImage: str | None
+    """
+    The cover (background) image URL.
+    """
 
 
 class LinkedinProfileVolunteering(BaseModel):

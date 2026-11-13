@@ -107,13 +107,25 @@ class FacebookAttachment(BaseModel):
     title: str | None
     subtitle: str | None
     url: str | None
+    """
+    Link URL of a link card.
+    """
     external_url: str | None
+    """
+    The outside site a link card points to.
+    """
     target: FacebookAttachmentTarget
     items: list[FacebookPhoto | FacebookVideo | FacebookOtherMedia]
+    """
+    Album photos and videos.
+    """
     source: str | None
     article_author: str | None
     kind: FacebookCode
     media: FacebookPhoto | FacebookVideo | FacebookOtherMedia | None
+    """
+    The attached photo or video.
+    """
 
 
 class FacebookAttachmentTarget(BaseModel):
@@ -283,15 +295,30 @@ class FacebookEngagement(BaseModel):
     """
 
     reaction_count: int | None
+    """
+    Reactions of every type.
+    """
     reaction_count_text: str | None
     comment_count: int | None
+    """
+    Comments.
+    """
     share_count: int | None
+    """
+    Shares.
+    """
     share_count_text: str | None
     view_count: int | None
+    """
+    Video views.
+    """
     view_count_text: str | None
     play_count: int | None
     post_play_count: int | None
     reactions: list[FacebookReaction]
+    """
+    Reactions by type, such as Like and Love, with their counts.
+    """
 
 
 class FacebookEvent(BaseModel):
@@ -537,28 +564,61 @@ class FacebookPage(BaseModel):
     """
 
     page_id: str | None
+    """
+    Page ID: the id the Ad Library takes.
+    """
     profile_id: str | None
+    """
+    Profile ID of the page or public profile.
+    """
     username: str | None = None
+    """
+    Username (vanity name) in the page link.
+    """
     story_bucket_ids: list[str] | None = None
     name: str | None
+    """
+    Page name.
+    """
     url: str | None
+    """
+    Link to the page.
+    """
     ad_library_url: str | None = None
+    """
+    Link to the page's ads in the Ad Library.
+    """
     metrics: FacebookPageMetrics
+    """
+    Audience counts: followers, following, likes and talking about.
+    """
     status: FacebookPageStatus
     instagram: FacebookInstagramAccount | None = None
     tabs: list[FacebookPageTab] | None = None
     category: str | None = None
+    """
+    Page category.
+    """
     entity_type: FacebookCode | None = None
     verification: FacebookCode | None = None
+    """
+    Verified badge.
+    """
     alternate_name: str | None = None
     gender: FacebookCode | None = None
     profile_type_transition: FacebookCode | None = None
     social_context: list[FacebookSocialContextItem] | None = None
     legal: FacebookPageLegal | None = None
     profile_picture_url: str | None = None
+    """
+    Profile picture (photo) URL.
+    """
     profile_photo: FacebookPhoto | None = None
     profile_pictures: list[FacebookImage] | None = None
     cover_photo: FacebookCoverPhoto | None = None
+    """
+    Cover photo.
+    """
 
 
 class FacebookPageAboutSection(BaseModel):
@@ -596,19 +656,52 @@ class FacebookPageIntro(BaseModel):
     page_id: str | None
     bio_status_id: str | None
     bio: str | None
+    """
+    Bio: the Intro card's about text.
+    """
     hours_text: str | None
+    """
+    Opening hours as Facebook prints them.
+    """
     websites: list[str]
+    """
+    Website links.
+    """
     social_links: list[FacebookSocialLink]
+    """
+    Other links: Instagram, X, YouTube and other social profiles.
+    """
     rating: FacebookPageRating | None
+    """
+    Rating with its review count.
+    """
     price_range: str | None
+    """
+    Price range, such as `$$`.
+    """
     items: list[FacebookIntroItem]
     category: str | None
+    """
+    Page category.
+    """
     confirmed_owner: str | None
     services: list[str]
     emails: list[str]
+    """
+    Contact email addresses.
+    """
     phones: list[str]
+    """
+    Contact phone numbers.
+    """
     addresses: list[str]
+    """
+    Postal addresses.
+    """
     profile_type: str | None
+    """
+    Page type, such as `PAGE`.
+    """
     photos_mediaset_token: str | None
     featured_photos: list[FacebookPhoto]
 
@@ -621,10 +714,25 @@ class FacebookPageLegal(BaseModel):
 
 class FacebookPageMetrics(BaseModel):
     like_count: int | None = None
+    """
+    Page likes.
+    """
     follower_count: int | None = None
+    """
+    Followers, exact.
+    """
     talking_about_count: int | None = None
+    """
+    People talking about the page.
+    """
     follower_count_approx: int | None = None
+    """
+    Followers, rounded as Facebook prints them.
+    """
     following_count_approx: int | None = None
+    """
+    Accounts the page follows, rounded as Facebook prints them.
+    """
 
 
 class FacebookPagePeople(BaseModel):
@@ -650,8 +758,17 @@ class FacebookPageProfile(BaseModel):
     """
 
     description: str | None
+    """
+    Page description (meta description of the page).
+    """
     page: FacebookPage
+    """
+    Page header: IDs, name, link, followers, verified badge, profile picture and cover photo.
+    """
     intro: FacebookPageIntro | None
+    """
+    Intro card: bio, category, links and contact details.
+    """
 
 
 class FacebookPageRating(BaseModel):
@@ -777,27 +894,54 @@ class FacebookPost(BaseModel):
     """
 
     id: str | None
+    """
+    Post ID.
+    """
     story_id: str | None
     feedback_id: str | None
     group_id: str | None
     title: str | None
     text: str | None
+    """
+    Post text.
+    """
     rich_text: list[FacebookRichTextBlock]
     url: str | None
+    """
+    Post URL.
+    """
     status: FacebookPostStatus
     created_at: str | None
+    """
+    When the post was published (created at), ISO 8601.
+    """
     message_entities: list[FacebookMessageEntity] | None = None
     author: FacebookProfileRef | None
+    """
+    Post author: name, short name, ID, URL and picture.
+    """
     actors: list[FacebookProfileRef]
     collaborators: list[FacebookProfileRef]
     owner: FacebookProfileRef | None
     top_comments: list[FacebookComment]
+    """
+    Top comments Facebook shows with the post.
+    """
     music: FacebookPostMusic | None
     attached_post: FacebookPost | None
     engagement: FacebookEngagement
+    """
+    Engagement: reaction count, reactions by type, comment, share and view counts.
+    """
     attachments: list[FacebookAttachment]
+    """
+    Media and links: images, videos and link cards.
+    """
     place_name: str | None
     ai_disclosure: FacebookAiDisclosure
+    """
+    AI disclosure: whether the post is marked as made with AI.
+    """
 
 
 class FacebookPostDetail(BaseModel):
@@ -828,15 +972,30 @@ class FacebookPostsPage(BaseModel):
 
 class FacebookProfileRef(BaseModel):
     id: str | None
+    """
+    Account ID.
+    """
     pfbid: str | None
     username: str | None
     name: str | None
+    """
+    Name.
+    """
     url: str | None
+    """
+    Profile or page URL.
+    """
     is_verified: bool | None
     short_name: str | None
+    """
+    Short name, such as the first name.
+    """
     account_type: FacebookCode
     gender: str | None
     profile_picture_url: str | None
+    """
+    Profile picture URL.
+    """
 
 
 class FacebookReaction(BaseModel):

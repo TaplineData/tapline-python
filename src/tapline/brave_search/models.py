@@ -155,13 +155,34 @@ class BraveSearchAddress(BaseModel):
     """
 
     display_address: str
+    """
+    One-line address.
+    """
     street_address: str | None = None
+    """
+    Street.
+    """
     house_number: str | None = None
     address_locality: str | None = None
+    """
+    City.
+    """
     address_region: str | None = None
+    """
+    State or province as the address prints it: a code such as `NY` in the US, Canada, Australia, Italy, Brazil and Mexico, a name such as `Maharashtra` elsewhere; null when the address holds none.
+    """
     postal_code: str | None = None
+    """
+    Postal code.
+    """
     country: str | None = None
+    """
+    Country name.
+    """
     country_code: str | None = None
+    """
+    Country code, ISO 3166-1 alpha-2, lowercase.
+    """
     plus_code: str | None = None
     type: str
 
@@ -207,6 +228,7 @@ class BraveSearchAiAnswerBlockEntitiesItem(BaseModel):
 class BraveSearchAiAnswerCitation(BaseModel):
     title: str
     snippet: str
+    snippet_html: str | None = None
     url: str
     source_index: int
     favicon_url: str
@@ -228,6 +250,7 @@ class BraveSearchAiAnswerOtherEvent(BaseModel):
 class BraveSearchAiAnswerSource(BaseModel):
     title: str
     description: str
+    description_html: str | None = None
     url: str
     hostname: str
     favicon_url: str
@@ -441,11 +464,19 @@ class BraveSearchGoggle(BaseModel):
     digest: str
     transferred_to: str | None = None
     transferred_from: str | None = None
+    rules: BraveSearchGoggleRules | None = None
     avatar: str
 
 
 class BraveSearchGoggleList(BaseModel):
     goggles: list[BraveSearchGoggle]
+
+
+class BraveSearchGoggleRules(BaseModel):
+    boost: int
+    downrank: int
+    discard: int
+    default: str | None
 
 
 class BraveSearchIcon(BaseModel):
@@ -462,13 +493,22 @@ class BraveSearchImage(BaseModel):
     """
 
     url: str | None = None
+    """
+    Image URL.
+    """
     resized_url: str | None = None
     proxied_url: str | None = None
     placeholder_url: str | None = None
     click_url: str | None = None
     alt: str | None = None
     height: int | None = None
+    """
+    Height in pixels.
+    """
     width: int | None = None
+    """
+    Width in pixels.
+    """
     format: str | None = None
     content_size: str | None = None
     site: BraveSearchSite | None = None
@@ -485,14 +525,23 @@ class BraveSearchImageResult(BaseModel):
     """
 
     title: str
+    """
+    Title of the page the image is on.
+    """
     full_title: str | None
     description: str
     language: str | None
     url: str
+    """
+    Page URL: the page the image is on.
+    """
     content_fetched_at: str | None
     published_at: str | None
     fetched_at: str | None
     site: BraveSearchSite
+    """
+    Site the page is on: hostname and favicon.
+    """
     similar_images_token: str | None
     content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
@@ -504,8 +553,17 @@ class BraveSearchImageResult(BaseModel):
     from_context: bool
     confidence: str | None
     position: int
+    """
+    Rank of the result on the page, from 1.
+    """
     image: BraveSearchImage
+    """
+    Full-size image with its width and height (size).
+    """
     thumbnail: BraveSearchImage
+    """
+    Thumbnail image.
+    """
 
 
 class BraveSearchImagesPage(BaseModel):
@@ -540,15 +598,39 @@ class BraveSearchNewsResult(BaseModel):
     """
 
     title: str
+    """
+    Headline.
+    """
     description: str
+    """
+    Snippet of the article.
+    """
     description_html: str | None = None
     url: str
+    """
+    Article URL.
+    """
     is_live: bool
     age_label: str | None
+    """
+    Publish date as Brave prints it, such as `1 day ago`.
+    """
     site: BraveSearchSite
+    """
+    Site the article is on: hostname and favicon.
+    """
     source: BraveSearchSource | None
+    """
+    News source: the publisher's name.
+    """
     position: int | None = None
+    """
+    Rank of the result on the page, from 1.
+    """
     thumbnail: BraveSearchImage | None
+    """
+    Article image (thumbnail).
+    """
 
 
 class BraveSearchOpeningHours(BaseModel):
@@ -576,15 +658,33 @@ class BraveSearchPlace(BaseModel):
     """
 
     id: str | None = None
+    """
+    Place ID; `/v1/brave-search/places/{place_id}` takes it.
+    """
     ai_answer_key: str | None = None
     title: str
+    """
+    Business name.
+    """
     full_title: str | None = None
     description: str | None
+    """
+    Short description of the place.
+    """
     language: str | None = None
     url: str | None = None
+    """
+    Website of the business.
+    """
     provider_url: str
     rating: BraveSearchRating | None
+    """
+    Rating with its review count.
+    """
     price_range: str | None
+    """
+    Price level, such as `$$`.
+    """
     rating_score: float | None = None
     content_fetched_at: str | None = None
     published_at: str | None = None
@@ -594,13 +694,34 @@ class BraveSearchPlace(BaseModel):
     spid: str | None = None
     pid: str | None = None
     coordinates: BraveSearchCoordinates | None = None
+    """
+    Coordinates: latitude and longitude.
+    """
     address: BraveSearchAddress
+    """
+    Address: the one-line address and its parts.
+    """
     opening_hours: BraveSearchOpeningHours | None
+    """
+    Opening hours: today's hours and the week.
+    """
     contact: BraveSearchPlaceContact | None
+    """
+    Phone number and email.
+    """
     categories: list[str]
+    """
+    Categories of the business.
+    """
     category: str | None
+    """
+    Main category, such as `restaurant`.
+    """
     cuisines: list[str] | None
     reviews: BraveSearchPlaceReviews | None
+    """
+    Reviews Brave shows for the place.
+    """
     profiles: list[BraveSearchProfile]
     results: list[BraveSearchPlaceWebResultsItem] | None = None
     web_results: list[BraveSearchPlaceWebResultsItem] | None = None
@@ -620,12 +741,21 @@ class BraveSearchPlace(BaseModel):
     raw: BraveSearchUnobservedObject | None
     icon_category: str | None
     thumbnail: BraveSearchImage | None
+    """
+    Photo of the place.
+    """
     pictures: BraveSearchPlacePictures | None
 
 
 class BraveSearchPlaceContact(BaseModel):
     email: str | None = None
+    """
+    Email address.
+    """
     telephone: str
+    """
+    Phone number.
+    """
 
 
 class BraveSearchPlaceDescription(BaseModel):
@@ -2016,12 +2146,30 @@ class BraveSearchSuggestion(BaseModel):
     """
 
     name: str | None = None
+    """
+    Entity name.
+    """
     text: str
+    """
+    Suggested query (completion).
+    """
     description: str | None = None
+    """
+    Entity description.
+    """
     category: str | None = None
+    """
+    Entity category, such as `application`.
+    """
     type: str
+    """
+    Type: `query` or `entity`.
+    """
     is_logo: bool | None = None
     image_url: str | None = None
+    """
+    Entity image.
+    """
 
 
 class BraveSearchSuggestions(BaseModel):
@@ -2030,6 +2178,9 @@ class BraveSearchSuggestions(BaseModel):
     """
 
     suggestions: list[BraveSearchSuggestion]
+    """
+    Suggestions in Brave's relevance order, most relevant first.
+    """
     query: BraveSearchTextQuery
 
 
@@ -2258,17 +2409,35 @@ class BraveSearchVideoResult(BaseModel):
     """
 
     title: str
+    """
+    Video title.
+    """
     full_title: str | None = None
     description: str
+    """
+    Snippet of the video's description.
+    """
     language: str | None = None
     url: str
+    """
+    Video page URL.
+    """
     published_at: str | None
+    """
+    Date the video was published, ISO 8601.
+    """
     content_fetched_at: str | None = None
     fetched_at: str | None = None
     site: BraveSearchSite
+    """
+    Site the video is on, such as youtube.com.
+    """
     publisher: str | None
     source: BraveSearchSource | None
     age_label: str | None
+    """
+    Publish date as Brave prints it.
+    """
     type: str | None = None
     content_fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     fetched_at_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
@@ -2278,7 +2447,13 @@ class BraveSearchVideoResult(BaseModel):
     icons: list[BraveSearchIcon] | None = None
     position: int | None = None
     thumbnail: BraveSearchImage | None
+    """
+    Thumbnail image.
+    """
     video: BraveSearchVideoResultVideo
+    """
+    The video itself: length, views, channel and player link.
+    """
 
 
 class BraveSearchVideoResultVideo(BaseModel):
@@ -2287,12 +2462,27 @@ class BraveSearchVideoResultVideo(BaseModel):
     """
 
     embed_url: str | None
+    """
+    Player (embed) link.
+    """
     author: BraveSearchVideoResultVideoAuthor | None
+    """
+    Channel the video is on.
+    """
     creator: str | None
+    """
+    Channel or creator name.
+    """
     tags: list[str] | None
     duration_seconds: int | None
+    """
+    Length of the video in seconds.
+    """
     duration_seconds_as_sent: bool | float | str | BraveSearchUnobservedObject | None = None
     views: int | None
+    """
+    View count, when the source shows one.
+    """
     publisher: str | None
     requires_subscription: bool | None
     thumbnail: BraveSearchImage | None
@@ -2389,8 +2579,15 @@ class BraveSearchWebPageAdsResultsItemCreative(BaseModel):
     description: str
     schema_type: str
     landing_page: str
+    conversion: BraveSearchWebPageAdsResultsItemCreativeConversion | None = None
     thumbnail: BraveSearchImage
     thumbnail_organic: bool | None = None
+
+
+class BraveSearchWebPageAdsResultsItemCreativeConversion(BaseModel):
+    url_pattern: str
+    observation_window: int
+    type: str
 
 
 class BraveSearchWebPageDiscussions(BaseModel):
@@ -2565,7 +2762,7 @@ class BraveSearchWebPageInfoboxResultsItemProvidersItem(BaseModel):
 class BraveSearchWebPageInfoboxResultsItemRatingsItem(BaseModel):
     rating_value: float
     best_rating: float
-    review_count: int
+    review_count: int | None = None
     source: BraveSearchSource
     from_tripadvisor: bool
 
@@ -3098,7 +3295,18 @@ class BraveSearchWebPageRichResultsItemWeather(BaseModel):
     current_weather: BraveSearchWebPageRichResultsItemWeatherCurrentWeather
     daily: list[BraveSearchWebPageRichResultsItemWeatherDailyItem]
     hours3: list[BraveSearchWebPageRichResultsItemWeatherHours3Item]
-    alerts: list[BraveSearchUnobservedObject]
+    alerts: list[BraveSearchWebPageRichResultsItemWeatherAlertsItem]
+
+
+class BraveSearchWebPageRichResultsItemWeatherAlertsItem(BaseModel):
+    description: str
+    tags: list[str]
+    sender: str
+    event: str
+    ts_start: int
+    ts_end: int
+    start_relative_i18n: str
+    type: str | None = None
 
 
 class BraveSearchWebPageRichResultsItemWeatherCurrentWeather(BaseModel):
@@ -3127,7 +3335,7 @@ class BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWeather(BaseModel):
 class BraveSearchWebPageRichResultsItemWeatherCurrentWeatherWind(BaseModel):
     speed: float
     deg: int
-    gust: float
+    gust: float | None = None
 
 
 class BraveSearchWebPageRichResultsItemWeatherDailyItem(BaseModel):
@@ -3146,6 +3354,7 @@ class BraveSearchWebPageRichResultsItemWeatherDailyItem(BaseModel):
     wind: BraveSearchWebPageRichResultsItemWeatherDailyItemWind
     clouds: int
     pop: float
+    rain: float | None = None
     uvi: float
 
 
@@ -3175,7 +3384,7 @@ class BraveSearchWebPageRichResultsItemWeatherDailyItemWeather(BaseModel):
 class BraveSearchWebPageRichResultsItemWeatherDailyItemWind(BaseModel):
     speed: float
     deg: int
-    gust: float
+    gust: float | None = None
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3Item(BaseModel):
@@ -3188,6 +3397,8 @@ class BraveSearchWebPageRichResultsItemWeatherHours3Item(BaseModel):
     humidity: int
     clouds: int
     pop: float
+    rain: float | None = None
+    snow: float | None = None
 
 
 class BraveSearchWebPageRichResultsItemWeatherHours3ItemTemperature(BaseModel):
@@ -3207,7 +3418,7 @@ class BraveSearchWebPageRichResultsItemWeatherHours3ItemWeather(BaseModel):
 class BraveSearchWebPageRichResultsItemWeatherHours3ItemWind(BaseModel):
     speed: float
     deg: int
-    gust: float
+    gust: float | None = None
 
 
 class BraveSearchWebPageRichResultsItemWeatherLocation(BaseModel):
@@ -3246,21 +3457,42 @@ class BraveSearchWebResult(BaseModel):
     """
 
     title: str
+    """
+    Page title.
+    """
     full_title: str | None
     description: str
+    """
+    Snippet text Brave shows under the title.
+    """
     description_html: str | None = None
     language: str
     url: str
+    """
+    Page URL.
+    """
     deep_links: BraveSearchWebResultDeepLinks | None
+    """
+    Links to other pages of the site.
+    """
     rating: BraveSearchRating | None
     is_live: bool
     published_at: str | None
+    """
+    Date the page was published, ISO 8601, when Brave knows it.
+    """
     location: BraveSearchPlace | None = None
     source: BraveSearchSource
     type: str
     subtype: str
     site: BraveSearchSite
+    """
+    Site the page is on: hostname, breadcrumbs and favicon.
+    """
     age_label: str | None
+    """
+    Publish date as Brave prints it, such as `2 days ago`.
+    """
     locations: list[BraveSearchUnobservedObject] | None
     movie: BraveSearchWebResultMovie | None
     faq: BraveSearchWebResultFaq | None
@@ -3268,6 +3500,9 @@ class BraveSearchWebResult(BaseModel):
     qa: BraveSearchWebResultQa | None
     book: BraveSearchWebResultBook | None
     article: BraveSearchWebResultArticle | None
+    """
+    Article details, such as the author.
+    """
     product: BraveSearchWebResultProduct | None
     product_cluster: list[BraveSearchWebResultProductClusterItem] | None
     cluster_type: str | None
@@ -3281,7 +3516,13 @@ class BraveSearchWebResult(BaseModel):
     boosted: bool | None = None
     organization: BraveSearchWebResultOrganization | None = None
     position: int
+    """
+    Rank of the result on the page, from 1.
+    """
     thumbnail: BraveSearchImage | None
+    """
+    Thumbnail image.
+    """
     video: BraveSearchWebResultVideo | None
 
 
@@ -3417,7 +3658,7 @@ class BraveSearchWebResultProductClusterItem(BaseModel):
     name: str
     description: str | None = None
     description_html: str | None = None
-    url: str
+    url: str | None = None
     price: str | None = None
     rating: BraveSearchRating | None = None
     type: str

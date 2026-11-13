@@ -458,9 +458,9 @@ class TwitterPost(BaseModel):
     """
     Is quote: the post quotes another post.
     """
-    is_repost: bool | None = None
+    is_repost: bool
     """
-    Is repost: always false on `/user-tweets`, whose window holds the account's original posts only.
+    Is repost: always false, since the logged-out x.com pages this API reads hold original posts only.
     """
     is_note_post: bool
     """
@@ -775,9 +775,9 @@ class TwitterTweetResponse(BaseModel):
     """
     Is quote: the post quotes another post.
     """
-    is_repost: bool | None = None
+    is_repost: bool
     """
-    Is repost: always false on `/user-tweets`, whose window holds the account's original posts only.
+    Is repost: always false, since the logged-out x.com pages this API reads hold original posts only.
     """
     is_note_post: bool
     """

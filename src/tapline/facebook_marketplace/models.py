@@ -139,27 +139,63 @@ class FacebookListing(BaseModel):
     shipping_profile_id: str | None
     shipping_option_ids: list[str]
     title: str | None
+    """
+    Listing title.
+    """
     base_title: str | None
     custom_title: str | None
     description: str | None
+    """
+    Listing description from the seller.
+    """
     share_url: str | None
     price: FacebookMoney | None
+    """
+    Price.
+    """
     inventory_count: int | None
     price_in_cents: int | None
     strikethrough_price: FacebookMoney | None
+    """
+    List price: the original price before a cut.
+    """
     sweepstake_status: str | None
     friends_visibility: FacebookCode
     can_share: bool | None
     status: FacebookListingStatus
+    """
+    Status: live, pending, sold or hidden.
+    """
     created_at: str | None
+    """
+    Date listed, ISO 8601.
+    """
     category: FacebookListingCategory
+    """
+    Listing category.
+    """
     taxonomy: list[FacebookListingCategory]
     location: FacebookListingLocation
+    """
+    Location: city, state, postal code and coordinates.
+    """
     seller: FacebookListingSellerProfile
+    """
+    Seller: name, ID, photo, joined date and ratings.
+    """
     hashtags: list[str]
     attributes: list[FacebookListingAttribute]
+    """
+    Item details, such as the condition.
+    """
     delivery_types: list[FacebookCode]
+    """
+    Delivery options, such as local pickup or shipping.
+    """
     shipping: FacebookListingShipping
+    """
+    Shipping details.
+    """
     inventory_type: FacebookCode
     search_pivots: list[str]
     details_type: FacebookCode
@@ -185,25 +221,61 @@ class FacebookListingCard(BaseModel):
     """
 
     id: str | None
+    """
+    Listing ID.
+    """
     video_id: str | None
     product_item_id: str | None
     feed_story_id: str | None
     title: str | None
+    """
+    Listing title.
+    """
     custom_title: str | None
     subtitles: list[str]
     share_url: str | None
+    """
+    Link to the listing.
+    """
     price: FacebookListingCardMoney | None
+    """
+    Price.
+    """
     price_in_cents: int | None
     strikethrough_price: FacebookListingCardMoney | None
+    """
+    List price: the original price before a cut.
+    """
     status: FacebookListingCardStatus
+    """
+    Status: live, pending, sold or hidden.
+    """
     created_at: str | None
+    """
+    Date listed, ISO 8601.
+    """
     category: FacebookListingCardCategory
     location: FacebookListingCardLocation
+    """
+    Location: city, state and coordinates.
+    """
     seller: FacebookListingCardSeller | None
+    """
+    Seller.
+    """
     delivery_types: list[FacebookCode]
+    """
+    Delivery options, such as local pickup or shipping.
+    """
     feed_story_type: FacebookCode
     primary_photo: FacebookListingCardPhoto | None
+    """
+    Main image of the listing.
+    """
     photos: list[FacebookListingCardPhoto]
+    """
+    Listing images.
+    """
 
 
 class FacebookListingCardCategory(BaseModel):
@@ -353,27 +425,63 @@ class FacebookListingWithMedia(BaseModel):
     shipping_profile_id: str | None
     shipping_option_ids: list[str]
     title: str | None
+    """
+    Listing title.
+    """
     base_title: str | None
     custom_title: str | None
     description: str | None
+    """
+    Listing description from the seller.
+    """
     share_url: str | None
     price: FacebookMoney | None
+    """
+    Price.
+    """
     inventory_count: int | None
     price_in_cents: int | None
     strikethrough_price: FacebookMoney | None
+    """
+    List price: the original price before a cut.
+    """
     sweepstake_status: str | None
     friends_visibility: FacebookCode
     can_share: bool | None
     status: FacebookListingStatus
+    """
+    Status: live, pending, sold or hidden.
+    """
     created_at: str | None
+    """
+    Date listed, ISO 8601.
+    """
     category: FacebookListingCategory
+    """
+    Listing category.
+    """
     taxonomy: list[FacebookListingCategory]
     location: FacebookListingLocation
+    """
+    Location: city, state, postal code and coordinates.
+    """
     seller: FacebookListingSellerProfile
+    """
+    Seller: name, ID, photo, joined date and ratings.
+    """
     hashtags: list[str]
     attributes: list[FacebookListingAttribute]
+    """
+    Item details, such as the condition.
+    """
     delivery_types: list[FacebookCode]
+    """
+    Delivery options, such as local pickup or shipping.
+    """
     shipping: FacebookListingShipping
+    """
+    Shipping details.
+    """
     inventory_type: FacebookCode
     search_pivots: list[str]
     details_type: FacebookCode
@@ -386,7 +494,13 @@ class FacebookListingWithMedia(BaseModel):
     badge_source: str | None
     badge_image_urls: list[str]
     photos: list[FacebookPhoto]
+    """
+    Listing images: every photo with its caption and size.
+    """
     videos: list[FacebookVideo]
+    """
+    Listing videos with their thumbnails.
+    """
 
 
 class FacebookListingsPage(BaseModel):
@@ -479,15 +593,30 @@ class FacebookPhoto(BaseModel):
 
 class FacebookProfileRef(BaseModel):
     id: str | None
+    """
+    Account ID.
+    """
     pfbid: str | None
     username: str | None
     name: str | None
+    """
+    Name.
+    """
     url: str | None
+    """
+    Profile or page URL.
+    """
     is_verified: bool | None
     short_name: str | None
+    """
+    Short name, such as the first name.
+    """
     account_type: FacebookCode
     gender: str | None
     profile_picture_url: str | None
+    """
+    Profile picture URL.
+    """
 
 
 class FacebookRating(BaseModel):

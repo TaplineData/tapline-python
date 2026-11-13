@@ -129,17 +129,41 @@ class FacebookAdCard(BaseModel):
     """
 
     ad_archive_id: str | None
+    """
+    Ad archive ID: the ad's Ad Library ID.
+    """
     ad_id: str | None
     text: FacebookAdText
+    """
+    Ad text: headline, body, caption and link description.
+    """
     url: str | None
+    """
+    Ad Library URL of the ad.
+    """
     page: FacebookPage
+    """
+    Advertiser: the page that runs the ad.
+    """
     regulation: FacebookAdRegulation
     collation: FacebookAdCollation
+    """
+    Collation ID and count: versions of one creative.
+    """
     categories: list[FacebookCode]
+    """
+    Ad categories, such as political or housing.
+    """
     disclaimer: FacebookAdDisclaimer
     creative: FacebookAdCreative
+    """
+    Media and call to action: images, videos, cards, link and display format.
+    """
     performance: FacebookAdPerformance
     delivery: FacebookAdDelivery
+    """
+    Ad status, run dates and platforms.
+    """
     moderation: FacebookAdModeration
 
 
@@ -169,17 +193,35 @@ class FacebookAdCreative(BaseModel):
     """
 
     link_url: str | None
+    """
+    Link URL the ad sends people to.
+    """
     extra_links: list[str]
     branded_content: FacebookPage | None
     display_format: FacebookCode
+    """
+    Display format, such as `IMAGE`, `VIDEO` or `DCO`.
+    """
     cta_type: FacebookCode
+    """
+    Call to action type and text, such as `LEARN_MORE` / `Learn more`.
+    """
     cards: list[FacebookAdCarouselCard]
+    """
+    Carousel cards.
+    """
     is_reshared: bool | None
     root_reshared_post: Any
     event: Any
     images: list[FacebookAdImage]
+    """
+    Ad images.
+    """
     extra_images: list[FacebookAdImage]
     videos: list[FacebookAdVideo]
+    """
+    Ad videos.
+    """
     extra_videos: list[FacebookAdVideo]
 
 
@@ -189,12 +231,30 @@ class FacebookAdDelivery(BaseModel):
     """
 
     total_active_seconds: int | None
+    """
+    Total active time in seconds.
+    """
     is_active: bool | None
+    """
+    Ad status: whether the ad is still running.
+    """
     start_at: str | None
+    """
+    Start date the ad began running, ISO 8601.
+    """
     end_at: str | None
+    """
+    End date: when the ad stopped, or the last day seen running.
+    """
     last_seen_at: str | None
     publisher_platforms: list[FacebookCode]
+    """
+    Platforms the ad runs on, such as Facebook and Instagram.
+    """
     targeted_or_reached_countries: list[str]
+    """
+    Countries targeted or reached (EU ads).
+    """
 
 
 class FacebookAdDisclaimer(BaseModel):
@@ -308,9 +368,21 @@ class FacebookAdText(BaseModel):
     """
 
     title: str | None
+    """
+    Ad title (headline).
+    """
     body: str | None
+    """
+    Ad text (body copy).
+    """
     caption: str | None
+    """
+    Link caption, such as the site's domain.
+    """
     link_description: str | None
+    """
+    Link description under the headline.
+    """
     extra_texts: list[str]
 
 
@@ -547,28 +619,61 @@ class FacebookPage(BaseModel):
     """
 
     page_id: str | None
+    """
+    Page ID: the id the Ad Library takes.
+    """
     profile_id: str | None
+    """
+    Profile ID of the page or public profile.
+    """
     username: str | None = None
+    """
+    Username (vanity name) in the page link.
+    """
     story_bucket_ids: list[str] | None = None
     name: str | None
+    """
+    Page name.
+    """
     url: str | None
+    """
+    Link to the page.
+    """
     ad_library_url: str | None = None
+    """
+    Link to the page's ads in the Ad Library.
+    """
     metrics: FacebookPageMetrics
+    """
+    Audience counts: followers, following, likes and talking about.
+    """
     status: FacebookPageStatus
     instagram: FacebookInstagramAccount | None = None
     tabs: list[FacebookPageTab] | None = None
     category: str | None = None
+    """
+    Page category.
+    """
     entity_type: FacebookCode | None = None
     verification: FacebookCode | None = None
+    """
+    Verified badge.
+    """
     alternate_name: str | None = None
     gender: FacebookCode | None = None
     profile_type_transition: FacebookCode | None = None
     social_context: list[FacebookSocialContextItem] | None = None
     legal: FacebookPageLegal | None = None
     profile_picture_url: str | None = None
+    """
+    Profile picture (photo) URL.
+    """
     profile_photo: FacebookPhoto | None = None
     profile_pictures: list[FacebookImage] | None = None
     cover_photo: FacebookCoverPhoto | None = None
+    """
+    Cover photo.
+    """
 
 
 class FacebookPageCollectionLink(BaseModel):
@@ -591,10 +696,25 @@ class FacebookPageLegal(BaseModel):
 
 class FacebookPageMetrics(BaseModel):
     like_count: int | None = None
+    """
+    Page likes.
+    """
     follower_count: int | None = None
+    """
+    Followers, exact.
+    """
     talking_about_count: int | None = None
+    """
+    People talking about the page.
+    """
     follower_count_approx: int | None = None
+    """
+    Followers, rounded as Facebook prints them.
+    """
     following_count_approx: int | None = None
+    """
+    Accounts the page follows, rounded as Facebook prints them.
+    """
 
 
 class FacebookPageStatus(BaseModel):

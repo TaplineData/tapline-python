@@ -256,7 +256,7 @@ class Linkedin(AsyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """Returns a public member profile with its jobs, schools, skills, posts, articles, recommendations and similar people. Missing profiles return 404. Costs 2 credits.
+        """Returns a public member profile with its jobs, schools, skills, posts, articles, recommendations and similar people. Missing profiles return 404. The logged-out page can mask the headline, About, connections (`500+`), job titles and dates. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,
@@ -448,7 +448,7 @@ class SyncLinkedin(SyncAPIResource):
         url: str,
         timeout: float | Timeout | NotGiven | None = not_given,
     ) -> LinkedinProfileResponse:
-        """Returns a public member profile with its jobs, schools, skills, posts, articles, recommendations and similar people. Missing profiles return 404. Costs 2 credits.
+        """Returns a public member profile with its jobs, schools, skills, posts, articles, recommendations and similar people. Missing profiles return 404. The logged-out page can mask the headline, About, connections (`500+`), job titles and dates. Costs 2 credits.
 
         Args:
             url: A LinkedIn profile URL, `https://www.linkedin.com/in/<username>/`,

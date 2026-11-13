@@ -809,6 +809,7 @@ class Callout(BaseModel):
     xFollowerCount: int
     accountKind: str | None = None
     prediction: Annotated[None, Field(None)] = None
+    authorIsDev: bool | None = None
 
 
 class CalloutAuthor(BaseModel):
@@ -1245,6 +1246,8 @@ class Coin(BaseModel):
     fdv_usd: float | None = None
     price_usd: float | None = None
     source: str | None = None
+    volume_24h_usd: float | None = None
+    price_change_24h_bps: int | None = None
 
 
 class CoinBoardParams(BaseModel):
@@ -1401,7 +1404,7 @@ class CoinPosition(BaseModel):
     costBasisUsd: float | str | None
     amountBoughtUsd: float | None
     amountBought: float | None
-    callout: PositionCallout
+    callout: PositionCallout | None
     contentKind: str
     quote: PositionQuote | None
     followerCount: int | None = None
@@ -1502,6 +1505,8 @@ class CoinsBatch(BaseModel):
     fdv_usd: float | None = None
     price_usd: float | None = None
     source: str | None = None
+    volume_24h_usd: float | None = None
+    price_change_24h_bps: int | None = None
 
 
 class CoinsBatchRequest(BaseModel):
@@ -1602,6 +1607,7 @@ class Competition(BaseModel):
     isFinal: bool
     top: list[Top]
     winners: list[CompetitionWinner]
+    scoringRule: str | None = None
 
 
 class CompetitionEntryHighlightsParams(BaseModel):
@@ -1712,6 +1718,7 @@ class CompetitionWinner(BaseModel):
     isVerified: bool
     verifiedBadgeVisible: bool
     prize: str
+    resolvedAvatarDecoration: str | None = None
 
 
 class Contributor(BaseModel):
@@ -1808,6 +1815,10 @@ class Daily(BaseModel):
     tailPnlHist4h: TailHistogram | None = None
     tailPnlHist24h: TailHistogram | None = None
     ranks: TailRanks | None = None
+    calloutsCreated: int | None = None
+    calloutsTailedIn: int | None = None
+    paidV1Usd: float | None = None
+    paidV2Usd: float | None = None
 
 
 class Data(BaseModel):
@@ -1996,6 +2007,8 @@ class Follower(BaseModel):
     timestamp: int | str | None
     followers: int
     resolved_avatar_decoration: str | None = None
+    pnlUsd: float | None = None
+    pnlRanked: bool | None = None
 
 
 class FollowersCountParams(BaseModel):
@@ -2437,6 +2450,8 @@ class GetCoinResponse(BaseModel):
     platform: str | None = None
     is_backfill: bool | None = None
     telegram: str | None = None
+    volume_24h_usd: float | None = None
+    price_change_24h_bps: int | None = None
 
 
 class GetCoinTopCalloutsResponse(BaseModel):
@@ -2468,11 +2483,11 @@ class GetCompetitionResponse(BaseModel):
 
 
 class GetCreatorFeesResponse(BaseModel):
-    creator: str
-    interval: str
-    period: str
+    creator: str | None = None
+    interval: str | None = None
+    period: str | None = None
     earned: list[Earned]
-    isClaimable: bool
+    isClaimable: bool | None = None
     series: list[Series]
     claimable: SeriesEarned | None = None
 
@@ -2485,6 +2500,7 @@ class GetFollowSuggestionsResponse(BaseModel):
 
 class GetFollowersCountResponse(BaseModel):
     count: int
+    traderCount: int | None = None
 
 
 class GetFollowingCountResponse(BaseModel):
@@ -2560,6 +2576,7 @@ class GetGroupPnlLeaderboardResponseEntry(BaseModel):
     isVerified: bool
     verifiedBadgeVisible: bool
     activeCompetitionEntry: ActiveCompetitionEntry | None = None
+    resolvedAvatarDecoration: str | None = None
 
 
 class GetHolderRewardsResponse(BaseModel):
@@ -2879,7 +2896,7 @@ class GetMoversBoardResponseEntry(BaseModel):
     bc: int
     sc: int
     txc: int
-    nh: int
+    nh: int | None = None
     t10: float
     dh: float
     tw: bool
@@ -2952,6 +2969,8 @@ class GetPayoutsLeaderboardResponse(BaseModel):
     entries: list[GetPayoutsLeaderboardResponseEntry]
     totalEarners: int
     generatedAt: str
+    windowPaidV1Usdc: float | None = None
+    windowPaidV2Usdc: float | None = None
 
 
 class GetPayoutsLeaderboardResponseEntry(BaseModel):
@@ -2981,6 +3000,7 @@ class GetPerpTradesResponse(BaseModel):
     aggregates: Aggregate
     cursor: str | None
     source: str
+    lifecycleOpenedAt: Annotated[None, Field(None)] = None
 
 
 class GetPerpTradesResponseTrade(BaseModel):
@@ -3353,6 +3373,9 @@ class GetUserCalloutsResponseCallout(BaseModel):
     paidV2Usd: float | None = None
     v2Boost: int | None = None
     author: CalloutAuthor | None = None
+    authorIsDev: bool | None = None
+    v2BoostFactors: list[Any] | None = None
+    v2BoostReasons: list[Any] | None = None
 
 
 class GetUserCoinCalloutResponse(BaseModel):
@@ -4312,12 +4335,14 @@ class LiveCoin(BaseModel):
     is_backfill: bool | None = None
     is_charity: bool | None = None
     tokenized_agent: bool | None = None
+    platform: str | None = None
 
 
 class LiveCoinMayhem(BaseModel):
     complete_reason: str | None = None
     mode: str
     state: str
+    pause_reason: str | None = None
 
 
 class LiveCoinsParams(BaseModel):
@@ -4640,6 +4665,7 @@ class Member(BaseModel):
     xUsername: str | None = None
     isVerified: bool
     verifiedBadgeVisible: bool
+    resolvedAvatarDecoration: str | None = None
 
 
 class Meta(BaseModel):
@@ -4754,6 +4780,9 @@ class MultiChainBreakdown(BaseModel):
     avalanche: Solana | None = None
     optimism: Solana | None = None
     sei: Solana | None = None
+    unichain: Solana | None = None
+    tron: Solana | None = None
+    elysium: Solana | None = None
 
 
 class MultichainToken(BaseModel):
@@ -5064,9 +5093,9 @@ class PerpsParams(BaseModel):
 
 
 class Playback(BaseModel):
-    posterUrl: str
+    posterUrl: str | None = None
     mp4Url: str
-    hlsUrl: str
+    hlsUrl: str | None = None
 
 
 class PlaylistMapRequest(BaseModel):
@@ -5124,7 +5153,7 @@ class Point(BaseModel):
 
 
 class Pool(BaseModel):
-    chainId: str
+    chainId: str | None = None
     address: str
 
 
@@ -5253,6 +5282,10 @@ class PositionCallout(BaseModel):
     actingUser: Annotated[None, Field(None)] = None
     prediction: Annotated[None, Field(None)] = None
     pinnedUpdate: Update | None = None
+    authorIsDev: bool | None = None
+    evmChain: str | None = None
+    mediaTranscript: str | None = None
+    mediaWaveform: list[int] | None = None
 
 
 class PositionCoin(BaseModel):
@@ -5295,7 +5328,7 @@ class ProfileIdsRequest(BaseModel):
 
 class ProfilePin(BaseModel):
     position: GetMintPositionsResponsePosition | None
-    pinnedUpdate: None
+    pinnedUpdate: Update | None
 
 
 class Progress(BaseModel):
@@ -5345,6 +5378,7 @@ class Quote(BaseModel):
     positionAvgEntryMcapUsd: float | None
     isQuote: bool
     prediction: Annotated[None, Field(None)] = None
+    authorIsDev: bool | None = None
 
 
 class QuoteCallout(BaseModel):
@@ -5365,6 +5399,7 @@ class QuoteCallout(BaseModel):
     walletAddress: str
     xFollowerCount: int
     xUsername: str | None
+    evmChain: str | None = None
 
 
 class QuoteEntry(BaseModel):
@@ -5455,6 +5490,7 @@ class Reply(BaseModel):
     isQuote: bool
     viewCount: int | None = None
     prediction: Annotated[None, Field(None)] = None
+    authorIsDev: bool | None = None
 
 
 class ReplyLikersParams(BaseModel):
@@ -5611,6 +5647,15 @@ class Result(BaseModel):
     user: GetUserResponse | None
     resolvedVia: str
     definitive: bool
+    chains: list[ResultChain] | None = None
+
+
+class ResultChain(BaseModel):
+    chain: str
+    name: str
+    symbol: str
+    image_uri: str | None
+    liquidity_usd: float | None
 
 
 class ResultCoin(BaseModel):
@@ -5748,6 +5793,7 @@ class Row(BaseModel):
     xUsername: str | None = None
     isVerified: bool
     verifiedBadgeVisible: bool
+    resolvedAvatarDecoration: str | None = None
 
 
 class SearchCoinsParams(BaseModel):
@@ -5980,6 +6026,8 @@ class SearchedCoin(BaseModel):
     price_usd: float | None = None
     source: str | None = None
     preview: bool | None = None
+    volume_24h_usd: float | None = None
+    price_change_24h_bps: int | None = None
 
 
 class SecurityVerdict(BaseModel):
@@ -5995,7 +6043,7 @@ class SecurityVerdict(BaseModel):
 
 class Series(BaseModel):
     bucketStart: int
-    earned: SeriesEarned
+    earned: SeriesEarned | None = None
     byQuote: list[Earned]
 
 
@@ -6242,6 +6290,18 @@ class TailRanks(BaseModel):
     tailPnl24hUsd: float | None
     tailUniqueBuyers: float | None
     tailVolumeUsd: float | None
+    tailAth1hUsdPosition: int | None = None
+    tailAth4hUsdPosition: int | None = None
+    tailAth24hUsdPosition: int | None = None
+    tailBuyersPosition: int | None = None
+    tailCohort1hPosition: int | None = None
+    tailCohort4hPosition: int | None = None
+    tailCohort24hPosition: int | None = None
+    tailPnl1hUsdPosition: int | None = None
+    tailPnl4hUsdPosition: int | None = None
+    tailPnl24hUsdPosition: int | None = None
+    tailUniqueBuyersPosition: int | None = None
+    tailVolumeUsdPosition: int | None = None
 
 
 class Token(BaseModel):
@@ -6341,6 +6401,7 @@ class Top(BaseModel):
     xUsername: str | None = None
     isVerified: bool
     verifiedBadgeVisible: bool
+    resolvedAvatarDecoration: str | None = None
 
 
 class TopClipsParams(BaseModel):
@@ -6423,6 +6484,8 @@ class Topholder(BaseModel):
     isBundler: bool
     enteredAt: int | None
     funding: Annotated[None, Field(None)] = None
+    isBondingCurve: bool | None = None
+    isPool: bool | None = None
 
 
 class Topposition(BaseModel):
@@ -6643,6 +6706,12 @@ class TrendingCoin(BaseModel):
     source: str | None = None
     recommendation_id: str | None = None
     recommendation_rank: int | None = None
+    coin_key: str | None = None
+    curve: TrendingCoinCurve | None = None
+
+
+class TrendingCoinCurve(BaseModel):
+    had_curve: bool
 
 
 class TrendingCoinsParams(BaseModel):

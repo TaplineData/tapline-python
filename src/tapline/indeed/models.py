@@ -776,6 +776,10 @@ class IndeedJobCompany(BaseModel):
     is_claimed: bool | None
     industry: str | None
     industry_label: str | None
+    sectors: list[str]
+    """
+    Industry sectors, by name.
+    """
     size: IndeedCodeLabel
     revenue: IndeedCodeLabel
     headquarters: list[str]
