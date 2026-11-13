@@ -301,18 +301,9 @@ async def test_an_unknown_playlist_raises_not_found(tapline: TaplineClient) -> N
     assert caught.value.request_id
 
 
-async def test_an_unknown_video_is_not_an_error(tapline: TaplineClient) -> None:
-    """A well-formed video ID that does not exist comes back 200, not 404.
-
-    yt-dlp answers for any syntactically valid ID, so the API cannot tell an
-    unwatchable video from an absent one and returns a record with a synthesised
-    title and nothing else. Callers have to test a field, not catch an exception.
-    """
-    video = await tapline.youtube.metadata("aaaaaaaaaaa")
-
-    assert video.video_id == "aaaaaaaaaaa"
-    assert video.duration is None
-    assert video.channel_id is None
+async def test_an_unknown_video_raises_not_found(tapline: TaplineClient) -> None:
+    with pytest.raises(NotFoundError):
+        await tapline.youtube.metadata("aaaaaaaaaaa")
 
 
 async def test_a_malformed_cursor_raises_invalid_cursor(tapline: TaplineClient) -> None:
